@@ -34,13 +34,15 @@ class BeanConfig {
         repositoryRepository: RepositoryRepository,
         sourceCodeService: SourceCodeService,
         githubAppService: GithubAppService,
-        plagiarismService: PlagiarismService
+        plagiarismService: PlagiarismService,
+        analysisResultService: AnalysisResultService
     ): PullRequestWebhookService {
         return PullRequestWebhookService(
             repositoryRepository,
             sourceCodeService,
             githubAppService,
-            plagiarismService
+            plagiarismService,
+            analysisResultService
         )
     }
 

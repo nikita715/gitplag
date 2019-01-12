@@ -1,5 +1,12 @@
 package ru.nikstep.redink.data
 
-enum class GithubAnalysisConclusion(val value: String) {
-    SUCCESS("success")
+enum class GithubAnalysisConclusion {
+    SUCCESS,
+    FAILURE,
+    NEUTRAL,
+    CANCELLED,
+    TIMED_OUT,
+    ACTION_REQUIRED;
+
+    val value: String = this.name.toLowerCase()
 }

@@ -3,6 +3,8 @@ package ru.nikstep.redink.service
 import mu.KotlinLogging
 import org.springframework.boot.configurationprocessor.json.JSONObject
 import org.springframework.http.HttpMethod
+import ru.nikstep.redink.data.AnalysisResultData
+import ru.nikstep.redink.data.GithubAnalysisStatus
 import ru.nikstep.redink.data.PullRequestData
 import ru.nikstep.redink.repo.RepositoryRepository
 import ru.nikstep.redink.util.RequestUtil
@@ -12,12 +14,12 @@ class PullRequestWebhookService(
     private val repositoryRepository: RepositoryRepository,
     private val sourceCodeService: SourceCodeService,
     private val githubAppService: GithubAppService,
-    private val plagiarismService: PlagiarismService
+    private val plagiarismService: PlagiarismService,
+    private val analysisResultService: AnalysisResultService
 ) {
 
     private val rawGithubFileQuery = "{\"query\": \"query {repository(name: \\\"%s\\\", owner: \\\"%s\\\")" +
             " {object(expression: \\\"%s:%s\\\") {... on Blob{text}}}}\"}"
-    private val githubPullRequestLink = "https://github.com/%s/pull/%s"
 
     private val logger = KotlinLogging.logger {}
 
@@ -28,6 +30,7 @@ class PullRequestWebhookService(
             "PullRequest: new from repo ${data.repoFullName}, user ${data.creatorName}," +
                     " branch ${data.branchName}, url https://github.com/${data.repoFullName}/pull/${data.number}"
         }
+        sendInProgressStatus(data)
         loadFiles(data)
         plagiarismService.analyze(data)
     }
@@ -65,6 +68,11 @@ class PullRequestWebhookService(
                 .getJSONObject("object").getString("text")
             sourceCodeService.save(data, fileName, fileData)
         }
+    }
+
+    private fun sendInProgressStatus(prData: PullRequestData) {
+        val analysisResultData = AnalysisResultData(status = GithubAnalysisStatus.IN_PROGRESS.value)
+        analysisResultService.send(prData, analysisResultData)
     }
 
 }

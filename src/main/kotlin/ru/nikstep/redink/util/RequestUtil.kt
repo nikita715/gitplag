@@ -8,7 +8,6 @@ import org.springframework.http.HttpMethod
 
 class RequestUtil {
 
-
     companion object {
         private const val githubGraphql = "https://api.github.com/graphql"
         private const val acceptMachineManPreview = "application/vnd.github.machine-man-preview+json"
