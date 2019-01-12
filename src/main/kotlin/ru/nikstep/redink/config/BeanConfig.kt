@@ -2,7 +2,6 @@ package ru.nikstep.redink.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import ru.nikstep.redink.repo.PullRequestRepository
 import ru.nikstep.redink.repo.RepositoryRepository
 import ru.nikstep.redink.repo.SourceCodeRepository
 import ru.nikstep.redink.repo.UserRepository
@@ -32,32 +31,24 @@ class BeanConfig {
 
     @Bean
     fun pullRequestService(
-        pullRequestRepository: PullRequestRepository,
         repositoryRepository: RepositoryRepository,
         sourceCodeService: SourceCodeService,
         githubAppService: GithubAppService,
-        analysisResultService: AnalysisResultService
-    ): PullRequestSavingService {
-        return PullRequestSavingService(
-            pullRequestRepository,
+        plagiarismService: PlagiarismService
+    ): PullRequestWebhookService {
+        return PullRequestWebhookService(
             repositoryRepository,
             sourceCodeService,
             githubAppService,
-            analysisResultService
+            plagiarismService
         )
     }
 
     @Bean
-    fun plagiarismService(): PlagiarismService {
-        return EmptyPlagiarismService()
-    }
-
-    @Bean
-    fun pullRequestLoadingService(
-        pullRequestRepository: PullRequestRepository,
-        plagiarismService: PlagiarismService
-    ): PullRequestLoadingService {
-        return PullRequestLoadingService(pullRequestRepository, plagiarismService)
+    fun plagiarismService(
+        analysisResultService: AnalysisResultService
+    ): PlagiarismService {
+        return EmptyPlagiarismService(analysisResultService)
     }
 
 }

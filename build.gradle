@@ -49,6 +49,8 @@ dependencies {
 
     compile 'com.google.code.gson:gson:2.8.5'
 
+    compile 'io.github.microutils:kotlin-logging:1.6.22'
+
     testCompile 'org.jetbrains.kotlin:kotlin-test'
     testCompile 'org.jetbrains.kotlin:kotlin-test-junit'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

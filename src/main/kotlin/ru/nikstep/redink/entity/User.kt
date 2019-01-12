@@ -6,11 +6,11 @@ import javax.persistence.*
 @Entity
 @Table(name = "p_user")
 open class User(
-    var name: String = "",
-    var email: String = "",
-    var pword: String = ""
-//    ,
-//    @OneToMany(mappedBy = "owner", cascade = arrayOf(CascadeType.ALL)) var repositories: Set<Repository>
+    var name: String,
+    var email: String,
+    var pword: String,
+    var githubId: Long,
+    var installationId: Long
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

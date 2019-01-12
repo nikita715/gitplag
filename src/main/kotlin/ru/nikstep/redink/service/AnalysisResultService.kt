@@ -1,42 +1,37 @@
 package ru.nikstep.redink.service
 
-import com.github.kittinunf.fuel.httpPost
 import com.google.gson.Gson
-import java.text.SimpleDateFormat
+import mu.KotlinLogging
+import ru.nikstep.redink.data.AnalysisResultData
+import ru.nikstep.redink.data.PullRequestData
+import ru.nikstep.redink.util.RequestUtil
+import ru.nikstep.redink.util.asIsoString
 import java.util.*
 
+class AnalysisResultService(private val githubAppService: GithubAppService) {
+    private val logger = KotlinLogging.logger {}
 
-class AnalysisResultService(val githubAppService: GithubAppService) {
+    fun send(prData: PullRequestData, analysisData: AnalysisResultData) {
+        val jwt = githubAppService.getAccessToken(prData.installationId)
 
-    fun send(installationId: Int, repo: String, sha: String) {
-        val jwt = githubAppService.getAccessToken(installationId)
-
-        val tz = TimeZone.getTimeZone("UTC")
-        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        df.timeZone = tz
-        val nowAsISO = df.format(Date())
-
-        val body = mapOf<String, Any>(
-            "name" to "Plagiarism tests",
-            "head_sha" to sha,
-            "status" to "completed",
-            "conclusion" to "success",
-            "completed_at" to nowAsISO,
-            "details_url" to "localhost:8080",
-            "output" to mapOf<String, Any>(
-                "title" to "Mighty Readme report",
-                "summary" to "Sample summary"
+        val body = Gson().toJson(
+            mapOf(
+                "name" to "Plagiarism tests",
+                "head_sha" to prData.headSha,
+                "status" to analysisData.status.value,
+                "conclusion" to analysisData.conclusion.value,
+                "completed_at" to Date().asIsoString(),
+                "details_url" to analysisData.detailsUrl,
+                "output" to mapOf(
+                    "title" to "Report",
+                    "summary" to analysisData.summary
+                )
             )
         )
-        val body1 = Gson().toJson(body)
 
-        "https://api.github.com/repos/$repo/check-runs".httpPost()
-            .header(
-                "Authorization" to jwt,
-                "Accept" to "application/vnd.github.antiope-preview+json"
-            )
-            .body(body1)
-            .response()
+        RequestUtil.sendStatusCheckRequest(prData.repoFullName, jwt, body)
+
+        logger.info { "AnalysisResult: sent for ${prData.repoFullName}, creator ${prData.creatorName}" }
     }
 
 }

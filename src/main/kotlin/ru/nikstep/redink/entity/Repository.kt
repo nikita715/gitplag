@@ -14,6 +14,7 @@ class Repository {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "repository_pattern", joinColumns = arrayOf(JoinColumn(name = "repository")))
     var filePatterns: MutableList<String> = mutableListOf()
+    var githubId: Long = 0
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

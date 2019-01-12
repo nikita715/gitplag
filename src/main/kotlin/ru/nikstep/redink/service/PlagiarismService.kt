@@ -1,8 +1,7 @@
 package ru.nikstep.redink.service
 
-import ru.nikstep.redink.entity.PullRequest
+import ru.nikstep.redink.data.PullRequestData
 
 interface PlagiarismService {
-    fun analyze(pullRequest: PullRequest)
-//            : AnalysisResult
+    fun analyze(data: PullRequestData)
 }
