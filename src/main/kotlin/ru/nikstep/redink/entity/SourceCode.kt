@@ -6,11 +6,11 @@ import javax.persistence.*
 class SourceCode(
     @ManyToOne
     @JoinColumn(name = "p_user")
-    val user: User,
+    var user: User,
     @ManyToOne
     @JoinColumn(name = "repo")
-    val repo: Repository,
-    val fileName: String,
+    var repo: Repository,
+    var fileName: String,
     var fileText: String
 ) {
     @Id

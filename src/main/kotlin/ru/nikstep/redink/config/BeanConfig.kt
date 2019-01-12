@@ -51,4 +51,12 @@ class BeanConfig {
         return EmptyPlagiarismService(analysisResultService)
     }
 
+    @Bean
+    fun integrationService(
+        userRepository: UserRepository,
+        repositoryRepository: RepositoryRepository
+    ): IntegrationService {
+        return IntegrationService(userRepository, repositoryRepository)
+    }
+
 }

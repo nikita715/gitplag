@@ -6,5 +6,6 @@ import ru.nikstep.redink.entity.User
 interface UserRepository : JpaRepository<User, Long> {
 
     fun findByName(name: String): User
+    fun findByInstallationId(installationId: Long): User
 
 }

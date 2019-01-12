@@ -7,8 +7,6 @@ import javax.persistence.*
 @Table(name = "p_user")
 open class User(
     var name: String,
-    var email: String,
-    var pword: String,
     var githubId: Long,
     var installationId: Long
 ) {

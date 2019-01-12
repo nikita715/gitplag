@@ -5,12 +5,14 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import ru.nikstep.redink.service.IntegrationService
 import ru.nikstep.redink.service.PullRequestWebhookService
 import javax.servlet.http.HttpServletRequest
 
 @RestController
 class PullRequestController(
-    private val pullRequestWebhookService: PullRequestWebhookService
+    private val pullRequestWebhookService: PullRequestWebhookService,
+    private val integrationService: IntegrationService
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -19,12 +21,9 @@ class PullRequestController(
         val githubEvent = httpServletRequest.getHeader("X-GitHub-Event")
         logger.info { "Webhook: got new $githubEvent" }
         when (githubEvent) {
-            "pull_request" -> {
-                pullRequestWebhookService.processPullRequest(payload)
-            }
-            else -> {
-                logger.info { "Webhook: $githubEvent is not supported" }
-            }
+            "pull_request" -> pullRequestWebhookService.processPullRequest(payload)
+            "integration_installation" -> integrationService.createNewUser(payload)
+            else -> logger.info { "Webhook: $githubEvent is not supported" }
         }
     }
 }
