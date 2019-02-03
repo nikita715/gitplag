@@ -28,4 +28,6 @@ dependencies {
 
     compile 'it.zielke:moji:1.0.1'
 
+    compile 'org.jsoup:jsoup:1.11.3'
+
 }

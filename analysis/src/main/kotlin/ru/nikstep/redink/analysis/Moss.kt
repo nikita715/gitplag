@@ -10,6 +10,6 @@ interface Moss {
 
     fun solutions(solutions: List<File>): Moss
 
-    fun analyse(): String
+    fun analyse(): String?
 }
 

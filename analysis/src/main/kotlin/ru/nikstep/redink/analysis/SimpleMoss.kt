@@ -25,10 +25,10 @@ class SimpleMoss(
     override fun solutions(solutions: List<File>): Moss =
         SimpleMoss(userId, language, client, bases, solutions)
 
-    override fun analyse(): String {
+    override fun analyse(): String? {
 
         if (solutions.isEmpty()) {
-            return "No solutions!"
+            return null
         }
 
         try {

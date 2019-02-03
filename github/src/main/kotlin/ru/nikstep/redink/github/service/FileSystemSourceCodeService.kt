@@ -1,5 +1,6 @@
 package ru.nikstep.redink.github.service
 
+import mu.KotlinLogging
 import ru.nikstep.redink.data.PullRequestData
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.UserRepository
@@ -13,11 +14,13 @@ class FileSystemSourceCodeService(
     private val repositoryRepository: RepositoryRepository,
     private val userRepository: UserRepository
 ) : SourceCodeService {
+    private val logger = KotlinLogging.logger {}
 
     override fun load(repoId: Long, fileName: String): List<File> {
         val repository = repositoryRepository.findById(repoId).get()
         val solutionDirectory = File(Paths.get(repository.name).toUri())
         val directories = solutionDirectory.list()
+        logger.info { "File storage: loaded files ${repository.name}/**/$fileName" }
         return directories.map { File(Paths.get(repository.name, it, fileName).toUri()) }
     }
 
@@ -29,12 +32,14 @@ class FileSystemSourceCodeService(
         Files.deleteIfExists(path)
         val tempFile = Files.createFile(path)
         FileOutputStream(tempFile.toFile()).use { fileOutputStream -> fileOutputStream.write(fileText.toByteArray()) }
+        logger.info { "File storage: saved file ${pathToFile.first}/${pathToFile.second}" }
     }
 
     override fun load(userId: Long, repoId: Long, fileName: String): File {
         val repository = repositoryRepository.findById(repoId).get()
         val user = userRepository.findById(userId).get()
         val pathToFile = Paths.get(repository.name, user.name, fileName)
+        logger.info { "File storage: loaded file ${repository.name}/${user.name}/$fileName" }
         return File(pathToFile.toUri())
     }
 

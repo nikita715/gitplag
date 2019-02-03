@@ -12,6 +12,9 @@ import ru.nikstep.redink.github.service.PlagiarismService
 import ru.nikstep.redink.github.service.PullRequestWebhookService
 import ru.nikstep.redink.github.service.SimpleGithubAppService
 import ru.nikstep.redink.github.service.SourceCodeService
+import ru.nikstep.redink.model.repo.AnalysisPairLinesRepository
+import ru.nikstep.redink.model.repo.AnalysisPairRepository
+import ru.nikstep.redink.model.repo.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SourceCodeRepository
 import ru.nikstep.redink.model.repo.UserRepository
@@ -45,6 +48,7 @@ open class GithubConfig {
         githubAppService: GithubAppService,
         plagiarismService: PlagiarismService,
         analysisService: AnalysisService,
+        analysisResultRepository: AnalysisResultRepository,
         analysisResultService: AnalysisResultService
     ): PullRequestWebhookService {
         return PullRequestWebhookService(
@@ -53,6 +57,7 @@ open class GithubConfig {
             githubAppService,
             plagiarismService,
             analysisService,
+            analysisResultRepository,
             analysisResultService
         )
     }
@@ -72,4 +77,11 @@ open class GithubConfig {
         return IntegrationService(userRepository, repositoryRepository)
     }
 
+    @Bean
+    open fun analysisResultRepository(
+        analysisPairRepository: AnalysisPairRepository,
+        analysisPairLinesRepository: AnalysisPairLinesRepository
+    ): AnalysisResultRepository {
+        return AnalysisResultRepository(analysisPairRepository, analysisPairLinesRepository)
+    }
 }

@@ -26,7 +26,6 @@ dependencies {
     compile 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.1.RELEASE'
 
     compile 'org.postgresql:postgresql:42.2.2'
-    compile 'org.flywaydb:flyway-core:5.2.1'
 
     compile 'com.graphql-java:graphiql-spring-boot-starter:5.0.2'
     compile 'com.graphql-java:graphql-spring-boot-starter:5.0.2'
