@@ -14,7 +14,7 @@ class FileSystemSolutionLoadingService(
         val solutionDirectory = File(Paths.get("solutions", repoName).toUri())
         val directories = solutionDirectory.list()
         return File("") to directories.mapNotNull {
-            val file = File(Paths.get(repoName, it, fileName).toUri())
+            val file = File(Paths.get("solutions", repoName, it, fileName).toUri())
             if (file.exists()) file else null
         }
     }

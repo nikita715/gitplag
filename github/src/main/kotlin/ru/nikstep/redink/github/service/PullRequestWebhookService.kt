@@ -10,6 +10,7 @@ import ru.nikstep.redink.data.GithubAnalysisStatus
 import ru.nikstep.redink.data.PullRequestData
 import ru.nikstep.redink.github.util.JsonArrayDeserializer
 import ru.nikstep.redink.github.util.RequestUtil
+import ru.nikstep.redink.model.repo.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import java.lang.String.format
 
@@ -19,6 +20,7 @@ class PullRequestWebhookService(
     private val githubAppService: GithubAppService,
     private val plagiarismService: PlagiarismService,
     private val analysisService: AnalysisService,
+    private val analysisResultRepository: AnalysisResultRepository,
     private val analysisResultService: AnalysisResultService
 ) {
 
@@ -36,7 +38,8 @@ class PullRequestWebhookService(
         }
         sendInProgressStatus(data)
         loadFiles(data)
-        analysisService.analyse(data)
+        val analysisResult = analysisService.analyse(data)
+        analysisResultRepository.save(analysisResult)
         plagiarismService.analyze(data)
     }
 
