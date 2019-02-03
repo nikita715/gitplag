@@ -1,11 +1,14 @@
 package ru.nikstep.redink.github.service
 
 import mu.KotlinLogging
+import org.springframework.boot.configurationprocessor.json.JSONArray
 import org.springframework.boot.configurationprocessor.json.JSONObject
 import org.springframework.http.HttpMethod
-import ru.nikstep.redink.github.data.AnalysisResultData
-import ru.nikstep.redink.github.data.GithubAnalysisStatus
-import ru.nikstep.redink.github.data.PullRequestData
+import ru.nikstep.redink.analysis.AnalysisService
+import ru.nikstep.redink.data.AnalysisResultData
+import ru.nikstep.redink.data.GithubAnalysisStatus
+import ru.nikstep.redink.data.PullRequestData
+import ru.nikstep.redink.github.util.JsonArrayDeserializer
 import ru.nikstep.redink.github.util.RequestUtil
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import java.lang.String.format
@@ -15,6 +18,7 @@ class PullRequestWebhookService(
     private val sourceCodeService: SourceCodeService,
     private val githubAppService: GithubAppService,
     private val plagiarismService: PlagiarismService,
+    private val analysisService: AnalysisService,
     private val analysisResultService: AnalysisResultService
 ) {
 
@@ -32,6 +36,7 @@ class PullRequestWebhookService(
         }
         sendInProgressStatus(data)
         loadFiles(data)
+        analysisService.analyse(data)
         plagiarismService.analyze(data)
     }
 
@@ -40,16 +45,33 @@ class PullRequestWebhookService(
 
         val pullRequest = jsonPayload.getJSONObject("pull_request")
 
+        val installationId = jsonPayload.getJSONObject("installation").getInt("id")
+        val repoFullName = jsonPayload.getJSONObject("repository").getString("full_name")
+        val prNumber = jsonPayload.getInt("number")
+
+        val changeList = (RequestUtil.sendRestRequest(
+            url = "https://api.github.com/repos/$repoFullName/pulls/$prNumber/files",
+            accessToken = githubAppService.getAccessToken(installationId),
+            deserializer = JsonArrayDeserializer()
+        ) as JSONArray)
+
+
+        val changedFilesList = mutableListOf<String>()
+        for (index in 0 until changeList.length()) {
+            changedFilesList.add((changeList.get(index) as JSONObject).getString("filename"))
+        }
+
         val data = PullRequestData(
             number = jsonPayload.getInt("number"),
-            installationId = jsonPayload.getJSONObject("installation").getInt("id"),
+            installationId = installationId,
             creatorName = pullRequest.getJSONObject("user").getString("login"),
             repoOwnerName = jsonPayload.getJSONObject("repository")
                 .getJSONObject("owner").getString("login"),
             repoName = jsonPayload.getJSONObject("repository").getString("name"),
-            repoFullName = jsonPayload.getJSONObject("repository").getString("full_name"),
+            repoFullName = repoFullName,
             headSha = pullRequest.getJSONObject("head").getString("sha"),
-            branchName = pullRequest.getJSONObject("head").getString("ref")
+            branchName = pullRequest.getJSONObject("head").getString("ref"),
+            changedFiles = changedFilesList
         )
 
         return data
@@ -64,14 +86,23 @@ class PullRequestWebhookService(
                 body = format(rawGithubFileQuery, data.repoName, data.repoOwnerName, data.branchName, fileName),
                 accessToken = githubAppService.getAccessToken(data.installationId)
             )
-            val fileData = fileResponse.getJSONObject("data").getJSONObject("repository")
-                .getJSONObject("object").getString("text")
-            sourceCodeService.save(data, fileName, fileData)
+
+            val resultObject = fileResponse.getJSONObject("data").getJSONObject("repository")
+
+            if (resultObject.isNull("object")) {
+                logger.error { "$fileName is not found in ${data.branchName} branch, ${data.repoFullName} repo" }
+            } else {
+                sourceCodeService.save(
+                    data, fileName,
+                    resultObject.getJSONObject("object").getString("text")
+                )
+            }
         }
     }
 
     private fun sendInProgressStatus(prData: PullRequestData) {
-        val analysisResultData = AnalysisResultData(status = GithubAnalysisStatus.IN_PROGRESS.value)
+        val analysisResultData =
+            AnalysisResultData(status = GithubAnalysisStatus.IN_PROGRESS.value)
         analysisResultService.send(prData, analysisResultData)
     }
 

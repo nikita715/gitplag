@@ -1,10 +1,10 @@
 package ru.nikstep.redink.github.service
 
 import mu.KotlinLogging
-import ru.nikstep.redink.github.data.AnalysisResultData
-import ru.nikstep.redink.github.data.GithubAnalysisConclusion
-import ru.nikstep.redink.github.data.GithubAnalysisStatus
-import ru.nikstep.redink.github.data.PullRequestData
+import ru.nikstep.redink.data.AnalysisResultData
+import ru.nikstep.redink.data.GithubAnalysisConclusion
+import ru.nikstep.redink.data.GithubAnalysisStatus
+import ru.nikstep.redink.data.PullRequestData
 
 class EmptyPlagiarismService(
     private val analysisResultService: AnalysisResultService

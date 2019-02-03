@@ -2,9 +2,9 @@ package ru.nikstep.redink.github.service
 
 import com.google.gson.Gson
 import mu.KotlinLogging
-import ru.nikstep.redink.github.data.AnalysisResultData
-import ru.nikstep.redink.github.data.GithubAnalysisStatus
-import ru.nikstep.redink.github.data.PullRequestData
+import ru.nikstep.redink.data.AnalysisResultData
+import ru.nikstep.redink.data.GithubAnalysisStatus
+import ru.nikstep.redink.data.PullRequestData
 import ru.nikstep.redink.github.util.RequestUtil
 import ru.nikstep.redink.github.util.asIsoString
 import java.util.*

@@ -1,4 +1,4 @@
-package ru.nikstep.redink.github.data
+package ru.nikstep.redink.data
 
 class PullRequestData(
     val number: Int,
@@ -8,5 +8,6 @@ class PullRequestData(
     val repoName: String,
     val repoFullName: String,
     val headSha: String,
-    val branchName: String
+    val branchName: String,
+    val changedFiles: List<String>
 )

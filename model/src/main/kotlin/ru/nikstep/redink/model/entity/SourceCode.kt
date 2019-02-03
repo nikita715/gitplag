@@ -22,5 +22,6 @@ class SourceCode(
     val repo: Repository,
 
     val fileName: String,
-    val fileText: String
+
+    val fileText: ByteArray
 )

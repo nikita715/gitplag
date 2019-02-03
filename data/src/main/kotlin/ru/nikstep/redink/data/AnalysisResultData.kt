@@ -1,4 +1,4 @@
-package ru.nikstep.redink.github.data
+package ru.nikstep.redink.data
 
 class AnalysisResultData(
     val conclusion: String = GithubAnalysisConclusion.NEUTRAL.value,

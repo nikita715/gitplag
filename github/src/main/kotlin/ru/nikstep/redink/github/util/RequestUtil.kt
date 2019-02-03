@@ -1,5 +1,6 @@
 package ru.nikstep.redink.github.util
 
+import com.github.kittinunf.fuel.core.ResponseDeserializable
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import mu.KotlinLogging
@@ -50,6 +51,24 @@ class RequestUtil {
                 .header("Authorization" to accessToken)
                 .body(body)
                 .responseObject(deserializer)
+            logger.responseInfo(triple)
+            return triple.third.get()
+        }
+
+        fun sendRestRequest(
+            url: String,
+            body: String = "",
+            accessToken: String,
+            deserializer: Any = JsonObjectDeserializer(),
+            httpMethod: HttpMethod = HttpMethod.GET
+        ): Any {
+            val triple = when (httpMethod) {
+                HttpMethod.POST -> url.httpPost()
+                else -> url.httpGet()
+            }
+                .header("Authorization" to accessToken)
+                .body(body)
+                .responseObject(deserializer as ResponseDeserializable<Any>)
             logger.responseInfo(triple)
             return triple.third.get()
         }
