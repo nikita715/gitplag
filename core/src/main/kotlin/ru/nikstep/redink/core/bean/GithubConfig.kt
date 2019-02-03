@@ -2,8 +2,10 @@ package ru.nikstep.redink.core.bean
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import ru.nikstep.redink.analysis.AnalysisService
 import ru.nikstep.redink.github.service.AnalysisResultService
 import ru.nikstep.redink.github.service.EmptyPlagiarismService
+import ru.nikstep.redink.github.service.FileSystemSourceCodeService
 import ru.nikstep.redink.github.service.GithubAppService
 import ru.nikstep.redink.github.service.IntegrationService
 import ru.nikstep.redink.github.service.PlagiarismService
@@ -33,7 +35,7 @@ open class GithubConfig {
         userRepository: UserRepository,
         repositoryRepository: RepositoryRepository
     ): SourceCodeService {
-        return SourceCodeService(sourceCodeRepository, userRepository, repositoryRepository)
+        return FileSystemSourceCodeService(repositoryRepository, userRepository)
     }
 
     @Bean
@@ -42,6 +44,7 @@ open class GithubConfig {
         sourceCodeService: SourceCodeService,
         githubAppService: GithubAppService,
         plagiarismService: PlagiarismService,
+        analysisService: AnalysisService,
         analysisResultService: AnalysisResultService
     ): PullRequestWebhookService {
         return PullRequestWebhookService(
@@ -49,6 +52,7 @@ open class GithubConfig {
             sourceCodeService,
             githubAppService,
             plagiarismService,
+            analysisService,
             analysisResultService
         )
     }
