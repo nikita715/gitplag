@@ -19,6 +19,7 @@ class AnalysisResultRepository(
                 student1 = analysisResult.students.first,
                 student2 = analysisResult.students.second,
                 lines = analysisResult.countOfLines,
+                repo = analysisResult.repository,
                 percentage = analysisResult.percentage
             )
         )

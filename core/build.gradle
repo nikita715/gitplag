@@ -15,8 +15,10 @@ repositories {
 
 dependencies {
     compile project(':analysis')
+    compile project(':checks')
     compile project(':github')
     compile project(':model')
+    compile project(':util')
     
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     compile 'org.jetbrains.kotlin:kotlin-reflect'

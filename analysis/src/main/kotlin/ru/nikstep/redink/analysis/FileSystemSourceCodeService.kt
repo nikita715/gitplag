@@ -1,7 +1,7 @@
-package ru.nikstep.redink.github.service
+package ru.nikstep.redink.analysis
 
 import mu.KotlinLogging
-import ru.nikstep.redink.data.PullRequestData
+import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.UserRepository
 import java.io.File
@@ -16,15 +16,17 @@ class FileSystemSourceCodeService(
 ) : SourceCodeService {
     private val logger = KotlinLogging.logger {}
 
-    override fun load(repoId: Long, fileName: String): List<File> {
-        val repository = repositoryRepository.findById(repoId).get()
-        val solutionDirectory = File(Paths.get(repository.name).toUri())
+    override fun load(repoName: String, fileName: String): Pair<File, List<File>> {
+        val solutionDirectory = File(Paths.get("solutions", repoName).toUri())
         val directories = solutionDirectory.list()
-        logger.info { "File storage: loaded files ${repository.name}/**/$fileName" }
-        return directories.map { File(Paths.get(repository.name, it, fileName).toUri()) }
+        logger.info { "File storage: loaded files $repoName/**/$fileName" }
+        return File("") to directories.mapNotNull {
+            val file = File(Paths.get("solutions", repoName, it, fileName).toUri())
+            if (file.exists()) file else null
+        }
     }
 
-    override fun save(prData: PullRequestData, fileName: String, fileText: String) {
+    override fun save(prData: PullRequest, fileName: String, fileText: String) {
         val pathToFile = getPathToFile(prData.repoFullName, prData.creatorName, fileName)
         val tempDirectory =
             Files.createDirectories(Paths.get(pathToFile.first))
@@ -48,4 +50,5 @@ class FileSystemSourceCodeService(
         val split = fullPath.dropLast(1).joinToString(separator = "/")
         return "solutions/$repoFullName/$creator/$split" to fullPath.last()
     }
+
 }
