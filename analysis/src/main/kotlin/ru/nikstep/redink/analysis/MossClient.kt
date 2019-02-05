@@ -4,28 +4,25 @@ import it.zielke.moji.SocketClient
 import mu.KotlinLogging
 import java.io.File
 
-class SimpleMoss(
-    override val userId: String,
-    override val language: String,
+class MossClient(
+    val userId: String,
+    val language: String,
     private val client: SocketClient,
     private val bases: List<File> = emptyList(),
     private val solutions: List<File> = emptyList()
-) : Moss {
+) : AnalysisSystemClient {
 
     private val logger = KotlinLogging.logger {}
 
-    init {
-        client.userID = userId
-        client.language = language
-    }
+    override fun base(bases: List<File>): AnalysisSystemClient =
+        MossClient(userId, language, client, bases, solutions)
 
-    override fun base(bases: List<File>): Moss =
-        SimpleMoss(userId, language, client, bases, solutions)
-
-    override fun solutions(solutions: List<File>): Moss =
-        SimpleMoss(userId, language, client, bases, solutions)
+    override fun solutions(solutions: List<File>): AnalysisSystemClient =
+        MossClient(userId, language, client, bases, solutions)
 
     override fun analyse(): String? {
+        client.userID = userId
+        client.language = language
 
         if (solutions.isEmpty()) {
             return null

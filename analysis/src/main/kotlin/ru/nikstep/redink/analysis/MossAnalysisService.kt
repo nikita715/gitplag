@@ -4,6 +4,7 @@ import it.zielke.moji.SocketClient
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 import org.springframework.http.HttpMethod
+import ru.nikstep.redink.analysis.solutions.SolutionService
 import ru.nikstep.redink.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.RepositoryRepository
@@ -11,7 +12,7 @@ import ru.nikstep.redink.util.RequestUtil
 import ru.nikstep.redink.util.auth.AuthorizationService
 
 class MossAnalysisService(
-    private val sourceCodeService: SourceCodeService,
+    private val solutionService: SolutionService,
     private val repositoryRepository: RepositoryRepository,
     private val authorizationService: AuthorizationService,
     private val mossId: String
@@ -28,14 +29,14 @@ class MossAnalysisService(
 
         val result = mutableSetOf<AnalysisResult>()
         prData.changedFiles.forEach {
-            val (_, list) = sourceCodeService.load(prData.repoFullName, it)
+            val (baseFile, solutionFiles) = solutionService.load(prData.repoFullName, it)
 
-            val simpleMoss = SimpleMoss(
+            val simpleMoss = MossClient(
                 mossId,
-                "java",
+                baseFile.extension.toMossLanguage(),
                 SocketClient(),
-                emptyList(),
-                list
+                arrayListOf(baseFile),
+                solutionFiles
             )
             val href = simpleMoss.analyse()
             if (href != null) {
@@ -111,11 +112,19 @@ class MossAnalysisService(
             if (resultObject.isNull("object")) {
                 logger.error { "$fileName is not found in ${data.branchName} branch, ${data.repoFullName} repo" }
             } else {
-                sourceCodeService.save(
+                solutionService.save(
                     data, fileName,
                     resultObject.getJSONObject("object").getString("text")
                 )
             }
         }
+    }
+}
+
+fun String.toMossLanguage(): String {
+    return when (this) {
+        "java" -> this
+        "cpp" -> "cc"
+        else -> throw RuntimeException("Analysis: Moss does not support the \"$this\" extension")
     }
 }

@@ -1,4 +1,4 @@
-package ru.nikstep.redink.analysis
+package ru.nikstep.redink.analysis.solutions
 
 import mu.KotlinLogging
 import ru.nikstep.redink.model.entity.PullRequest
@@ -10,17 +10,31 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 
-class FileSystemSourceCodeService(
+class FileSystemSolutionService(
     private val repositoryRepository: RepositoryRepository,
     private val userRepository: UserRepository
-) : SourceCodeService {
+) : SolutionService {
     private val logger = KotlinLogging.logger {}
 
     override fun load(repoName: String, fileName: String): Pair<File, List<File>> {
+        val baseFile = loadBaseFile(repoName, fileName)
+        val solutionFiles = loadSolutionFiles(repoName, fileName)
+        logger.info { "File storage: loaded files $repoName/**/$fileName" }
+        return baseFile to solutionFiles
+    }
+
+    private fun loadBaseFile(repoName: String, fileName: String): File {
+        val baseFile = File(Paths.get("base", repoName, fileName).toUri())
+        if (baseFile.notExists()) {
+            throw RuntimeException("No base file $fileName of $repoName repo")
+        }
+        return baseFile
+    }
+
+    private fun loadSolutionFiles(repoName: String, fileName: String): List<File> {
         val solutionDirectory = File(Paths.get("solutions", repoName).toUri())
         val directories = solutionDirectory.list()
-        logger.info { "File storage: loaded files $repoName/**/$fileName" }
-        return File("") to directories.mapNotNull {
+        return directories.mapNotNull {
             val file = File(Paths.get("solutions", repoName, it, fileName).toUri())
             if (file.exists()) file else null
         }
@@ -51,4 +65,8 @@ class FileSystemSourceCodeService(
         return "solutions/$repoFullName/$creator/$split" to fullPath.last()
     }
 
+}
+
+fun File.notExists(): Boolean {
+    return !this.exists()
 }
