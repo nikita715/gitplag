@@ -1,4 +1,4 @@
-package ru.nikstep.redink.github.util
+package ru.nikstep.redink.util
 
 import java.text.SimpleDateFormat
 import java.util.*

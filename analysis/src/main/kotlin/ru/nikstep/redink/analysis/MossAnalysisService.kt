@@ -3,23 +3,32 @@ package ru.nikstep.redink.analysis
 import it.zielke.moji.SocketClient
 import mu.KotlinLogging
 import org.jsoup.Jsoup
+import org.springframework.http.HttpMethod
 import ru.nikstep.redink.data.AnalysisResult
-import ru.nikstep.redink.data.PullRequestData
+import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.RepositoryRepository
+import ru.nikstep.redink.util.RequestUtil
+import ru.nikstep.redink.util.auth.AuthorizationService
 
 class MossAnalysisService(
-    private val solutionLoadingService: SolutionLoadingService,
+    private val sourceCodeService: SourceCodeService,
     private val repositoryRepository: RepositoryRepository,
+    private val authorizationService: AuthorizationService,
     private val mossId: String
 ) : AnalysisService {
 
+    private val rawGithubFileQuery = "{\"query\": \"query {repository(name: \\\"%s\\\", owner: \\\"%s\\\")" +
+            " {object(expression: \\\"%s:%s\\\") {... on Blob{text}}}}\"}"
+
     private val logger = KotlinLogging.logger {}
 
-    override fun analyse(prData: PullRequestData): Set<AnalysisResult> {
+    override fun analyse(prData: PullRequest): Set<AnalysisResult> {
+
+        loadFiles(prData)
 
         val result = mutableSetOf<AnalysisResult>()
         prData.changedFiles.forEach {
-            val (_, list) = solutionLoadingService.loadSolutions(prData.repoFullName, it)
+            val (_, list) = sourceCodeService.load(prData.repoFullName, it)
 
             val simpleMoss = SimpleMoss(
                 mossId,
@@ -72,12 +81,41 @@ class MossAnalysisService(
                             matchedLines.add((data[0].toInt() to data[1].toInt()) to (data2[0].toInt() to data2[1].toInt()))
                         }
 
-                        AnalysisResult(students, lines, percentage, matchedLines)
+                        AnalysisResult(students, lines, percentage, prData.repoFullName, matchedLines)
                     }
                     .toSet()
                 result.addAll(set)
             }
         }
         return result
+    }
+
+    private fun loadFiles(data: PullRequest) {
+        val fileNames = repositoryRepository.findByName(data.repoFullName).filePatterns
+
+        for (fileName in fileNames) {
+            val fileResponse = RequestUtil.sendGraphqlRequest(
+                httpMethod = HttpMethod.POST,
+                body = java.lang.String.format(
+                    rawGithubFileQuery,
+                    data.repoName,
+                    data.repoOwnerName,
+                    data.branchName,
+                    fileName
+                ),
+                accessToken = authorizationService.getAuthorizationToken(data.installationId)
+            )
+
+            val resultObject = fileResponse.getJSONObject("data").getJSONObject("repository")
+
+            if (resultObject.isNull("object")) {
+                logger.error { "$fileName is not found in ${data.branchName} branch, ${data.repoFullName} repo" }
+            } else {
+                sourceCodeService.save(
+                    data, fileName,
+                    resultObject.getJSONObject("object").getString("text")
+                )
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package ru.nikstep.redink.model.entity
 
+import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -12,14 +13,21 @@ class AnalysisPair(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = -1,
 
+    @Column(nullable = false)
     val student1: String = "",
 
+    @Column(nullable = false)
     val student2: String = "",
 
+    @Column(nullable = false)
     val lines: Int = 0,
 
+    @Column(nullable = false)
     val percentage: Int = 0,
 
-    @OneToMany(mappedBy = "analysisPair")
+    @Column(nullable = false)
+    val repo: String,
+
+    @OneToMany(mappedBy = "analysisPair", orphanRemoval = true)
     val analysisPairLines: List<AnalysisPairLines> = emptyList()
 )

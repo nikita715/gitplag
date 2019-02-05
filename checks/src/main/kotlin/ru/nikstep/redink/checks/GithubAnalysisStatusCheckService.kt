@@ -1,25 +1,30 @@
-package ru.nikstep.redink.github.service
+package ru.nikstep.redink.checks
 
 import com.google.gson.Gson
 import mu.KotlinLogging
 import ru.nikstep.redink.data.AnalysisResultData
 import ru.nikstep.redink.data.GithubAnalysisStatus
-import ru.nikstep.redink.data.PullRequestData
-import ru.nikstep.redink.github.util.RequestUtil
-import ru.nikstep.redink.github.util.asIsoString
+import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.util.RequestUtil
+import ru.nikstep.redink.util.asIsoString
+import ru.nikstep.redink.util.auth.AuthorizationService
 import java.util.*
 
-class AnalysisResultService(private val githubAppService: GithubAppService) {
+class GithubAnalysisStatusCheckService(private val authorizationService: AuthorizationService) :
+    AnalysisStatusCheckService {
     private val logger = KotlinLogging.logger {}
 
-    fun send(prData: PullRequestData, analysisData: AnalysisResultData) {
-        val accessToken = githubAppService.getAccessToken(prData.installationId)
-        val body = createBody(prData, analysisData, accessToken)
+    override fun send(prData: PullRequest, analysisData: AnalysisResultData) {
+        val accessToken = authorizationService.getAuthorizationToken(prData.installationId)
+        val body = createBody(prData, analysisData)
         RequestUtil.sendStatusCheckRequest(prData.repoFullName, accessToken, body)
         logger.info { "AnalysisResult: sent for ${prData.repoFullName}, creator ${prData.creatorName}" }
     }
 
-    private fun createBody(prData: PullRequestData, analysisData: AnalysisResultData, accessToken: String): String {
+    private fun createBody(
+        prData: PullRequest,
+        analysisData: AnalysisResultData
+    ): String {
 
         val body = mutableMapOf<String, Any?>(
             "name" to "Plagiarism tests",
@@ -43,6 +48,4 @@ class AnalysisResultService(private val githubAppService: GithubAppService) {
 
         return Gson().toJson(body)
     }
-
-
 }

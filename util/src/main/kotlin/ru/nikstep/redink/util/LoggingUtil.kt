@@ -1,4 +1,4 @@
-package ru.nikstep.redink.github.util
+package ru.nikstep.redink.util
 
 import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.Request

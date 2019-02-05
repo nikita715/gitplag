@@ -1,4 +1,4 @@
-package ru.nikstep.redink.github.util
+package ru.nikstep.redink.util
 
 import com.github.kittinunf.fuel.core.ResponseDeserializable
 import com.github.kittinunf.fuel.httpGet

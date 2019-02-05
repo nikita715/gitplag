@@ -1,4 +1,4 @@
-package ru.nikstep.redink.github.service
+package ru.nikstep.redink.github
 
 import mu.KotlinLogging
 import org.springframework.boot.configurationprocessor.json.JSONObject
@@ -41,6 +41,8 @@ class IntegrationService(
                 )
             )
         }
+
+        logger.info { "Webhook: Integration: registered new user ${user.name}, github id ${user.githubId}" }
 
     }
 

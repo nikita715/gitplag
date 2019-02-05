@@ -5,28 +5,21 @@ import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
 
 @Entity
-class AnalysisPairLines(
+class AnalysisTask(
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = -1,
+    val id: Int,
 
     @Column(nullable = false)
-    val from1: Int,
+    val studentName: String,
 
     @Column(nullable = false)
-    val to1: Int,
+    val repoName: String,
 
     @Column(nullable = false)
-    val from2: Int,
+    val fileName: String
 
-    @Column(nullable = false)
-    val to2: Int,
-
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    val analysisPair: AnalysisPair
 )
