@@ -1,21 +1,4 @@
-plugins {
-    id 'kotlin'
-    id 'org.springframework.boot'
-    id 'io.spring.dependency-management'
-}
-
-group 'ru.nikstep'
-version '1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-    maven { url "http://repo.spring.io/libs-release" }
-}
-
 dependencies {
-    compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-    compile 'org.jetbrains.kotlin:kotlin-reflect'
-
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.boot:spring-boot-configuration-processor"
 
