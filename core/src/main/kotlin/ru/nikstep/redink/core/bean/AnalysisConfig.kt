@@ -17,10 +17,10 @@ import ru.nikstep.redink.model.repo.UserRepository
 import ru.nikstep.redink.util.auth.AuthorizationService
 
 @Configuration
-open class AnalysisConfig {
+class AnalysisConfig {
 
     @Bean
-    open fun sourceCodeService(
+    fun sourceCodeService(
         sourceCodeRepository: SourceCodeRepository,
         userRepository: UserRepository,
         repositoryRepository: RepositoryRepository
@@ -29,13 +29,13 @@ open class AnalysisConfig {
     }
 
     @Bean
-    open fun analysisService(
+    fun analysisService(
         solutionService: SolutionService,
         repositoryRepository: RepositoryRepository,
         authorizationService: AuthorizationService,
         env: Environment
     ): MossAnalysisService {
-        val mossId = env.getProperty("MOSS_ID")
+        val mossId = env.getProperty("MOSS_ID")!!
         return MossAnalysisService(
             solutionService,
             repositoryRepository,
@@ -45,7 +45,7 @@ open class AnalysisConfig {
     }
 
     @Bean
-    open fun analysisScheduler(
+    fun analysisScheduler(
         pullRequestRepository: PullRequestRepository,
         analysisService: AnalysisService,
         analysisResultRepository: AnalysisResultRepository,
