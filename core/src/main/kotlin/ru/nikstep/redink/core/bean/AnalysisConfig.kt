@@ -5,9 +5,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import ru.nikstep.redink.analysis.AnalysisScheduler
 import ru.nikstep.redink.analysis.AnalysisService
-import ru.nikstep.redink.analysis.FileSystemSourceCodeService
 import ru.nikstep.redink.analysis.MossAnalysisService
-import ru.nikstep.redink.analysis.SourceCodeService
+import ru.nikstep.redink.analysis.solutions.FileSystemSolutionService
+import ru.nikstep.redink.analysis.solutions.SolutionService
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.model.repo.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.PullRequestRepository
@@ -24,20 +24,20 @@ open class AnalysisConfig {
         sourceCodeRepository: SourceCodeRepository,
         userRepository: UserRepository,
         repositoryRepository: RepositoryRepository
-    ): SourceCodeService {
-        return FileSystemSourceCodeService(repositoryRepository, userRepository)
+    ): SolutionService {
+        return FileSystemSolutionService(repositoryRepository, userRepository)
     }
 
     @Bean
     open fun analysisService(
-        sourceCodeService: SourceCodeService,
+        solutionService: SolutionService,
         repositoryRepository: RepositoryRepository,
         authorizationService: AuthorizationService,
         env: Environment
     ): MossAnalysisService {
         val mossId = env.getProperty("MOSS_ID")
         return MossAnalysisService(
-            sourceCodeService,
+            solutionService,
             repositoryRepository,
             authorizationService,
             mossId

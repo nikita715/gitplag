@@ -1,4 +1,4 @@
-package ru.nikstep.redink.analysis
+package ru.nikstep.redink.analysis.solutions
 
 import mu.KotlinLogging
 import ru.nikstep.redink.model.entity.PullRequest
@@ -9,11 +9,11 @@ import ru.nikstep.redink.model.repo.UserRepository
 import java.io.File
 import java.util.*
 
-class PostgresqlSourceCodeService(
+class PostgresqlSolutionService(
     private val sourceCodeRepository: SourceCodeRepository,
     private val userRepository: UserRepository,
     private val repositoryRepository: RepositoryRepository
-) : DatabaseSourceCodeService {
+) : DatabaseSolutionService {
 
     override fun load(repoName: String, fileName: String): Pair<File, List<File>> {
         TODO("not implemented")

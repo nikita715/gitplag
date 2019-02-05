@@ -29,25 +29,37 @@ open class AnalysisScheduler(
             logger.info { "Analysis: start analysis of $countOfRequiredAnalyses new pull request(s)" }
         }
 
-        for (i in 0 until countOfRequiredAnalyses) {
-            val data = pullRequestRepository.findFirstByAnalysedIsFalse()!!
-            logger.info { "Analysis: start analysing of pr #${data.number}, repo ${data.repoFullName}, user ${data.creatorName}" }
+        val pullRequestList = pullRequestRepository.findAllByAnalysedIsFalse()
+        for (i in 0 until pullRequestList.size) {
+            val pullRequest = pullRequestList[i]
+            try {
+                logger.info {
+                    "Analysis: start analysing of pr #${pullRequest.number}," +
+                            " repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}"
+                }
+                val analysisResult = analysisService.analyse(pullRequest)
+                analysisResultRepository.save(analysisResult)
 
-            val analysisResult = analysisService.analyse(data)
-            analysisResultRepository.save(analysisResult)
-
-            analysisStatusCheckService.send(
-                data,
-                AnalysisResultData(
-                    status = GithubAnalysisStatus.COMPLETED.value,
-                    conclusion = GithubAnalysisConclusion.SUCCESS.value
+                analysisStatusCheckService.send(
+                    pullRequest,
+                    AnalysisResultData(
+                        status = GithubAnalysisStatus.COMPLETED.value,
+                        conclusion = GithubAnalysisConclusion.SUCCESS.value
+                    )
                 )
-            )
 
-            data.analysed = true
-            pullRequestRepository.save(data)
-            logger.info { "Analysis: complete analysing of pr #${data.number}, repo ${data.repoFullName}, user ${data.creatorName}" }
+                pullRequest.analysed = true
+                pullRequestRepository.save(pullRequest)
+                logger.info {
+                    "Analysis: complete analysing of pr #${pullRequest.number}," +
+                            " repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}"
+                }
+            } catch (e: Exception) {
+                logger.error { "Analysis: exception at the analysis of the pull request with id = ${pullRequest.id}" }
+                e.printStackTrace()
+            }
 
+            logger.info { "Analysis: analysed ${pullRequestList.size} pull requests" }
         }
     }
 
