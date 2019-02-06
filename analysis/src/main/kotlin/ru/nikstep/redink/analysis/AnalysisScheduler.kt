@@ -1,37 +1,62 @@
 package ru.nikstep.redink.analysis
 
 import mu.KotlinLogging
+import org.springframework.core.task.TaskExecutor
 import org.springframework.scheduling.annotation.Scheduled
 import ru.nikstep.redink.checks.AnalysisResultData
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.checks.GithubAnalysisConclusion
 import ru.nikstep.redink.checks.GithubAnalysisStatus
 import ru.nikstep.redink.model.data.AnalysisResultRepository
+import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 
 open class AnalysisScheduler(
     private val pullRequestRepository: PullRequestRepository,
     private val analysisService: AnalysisService,
     private val analysisResultRepository: AnalysisResultRepository,
-    private val analysisStatusCheckService: AnalysisStatusCheckService
+    private val analysisStatusCheckService: AnalysisStatusCheckService,
+    private val taskExecutor: TaskExecutor
 ) {
 
     private val logger = KotlinLogging.logger {}
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 15000)
     fun runAnalysis() {
         val countOfRequiredAnalyses = pullRequestRepository.countAllByAnalysedIsFalse()
 
-        if (countOfRequiredAnalyses.compareTo(0) == 0) {
-            logger.info { "Analysis: no required analyses" }
+        if (countOfRequiredAnalyses.isZero()) {
+            logger.info { "Analysis: waiting for pull requests" }
             return
         } else {
-            logger.info { "Analysis: start analysis of $countOfRequiredAnalyses new pull request(s)" }
+            logger.info { "Analysis: found $countOfRequiredAnalyses created/changed pull request(s)" }
         }
 
-        val pullRequestList = pullRequestRepository.findAllByAnalysedIsFalse()
-        for (i in 0 until pullRequestList.size) {
-            val pullRequest = pullRequestList[i]
+        startAnalysisOfNewPullRequests()
+    }
+
+    private fun startAnalysisOfNewPullRequests() {
+        val allChangedPullRequests = pullRequestRepository.findAllByAnalysedIsFalse()
+        val pullRequestsToAnalyse = allChangedPullRequests.removeDuplicatedPullRequests()
+
+        removeDuplicates(allChangedPullRequests, pullRequestsToAnalyse)
+
+        for (pullRequest in pullRequestsToAnalyse) {
+            taskExecutor.execute(AnalysisRunnable(pullRequest))
+        }
+    }
+
+    private fun removeDuplicates(allChangedPullRequests: List<PullRequest>, pullRequestsToAnalyse: List<PullRequest>) {
+        for (duplicatedPullRequest in allChangedPullRequests.minus(pullRequestsToAnalyse)) {
+            duplicatedPullRequest.analysed = true
+            pullRequestRepository.save(duplicatedPullRequest)
+        }
+    }
+
+    inner class AnalysisRunnable(private val pullRequest: PullRequest) : Runnable {
+
+        override fun run() {
+
             try {
                 logger.info {
                     "Analysis: start analysing of pr #${pullRequest.number}," +
@@ -58,9 +83,16 @@ open class AnalysisScheduler(
                 logger.error { "Analysis: exception at the analysis of the pull request with id = ${pullRequest.id}" }
                 e.printStackTrace()
             }
-
-            logger.info { "Analysis: analysed ${pullRequestList.size} pull requests" }
         }
+
     }
 
+}
+
+private fun Int.isZero(): Boolean {
+    return this.compareTo(0) == 0
+}
+
+private fun List<PullRequest>.removeDuplicatedPullRequests(): List<PullRequest> {
+    return this.sortedByDescending { it.id }.distinctBy { (it.repoFullName to it.creatorName) }
 }

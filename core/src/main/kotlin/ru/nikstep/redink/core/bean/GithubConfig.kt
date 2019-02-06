@@ -3,6 +3,7 @@ package ru.nikstep.redink.core.bean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
+import ru.nikstep.redink.github.GithubIntegrationService
 import ru.nikstep.redink.github.IntegrationService
 import ru.nikstep.redink.github.PullRequestWebhookService
 import ru.nikstep.redink.model.data.AnalysisResultRepository
@@ -34,7 +35,7 @@ class GithubConfig {
         userRepository: UserRepository,
         repositoryRepository: RepositoryRepository
     ): IntegrationService {
-        return IntegrationService(userRepository, repositoryRepository)
+        return GithubIntegrationService(userRepository, repositoryRepository)
     }
 
     @Bean

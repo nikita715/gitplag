@@ -8,7 +8,7 @@ import ru.nikstep.redink.analysis.solutions.SolutionService
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.util.RequestUtil
+import ru.nikstep.redink.util.RequestUtil.Companion.sendGraphqlRequest
 import ru.nikstep.redink.util.auth.AuthorizationService
 
 class MossAnalysisService(
@@ -35,7 +35,7 @@ class MossAnalysisService(
                 mossId,
                 baseFile.second.extension.toMossLanguage(),
                 SocketClient(),
-                arrayListOf(baseFile.second),
+                baseFile.second,
                 solutionFiles
             )
             val href = simpleMoss.analyse()
@@ -102,7 +102,7 @@ class MossAnalysisService(
         val fileNames = repositoryRepository.findByName(data.repoFullName).filePatterns
 
         for (fileName in fileNames) {
-            val fileResponse = RequestUtil.sendGraphqlRequest(
+            val fileResponse = sendGraphqlRequest(
                 httpMethod = HttpMethod.POST,
                 body = java.lang.String.format(
                     rawGithubFileQuery,
