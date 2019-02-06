@@ -1,8 +1,10 @@
 package ru.nikstep.redink.core.bean
 
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
+import org.springframework.core.task.TaskExecutor
 import ru.nikstep.redink.analysis.AnalysisScheduler
 import ru.nikstep.redink.analysis.AnalysisService
 import ru.nikstep.redink.analysis.MossAnalysisService
@@ -49,13 +51,15 @@ class AnalysisConfig {
         pullRequestRepository: PullRequestRepository,
         analysisService: AnalysisService,
         analysisResultRepository: AnalysisResultRepository,
-        analysisStatusCheckService: AnalysisStatusCheckService
+        analysisStatusCheckService: AnalysisStatusCheckService,
+        @Qualifier("analysisThreadPoolTaskExecutor") taskExecutor: TaskExecutor
     ): AnalysisScheduler {
         return AnalysisScheduler(
             pullRequestRepository,
             analysisService,
             analysisResultRepository,
-            analysisStatusCheckService
+            analysisStatusCheckService,
+            taskExecutor
         )
     }
 

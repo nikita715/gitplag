@@ -8,19 +8,23 @@ class MossClient(
     val userId: String,
     val language: String,
     private val client: SocketClient,
-    private val bases: List<File> = emptyList(),
+    private val base: File,
     private val solutions: List<File> = emptyList()
 ) : AnalysisSystemClient {
 
     private val logger = KotlinLogging.logger {}
 
-    override fun base(bases: List<File>): AnalysisSystemClient =
-        MossClient(userId, language, client, bases, solutions)
+    override fun base(base: File): AnalysisSystemClient =
+        MossClient(userId, language, client, base, solutions)
 
     override fun solutions(solutions: List<File>): AnalysisSystemClient =
-        MossClient(userId, language, client, bases, solutions)
+        MossClient(userId, language, client, base, solutions)
 
+    @Synchronized
     override fun analyse(): String? {
+
+        Thread.sleep(1000)
+
         client.userID = userId
         client.language = language
 
@@ -31,7 +35,7 @@ class MossClient(
         try {
             client.run()
 
-            bases.forEach { loadBaseFile(it) }
+            loadBaseFile(base)
             solutions.forEach { loadFile(it) }
 
             client.sendQuery()
@@ -42,7 +46,7 @@ class MossClient(
         return client.resultURL.toString()
     }
 
-    private fun loadBaseFile(file: File): Unit = loadFile(file, isBase = true)
+    private fun loadBaseFile(file: File) = loadFile(file, isBase = true)
 
     private fun loadFile(file: File, isBase: Boolean = false) =
         try {

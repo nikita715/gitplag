@@ -29,5 +29,5 @@ class Repository(
     val filePatterns: MutableList<String> = mutableListOf(),
 
     val name: String,
-    val githubId: Long
+    val repoGithubId: Long
 )

@@ -16,6 +16,7 @@ class FileSystemSolutionService(
 ) : SolutionService {
     private val logger = KotlinLogging.logger {}
 
+    @Synchronized
     override fun load(repoName: String, fileName: String): Pair<Pair<String, File>, List<File>> {
         val baseFile = loadBaseFile(repoName, fileName)
         val solutionFiles = loadSolutionFiles(repoName, fileName)
@@ -40,6 +41,7 @@ class FileSystemSolutionService(
         }
     }
 
+    @Synchronized
     override fun save(prData: PullRequest, fileName: String, fileText: String) {
         val pathToFile = getPathToFile(prData.repoFullName, prData.creatorName, fileName)
         val tempDirectory =
@@ -51,6 +53,7 @@ class FileSystemSolutionService(
         logger.info { "File storage: saved file ${pathToFile.first}/${pathToFile.second}" }
     }
 
+    @Synchronized
     override fun load(userId: Long, repoId: Long, fileName: String): File {
         val repository = repositoryRepository.findById(repoId).get()
         val user = userRepository.findById(userId).get()

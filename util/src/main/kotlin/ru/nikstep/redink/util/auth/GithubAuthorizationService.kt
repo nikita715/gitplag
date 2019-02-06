@@ -3,7 +3,7 @@ package ru.nikstep.redink.util.auth
 import mu.KotlinLogging
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.util.ResourceUtils
-import ru.nikstep.redink.util.RequestUtil
+import ru.nikstep.redink.util.RequestUtil.Companion.sendAccessTokenRequest
 
 open class GithubAuthorizationService : AuthorizationService {
 
@@ -14,7 +14,7 @@ open class GithubAuthorizationService : AuthorizationService {
     @Cacheable(cacheNames = ["githubAccessTokens"])
     override fun getAuthorizationToken(installationId: Int): String {
         logger.info { "Authorization: new request for access token from github" }
-        return bearer + RequestUtil.sendAccessTokenRequest(installationId, getToken()).getString("token")
+        return bearer + sendAccessTokenRequest(installationId, getToken()).getString("token")
     }
 
     private fun getToken(): String {
