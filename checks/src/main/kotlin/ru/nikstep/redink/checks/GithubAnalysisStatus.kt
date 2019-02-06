@@ -1,4 +1,4 @@
-package ru.nikstep.redink.data
+package ru.nikstep.redink.checks
 
 enum class GithubAnalysisStatus {
     COMPLETED,

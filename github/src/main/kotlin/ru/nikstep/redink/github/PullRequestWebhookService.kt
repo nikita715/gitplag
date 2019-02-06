@@ -3,9 +3,9 @@ package ru.nikstep.redink.github
 import mu.KotlinLogging
 import org.springframework.boot.configurationprocessor.json.JSONArray
 import org.springframework.boot.configurationprocessor.json.JSONObject
+import ru.nikstep.redink.checks.AnalysisResultData
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
-import ru.nikstep.redink.data.AnalysisResultData
-import ru.nikstep.redink.data.GithubAnalysisStatus
+import ru.nikstep.redink.checks.GithubAnalysisStatus
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.JsonArrayDeserializer

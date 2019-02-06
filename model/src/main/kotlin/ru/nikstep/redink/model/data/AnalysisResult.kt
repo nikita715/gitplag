@@ -1,4 +1,4 @@
-package ru.nikstep.redink.data
+package ru.nikstep.redink.model.data
 
 class AnalysisResult(
     val students: Pair<String, String>,

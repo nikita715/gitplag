@@ -1,6 +1,5 @@
 package ru.nikstep.redink.checks
 
-import ru.nikstep.redink.data.AnalysisResultData
 import ru.nikstep.redink.model.entity.PullRequest
 
 interface AnalysisStatusCheckService {

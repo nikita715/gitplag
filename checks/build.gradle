@@ -1,5 +1,4 @@
 dependencies {
-    compile project(':data')
     compile project(':model')
     compile project(':util')
 

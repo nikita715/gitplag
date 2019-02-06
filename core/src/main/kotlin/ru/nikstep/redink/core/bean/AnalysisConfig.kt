@@ -9,7 +9,7 @@ import ru.nikstep.redink.analysis.MossAnalysisService
 import ru.nikstep.redink.analysis.solutions.FileSystemSolutionService
 import ru.nikstep.redink.analysis.solutions.SolutionService
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
-import ru.nikstep.redink.model.repo.AnalysisResultRepository
+import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SourceCodeRepository

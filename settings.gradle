@@ -3,7 +3,6 @@ include 'github'
 include 'core'
 include 'model'
 include 'analysis'
-include 'data'
 include 'util'
 include 'checks'
 

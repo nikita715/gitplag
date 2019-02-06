@@ -2,11 +2,11 @@ package ru.nikstep.redink.analysis
 
 import mu.KotlinLogging
 import org.springframework.scheduling.annotation.Scheduled
+import ru.nikstep.redink.checks.AnalysisResultData
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
-import ru.nikstep.redink.data.AnalysisResultData
-import ru.nikstep.redink.data.GithubAnalysisConclusion
-import ru.nikstep.redink.data.GithubAnalysisStatus
-import ru.nikstep.redink.model.repo.AnalysisResultRepository
+import ru.nikstep.redink.checks.GithubAnalysisConclusion
+import ru.nikstep.redink.checks.GithubAnalysisStatus
+import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.PullRequestRepository
 
 open class AnalysisScheduler(
