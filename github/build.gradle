@@ -1,6 +1,5 @@
 dependencies {
     compile project(':checks')
-    compile project(':data')
     compile project(':model')
     compile project(':util')
     

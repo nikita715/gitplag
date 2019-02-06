@@ -1,8 +1,9 @@
-package ru.nikstep.redink.model.repo
+package ru.nikstep.redink.model.data
 
-import ru.nikstep.redink.data.AnalysisResult
 import ru.nikstep.redink.model.entity.AnalysisPair
 import ru.nikstep.redink.model.entity.AnalysisPairLines
+import ru.nikstep.redink.model.repo.AnalysisPairLinesRepository
+import ru.nikstep.redink.model.repo.AnalysisPairRepository
 
 class AnalysisResultRepository(
     private val analysisPairRepository: AnalysisPairRepository,

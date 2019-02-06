@@ -5,9 +5,9 @@ import org.springframework.context.annotation.Configuration
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.github.IntegrationService
 import ru.nikstep.redink.github.PullRequestWebhookService
+import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.AnalysisPairLinesRepository
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
-import ru.nikstep.redink.model.repo.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.UserRepository
@@ -42,6 +42,9 @@ class GithubConfig {
         analysisPairRepository: AnalysisPairRepository,
         analysisPairLinesRepository: AnalysisPairLinesRepository
     ): AnalysisResultRepository {
-        return AnalysisResultRepository(analysisPairRepository, analysisPairLinesRepository)
+        return AnalysisResultRepository(
+            analysisPairRepository,
+            analysisPairLinesRepository
+        )
     }
 }

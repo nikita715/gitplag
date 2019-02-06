@@ -5,7 +5,7 @@ import mu.KotlinLogging
 import org.jsoup.Jsoup
 import org.springframework.http.HttpMethod
 import ru.nikstep.redink.analysis.solutions.SolutionService
-import ru.nikstep.redink.data.AnalysisResult
+import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.RequestUtil
@@ -82,7 +82,14 @@ class MossAnalysisService(
                             matchedLines.add((data[0].toInt() to data[1].toInt()) to (data2[0].toInt() to data2[1].toInt()))
                         }
 
-                        AnalysisResult(students, lines, percentage, prData.repoFullName, baseFile.first, matchedLines)
+                        AnalysisResult(
+                            students,
+                            lines,
+                            percentage,
+                            prData.repoFullName,
+                            baseFile.first,
+                            matchedLines
+                        )
                     }
                     .toSet()
                 result.addAll(set)

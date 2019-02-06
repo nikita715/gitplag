@@ -2,8 +2,6 @@ package ru.nikstep.redink.checks
 
 import com.google.gson.Gson
 import mu.KotlinLogging
-import ru.nikstep.redink.data.AnalysisResultData
-import ru.nikstep.redink.data.GithubAnalysisStatus
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.RequestUtil
 import ru.nikstep.redink.util.asIsoString
