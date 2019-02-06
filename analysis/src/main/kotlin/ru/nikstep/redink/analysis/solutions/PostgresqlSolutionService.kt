@@ -15,7 +15,7 @@ class PostgresqlSolutionService(
     private val repositoryRepository: RepositoryRepository
 ) : DatabaseSolutionService {
 
-    override fun load(repoName: String, fileName: String): Pair<File, List<File>> {
+    override fun load(repoName: String, fileName: String): Pair<Pair<String, File>, List<File>> {
         TODO("not implemented")
     }
 

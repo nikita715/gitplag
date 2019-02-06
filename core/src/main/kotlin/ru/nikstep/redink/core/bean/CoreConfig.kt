@@ -7,16 +7,17 @@ import ru.nikstep.redink.checks.GithubAnalysisStatusCheckService
 import ru.nikstep.redink.util.auth.AuthorizationService
 import ru.nikstep.redink.util.auth.GithubAuthorizationService
 
+
 @Configuration
-open class CoreConfig {
+class CoreConfig {
 
     @Bean
-    open fun authenticationService(): GithubAuthorizationService {
+    fun authenticationService(): GithubAuthorizationService {
         return GithubAuthorizationService()
     }
 
     @Bean
-    open fun analysisResultService(authorizationService: AuthorizationService): AnalysisStatusCheckService {
+    fun analysisResultService(authorizationService: AuthorizationService): AnalysisStatusCheckService {
         return GithubAnalysisStatusCheckService(authorizationService)
     }
 

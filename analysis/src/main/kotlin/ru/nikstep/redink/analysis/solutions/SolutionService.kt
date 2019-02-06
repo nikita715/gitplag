@@ -6,5 +6,5 @@ import java.io.File
 interface SolutionService {
     fun save(prData: PullRequest, fileName: String, fileText: String)
     fun load(userId: Long, repoId: Long, fileName: String): File
-    fun load(repoName: String, fileName: String): Pair<File, List<File>>
+    fun load(repoName: String, fileName: String): Pair<Pair<String, File>, List<File>>
 }

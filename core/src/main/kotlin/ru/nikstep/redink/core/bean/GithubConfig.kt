@@ -14,10 +14,10 @@ import ru.nikstep.redink.model.repo.UserRepository
 import ru.nikstep.redink.util.auth.AuthorizationService
 
 @Configuration
-open class GithubConfig {
+class GithubConfig {
 
     @Bean
-    open fun pullRequestService(
+    fun pullRequestService(
         authorizationService: AuthorizationService,
         analysisStatusCheckService: AnalysisStatusCheckService,
         pullRequestRepository: PullRequestRepository
@@ -30,7 +30,7 @@ open class GithubConfig {
     }
 
     @Bean
-    open fun integrationService(
+    fun integrationService(
         userRepository: UserRepository,
         repositoryRepository: RepositoryRepository
     ): IntegrationService {
@@ -38,7 +38,7 @@ open class GithubConfig {
     }
 
     @Bean
-    open fun analysisResultRepository(
+    fun analysisResultRepository(
         analysisPairRepository: AnalysisPairRepository,
         analysisPairLinesRepository: AnalysisPairLinesRepository
     ): AnalysisResultRepository {

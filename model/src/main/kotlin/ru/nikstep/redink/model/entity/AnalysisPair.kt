@@ -28,6 +28,9 @@ class AnalysisPair(
     @Column(nullable = false)
     val repo: String,
 
+    @Column(nullable = false)
+    val fileName: String,
+
     @OneToMany(mappedBy = "analysisPair", orphanRemoval = true)
     val analysisPairLines: List<AnalysisPairLines> = emptyList()
 )

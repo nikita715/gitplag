@@ -2,8 +2,8 @@ package ru.nikstep.redink.core.util
 
 import java.io.File
 
-private val beforePattern = """[({}<>,.:=&|^\-+%/ ]""".toRegex();
-private val afterPattern = """[){}<>,.:=&|^\-+%/ ]""".toRegex();
+private val beforePattern = """[({}<>,.:=&|^\-+%/ ]""".toRegex()
+private val afterPattern = """[){}<>,.:=&|^\-+%/ ]""".toRegex()
 
 fun parseLines(fileName: String): List<String> {
     val lines = mutableListOf<String>()

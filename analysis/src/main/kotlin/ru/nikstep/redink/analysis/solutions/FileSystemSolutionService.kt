@@ -16,11 +16,11 @@ class FileSystemSolutionService(
 ) : SolutionService {
     private val logger = KotlinLogging.logger {}
 
-    override fun load(repoName: String, fileName: String): Pair<File, List<File>> {
+    override fun load(repoName: String, fileName: String): Pair<Pair<String, File>, List<File>> {
         val baseFile = loadBaseFile(repoName, fileName)
         val solutionFiles = loadSolutionFiles(repoName, fileName)
         logger.info { "File storage: loaded files $repoName/**/$fileName" }
-        return baseFile to solutionFiles
+        return (fileName to baseFile) to solutionFiles
     }
 
     private fun loadBaseFile(repoName: String, fileName: String): File {
