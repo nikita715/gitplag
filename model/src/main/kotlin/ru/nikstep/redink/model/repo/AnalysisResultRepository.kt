@@ -14,10 +14,17 @@ class AnalysisResultRepository(
     }
 
     fun save(analysisResult: AnalysisResult) {
+        analysisPairRepository.deleteByStudent1AndStudent2AndRepoAndFileName(
+            student1 = analysisResult.students.first,
+            student2 = analysisResult.students.second,
+            repo = analysisResult.repository,
+            fileName = analysisResult.fileName
+        )
         val analysisPair = analysisPairRepository.save(
             AnalysisPair(
                 student1 = analysisResult.students.first,
                 student2 = analysisResult.students.second,
+                fileName = analysisResult.fileName,
                 lines = analysisResult.countOfLines,
                 repo = analysisResult.repository,
                 percentage = analysisResult.percentage

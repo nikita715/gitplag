@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EntityScan("ru.nikstep.redink.model.entity")
 @PropertySource("classpath:application.yml")
 @EnableScheduling
-open class RedinkApplication
+class RedinkApplication
 
 fun main(args: Array<String>) {
     runApplication<RedinkApplication>(*args)

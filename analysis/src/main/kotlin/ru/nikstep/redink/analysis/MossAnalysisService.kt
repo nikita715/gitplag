@@ -33,9 +33,9 @@ class MossAnalysisService(
 
             val simpleMoss = MossClient(
                 mossId,
-                baseFile.extension.toMossLanguage(),
+                baseFile.second.extension.toMossLanguage(),
                 SocketClient(),
-                arrayListOf(baseFile),
+                arrayListOf(baseFile.second),
                 solutionFiles
             )
             val href = simpleMoss.analyse()
@@ -82,7 +82,7 @@ class MossAnalysisService(
                             matchedLines.add((data[0].toInt() to data[1].toInt()) to (data2[0].toInt() to data2[1].toInt()))
                         }
 
-                        AnalysisResult(students, lines, percentage, prData.repoFullName, matchedLines)
+                        AnalysisResult(students, lines, percentage, prData.repoFullName, baseFile.first, matchedLines)
                     }
                     .toSet()
                 result.addAll(set)

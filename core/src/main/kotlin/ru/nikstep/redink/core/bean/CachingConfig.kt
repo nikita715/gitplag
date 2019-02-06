@@ -12,10 +12,10 @@ import java.util.concurrent.TimeUnit
 
 @Configuration
 @EnableCaching
-open class CachingConfig {
+class CachingConfig {
 
     @Bean
-    open fun cacheManager(): CacheManager {
+    fun cacheManager(): CacheManager {
         return object : ConcurrentMapCacheManager("githubAccessTokens") {
             override fun createConcurrentMapCache(name: String): Cache {
                 return ConcurrentMapCache(
