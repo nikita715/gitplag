@@ -25,7 +25,7 @@ class Repository(
 
     @Column(name = "pattern")
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "repository_pattern", joinColumns = arrayOf(JoinColumn(name = "repository")))
+    @CollectionTable(name = "repository_pattern", joinColumns = [JoinColumn(name = "repository")])
     val filePatterns: MutableList<String> = mutableListOf(),
 
     val name: String,

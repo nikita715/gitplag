@@ -14,7 +14,7 @@ fun parseLines(fileName: String): List<String> {
 private fun replaceNoise(lines: MutableList<String>): List<String> {
     lines.replaceAll { it.trim() }
     lines.replaceAll(removeIrrelevantLines)
-    lines.removeIf { it.equals("") || it.startsWith("import ") || it.startsWith("package ") }
+    lines.removeIf { it == "" || it.startsWith("import ") || it.startsWith("package ") }
     return lines
 }
 
@@ -38,9 +38,9 @@ private val removeIrrelevantLines = { it: String ->
             curr = next
             next = stringArray[i]
 
-            if (curr.equals("\"") || curr.equals("\'")) isCurrString = !isCurrString
+            if (curr == "\"" || curr == "\'") isCurrString = !isCurrString
 
-            if ((curr.equals(" ")
+            if ((curr == " "
                         && !isCurrString && (beforePattern.matches(next) || afterPattern.matches(prev)))
             ) {
                 continue

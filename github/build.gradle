@@ -2,7 +2,6 @@ dependencies {
     compile project(':checks')
     compile project(':model')
     compile project(':util')
-    
-    compile "org.springframework.boot:spring-boot-starter-web"
+
     compile "org.springframework.boot:spring-boot-configuration-processor"
 }

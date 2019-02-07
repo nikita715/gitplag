@@ -43,7 +43,7 @@ open class AnalysisResultRepository(
     }
 
     private fun saveAnalysisResult(analysisResult: AnalysisResult): AnalysisPair {
-        val analysisPair = analysisPairRepository.save(
+        return analysisPairRepository.save(
             AnalysisPair(
                 student1 = analysisResult.students.first,
                 student2 = analysisResult.students.second,
@@ -53,7 +53,6 @@ open class AnalysisResultRepository(
                 percentage = analysisResult.percentage
             )
         )
-        return analysisPair
     }
 
     private fun deleteExistingAnalysisResult(analysisResult: AnalysisResult) {

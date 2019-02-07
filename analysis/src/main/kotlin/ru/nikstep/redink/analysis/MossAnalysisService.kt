@@ -28,8 +28,8 @@ class MossAnalysisService(
         loadFiles(prData)
 
         val result = mutableSetOf<AnalysisResult>()
-        prData.changedFiles.forEach {
-            val (baseFile, solutionFiles) = solutionService.load(prData.repoFullName, it)
+        prData.changedFiles.forEach { fileName ->
+            val (baseFile, solutionFiles) = solutionService.load(prData.repoFullName, fileName)
 
             val simpleMoss = MossClient(
                 mossId,
@@ -42,7 +42,7 @@ class MossAnalysisService(
             if (href != null) {
                 logger.info {
                     "Analysis: for repo ${prData.repoFullName}, user ${prData.creatorName}," +
-                            " file $it, url $href "
+                            " file $fileName, url $href "
                 }
 
                 val set = Jsoup.connect(href).get()

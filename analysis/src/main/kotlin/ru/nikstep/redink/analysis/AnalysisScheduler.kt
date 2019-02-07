@@ -21,7 +21,7 @@ open class AnalysisScheduler(
 
     private val logger = KotlinLogging.logger {}
 
-    @Scheduled(fixedDelay = 15000)
+    @Scheduled(fixedDelay = 10000)
     fun runAnalysis() {
         val countOfRequiredAnalyses = pullRequestRepository.countAllByAnalysedIsFalse()
 
