@@ -22,17 +22,19 @@ class PullRequestWebhookService(
 
     @Synchronized
     fun processPullRequest(payload: String) {
-        val data = fillPullRequestData(payload)
-        logger.info {
-            "Webhook: PullRequest: new from repo ${data.repoFullName}, user ${data.creatorName}," +
-                    " branch ${data.branchName}, url https://github.com/${data.repoFullName}/pull/${data.number}"
+        val jsonPayload = JSONObject(payload)
+        if (jsonPayload.hasInstallationId()) {
+            val data = fillPullRequestData(jsonPayload)
+            logger.info {
+                "Webhook: PullRequest: new from repo ${data.repoFullName}, user ${data.creatorName}," +
+                        " branch ${data.branchName}, url https://github.com/${data.repoFullName}/pull/${data.number}"
+            }
+            pullRequestRepository.save(data)
+            sendInProgressStatus(data)
         }
-        pullRequestRepository.save(data)
-        sendInProgressStatus(data)
     }
 
-    private fun fillPullRequestData(payload: String): PullRequest {
-        val jsonPayload = JSONObject(payload)
+    private fun fillPullRequestData(jsonPayload: JSONObject): PullRequest {
 
         val pullRequest = jsonPayload.getJSONObject("pull_request")
 
@@ -51,7 +53,7 @@ class PullRequestWebhookService(
             changedFilesList.add((changeList.get(index) as JSONObject).getString("filename"))
         }
 
-        val data = PullRequest(
+        return PullRequest(
             number = jsonPayload.getInt("number"),
             installationId = installationId,
             creatorName = pullRequest.getJSONObject("user").getString("login"),
@@ -63,8 +65,6 @@ class PullRequestWebhookService(
             branchName = pullRequest.getJSONObject("head").getString("ref"),
             changedFiles = changedFilesList
         )
-
-        return data
     }
 
     private fun sendInProgressStatus(prData: PullRequest) {
@@ -76,4 +76,8 @@ class PullRequestWebhookService(
                     " branch ${prData.branchName}, url https://github.com/${prData.repoFullName}/pull/${prData.number}"
         }
     }
+}
+
+private fun JSONObject.hasInstallationId(): Boolean {
+    return !this.isNull("installation")
 }

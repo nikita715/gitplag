@@ -42,7 +42,7 @@ data class PullRequest(
 
     @Column
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "pull_request_changed_file", joinColumns = arrayOf(JoinColumn(name = "pullRequest")))
+    @CollectionTable(name = "pull_request_changed_file", joinColumns = [JoinColumn(name = "pullRequest")])
     val changedFiles: List<String>,
 
     @Column(nullable = false)

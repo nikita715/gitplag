@@ -1,3 +1,8 @@
+plugins {
+    id 'kotlin-noarg'
+    id 'kotlin-jpa'
+}
+
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 }

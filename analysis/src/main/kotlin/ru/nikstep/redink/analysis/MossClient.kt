@@ -5,8 +5,8 @@ import mu.KotlinLogging
 import java.io.File
 
 class MossClient(
-    val userId: String,
-    val language: String,
+    private val userId: String,
+    private val language: String,
     private val client: SocketClient,
     private val base: File,
     private val solutions: List<File> = emptyList()
