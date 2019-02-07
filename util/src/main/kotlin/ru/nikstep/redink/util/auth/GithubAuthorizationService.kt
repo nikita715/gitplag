@@ -11,7 +11,7 @@ open class GithubAuthorizationService : AuthorizationService {
 
     private val bearer = "Bearer "
 
-    @Cacheable(cacheNames = ["githubAccessTokens"])
+    @Cacheable(cacheNames = ["githubAccessTokens"], sync = true)
     override fun getAuthorizationToken(installationId: Int): String {
         logger.info { "Authorization: new request for access token from github" }
         return bearer + sendAccessTokenRequest(installationId, getToken()).getString("token")
@@ -21,7 +21,6 @@ open class GithubAuthorizationService : AuthorizationService {
         val file = ResourceUtils.getFile("classpath:keygen.rb")
         val process = Runtime.getRuntime().exec("ruby $file")
         process.waitFor()
-        val token = bearer + process.inputStream.bufferedReader().readText().replace("\n", "")
-        return token
+        return bearer + process.inputStream.bufferedReader().readText().replace("\n", "")
     }
 }
