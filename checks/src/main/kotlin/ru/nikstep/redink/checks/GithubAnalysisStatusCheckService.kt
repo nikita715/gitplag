@@ -12,21 +12,21 @@ class GithubAnalysisStatusCheckService(private val authorizationService: Authori
     AnalysisStatusCheckService {
     private val logger = KotlinLogging.logger {}
 
-    override fun send(prData: PullRequest, analysisData: AnalysisResultData) {
-        val accessToken = authorizationService.getAuthorizationToken(prData.installationId)
-        val body = createBody(prData, analysisData)
-        sendStatusCheckRequest(prData.repoFullName, accessToken, body)
-        logger.info { "AnalysisResult: sent for ${prData.repoFullName}, creator ${prData.creatorName}" }
+    override fun send(pullRequest: PullRequest, analysisData: AnalysisResultData) {
+        val accessToken = authorizationService.getAuthorizationToken(pullRequest.installationId)
+        val body = createBody(pullRequest, analysisData)
+        sendStatusCheckRequest(pullRequest.repoFullName, accessToken, body)
+        logger.info { "AnalysisResult: sent for ${pullRequest.repoFullName}, creator ${pullRequest.creatorName}" }
     }
 
     private fun createBody(
-        prData: PullRequest,
+        pullRequest: PullRequest,
         analysisData: AnalysisResultData
     ): String {
 
         val body = mutableMapOf<String, Any?>(
             "name" to "Plagiarism tests",
-            "head_sha" to prData.headSha,
+            "head_sha" to pullRequest.headSha,
             "status" to analysisData.status
         )
 

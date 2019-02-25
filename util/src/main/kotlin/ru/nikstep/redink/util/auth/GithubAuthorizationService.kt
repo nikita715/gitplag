@@ -21,6 +21,8 @@ open class GithubAuthorizationService : AuthorizationService {
         val file = ResourceUtils.getFile("classpath:keygen.rb")
         val process = Runtime.getRuntime().exec("ruby $file")
         process.waitFor()
-        return bearer + process.inputStream.bufferedReader().readText().replace("\n", "")
+        val generatedKey = process.inputStream.bufferedReader().readText()
+        if (generatedKey.isBlank()) throw RuntimeException("Authorization: exception at the key generation")
+        return bearer + generatedKey.replace("\n", "")
     }
 }

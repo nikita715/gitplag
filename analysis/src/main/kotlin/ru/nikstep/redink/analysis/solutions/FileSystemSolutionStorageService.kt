@@ -19,10 +19,10 @@ class FileSystemSolutionStorageService(
     private val logger = KotlinLogging.logger {}
 
     @Synchronized
-    override fun loadAllBasesAndSolutions(prData: PullRequest): Collection<PreparedAnalysisFiles> {
+    override fun loadAllBasesAndSolutions(pullRequest: PullRequest): Collection<PreparedAnalysisFiles> {
         val requiredFiles =
-            prData.changedFiles.intersect(repositoryRepository.findByName(prData.repoFullName).filePatterns)
-        return requiredFiles.map { fileName -> loadBaseAndSolutions(prData.repoFullName, fileName) }
+            pullRequest.changedFiles.intersect(repositoryRepository.findByName(pullRequest.repoFullName).filePatterns)
+        return requiredFiles.map { fileName -> loadBaseAndSolutions(pullRequest.repoFullName, fileName) }
     }
 
     @Synchronized
@@ -49,12 +49,12 @@ class FileSystemSolutionStorageService(
     }
 
     @Synchronized
-    override fun saveSolution(prData: PullRequest, fileName: String, fileText: String): File {
-        val pathToFile = getPathToFile(prData.repoFullName, fileName, prData.creatorName)
+    override fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): File {
+        val pathToFile = getPathToFile(pullRequest.repoFullName, fileName, pullRequest.creatorName)
         sourceCodeRepository.save(
             SourceCode(
-                user = prData.creatorName,
-                repo = prData.repoFullName,
+                user = pullRequest.creatorName,
+                repo = pullRequest.repoFullName,
                 fileName = fileName
             )
         )
@@ -77,8 +77,8 @@ class FileSystemSolutionStorageService(
         )
     }
 
-    override fun saveBase(prData: PullRequest, fileName: String, fileText: String): File {
-        return saveBase(prData.repoFullName, fileName, fileText)
+    override fun saveBase(pullRequest: PullRequest, fileName: String, fileText: String): File {
+        return saveBase(pullRequest.repoFullName, fileName, fileText)
     }
 
     @Synchronized

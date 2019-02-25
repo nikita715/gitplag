@@ -15,22 +15,22 @@ class MossAnalysisService(
 
     private val logger = KotlinLogging.logger {}
 
-    override fun analyse(prData: PullRequest): Collection<AnalysisResult> {
-        return solutionStorageService.loadAllBasesAndSolutions(prData).flatMap { analysisFiles ->
+    override fun analyse(pullRequest: PullRequest): Collection<AnalysisResult> {
+        return solutionStorageService.loadAllBasesAndSolutions(pullRequest).flatMap { analysisFiles ->
             val resultLink = MossClient(mossId, analysisFiles).analyse()
 
             logger.info {
-                "Analysis: for repo ${prData.repoFullName}, user ${prData.creatorName}," +
+                "Analysis: for repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}," +
                         " file ${analysisFiles.fileName}, url $resultLink "
             }
 
-            createAnalysisResults(resultLink, prData.repoFullName, analysisFiles.fileName)
+            createAnalysisResults(pullRequest, resultLink, analysisFiles.fileName)
         }
     }
 
     private fun createAnalysisResults(
+        pullRequest: PullRequest,
         resultLink: String,
-        repoFullName: String,
         fileName: String
     ): Collection<AnalysisResult> {
         return Jsoup.connect(resultLink).get()
@@ -39,7 +39,7 @@ class MossAnalysisService(
             .select("tr")
             .drop(1)
             .map { tr -> tr.select("td") }
-            .map { tds ->
+            .mapNotNull { tds ->
                 val first = tds[0].selectFirst("a")
                 val second = tds[1].selectFirst("a")
 
@@ -52,6 +52,9 @@ class MossAnalysisService(
                     firstPath.zip(secondPath)
                         .dropWhile { it.first == it.second }
                         .first()
+
+                if (pullRequest.creatorName != students.first && pullRequest.creatorName != students.second)
+                    return@mapNotNull null
 
                 val lines = tds[2].text().toInt()
 
@@ -74,7 +77,7 @@ class MossAnalysisService(
                     students = students,
                     countOfLines = lines,
                     percentage = percentage,
-                    repository = repoFullName,
+                    repository = pullRequest.repoFullName,
                     fileName = fileName,
                     matchedLines = matchedLines
                 )

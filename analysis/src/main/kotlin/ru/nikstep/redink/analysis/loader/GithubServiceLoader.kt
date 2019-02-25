@@ -18,36 +18,35 @@ class GithubServiceLoader(
 
     private val logger = KotlinLogging.logger {}
 
-    private val rawGithubFileQuery = "{\"query\": \"query {repository(name: \\\"%s\\\", owner: \\\"%s\\\")" +
+    private val rawGithubFileQuery = "{\"query\": \"query {repository(owner: \\\"%s\\\", name: \\\"%s\\\")" +
             " {object(expression: \\\"%s:%s\\\") {... on Blob{text}}}}\"}"
 
-    override fun loadFilesFromGit(data: PullRequest) {
+    override fun loadFilesFromGit(pullRequest: PullRequest) {
 
-
-        val fileNames = data.changedFiles.intersect(repositoryRepository.findByName(data.repoFullName).filePatterns)
+        val fileNames =
+            pullRequest.changedFiles.intersect(repositoryRepository.findByName(pullRequest.repoFullName).filePatterns)
 
         fileNames.map { fileName ->
-            checkBaseExists(data, fileName)
+            checkBaseExists(pullRequest, fileName)
 
             val fileResponse = sendGraphqlRequest(
                 httpMethod = HttpMethod.POST,
                 body = String.format(
                     rawGithubFileQuery,
-                    data.repoName,
-                    data.repoOwnerName,
-                    data.branchName,
+                    *(pullRequest.repoFullName.split("/").toTypedArray()),
+                    pullRequest.branchName,
                     fileName
                 ),
-                accessToken = authorizationService.getAuthorizationToken(data.installationId)
+                accessToken = authorizationService.getAuthorizationToken(pullRequest.installationId)
             )
 
             val resultObject = fileResponse.getJSONObject("data").getJSONObject("repository")
 
             if (resultObject.isNull("object"))
-                throw AnalysisException("$fileName is not found in ${data.branchName} branch, ${data.repoFullName} repo")
+                throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")
 
             solutionStorageService.saveSolution(
-                data, fileName,
+                pullRequest, fileName,
                 resultObject.getJSONObject("object").getString("text")
             )
         }
@@ -58,28 +57,27 @@ class GithubServiceLoader(
         if (base.notExists()) saveBase(data, fileName)
     }
 
-    private fun saveBase(data: PullRequest, fileName: String) {
+    private fun saveBase(pullRequest: PullRequest, fileName: String) {
         val fileResponse = sendGraphqlRequest(
             httpMethod = HttpMethod.POST,
             body = String.format(
                 rawGithubFileQuery,
-                data.repoName,
-                data.repoOwnerName,
+                *(pullRequest.repoFullName.split("/").toTypedArray()),
                 "master",
                 fileName
             ),
-            accessToken = authorizationService.getAuthorizationToken(data.installationId)
+            accessToken = authorizationService.getAuthorizationToken(pullRequest.installationId)
         )
 
 
         val resultObject = fileResponse.getJSONObject("data").getJSONObject("repository")
 
         if (resultObject.isNull("object"))
-            throw AnalysisException("$fileName is not found in ${data.branchName} branch, ${data.repoFullName} repo")
+            throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")
 
         val fileText = resultObject.getJSONObject("object").getString("text")
 
-        solutionStorageService.saveBase(data, fileName, fileText)
+        solutionStorageService.saveBase(pullRequest, fileName, fileText)
     }
 }
 
