@@ -2,13 +2,11 @@ package ru.nikstep.redink.analysis
 
 import mu.KotlinLogging
 import org.jsoup.Jsoup
-import ru.nikstep.redink.analysis.loader.GitServiceLoader
 import ru.nikstep.redink.analysis.solutions.SolutionStorageService
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest
 
 class MossAnalysisService(
-    private val gitServiceLoader: GitServiceLoader,
     private val solutionStorageService: SolutionStorageService,
     private val mossId: String
 ) : AnalysisService {

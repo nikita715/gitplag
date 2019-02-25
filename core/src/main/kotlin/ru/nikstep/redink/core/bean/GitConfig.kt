@@ -3,6 +3,7 @@ package ru.nikstep.redink.core.bean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
+import ru.nikstep.redink.github.BitbucketPullRequestWebhookService
 import ru.nikstep.redink.github.GithubIntegrationService
 import ru.nikstep.redink.github.GithubPullRequestWebhookService
 import ru.nikstep.redink.github.IntegrationService
@@ -15,7 +16,7 @@ import ru.nikstep.redink.model.repo.UserRepository
 import ru.nikstep.redink.util.auth.AuthorizationService
 
 @Configuration
-class GithubConfig {
+class GitConfig {
 
     @Bean
     fun pullRequestService(
@@ -47,5 +48,10 @@ class GithubConfig {
             analysisPairRepository,
             analysisPairLinesRepository
         )
+    }
+
+    @Bean
+    fun bitbucketPullRequestWebhookService(pullRequestRepository: PullRequestRepository): BitbucketPullRequestWebhookService {
+        return BitbucketPullRequestWebhookService(pullRequestRepository)
     }
 }

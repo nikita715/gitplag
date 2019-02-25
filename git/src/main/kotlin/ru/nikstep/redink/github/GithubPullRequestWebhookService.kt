@@ -53,6 +53,7 @@ class GithubPullRequestWebhookService(
         }
 
         return PullRequest(
+            gitService = "github",
             number = jsonPayload.getInt("number"),
             installationId = installationId,
             creatorName = pullRequest.getJSONObject("user").getString("login"),

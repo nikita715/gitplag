@@ -3,7 +3,8 @@ package ru.nikstep.redink.analysis
 import mu.KotlinLogging
 import org.springframework.core.task.TaskExecutor
 import org.springframework.scheduling.annotation.Scheduled
-import ru.nikstep.redink.analysis.loader.GitServiceLoader
+import ru.nikstep.redink.analysis.loader.BitbucketServiceLoader
+import ru.nikstep.redink.analysis.loader.GithubServiceLoader
 import ru.nikstep.redink.checks.AnalysisResultData
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.checks.GithubAnalysisConclusion
@@ -17,7 +18,8 @@ open class AnalysisScheduler(
     private val analysisService: AnalysisService,
     private val analysisResultRepository: AnalysisResultRepository,
     private val analysisStatusCheckService: AnalysisStatusCheckService,
-    private val gitServiceLoader: GitServiceLoader,
+    private val githubServiceLoader: GithubServiceLoader,
+    private val bitbucketServiceLoader: BitbucketServiceLoader,
     private val taskExecutor: TaskExecutor
 ) {
 
@@ -61,6 +63,12 @@ open class AnalysisScheduler(
 
         override fun run() {
 
+            val gitServiceLoader = when (pullRequest.gitService) {
+                "github" -> githubServiceLoader
+                "bitbucket" -> bitbucketServiceLoader
+                else -> throw AnalysisException("Analysis: git service ${pullRequest.gitService} is not supported")
+            }
+
             try {
                 gitServiceLoader.loadFilesFromGit(pullRequest)
 
@@ -72,13 +80,14 @@ open class AnalysisScheduler(
                 val analysisResult = analysisService.analyse(pullRequest)
                 analysisResultRepository.save(analysisResult)
 
-                analysisStatusCheckService.send(
-                    pullRequest,
-                    AnalysisResultData(
-                        status = GithubAnalysisStatus.COMPLETED.value,
-                        conclusion = GithubAnalysisConclusion.SUCCESS.value
+                if (pullRequest.gitService == "github")
+                    analysisStatusCheckService.send(
+                        pullRequest,
+                        AnalysisResultData(
+                            status = GithubAnalysisStatus.COMPLETED.value,
+                            conclusion = GithubAnalysisConclusion.SUCCESS.value
+                        )
                     )
-                )
 
                 pullRequestRepository.delete(pullRequest)
                 logger.info {
