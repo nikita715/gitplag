@@ -12,7 +12,7 @@ open class AnalysisResultRepository(
 ) {
 
     @Synchronized
-    fun save(analysisResults: Set<AnalysisResult>) {
+    fun save(analysisResults: Collection<AnalysisResult>) {
         for (analysisResult in analysisResults) {
             save(analysisResult)
         }

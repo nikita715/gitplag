@@ -1,5 +1,5 @@
 rootProject.name = 'redink'
-include 'github'
+include 'git'
 include 'core'
 include 'model'
 include 'analysis'

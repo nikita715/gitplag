@@ -8,8 +8,10 @@ import org.springframework.core.task.TaskExecutor
 import ru.nikstep.redink.analysis.AnalysisScheduler
 import ru.nikstep.redink.analysis.AnalysisService
 import ru.nikstep.redink.analysis.MossAnalysisService
-import ru.nikstep.redink.analysis.solutions.FileSystemSolutionService
-import ru.nikstep.redink.analysis.solutions.SolutionService
+import ru.nikstep.redink.analysis.loader.GitServiceLoader
+import ru.nikstep.redink.analysis.loader.GithubServiceLoader
+import ru.nikstep.redink.analysis.solutions.FileSystemSolutionStorageService
+import ru.nikstep.redink.analysis.solutions.SolutionStorageService
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.PullRequestRepository
@@ -22,26 +24,24 @@ import ru.nikstep.redink.util.auth.AuthorizationService
 class AnalysisConfig {
 
     @Bean
-    fun sourceCodeService(
+    fun solutionStorageService(
         sourceCodeRepository: SourceCodeRepository,
         userRepository: UserRepository,
         repositoryRepository: RepositoryRepository
-    ): SolutionService {
-        return FileSystemSolutionService(repositoryRepository, userRepository)
+    ): SolutionStorageService {
+        return FileSystemSolutionStorageService(repositoryRepository)
     }
 
     @Bean
     fun analysisService(
-        solutionService: SolutionService,
-        repositoryRepository: RepositoryRepository,
-        authorizationService: AuthorizationService,
+        solutionStorageService: SolutionStorageService,
+        serviceLoader: GitServiceLoader,
         env: Environment
     ): MossAnalysisService {
         val mossId = env.getProperty("MOSS_ID")!!
         return MossAnalysisService(
-            solutionService,
-            repositoryRepository,
-            authorizationService,
+            serviceLoader,
+            solutionStorageService,
             mossId
         )
     }
@@ -52,6 +52,7 @@ class AnalysisConfig {
         analysisService: AnalysisService,
         analysisResultRepository: AnalysisResultRepository,
         analysisStatusCheckService: AnalysisStatusCheckService,
+        serviceLoader: GitServiceLoader,
         @Qualifier("analysisThreadPoolTaskExecutor") taskExecutor: TaskExecutor
     ): AnalysisScheduler {
         return AnalysisScheduler(
@@ -59,8 +60,18 @@ class AnalysisConfig {
             analysisService,
             analysisResultRepository,
             analysisStatusCheckService,
+            serviceLoader,
             taskExecutor
         )
+    }
+
+    @Bean
+    fun GitServiceLoader(
+        solutionStorageService: SolutionStorageService,
+        repositoryRepository: RepositoryRepository,
+        authorizationService: AuthorizationService
+    ): GithubServiceLoader {
+        return GithubServiceLoader(solutionStorageService, repositoryRepository, authorizationService)
     }
 
 }

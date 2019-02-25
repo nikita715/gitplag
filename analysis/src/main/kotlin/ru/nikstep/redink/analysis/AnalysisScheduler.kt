@@ -3,6 +3,7 @@ package ru.nikstep.redink.analysis
 import mu.KotlinLogging
 import org.springframework.core.task.TaskExecutor
 import org.springframework.scheduling.annotation.Scheduled
+import ru.nikstep.redink.analysis.loader.GitServiceLoader
 import ru.nikstep.redink.checks.AnalysisResultData
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.checks.GithubAnalysisConclusion
@@ -16,6 +17,7 @@ open class AnalysisScheduler(
     private val analysisService: AnalysisService,
     private val analysisResultRepository: AnalysisResultRepository,
     private val analysisStatusCheckService: AnalysisStatusCheckService,
+    private val gitServiceLoader: GitServiceLoader,
     private val taskExecutor: TaskExecutor
 ) {
 
@@ -58,10 +60,13 @@ open class AnalysisScheduler(
         override fun run() {
 
             try {
+                gitServiceLoader.loadFilesFromGit(pullRequest)
+
                 logger.info {
                     "Analysis: start analysing of pr #${pullRequest.number}," +
                             " repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}"
                 }
+
                 val analysisResult = analysisService.analyse(pullRequest)
                 analysisResultRepository.save(analysisResult)
 

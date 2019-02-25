@@ -6,22 +6,35 @@ import java.io.File
 
 class MossClient(
     private val userId: String,
-    private val language: String,
-    private val client: SocketClient,
+    private val client: SocketClient = SocketClient(),
     private val base: File,
-    private val solutions: List<File> = emptyList()
+    private val solutions: Collection<File>
 ) : AnalysisSystemClient {
+
+    constructor(userId: String, files: Pair<File, Collection<File>>) : this(
+        userId,
+        base = files.first,
+        solutions = files.second
+    )
+
+    constructor(userId: String, files: PreparedAnalysisFiles) : this(
+        userId,
+        base = files.base,
+        solutions = files.solutions
+    )
+
+    private val language: String = base.mossExtension
 
     private val logger = KotlinLogging.logger {}
 
     override fun base(base: File): AnalysisSystemClient =
-        MossClient(userId, language, client, base, solutions)
+        MossClient(userId, client, base, solutions)
 
     override fun solutions(solutions: List<File>): AnalysisSystemClient =
-        MossClient(userId, language, client, base, solutions)
+        MossClient(userId, client, base, solutions)
 
     @Synchronized
-    override fun analyse(): String? {
+    override fun analyse(): String {
 
         Thread.sleep(1000)
 
@@ -29,7 +42,7 @@ class MossClient(
         client.language = language
 
         if (solutions.isEmpty()) {
-            return null
+            throw AnalysisException("Analysis: No solutions for file ${base.canonicalPath}")
         }
 
         try {
@@ -60,3 +73,12 @@ class MossClient(
 
 }
 
+val File.mossExtension: String
+    get() {
+        val extension = this.extension
+        return when (extension) {
+            "java" -> extension
+            "cpp" -> "cc"
+            else -> throw RuntimeException("Analysis: Moss does not support the \"${this.extension}\" extension")
+        }
+    }
