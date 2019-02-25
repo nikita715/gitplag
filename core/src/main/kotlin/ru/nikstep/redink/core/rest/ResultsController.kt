@@ -8,8 +8,8 @@ import ru.nikstep.redink.results.AnalysisResultViewBuilder
 @RestController
 class ResultsController(private val analysisResultViewBuilder: AnalysisResultViewBuilder) {
 
-    @GetMapping(name = "/data/{id}")
-    fun getData(@PathVariable("id") id: Int): String {
+    @GetMapping("data/{id}")
+    fun getData(@PathVariable id: Int): String {
         return analysisResultViewBuilder.build(id.toLong())
     }
 

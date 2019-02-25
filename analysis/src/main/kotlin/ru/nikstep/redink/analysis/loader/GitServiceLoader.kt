@@ -4,6 +4,6 @@ import ru.nikstep.redink.model.entity.PullRequest
 
 interface GitServiceLoader {
 
-    fun loadFilesFromGit(data: PullRequest)
+    fun loadFilesFromGit(pullRequest: PullRequest)
 
 }

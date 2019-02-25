@@ -4,6 +4,6 @@ import ru.nikstep.redink.model.entity.PullRequest
 
 interface AnalysisStatusCheckService {
 
-    fun send(prData: PullRequest, analysisData: AnalysisResultData)
+    fun send(pullRequest: PullRequest, analysisData: AnalysisResultData)
 
 }

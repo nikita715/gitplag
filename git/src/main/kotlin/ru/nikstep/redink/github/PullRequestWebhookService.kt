@@ -24,13 +24,13 @@ class PullRequestWebhookService(
     fun processPullRequest(payload: String) {
         val jsonPayload = JSONObject(payload)
         if (jsonPayload.hasInstallationId()) {
-            val data = fillPullRequestData(jsonPayload)
+            val pullRequest = fillPullRequestData(jsonPayload)
             logger.info {
-                "Webhook: PullRequest: new from repo ${data.repoFullName}, user ${data.creatorName}," +
-                        " branch ${data.branchName}, url https://github.com/${data.repoFullName}/pull/${data.number}"
+                "Webhook: PullRequest: new from repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}," +
+                        " branch ${pullRequest.branchName}, url https://github.com/${pullRequest.repoFullName}/pull/${pullRequest.number}"
             }
-            pullRequestRepository.save(data)
-            sendInProgressStatus(data)
+            pullRequestRepository.save(pullRequest)
+            sendInProgressStatus(pullRequest)
         }
     }
 
@@ -56,9 +56,6 @@ class PullRequestWebhookService(
             number = jsonPayload.getInt("number"),
             installationId = installationId,
             creatorName = pullRequest.getJSONObject("user").getString("login"),
-            repoOwnerName = jsonPayload.getJSONObject("repository")
-                .getJSONObject("owner").getString("login"),
-            repoName = jsonPayload.getJSONObject("repository").getString("name"),
             repoFullName = repoFullName,
             headSha = pullRequest.getJSONObject("head").getString("sha"),
             branchName = pullRequest.getJSONObject("head").getString("ref"),
@@ -66,13 +63,13 @@ class PullRequestWebhookService(
         )
     }
 
-    private fun sendInProgressStatus(prData: PullRequest) {
+    private fun sendInProgressStatus(pullRequest: PullRequest) {
         val analysisResultData =
             AnalysisResultData(status = GithubAnalysisStatus.IN_PROGRESS.value)
-        analysisStatusCheckService.send(prData, analysisResultData)
+        analysisStatusCheckService.send(pullRequest, analysisResultData)
         logger.info {
-            "Webhook: PullRequest: sent in progress status to repo ${prData.repoFullName}, user ${prData.creatorName}," +
-                    " branch ${prData.branchName}, url https://github.com/${prData.repoFullName}/pull/${prData.number}"
+            "Webhook: PullRequest: sent in progress status to repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}," +
+                    " branch ${pullRequest.branchName}, url https://github.com/${pullRequest.repoFullName}/pull/${pullRequest.number}"
         }
     }
 }

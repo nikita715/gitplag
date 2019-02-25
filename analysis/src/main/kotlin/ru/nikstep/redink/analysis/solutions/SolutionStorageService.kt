@@ -7,11 +7,11 @@ import java.io.File
 
 interface SolutionStorageService {
     fun loadBase(repoName: String, fileName: String): File
-    fun saveBase(prData: PullRequest, fileName: String, fileText: String): File
+    fun saveBase(pullRequest: PullRequest, fileName: String, fileText: String): File
     fun loadSolution(repoName: String, userName: String, fileName: String): File
     fun loadSolution1(analysisPair: AnalysisPair): File
     fun loadSolution2(analysisPair: AnalysisPair): File
-    fun saveSolution(prData: PullRequest, fileName: String, fileText: String): File
+    fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): File
     fun loadBaseAndSolutions(repoName: String, fileName: String): PreparedAnalysisFiles
-    fun loadAllBasesAndSolutions(prData: PullRequest): Collection<PreparedAnalysisFiles>
+    fun loadAllBasesAndSolutions(pullRequest: PullRequest): Collection<PreparedAnalysisFiles>
 }
