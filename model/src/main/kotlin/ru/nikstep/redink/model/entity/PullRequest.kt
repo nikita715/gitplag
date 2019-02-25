@@ -1,14 +1,6 @@
 package ru.nikstep.redink.model.entity
 
-import javax.persistence.CollectionTable
-import javax.persistence.Column
-import javax.persistence.ElementCollection
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.JoinColumn
+import javax.persistence.*
 
 @Entity
 data class PullRequest(
@@ -43,8 +35,5 @@ data class PullRequest(
     @Column
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "pull_request_changed_file", joinColumns = [JoinColumn(name = "pullRequest")])
-    val changedFiles: List<String>,
-
-    @Column(nullable = false)
-    var analysed: Boolean = false
+    val changedFiles: List<String>
 )

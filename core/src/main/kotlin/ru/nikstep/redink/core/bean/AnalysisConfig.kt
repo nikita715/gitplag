@@ -17,7 +17,6 @@ import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SourceCodeRepository
-import ru.nikstep.redink.model.repo.UserRepository
 import ru.nikstep.redink.util.auth.AuthorizationService
 
 @Configuration
@@ -26,10 +25,9 @@ class AnalysisConfig {
     @Bean
     fun solutionStorageService(
         sourceCodeRepository: SourceCodeRepository,
-        userRepository: UserRepository,
         repositoryRepository: RepositoryRepository
     ): SolutionStorageService {
-        return FileSystemSolutionStorageService(repositoryRepository)
+        return FileSystemSolutionStorageService(sourceCodeRepository, repositoryRepository)
     }
 
     @Bean

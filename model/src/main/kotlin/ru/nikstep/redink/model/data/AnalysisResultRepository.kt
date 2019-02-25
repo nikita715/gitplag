@@ -31,14 +31,13 @@ open class AnalysisResultRepository(
         analysisPair: AnalysisPair
     ) {
         analysisPairLinesRepository.saveAll(analysisResult.matchedLines.map {
-            val analysisPairLines = AnalysisPairLines(
+            AnalysisPairLines(
                 from1 = it.first.first,
                 to1 = it.first.second,
                 from2 = it.second.first,
                 to2 = it.second.second,
                 analysisPair = analysisPair
             )
-            analysisPairLines
         })
     }
 

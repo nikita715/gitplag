@@ -2,14 +2,18 @@ package ru.nikstep.redink.analysis.solutions
 
 import mu.KotlinLogging
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
+import ru.nikstep.redink.model.entity.AnalysisPair
 import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.model.entity.SourceCode
 import ru.nikstep.redink.model.repo.RepositoryRepository
+import ru.nikstep.redink.model.repo.SourceCodeRepository
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Paths
 
 class FileSystemSolutionStorageService(
+    private val sourceCodeRepository: SourceCodeRepository,
     private val repositoryRepository: RepositoryRepository
 ) : SolutionStorageService {
     private val logger = KotlinLogging.logger {}
@@ -35,7 +39,9 @@ class FileSystemSolutionStorageService(
 
     private fun loadSolutionFiles(repoName: String, fileName: String): List<File> {
         val solutionDirectory = File(Paths.get("solutions", repoName).toUri())
-        val directories = solutionDirectory.list()
+        val directories = solutionDirectory.list().toList().intersect<String>(
+            sourceCodeRepository.findAllByRepoAndFileName(repoName, fileName).map { it.user }
+        )
         return directories.mapNotNull {
             val file = File(Paths.get("solutions", repoName, it, fileName).toUri())
             if (file.exists()) file else null
@@ -44,8 +50,31 @@ class FileSystemSolutionStorageService(
 
     @Synchronized
     override fun saveSolution(prData: PullRequest, fileName: String, fileText: String): File {
-        val pathToFile = getPathToFile(prData.repoFullName, prData.creatorName, fileName)
+        val pathToFile = getPathToFile(prData.repoFullName, fileName, prData.creatorName)
+        sourceCodeRepository.save(
+            SourceCode(
+                user = prData.creatorName,
+                repo = prData.repoFullName,
+                fileName = fileName
+            )
+        )
         return save(pathToFile, fileText)
+    }
+
+    override fun loadSolution1(analysisPair: AnalysisPair): File {
+        return loadSolution(
+            analysisPair.repo,
+            analysisPair.student1,
+            analysisPair.fileName
+        )
+    }
+
+    override fun loadSolution2(analysisPair: AnalysisPair): File {
+        return loadSolution(
+            analysisPair.repo,
+            analysisPair.student2,
+            analysisPair.fileName
+        )
     }
 
     override fun saveBase(prData: PullRequest, fileName: String, fileText: String): File {
@@ -70,8 +99,8 @@ class FileSystemSolutionStorageService(
 
     @Synchronized
     override fun loadSolution(repoName: String, userName: String, fileName: String): File {
-        val pathToFile = Paths.get(repoName, userName, fileName)
-        logger.info { "File storage: loaded file ${repoName}/${userName}/$fileName" }
+        val pathToFile = Paths.get("solutions", repoName, userName, fileName)
+        logger.info { "File storage: loaded file $repoName/$userName/$fileName" }
         return File(pathToFile.toUri())
     }
 
@@ -81,9 +110,14 @@ class FileSystemSolutionStorageService(
         creator: String = "",
         isBase: Boolean = false
     ): Pair<String, String> {
-        val fullPath = repoFilePath.split("/")
-        val path = fullPath.dropLast(1).joinToString(separator = "/")
-        return "${if (isBase) "base" else "solutions"}/$repoFullName/${if (isBase) "" else "$creator/"}$path" to fullPath.last()
+        val pathElements: List<String> = repoFilePath.split("/")
+        val pathBeforeFileName: String = pathElements.dropLast(1).joinToString(separator = "/")
+        val path =
+            if (isBase)
+                "base/$repoFullName/$pathBeforeFileName"
+            else
+                "solutions/$repoFullName/$creator/$pathBeforeFileName"
+        return path to pathElements.last()
     }
 
 }

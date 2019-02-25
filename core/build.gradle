@@ -8,6 +8,7 @@ dependencies {
     compile project(':checks')
     compile project(':git')
     compile project(':model')
+    compile project(':results')
     compile project(':util')
     
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
