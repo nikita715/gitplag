@@ -4,8 +4,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.github.GithubIntegrationService
+import ru.nikstep.redink.github.GithubPullRequestWebhookService
 import ru.nikstep.redink.github.IntegrationService
-import ru.nikstep.redink.github.PullRequestWebhookService
 import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.AnalysisPairLinesRepository
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
@@ -22,8 +22,8 @@ class GithubConfig {
         authorizationService: AuthorizationService,
         analysisStatusCheckService: AnalysisStatusCheckService,
         pullRequestRepository: PullRequestRepository
-    ): PullRequestWebhookService {
-        return PullRequestWebhookService(
+    ): GithubPullRequestWebhookService {
+        return GithubPullRequestWebhookService(
             authorizationService,
             analysisStatusCheckService,
             pullRequestRepository
