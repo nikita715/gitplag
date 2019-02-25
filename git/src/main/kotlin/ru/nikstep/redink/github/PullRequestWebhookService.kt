@@ -9,7 +9,7 @@ import ru.nikstep.redink.checks.GithubAnalysisStatus
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.JsonArrayDeserializer
-import ru.nikstep.redink.util.RequestUtil
+import ru.nikstep.redink.util.RequestUtil.Companion.sendRestRequest
 import ru.nikstep.redink.util.auth.AuthorizationService
 
 class PullRequestWebhookService(
@@ -42,15 +42,14 @@ class PullRequestWebhookService(
         val repoFullName = jsonPayload.getJSONObject("repository").getString("full_name")
         val prNumber = jsonPayload.getInt("number")
 
-        val changeList = (RequestUtil.sendRestRequest(
+        val changeList = (sendRestRequest(
             url = "https://api.github.com/repos/$repoFullName/pulls/$prNumber/files",
             accessToken = authorizationService.getAuthorizationToken(installationId),
             deserializer = JsonArrayDeserializer()
         ) as JSONArray)
 
-        val changedFilesList = mutableListOf<String>()
-        for (index in 0 until changeList.length()) {
-            changedFilesList.add((changeList.get(index) as JSONObject).getString("filename"))
+        val changedFilesList = (0 until changeList.length()).map { index ->
+            (changeList.get(index) as JSONObject).getString("filename")
         }
 
         return PullRequest(

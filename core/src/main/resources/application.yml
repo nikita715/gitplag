@@ -25,4 +25,4 @@ security:
       loginPath: /authorization-code/callback
 
 server:
-  port: 80
+  port: 8081
