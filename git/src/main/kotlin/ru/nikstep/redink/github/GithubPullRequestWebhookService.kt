@@ -12,16 +12,16 @@ import ru.nikstep.redink.util.JsonArrayDeserializer
 import ru.nikstep.redink.util.RequestUtil.Companion.sendRestRequest
 import ru.nikstep.redink.util.auth.AuthorizationService
 
-class PullRequestWebhookService(
+class GithubPullRequestWebhookService(
     private val authorizationService: AuthorizationService,
     private val analysisStatusCheckService: AnalysisStatusCheckService,
     private val pullRequestRepository: PullRequestRepository
-) {
+) : WebhookService {
 
     private val logger = KotlinLogging.logger {}
 
     @Synchronized
-    fun processPullRequest(payload: String) {
+    override fun saveNewPullRequest(payload: String) {
         val jsonPayload = JSONObject(payload)
         if (jsonPayload.hasInstallationId()) {
             val pullRequest = fillPullRequestData(jsonPayload)
