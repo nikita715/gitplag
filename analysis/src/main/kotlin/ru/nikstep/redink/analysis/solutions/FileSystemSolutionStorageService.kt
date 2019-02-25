@@ -34,7 +34,7 @@ class FileSystemSolutionStorageService(
     }
 
     override fun loadBase(repoName: String, fileName: String): File {
-        return File(Paths.get("base", repoName, fileName).toUri())
+        return File(Paths.get("solutions", repoName, ".base", fileName).toUri())
     }
 
     private fun loadSolutionFiles(repoName: String, fileName: String): List<File> {
@@ -114,7 +114,7 @@ class FileSystemSolutionStorageService(
         val pathBeforeFileName: String = pathElements.dropLast(1).joinToString(separator = "/")
         val path =
             if (isBase)
-                "base/$repoFullName/$pathBeforeFileName"
+                "solutions/$repoFullName/.base/$pathBeforeFileName"
             else
                 "solutions/$repoFullName/$creator/$pathBeforeFileName"
         return path to pathElements.last()
