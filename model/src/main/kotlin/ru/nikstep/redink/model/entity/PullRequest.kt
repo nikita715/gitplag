@@ -20,7 +20,7 @@ data class PullRequest(
     val number: Int,
 
     @Column(nullable = false)
-    val installationId: Int,
+    val installationId: Int = -1,
 
     @Column(nullable = false)
     val creatorName: String,
@@ -33,6 +33,9 @@ data class PullRequest(
 
     @Column(nullable = false)
     val branchName: String,
+
+    @Column(nullable = false)
+    val gitService: String,
 
     @Column
     @ElementCollection(fetch = FetchType.EAGER)

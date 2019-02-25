@@ -10,7 +10,7 @@ import ru.nikstep.redink.github.IntegrationService
 import javax.servlet.http.HttpServletRequest
 
 @RestController
-class WebhookController(
+class GithubWebhookController(
     private val githubPullRequestWebhookService: GithubPullRequestWebhookService,
     private val integrationService: IntegrationService
 ) {
@@ -18,12 +18,12 @@ class WebhookController(
 
     @PostMapping("/webhook/github", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun processGithubWebhookRequest(@RequestBody payload: String, httpServletRequest: HttpServletRequest) {
-        val githubEvent = httpServletRequest.getHeader("X-GitHub-Event")
-        logger.info { "Webhook: got new $githubEvent" }
-        when (githubEvent) {
+        val event = httpServletRequest.getHeader("X-GitHub-Event")
+        logger.info { "Webhook: got new $event" }
+        when (event) {
             "pull_request" -> githubPullRequestWebhookService.saveNewPullRequest(payload)
             "integration_installation" -> integrationService.createNewUser(payload)
-            else -> logger.info { "Webhook: $githubEvent is not supported" }
+            else -> logger.info { "Webhook: $event is not supported" }
         }
     }
 }

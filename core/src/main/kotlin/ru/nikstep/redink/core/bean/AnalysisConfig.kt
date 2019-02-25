@@ -8,7 +8,7 @@ import org.springframework.core.task.TaskExecutor
 import ru.nikstep.redink.analysis.AnalysisScheduler
 import ru.nikstep.redink.analysis.AnalysisService
 import ru.nikstep.redink.analysis.MossAnalysisService
-import ru.nikstep.redink.analysis.loader.GitServiceLoader
+import ru.nikstep.redink.analysis.loader.BitbucketServiceLoader
 import ru.nikstep.redink.analysis.loader.GithubServiceLoader
 import ru.nikstep.redink.analysis.solutions.FileSystemSolutionStorageService
 import ru.nikstep.redink.analysis.solutions.SolutionStorageService
@@ -33,12 +33,10 @@ class AnalysisConfig {
     @Bean
     fun analysisService(
         solutionStorageService: SolutionStorageService,
-        serviceLoader: GitServiceLoader,
         env: Environment
     ): MossAnalysisService {
         val mossId = env.getProperty("MOSS_ID")!!
         return MossAnalysisService(
-            serviceLoader,
             solutionStorageService,
             mossId
         )
@@ -50,7 +48,8 @@ class AnalysisConfig {
         analysisService: AnalysisService,
         analysisResultRepository: AnalysisResultRepository,
         analysisStatusCheckService: AnalysisStatusCheckService,
-        serviceLoader: GitServiceLoader,
+        githubServiceLoader: GithubServiceLoader,
+        bitbucketServiceLoader: BitbucketServiceLoader,
         @Qualifier("analysisThreadPoolTaskExecutor") taskExecutor: TaskExecutor
     ): AnalysisScheduler {
         return AnalysisScheduler(
@@ -58,18 +57,27 @@ class AnalysisConfig {
             analysisService,
             analysisResultRepository,
             analysisStatusCheckService,
-            serviceLoader,
+            githubServiceLoader,
+            bitbucketServiceLoader,
             taskExecutor
         )
     }
 
     @Bean
-    fun GitServiceLoader(
+    fun githubServiceLoader(
         solutionStorageService: SolutionStorageService,
         repositoryRepository: RepositoryRepository,
         authorizationService: AuthorizationService
     ): GithubServiceLoader {
         return GithubServiceLoader(solutionStorageService, repositoryRepository, authorizationService)
+    }
+
+    @Bean
+    fun bitbucketServiceLoader(
+        solutionStorageService: SolutionStorageService,
+        repositoryRepository: RepositoryRepository
+    ): BitbucketServiceLoader {
+        return BitbucketServiceLoader(solutionStorageService, repositoryRepository)
     }
 
 }
