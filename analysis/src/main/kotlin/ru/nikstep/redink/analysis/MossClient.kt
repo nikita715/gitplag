@@ -56,7 +56,11 @@ class MossClient(
             client.close()
         }
 
-        return client.resultURL.toString()
+        val resultUrl = client.resultURL.toString()
+
+        logger.info { "Analysis: performed new analysis at $resultUrl" }
+
+        return resultUrl
     }
 
     private fun loadBaseFile(file: File) = loadFile(file, isBase = true)

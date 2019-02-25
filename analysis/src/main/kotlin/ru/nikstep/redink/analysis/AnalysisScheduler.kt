@@ -25,33 +25,35 @@ open class AnalysisScheduler(
 
     @Scheduled(fixedDelay = 10000)
     fun runAnalysis() {
-        val countOfRequiredAnalyses = pullRequestRepository.countAllByAnalysedIsFalse()
+        val countOfRequiredAnalyses = pullRequestRepository.count()
 
         if (countOfRequiredAnalyses.isZero()) {
             logger.info { "Analysis: waiting for pull requests" }
             return
-        } else {
-            logger.info { "Analysis: found $countOfRequiredAnalyses created/changed pull request(s)" }
         }
 
+        logger.info { "Analysis: found $countOfRequiredAnalyses created/changed pull request(s)" }
         startAnalysisOfNewPullRequests()
     }
 
     private fun startAnalysisOfNewPullRequests() {
-        val allChangedPullRequests = pullRequestRepository.findAllByAnalysedIsFalse()
-        val pullRequestsToAnalyse = allChangedPullRequests.removeDuplicatedPullRequests()
+        val allChangedPullRequests = pullRequestRepository.findAll()
+        val pullRequestsToAnalyse = allChangedPullRequests.withoutDuplicates()
 
-        removeDuplicates(allChangedPullRequests, pullRequestsToAnalyse)
+        removeDuplicatedPullRequests(allChangedPullRequests.minus(pullRequestsToAnalyse))
 
         for (pullRequest in pullRequestsToAnalyse) {
             taskExecutor.execute(AnalysisRunnable(pullRequest))
         }
     }
 
-    private fun removeDuplicates(allChangedPullRequests: List<PullRequest>, pullRequestsToAnalyse: List<PullRequest>) {
-        for (duplicatedPullRequest in allChangedPullRequests.minus(pullRequestsToAnalyse)) {
-            duplicatedPullRequest.analysed = true
-            pullRequestRepository.save(duplicatedPullRequest)
+    private fun removeDuplicatedPullRequests(pullRequests: List<PullRequest>) {
+        for (pullRequest in pullRequests) {
+            logger.info {
+                "Analysis: delete duplicated analysis request of pr #${pullRequest.number}," +
+                        " repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}"
+            }
+            pullRequestRepository.delete(pullRequest)
         }
     }
 
@@ -78,8 +80,7 @@ open class AnalysisScheduler(
                     )
                 )
 
-                pullRequest.analysed = true
-                pullRequestRepository.save(pullRequest)
+                pullRequestRepository.delete(pullRequest)
                 logger.info {
                     "Analysis: complete analysing of pr #${pullRequest.number}," +
                             " repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}"
@@ -94,10 +95,10 @@ open class AnalysisScheduler(
 
 }
 
-private fun Int.isZero(): Boolean {
+private fun Long.isZero(): Boolean {
     return this.compareTo(0) == 0
 }
 
-private fun List<PullRequest>.removeDuplicatedPullRequests(): List<PullRequest> {
+private fun List<PullRequest>.withoutDuplicates(): List<PullRequest> {
     return this.sortedByDescending { it.id }.distinctBy { (it.repoFullName to it.creatorName) }
 }
