@@ -1,9 +1,12 @@
 package ru.nikstep.redink.model.entity
 
+import ru.nikstep.redink.util.Git
 import javax.persistence.CollectionTable
 import javax.persistence.Column
 import javax.persistence.ElementCollection
 import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
 import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -35,7 +38,8 @@ data class PullRequest(
     val branchName: String,
 
     @Column(nullable = false)
-    val gitService: String,
+    @Enumerated(EnumType.STRING)
+    val gitService: Git,
 
     @Column
     @ElementCollection(fetch = FetchType.EAGER)

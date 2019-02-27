@@ -8,6 +8,7 @@ import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.checks.GithubAnalysisStatus
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
+import ru.nikstep.redink.util.Git.GITHUB
 import ru.nikstep.redink.util.JsonArrayDeserializer
 import ru.nikstep.redink.util.RequestUtil.Companion.sendRestRequest
 import ru.nikstep.redink.util.auth.AuthorizationService
@@ -53,7 +54,7 @@ class GithubPullRequestWebhookService(
         }
 
         return PullRequest(
-            gitService = "github",
+            gitService = GITHUB,
             number = jsonPayload.getInt("number"),
             installationId = installationId,
             creatorName = pullRequest.getJSONObject("user").getString("login"),

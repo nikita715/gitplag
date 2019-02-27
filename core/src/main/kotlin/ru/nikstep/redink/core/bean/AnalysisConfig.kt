@@ -7,8 +7,10 @@ import org.springframework.core.env.Environment
 import org.springframework.core.task.TaskExecutor
 import ru.nikstep.redink.analysis.AnalysisScheduler
 import ru.nikstep.redink.analysis.AnalysisService
+import ru.nikstep.redink.analysis.JPlagAnalysisService
 import ru.nikstep.redink.analysis.MossAnalysisService
 import ru.nikstep.redink.analysis.loader.BitbucketServiceLoader
+import ru.nikstep.redink.analysis.loader.GitServiceLoader
 import ru.nikstep.redink.analysis.loader.GithubServiceLoader
 import ru.nikstep.redink.analysis.solutions.FileSystemSolutionStorageService
 import ru.nikstep.redink.analysis.solutions.SolutionStorageService
@@ -17,6 +19,12 @@ import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SourceCodeRepository
+import ru.nikstep.redink.util.Analyser
+import ru.nikstep.redink.util.Analyser.JPLAG
+import ru.nikstep.redink.util.Analyser.MOSS
+import ru.nikstep.redink.util.Git
+import ru.nikstep.redink.util.Git.BITBUCKET
+import ru.nikstep.redink.util.Git.GITHUB
 import ru.nikstep.redink.util.auth.AuthorizationService
 
 @Configuration
@@ -31,7 +39,7 @@ class AnalysisConfig {
     }
 
     @Bean
-    fun analysisService(
+    fun mossAnalysisService(
         solutionStorageService: SolutionStorageService,
         env: Environment
     ): MossAnalysisService {
@@ -43,23 +51,26 @@ class AnalysisConfig {
     }
 
     @Bean
+    fun jplagAnalysisService(solutionStorageService: SolutionStorageService): JPlagAnalysisService {
+        return JPlagAnalysisService(solutionStorageService)
+    }
+
+    @Bean
     fun analysisScheduler(
         pullRequestRepository: PullRequestRepository,
-        analysisService: AnalysisService,
         analysisResultRepository: AnalysisResultRepository,
         analysisStatusCheckService: AnalysisStatusCheckService,
-        githubServiceLoader: GithubServiceLoader,
-        bitbucketServiceLoader: BitbucketServiceLoader,
-        @Qualifier("analysisThreadPoolTaskExecutor") taskExecutor: TaskExecutor
+        @Qualifier("analysisThreadPoolTaskExecutor") taskExecutor: TaskExecutor,
+        gitServiceLoaders: Map<Git, GitServiceLoader>,
+        analysers: Map<Analyser, AnalysisService>
     ): AnalysisScheduler {
         return AnalysisScheduler(
             pullRequestRepository,
-            analysisService,
             analysisResultRepository,
             analysisStatusCheckService,
-            githubServiceLoader,
-            bitbucketServiceLoader,
-            taskExecutor
+            taskExecutor,
+            gitServiceLoaders,
+            analysers
         )
     }
 
@@ -78,6 +89,28 @@ class AnalysisConfig {
         repositoryRepository: RepositoryRepository
     ): BitbucketServiceLoader {
         return BitbucketServiceLoader(solutionStorageService, repositoryRepository)
+    }
+
+    @Bean
+    fun gitServiceLoaders(
+        githubServiceLoader: GithubServiceLoader,
+        bitbucketServiceLoader: BitbucketServiceLoader
+    ): Map<Git, GitServiceLoader> {
+        return mapOf(
+            GITHUB to githubServiceLoader,
+            BITBUCKET to bitbucketServiceLoader
+        )
+    }
+
+    @Bean
+    fun analysers(
+        mossAnalysisService: MossAnalysisService,
+        jPlagAnalysisService: JPlagAnalysisService
+    ): Map<Analyser, AnalysisService> {
+        return mapOf(
+            MOSS to mossAnalysisService,
+            JPLAG to jPlagAnalysisService
+        )
     }
 
 }
