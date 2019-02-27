@@ -5,6 +5,7 @@ import org.springframework.boot.configurationprocessor.json.JSONArray
 import org.springframework.boot.configurationprocessor.json.JSONObject
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
+import ru.nikstep.redink.util.Git.BITBUCKET
 import ru.nikstep.redink.util.JsonArrayDeserializer
 import ru.nikstep.redink.util.RequestUtil.Companion.sendRestRequest
 
@@ -32,7 +33,7 @@ class BitbucketPullRequestWebhookService(private val pullRequestRepository: Pull
             (0 until jsonChangedFiles.length()).map { (jsonChangedFiles.get(it) as JSONObject).getString("file") }
 
         val pullRequest = PullRequest(
-            gitService = "bitbucket",
+            gitService = BITBUCKET,
             number = pullRequestJson.getInt("id"),
             repoFullName = repoFullName,
             creatorName = pullRequestJson.getJSONObject("author").getString("username"),

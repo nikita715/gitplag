@@ -3,8 +3,7 @@ package ru.nikstep.redink.analysis
 import mu.KotlinLogging
 import org.springframework.core.task.TaskExecutor
 import org.springframework.scheduling.annotation.Scheduled
-import ru.nikstep.redink.analysis.loader.BitbucketServiceLoader
-import ru.nikstep.redink.analysis.loader.GithubServiceLoader
+import ru.nikstep.redink.analysis.loader.GitServiceLoader
 import ru.nikstep.redink.checks.AnalysisResultData
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.checks.GithubAnalysisConclusion
@@ -12,15 +11,17 @@ import ru.nikstep.redink.checks.GithubAnalysisStatus
 import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
+import ru.nikstep.redink.util.Analyser
+import ru.nikstep.redink.util.Git
+import ru.nikstep.redink.util.Git.GITHUB
 
 open class AnalysisScheduler(
     private val pullRequestRepository: PullRequestRepository,
-    private val analysisService: AnalysisService,
     private val analysisResultRepository: AnalysisResultRepository,
     private val analysisStatusCheckService: AnalysisStatusCheckService,
-    private val githubServiceLoader: GithubServiceLoader,
-    private val bitbucketServiceLoader: BitbucketServiceLoader,
-    private val taskExecutor: TaskExecutor
+    private val taskExecutor: TaskExecutor,
+    private val gitServiceLoaders: Map<Git, GitServiceLoader>,
+    private val analysers: Map<Analyser, AnalysisService>
 ) {
 
     private val logger = KotlinLogging.logger {}
@@ -63,11 +64,11 @@ open class AnalysisScheduler(
 
         override fun run() {
 
-            val gitServiceLoader = when (pullRequest.gitService) {
-                "github" -> githubServiceLoader
-                "bitbucket" -> bitbucketServiceLoader
-                else -> throw AnalysisException("Analysis: git service ${pullRequest.gitService} is not supported")
-            }
+            val gitServiceLoader = gitServiceLoaders[pullRequest.gitService]
+                ?: throw AnalysisException("Analysis: git service ${pullRequest.gitService} is not supported")
+
+            val analysisService = analysers[Analyser.JPLAG]
+                ?: throw AnalysisException("Analysis: analyser is not supported")
 
             try {
                 gitServiceLoader.loadFilesFromGit(pullRequest)
@@ -80,7 +81,7 @@ open class AnalysisScheduler(
                 val analysisResult = analysisService.analyse(pullRequest)
                 analysisResultRepository.save(analysisResult)
 
-                if (pullRequest.gitService == "github")
+                if (pullRequest.gitService == GITHUB)
                     analysisStatusCheckService.send(
                         pullRequest,
                         AnalysisResultData(
