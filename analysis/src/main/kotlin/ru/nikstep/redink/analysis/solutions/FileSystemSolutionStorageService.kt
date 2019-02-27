@@ -23,6 +23,7 @@ class FileSystemSolutionStorageService(
         val requiredFiles =
             pullRequest.changedFiles.intersect(repositoryRepository.findByName(pullRequest.repoFullName).filePatterns)
         return requiredFiles.map { fileName -> loadBaseAndSolutions(pullRequest.repoFullName, fileName) }
+            .filter { it.solutions.size > 1 }
     }
 
     @Synchronized

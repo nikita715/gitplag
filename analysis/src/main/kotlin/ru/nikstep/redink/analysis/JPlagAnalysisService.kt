@@ -8,6 +8,7 @@ import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.asFileInRoot
 import ru.nikstep.redink.util.onlyLastName
 import java.io.File
+import java.nio.file.Files
 import kotlin.math.roundToInt
 
 class JPlagAnalysisService(private val solutionStorageService: SolutionStorageService) : AnalysisService {
@@ -17,14 +18,15 @@ class JPlagAnalysisService(private val solutionStorageService: SolutionStorageSe
     private val separator = System.getProperty("file.separator")
     private val jplagPath = "${"libs".asFileInRoot()}${separator}jplag.jar"
     private val solutionsPath = "solutions".asFileInRoot()
-    private val resultDirPath = ".res".asFileInRoot()
     private val regexUserNames = "^Matches for (.+) & (.+)$".toRegex()
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
 
     override fun analyse(pullRequest: PullRequest): Collection<AnalysisResult> {
         return solutionStorageService.loadAllBasesAndSolutions(pullRequest).flatMap {
-            val command = buildCommand(JPlagLang.JAVA_1_7, pullRequest.repoFullName, it.fileName)
+            val resultDir = Files.createTempDirectory(".res").toFile()
+            val resultDirPath = resultDir.absolutePath
+            val command = buildCommand(JPlagLang.JAVA_1_7, pullRequest.repoFullName, it.fileName, resultDirPath)
             println("exec $command")
             Runtime.getRuntime().exec(command).waitFor()
             println("exec success")
@@ -61,16 +63,17 @@ class JPlagAnalysisService(private val solutionStorageService: SolutionStorageSe
                     matchedLines = matchedLines
                 )
             }
+            resultDir.deleteRecursively()
             return list
         }
     }
 
-    private fun buildCommand(lang: JPlagLang, repoName: String, fileName: String): String {
+    private fun buildCommand(lang: JPlagLang, repoName: String, fileName: String, resultDir: String): String {
         return buildString {
             append("java -jar $jplagPath ")
             append("-l $lang ")
             append("-bc .base ")
-            append("-r $resultDirPath ")
+            append("-r $resultDir ")
             append("-p ${fileName.onlyLastName()} ")
             append("-s ")
             append("$solutionsPath$separator$repoName")
