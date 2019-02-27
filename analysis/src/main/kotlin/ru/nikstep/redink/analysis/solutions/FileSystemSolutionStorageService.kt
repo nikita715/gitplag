@@ -29,7 +29,6 @@ class FileSystemSolutionStorageService(
     override fun loadBaseAndSolutions(repoName: String, fileName: String): PreparedAnalysisFiles {
         val baseFile = loadBase(repoName, fileName)
         val solutionFiles = loadSolutionFiles(repoName, fileName)
-        logger.info { "File storage: loaded files $repoName/**/$fileName" }
         return PreparedAnalysisFiles(fileName, baseFile, solutionFiles)
     }
 
@@ -46,6 +45,14 @@ class FileSystemSolutionStorageService(
             val file = File(Paths.get("solutions", repoName, it, fileName).toUri())
             if (file.exists()) file else null
         }
+    }
+
+    override fun getCountOfSolutionFiles(repoName: String, fileName: String): Int {
+        val solutionDirectory = File(Paths.get("solutions", repoName).toUri())
+        val directories = solutionDirectory.list().toList().intersect<String>(
+            sourceCodeRepository.findAllByRepoAndFileName(repoName, fileName).map { it.user }
+        )
+        return directories.count { Files.exists(Paths.get("solutions", repoName, it, fileName)) }
     }
 
     @Synchronized

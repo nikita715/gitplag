@@ -25,3 +25,5 @@ hs_err_pid*
 /solutions
 
 /.idea
+!/libs/jplag.jar
+/.res/
