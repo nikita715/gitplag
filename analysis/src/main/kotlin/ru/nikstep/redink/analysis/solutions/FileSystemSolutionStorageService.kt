@@ -30,7 +30,7 @@ class FileSystemSolutionStorageService(
     override fun loadBaseAndSolutions(repoName: String, fileName: String): PreparedAnalysisFiles {
         val baseFile = loadBase(repoName, fileName)
         val solutionFiles = loadSolutionFiles(repoName, fileName)
-        return PreparedAnalysisFiles(fileName, baseFile, solutionFiles)
+        return PreparedAnalysisFiles(repoName, fileName, baseFile, solutionFiles)
     }
 
     override fun loadBase(repoName: String, fileName: String): File {
