@@ -29,6 +29,9 @@ data class PullRequest(
     val creatorName: String,
 
     @Column(nullable = false)
+    val repoId: Long,
+
+    @Column(nullable = false)
     val repoFullName: String,
 
     @Column(nullable = false)

@@ -58,6 +58,7 @@ class GithubPullRequestWebhookService(
             number = jsonPayload.getInt("number"),
             installationId = installationId,
             creatorName = pullRequest.getJSONObject("user").getString("login"),
+            repoId = -1,
             repoFullName = repoFullName,
             headSha = pullRequest.getJSONObject("head").getString("sha"),
             branchName = pullRequest.getJSONObject("head").getString("ref"),

@@ -34,6 +34,7 @@ class BitbucketPullRequestWebhookService(private val pullRequestRepository: Pull
 
         val pullRequest = PullRequest(
             gitService = BITBUCKET,
+            repoId = -1,
             number = pullRequestJson.getInt("id"),
             repoFullName = repoFullName,
             creatorName = pullRequestJson.getJSONObject("author").getString("username"),

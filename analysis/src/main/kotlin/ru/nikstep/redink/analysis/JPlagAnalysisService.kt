@@ -22,17 +22,17 @@ class JPlagAnalysisService(private val solutionStorageService: SolutionStorageSe
     private val regexUserNames = "^Matches for (.+) & (.+)$".toRegex()
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
-    override fun analyse(pullRequest: PullRequest): Collection<AnalysisResult> {
-        return solutionStorageService.loadAllBasesAndSolutions(pullRequest)
+    override fun analyse(pullRequest: PullRequest): Collection<AnalysisResult> =
+        solutionStorageService.loadAllBasesAndSolutions(pullRequest)
             .flatMap { analysisFiles ->
                 inTempDirectory { resultDir ->
                     executeJPlag(pullRequest, analysisFiles.fileName, resultDir)
                     rangeOfMatchIndexes(analysisFiles).map { index ->
-                        matchToAnalysisResult(analysisFiles, resultDir)(index)
+                        toAnalysisResults(analysisFiles, resultDir)(index)
                     }
                 }
             }
-    }
+
 
     private fun executeJPlag(pullRequest: PullRequest, fileName: String, resultDir: String) {
         val command = buildCommand(JPlagLang.JAVA_1_7, pullRequest.repoFullName, fileName, resultDir)
@@ -51,7 +51,10 @@ class JPlagAnalysisService(private val solutionStorageService: SolutionStorageSe
         }
     }
 
-    private fun matchToAnalysisResult(analysisFiles: PreparedAnalysisFiles, resultDir: String) = { numberOfMatch: Int ->
+    private fun toAnalysisResults(
+        analysisFiles: PreparedAnalysisFiles,
+        resultDir: String
+    ): (Int) -> AnalysisResult = { numberOfMatch: Int ->
         val body = Jsoup.parse(File(asPath(resultDir, "match$numberOfMatch-link.html")).readText())
             .body()
         val (name1, name2) = regexUserNames.find(body.getElementsByTag("H3")[0].text())!!
@@ -82,10 +85,7 @@ class JPlagAnalysisService(private val solutionStorageService: SolutionStorageSe
     }
 
     private fun rangeOfMatchIndexes(analysisFiles: PreparedAnalysisFiles): IntRange {
-        return (0 until analysisFiles.toCountOfMatches())
-    }
-
-    private fun PreparedAnalysisFiles.toCountOfMatches(): Int {
-        return (0 until this.solutions.size).sum()
+        val countOfMatches = (0 until analysisFiles.solutions.size).sum()
+        return 0 until countOfMatches
     }
 }

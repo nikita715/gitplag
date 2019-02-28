@@ -67,7 +67,7 @@ open class AnalysisScheduler(
             val gitServiceLoader = gitServiceLoaders[pullRequest.gitService]
                 ?: throw AnalysisException("Analysis: git service ${pullRequest.gitService} is not supported")
 
-            val analysisService = analysers[Analyser.JPLAG]
+            val analysisService = analysers[Analyser.MOSS]
                 ?: throw AnalysisException("Analysis: analyser is not supported")
 
             try {

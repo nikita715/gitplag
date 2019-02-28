@@ -12,6 +12,7 @@ import ru.nikstep.redink.analysis.MossAnalysisService
 import ru.nikstep.redink.analysis.loader.BitbucketServiceLoader
 import ru.nikstep.redink.analysis.loader.GitServiceLoader
 import ru.nikstep.redink.analysis.loader.GithubServiceLoader
+import ru.nikstep.redink.analysis.loader.GitlabServiceLoader
 import ru.nikstep.redink.analysis.solutions.FileSystemSolutionStorageService
 import ru.nikstep.redink.analysis.solutions.SolutionStorageService
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
@@ -23,8 +24,7 @@ import ru.nikstep.redink.util.Analyser
 import ru.nikstep.redink.util.Analyser.JPLAG
 import ru.nikstep.redink.util.Analyser.MOSS
 import ru.nikstep.redink.util.Git
-import ru.nikstep.redink.util.Git.BITBUCKET
-import ru.nikstep.redink.util.Git.GITHUB
+import ru.nikstep.redink.util.Git.*
 import ru.nikstep.redink.util.auth.AuthorizationService
 
 @Configuration
@@ -92,13 +92,23 @@ class AnalysisConfig {
     }
 
     @Bean
+    fun gitlabServiceLoader(
+        solutionStorageService: SolutionStorageService,
+        repositoryRepository: RepositoryRepository
+    ): GitlabServiceLoader {
+        return GitlabServiceLoader(solutionStorageService, repositoryRepository)
+    }
+
+    @Bean
     fun gitServiceLoaders(
         githubServiceLoader: GithubServiceLoader,
-        bitbucketServiceLoader: BitbucketServiceLoader
+        bitbucketServiceLoader: BitbucketServiceLoader,
+        gitlabServiceLoader: GitlabServiceLoader
     ): Map<Git, GitServiceLoader> {
         return mapOf(
             GITHUB to githubServiceLoader,
-            BITBUCKET to bitbucketServiceLoader
+            BITBUCKET to bitbucketServiceLoader,
+            GITLAB to gitlabServiceLoader
         )
     }
 
