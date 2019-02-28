@@ -29,11 +29,12 @@ class GithubServiceLoader(
         fileNames.map { fileName ->
             checkBaseExists(pullRequest, fileName)
 
+            val args = pullRequest.repoFullName.split("/").toTypedArray()
             val fileResponse = sendGraphqlRequest(
                 httpMethod = HttpMethod.POST,
                 body = String.format(
                     rawGithubFileQuery,
-                    *(pullRequest.repoFullName.split("/").toTypedArray()),
+                    *args,
                     pullRequest.branchName,
                     fileName
                 ),
@@ -50,6 +51,12 @@ class GithubServiceLoader(
                 resultObject.getJSONObject("object").getString("text")
             )
         }
+    }
+
+    fun getFileQuery(repoName: String, branchName: String, fileName: String): String {
+        val args = repoName.split("/").toTypedArray()
+        return """{"query": "query {repository(owner: "${args[0]}", name: "${args[1]}")
+            | {object(expression: "$branchName:$fileName") {... on Blob{text}}}}"}""".trimMargin()
     }
 
     private fun checkBaseExists(data: PullRequest, fileName: String) {

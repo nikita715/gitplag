@@ -20,6 +20,7 @@ class JPlagAnalysisServiceTest {
         on { getCountOfSolutionFiles(repoName, fileName) } doReturn 3
         on { loadAllBasesAndSolutions(any()) } doReturn listOf(
             PreparedAnalysisFiles(
+                repoName,
                 fileName,
                 File(""),
                 listOf(File(""), File(""), File(""))

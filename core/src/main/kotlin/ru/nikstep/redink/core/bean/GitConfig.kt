@@ -6,7 +6,7 @@ import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.github.BitbucketPullRequestWebhookService
 import ru.nikstep.redink.github.GithubIntegrationService
 import ru.nikstep.redink.github.GithubPullRequestWebhookService
-import ru.nikstep.redink.github.IntegrationService
+import ru.nikstep.redink.github.GitlabPullRequestWebhookService
 import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.AnalysisPairLinesRepository
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
@@ -19,7 +19,7 @@ import ru.nikstep.redink.util.auth.AuthorizationService
 class GitConfig {
 
     @Bean
-    fun pullRequestService(
+    fun githubPullRequestWebhookService(
         authorizationService: AuthorizationService,
         analysisStatusCheckService: AnalysisStatusCheckService,
         pullRequestRepository: PullRequestRepository
@@ -32,10 +32,26 @@ class GitConfig {
     }
 
     @Bean
-    fun integrationService(
+    fun bitbucketPullRequestWebhookService(
+        pullRequestRepository: PullRequestRepository
+    ): BitbucketPullRequestWebhookService {
+        return BitbucketPullRequestWebhookService(pullRequestRepository)
+    }
+
+    @Bean
+    fun gitlabPullRequestWebhookService(
+        authorizationService: AuthorizationService,
+        analysisStatusCheckService: AnalysisStatusCheckService,
+        pullRequestRepository: PullRequestRepository
+    ): GitlabPullRequestWebhookService {
+        return GitlabPullRequestWebhookService(pullRequestRepository)
+    }
+
+    @Bean
+    fun githubIntegrationService(
         userRepository: UserRepository,
         repositoryRepository: RepositoryRepository
-    ): IntegrationService {
+    ): GithubIntegrationService {
         return GithubIntegrationService(userRepository, repositoryRepository)
     }
 
@@ -48,10 +64,5 @@ class GitConfig {
             analysisPairRepository,
             analysisPairLinesRepository
         )
-    }
-
-    @Bean
-    fun bitbucketPullRequestWebhookService(pullRequestRepository: PullRequestRepository): BitbucketPullRequestWebhookService {
-        return BitbucketPullRequestWebhookService(pullRequestRepository)
     }
 }
