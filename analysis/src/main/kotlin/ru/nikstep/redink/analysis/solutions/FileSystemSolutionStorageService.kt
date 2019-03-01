@@ -17,43 +17,47 @@ class FileSystemSolutionStorageService(
     private val repositoryRepository: RepositoryRepository
 ) : SolutionStorageService {
     private val logger = KotlinLogging.logger {}
+    private val solutionsDir = "solutions"
+    private val baseDir = ".base"
 
     @Synchronized
     override fun loadAllBasesAndSolutions(pullRequest: PullRequest): Collection<PreparedAnalysisFiles> {
-        val requiredFiles =
-            pullRequest.changedFiles.intersect(repositoryRepository.findByName(pullRequest.repoFullName).filePatterns)
-        return requiredFiles.map { fileName -> loadBaseAndSolutions(pullRequest.repoFullName, fileName) }
-            .filter { it.solutions.size > 1 }
-    }
+        val repoName = pullRequest.repoFullName
+        val repo = repositoryRepository.findByName(repoName)
+        val requiredFiles = pullRequest.changedFiles.intersect(repo.filePatterns)
 
-    @Synchronized
-    override fun loadBaseAndSolutions(repoName: String, fileName: String): PreparedAnalysisFiles {
-        val baseFile = loadBase(repoName, fileName)
-        val solutionFiles = loadSolutionFiles(repoName, fileName)
-        return PreparedAnalysisFiles(repoName, fileName, baseFile, solutionFiles)
+        return requiredFiles.map { fileName ->
+            PreparedAnalysisFiles(
+                repoName = repoName,
+                fileName = fileName,
+                language = repo.language,
+                base = loadBase(repoName, fileName),
+                solutions = loadSolutionFiles(repoName, fileName)
+            )
+        }.filter { it.solutions.size > 1 }
     }
 
     override fun loadBase(repoName: String, fileName: String): File {
-        return File(Paths.get("solutions", repoName, ".base", fileName).toUri())
+        return File(Paths.get(solutionsDir, repoName, baseDir, fileName).toUri())
     }
 
     private fun loadSolutionFiles(repoName: String, fileName: String): List<File> {
-        val solutionDirectory = File(Paths.get("solutions", repoName).toUri())
+        val solutionDirectory = File(Paths.get(solutionsDir, repoName).toUri())
         val directories = solutionDirectory.list().toList().intersect<String>(
             sourceCodeRepository.findAllByRepoAndFileName(repoName, fileName).map { it.user }
         )
         return directories.mapNotNull {
-            val file = File(Paths.get("solutions", repoName, it, fileName).toUri())
+            val file = File(Paths.get(solutionsDir, repoName, it, fileName).toUri())
             if (file.exists()) file else null
         }
     }
 
     override fun getCountOfSolutionFiles(repoName: String, fileName: String): Int {
-        val solutionDirectory = File(Paths.get("solutions", repoName).toUri())
+        val solutionDirectory = File(Paths.get(solutionsDir, repoName).toUri())
         val directories = solutionDirectory.list().toList().intersect<String>(
             sourceCodeRepository.findAllByRepoAndFileName(repoName, fileName).map { it.user }
         )
-        return directories.count { Files.exists(Paths.get("solutions", repoName, it, fileName)) }
+        return directories.count { Files.exists(Paths.get(solutionsDir, repoName, it, fileName)) }
     }
 
     @Synchronized
@@ -107,7 +111,7 @@ class FileSystemSolutionStorageService(
 
     @Synchronized
     override fun loadSolution(repoName: String, userName: String, fileName: String): File {
-        val pathToFile = Paths.get("solutions", repoName, userName, fileName)
+        val pathToFile = Paths.get(solutionsDir, repoName, userName, fileName)
         logger.info { "File storage: loaded file $repoName/$userName/$fileName" }
         return File(pathToFile.toUri())
     }

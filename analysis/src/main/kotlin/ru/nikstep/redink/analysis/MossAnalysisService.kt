@@ -41,8 +41,6 @@ class MossAnalysisService(
                 val first = tds[0].selectFirst("a")
                 val second = tds[1].selectFirst("a")
 
-                val link = first.attr("href")
-
                 val firstPath = first.text().split(" ").first().split("/")
                 val secondPath = second.text().split(" ").first().split("/")
 
@@ -61,7 +59,7 @@ class MossAnalysisService(
                     .removeSurrounding("(", "%)")
                     .toInt()
 
-                val rows = Jsoup.connect(link.replace(".html", "-top.html"))
+                val rows = Jsoup.connect(first.attr("href").replace(".html", "-top.html"))
                     .get().getElementsByTag("tr")
                 val matchedLines = mutableListOf<Pair<Pair<Int, Int>, Pair<Int, Int>>>()
                 for (row in rows.subList(1, rows.size)) {
@@ -79,6 +77,6 @@ class MossAnalysisService(
                     fileName = fileName,
                     matchedLines = matchedLines
                 )
-            }.toList()
+            }
     }
 }

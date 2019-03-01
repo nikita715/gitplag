@@ -26,30 +26,27 @@ class JPlagAnalysisService(private val solutionStorageService: SolutionStorageSe
         solutionStorageService.loadAllBasesAndSolutions(pullRequest)
             .flatMap { analysisFiles ->
                 inTempDirectory { resultDir ->
-                    executeJPlag(pullRequest, analysisFiles.fileName, resultDir)
+                    executeJPlag(analysisFiles, resultDir)
                     rangeOfMatchIndexes(analysisFiles).map { index ->
-                        toAnalysisResults(analysisFiles, resultDir)(index)
+                        index.let(toAnalysisResults(analysisFiles, resultDir))
                     }
                 }
             }
 
 
-    private fun executeJPlag(pullRequest: PullRequest, fileName: String, resultDir: String) {
-        val command = buildCommand(JPlagLang.JAVA_1_7, pullRequest.repoFullName, fileName, resultDir)
-        Runtime.getRuntime().exec(command).waitFor(5, MINUTES)
-    }
-
-    private fun buildCommand(lang: JPlagLang, repoName: String, fileName: String, resultDir: String): String {
-        return buildString {
+    private fun executeJPlag(analysisFiles: PreparedAnalysisFiles, resultDir: String) =
+        buildString {
             append("java -jar $jplagPath ")
-            append("-l $lang ")
+            append("-l ${analysisFiles.language.ofJPlag()} ")
             append("-bc .base ")
             append("-r $resultDir ")
-            append("-p ${fileName.onlyLastName()} ")
+            append("-p ${analysisFiles.fileName.onlyLastName()} ")
             append("-s ")
-            append(asPath(solutionsPath, repoName))
+            append(asPath(solutionsPath, analysisFiles.repoName))
+        }.also {
+            Runtime.getRuntime().exec(it).waitFor(5, MINUTES)
         }
-    }
+
 
     private fun toAnalysisResults(
         analysisFiles: PreparedAnalysisFiles,
