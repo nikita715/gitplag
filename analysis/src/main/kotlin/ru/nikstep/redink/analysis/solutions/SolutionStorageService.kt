@@ -12,7 +12,6 @@ interface SolutionStorageService {
     fun loadSolution1(analysisPair: AnalysisPair): File
     fun loadSolution2(analysisPair: AnalysisPair): File
     fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): File
-    fun loadBaseAndSolutions(repoName: String, fileName: String): PreparedAnalysisFiles
     fun loadAllBasesAndSolutions(pullRequest: PullRequest): Collection<PreparedAnalysisFiles>
     fun getCountOfSolutionFiles(repoName: String, fileName: String): Int
 }

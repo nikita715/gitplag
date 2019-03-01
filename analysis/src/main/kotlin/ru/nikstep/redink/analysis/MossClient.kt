@@ -2,13 +2,15 @@ package ru.nikstep.redink.analysis
 
 import it.zielke.moji.SocketClient
 import mu.KotlinLogging
+import ru.nikstep.redink.util.Language
 import java.io.File
 
 class MossClient(
     private val userId: String,
     private val client: SocketClient = SocketClient(),
     private val base: File,
-    private val solutions: Collection<File>
+    private val solutions: Collection<File>,
+    private val language: Language = Language.TEXT
 ) : AnalysisSystemClient {
 
     constructor(userId: String, files: Pair<File, Collection<File>>) : this(
@@ -20,10 +22,9 @@ class MossClient(
     constructor(userId: String, files: PreparedAnalysisFiles) : this(
         userId,
         base = files.base,
-        solutions = files.solutions
+        solutions = files.solutions,
+        language = files.language
     )
-
-    private val language: String = base.mossExtension
 
     private val logger = KotlinLogging.logger {}
 
@@ -39,7 +40,7 @@ class MossClient(
         Thread.sleep(1000)
 
         client.userID = userId
-        client.language = language
+        client.language = language.ofMoss()
 
         if (solutions.isEmpty()) {
             throw AnalysisException("Analysis: No solutions for file ${base.canonicalPath}")
@@ -76,13 +77,3 @@ class MossClient(
         }
 
 }
-
-val File.mossExtension: String
-    get() {
-        val extension = this.extension
-        return when (extension) {
-            "java" -> extension
-            "cpp" -> "cc"
-            else -> throw RuntimeException("Analysis: Moss does not support the \"${this.extension}\" extension")
-        }
-    }

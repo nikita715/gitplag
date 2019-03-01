@@ -1,5 +1,6 @@
 package ru.nikstep.redink.model.entity
 
+import ru.nikstep.redink.util.Language
 import javax.persistence.*
 
 @Entity
@@ -19,5 +20,8 @@ class Repository(
     val filePatterns: List<String> = listOf(),
 
     val name: String,
-    val repoGithubId: Long
+    val repoGithubId: Long,
+
+    @Enumerated(EnumType.STRING)
+    val language: Language
 )
