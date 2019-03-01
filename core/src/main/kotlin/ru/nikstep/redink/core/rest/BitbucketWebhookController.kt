@@ -5,11 +5,11 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import ru.nikstep.redink.github.BitbucketPullRequestWebhookService
+import ru.nikstep.redink.github.BitbucketWebhookService
 import javax.servlet.http.HttpServletRequest
 
 @RestController("")
-class BitbucketWebhookController(private val bitbucketPullRequestWebhookService: BitbucketPullRequestWebhookService) {
+class BitbucketWebhookController(private val bitbucketWebhookService: BitbucketWebhookService) {
     private val logger = KotlinLogging.logger {}
 
     @PostMapping("/webhook/bitbucket", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -17,7 +17,7 @@ class BitbucketWebhookController(private val bitbucketPullRequestWebhookService:
         val event = httpServletRequest.getHeader("X-Event-Key")
         logger.info { "Webhook: got new $event" }
         when (event.substringBefore(":")) {
-            "pullrequest" -> bitbucketPullRequestWebhookService.saveNewPullRequest(payload)
+            "pullrequest" -> bitbucketWebhookService.saveNewPullRequest(payload)
             else -> logger.info { "Webhook: $event is not supported" }
         }
     }

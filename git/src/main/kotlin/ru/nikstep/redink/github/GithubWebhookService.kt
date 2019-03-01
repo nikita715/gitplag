@@ -10,26 +10,21 @@ import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty.GITHUB
 import ru.nikstep.redink.util.JsonArrayDeserializer
 import ru.nikstep.redink.util.auth.AuthorizationService
-import ru.nikstep.redink.util.parseAsObject
 import ru.nikstep.redink.util.sendRestRequest
 
 class GithubPullRequestWebhookService(
     private val authorizationService: AuthorizationService,
     private val analysisStatusCheckService: AnalysisStatusCheckService,
-    private val pullRequestRepository: PullRequestRepository
-) : WebhookService {
+    pullRequestRepository: PullRequestRepository
+) : AbstractWebhookService(pullRequestRepository) {
 
     private val logger = KotlinLogging.logger {}
 
-    @Synchronized
-    override fun saveNewPullRequest(payload: String) {
-        payload.parseAsObject().apply {
-            if (hasInstallationId()) {
-                toPullRequest()
-                    .let(pullRequestRepository::save)
-                    .apply(::sendInProgressStatus)
-                    .apply(logger::newPullRequest)
-            }
+    override val jsonToPullRequest: (JsonObject) -> PullRequest = { jsonPayload ->
+        if (jsonPayload.hasInstallationId()) {
+            jsonPayload.toPullRequest().apply(::sendInProgressStatus)
+        } else {
+            throw GitException("Git: no installation id")
         }
     }
 
@@ -66,8 +61,8 @@ class GithubPullRequestWebhookService(
         }
         logger.inProgressStatus(pullRequest)
     }
-}
 
-private fun JsonObject.hasInstallationId(): Boolean {
-    return this["installation"] == null
+    private fun JsonObject.hasInstallationId(): Boolean {
+        return this["installation"] == null
+    }
 }
