@@ -62,6 +62,7 @@ open class AnalysisScheduler(
             }
         }
 
+        @Suppress("UNUSED_PARAMETER")
         private fun sendStatusCheck(analysisResult: AnalysisResult) {
             if (pullRequest.gitService == GITHUB) {
                 analysisStatusCheckService.send(

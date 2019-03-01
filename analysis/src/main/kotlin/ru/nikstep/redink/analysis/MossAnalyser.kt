@@ -19,7 +19,7 @@ class MossAnalyser(
             client.language = language.ofMoss()
 
             if (solutions.isEmpty()) {
-                throw AnalysisException("Analysis: No solutions for file ${base.canonicalPath}")
+                throw AnalysisException("Analysis: No solutions for file ${base.absolutePath}")
             }
 
             try {
