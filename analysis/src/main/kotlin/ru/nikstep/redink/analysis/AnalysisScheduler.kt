@@ -57,7 +57,7 @@ open class AnalysisScheduler(
                         .forEach(::sendStatusCheck)
                 }
             } catch (e: Exception) {
-                logger.error { "Analysis: exception at the analysis of the pull request with id = ${pullRequest.id}\n" }
+                logger.exceptionAtAnalysisOf(pullRequest)
                 throw e
             }
         }
