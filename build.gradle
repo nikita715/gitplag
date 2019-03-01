@@ -39,10 +39,11 @@ subprojects {
             exclude group: 'org.jetbrains.kotlin'
             exclude group: 'org.mockito'
         }
-        
+
         testCompile 'junit:junit:4.12'
         testCompile 'org.jetbrains.kotlin:kotlin-test'
         testCompile 'org.jetbrains.kotlin:kotlin-test-junit'
+        testCompile "io.kotlintest:kotlintest:2.0.7"
         testCompile 'org.springframework.boot:spring-boot-starter-test'
         testCompile 'org.springframework.security:spring-security-test'
     }
