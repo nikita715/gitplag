@@ -2,7 +2,7 @@ package ru.nikstep.redink.analysis
 
 import mu.KotlinLogging
 import org.jsoup.Jsoup
-import ru.nikstep.redink.analysis.solutions.SolutionStorageService
+import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.asPath
@@ -13,7 +13,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit.MINUTES
 import kotlin.math.roundToInt
 
-class JPlagAnalysisService(private val solutionStorageService: SolutionStorageService) : AnalysisService {
+class JPlagAnalysisService(private val solutionStorage: SolutionStorage) : AnalysisService {
 
     private val logger = KotlinLogging.logger {}
 
@@ -23,7 +23,7 @@ class JPlagAnalysisService(private val solutionStorageService: SolutionStorageSe
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
     override fun analyse(pullRequest: PullRequest): Collection<AnalysisResult> =
-        solutionStorageService.loadAllBasesAndSolutions(pullRequest)
+        solutionStorage.loadAllBasesAndSolutions(pullRequest)
             .flatMap { analysisFiles ->
                 inTempDirectory { resultDir ->
                     executeJPlag(analysisFiles, resultDir)

@@ -1,8 +1,8 @@
 package ru.nikstep.redink.github
 
+import com.beust.klaxon.JsonArray
+import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
-import org.springframework.boot.configurationprocessor.json.JSONArray
-import org.springframework.boot.configurationprocessor.json.JSONObject
 import ru.nikstep.redink.checks.AnalysisResultData
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.checks.GithubAnalysisStatus
@@ -10,8 +10,9 @@ import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.Git.GITHUB
 import ru.nikstep.redink.util.JsonArrayDeserializer
-import ru.nikstep.redink.util.RequestUtil.Companion.sendRestRequest
 import ru.nikstep.redink.util.auth.AuthorizationService
+import ru.nikstep.redink.util.parseAsObject
+import ru.nikstep.redink.util.sendRestRequest
 
 class GithubPullRequestWebhookService(
     private val authorizationService: AuthorizationService,
@@ -23,60 +24,51 @@ class GithubPullRequestWebhookService(
 
     @Synchronized
     override fun saveNewPullRequest(payload: String) {
-        val jsonPayload = JSONObject(payload)
-        if (jsonPayload.hasInstallationId()) {
-            val pullRequest = fillPullRequestData(jsonPayload)
-            logger.info {
-                "Webhook: PullRequest: new from repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}," +
-                        " branch ${pullRequest.branchName}, url https://github.com/${pullRequest.repoFullName}/pull/${pullRequest.number}"
+        payload.parseAsObject().apply {
+            if (hasInstallationId()) {
+                toPullRequest()
+                    .let(pullRequestRepository::save)
+                    .apply(::sendInProgressStatus)
+                    .apply(logger::newPullRequest)
             }
-            pullRequestRepository.save(pullRequest)
-            sendInProgressStatus(pullRequest)
         }
     }
 
-    private fun fillPullRequestData(jsonPayload: JSONObject): PullRequest {
+    private fun JsonObject.toPullRequest(): PullRequest {
 
-        val pullRequest = jsonPayload.getJSONObject("pull_request")
+        val pullRequest = this.obj("pull_request")!!
 
-        val installationId = jsonPayload.getJSONObject("installation").getInt("id")
-        val repoFullName = jsonPayload.getJSONObject("repository").getString("full_name")
-        val prNumber = jsonPayload.getInt("number")
+        val installationId = this.obj("installation")!!.int("id")!!
+        val repoFullName = this.obj("repository")!!.string("full_name")!!
+        val prNumber = this.int("number")!!
 
         val changeList = (sendRestRequest(
             url = "https://api.github.com/repos/$repoFullName/pulls/$prNumber/files",
             accessToken = authorizationService.getAuthorizationToken(installationId),
             deserializer = JsonArrayDeserializer()
-        ) as JSONArray)
-
-        val changedFilesList = (0 until changeList.length()).map { index ->
-            (changeList.get(index) as JSONObject).getString("filename")
-        }
+        ) as JsonArray<*>)
 
         return PullRequest(
             gitService = GITHUB,
-            number = jsonPayload.getInt("number"),
+            number = this.int("number")!!,
             installationId = installationId,
-            creatorName = pullRequest.getJSONObject("user").getString("login"),
+            creatorName = pullRequest.obj("user")!!.string("login")!!,
             repoId = -1,
             repoFullName = repoFullName,
-            headSha = pullRequest.getJSONObject("head").getString("sha"),
-            branchName = pullRequest.getJSONObject("head").getString("ref"),
-            changedFiles = changedFilesList
+            headSha = pullRequest.obj("head")!!.string("sha")!!,
+            branchName = pullRequest.obj("head")!!.string("ref")!!,
+            changedFiles = changeList.map { (it as JsonObject).string("filename")!! }
         )
     }
 
     private fun sendInProgressStatus(pullRequest: PullRequest) {
-        val analysisResultData =
-            AnalysisResultData(status = GithubAnalysisStatus.IN_PROGRESS.value)
-        analysisStatusCheckService.send(pullRequest, analysisResultData)
-        logger.info {
-            "Webhook: PullRequest: sent in progress status to repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}," +
-                    " branch ${pullRequest.branchName}, url https://github.com/${pullRequest.repoFullName}/pull/${pullRequest.number}"
+        AnalysisResultData(status = GithubAnalysisStatus.IN_PROGRESS.value).also {
+            analysisStatusCheckService.send(pullRequest, it)
         }
+        logger.inProgressStatus(pullRequest)
     }
 }
 
-private fun JSONObject.hasInstallationId(): Boolean {
-    return !this.isNull("installation")
+private fun JsonObject.hasInstallationId(): Boolean {
+    return this["installation"] == null
 }

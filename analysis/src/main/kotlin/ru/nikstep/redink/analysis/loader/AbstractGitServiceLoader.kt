@@ -2,15 +2,15 @@ package ru.nikstep.redink.analysis.loader
 
 import mu.KotlinLogging
 import ru.nikstep.redink.analysis.AnalysisException
-import ru.nikstep.redink.analysis.solutions.SolutionStorageService
+import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.util.RequestUtil.Companion.sendRestRequest
 import ru.nikstep.redink.util.StringDeserializer
+import ru.nikstep.redink.util.sendRestRequest
 import java.io.File
 
 abstract class AbstractGitServiceLoader(
-    private val solutionStorageService: SolutionStorageService,
+    private val solutionStorage: SolutionStorage,
     private val repositoryRepository: RepositoryRepository
 ) : GitServiceLoader {
 
@@ -32,7 +32,7 @@ abstract class AbstractGitServiceLoader(
             if (fileText.isBlank())
                 throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")
 
-            solutionStorageService.saveSolution(pullRequest, fileName, fileText)
+            solutionStorage.saveSolution(pullRequest, fileName, fileText)
 
             logger.info {
                 "Analysis: loaded file ${pullRequest.repoFullName}/$fileName" +
@@ -44,7 +44,7 @@ abstract class AbstractGitServiceLoader(
     abstract fun getFileQuery(repoName: String, branchName: String, fileName: String): String
 
     private fun checkBaseExists(data: PullRequest, fileName: String) {
-        val base = solutionStorageService.loadBase(data.repoFullName, fileName)
+        val base = solutionStorage.loadBase(data.repoFullName, fileName)
         if (base.notExists()) saveBase(data, fileName)
     }
 
@@ -57,7 +57,7 @@ abstract class AbstractGitServiceLoader(
         if (fileText.isBlank())
             throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")
 
-        solutionStorageService.saveBase(pullRequest, fileName, fileText)
+        solutionStorage.saveBase(pullRequest, fileName, fileText)
 
         logger.info { "Analysis: loaded base file ${pullRequest.repoFullName}/$fileName" }
     }

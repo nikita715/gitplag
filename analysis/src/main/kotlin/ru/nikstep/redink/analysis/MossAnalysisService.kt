@@ -2,19 +2,19 @@ package ru.nikstep.redink.analysis
 
 import mu.KotlinLogging
 import org.jsoup.Jsoup
-import ru.nikstep.redink.analysis.solutions.SolutionStorageService
+import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest
 
 class MossAnalysisService(
-    private val solutionStorageService: SolutionStorageService,
+    private val solutionStorage: SolutionStorage,
     private val mossId: String
 ) : AnalysisService {
 
     private val logger = KotlinLogging.logger {}
 
     override fun analyse(pullRequest: PullRequest): Collection<AnalysisResult> {
-        return solutionStorageService.loadAllBasesAndSolutions(pullRequest).flatMap { analysisFiles ->
+        return solutionStorage.loadAllBasesAndSolutions(pullRequest).flatMap { analysisFiles ->
             val resultLink = MossClient(mossId, analysisFiles).analyse()
 
             logger.info {

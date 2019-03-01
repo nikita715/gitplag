@@ -1,11 +1,13 @@
 package ru.nikstep.redink.github
 
+import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
-import org.springframework.boot.configurationprocessor.json.JSONObject
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.User
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.UserRepository
+import ru.nikstep.redink.util.Language.TEXT
+import ru.nikstep.redink.util.parseAsObject
 
 class GithubIntegrationService(
     private val userRepository: UserRepository,
@@ -15,48 +17,44 @@ class GithubIntegrationService(
     private val logger = KotlinLogging.logger {}
 
     override fun createNewUser(payload: String) {
-        val jsonPayload = JSONObject(payload)
+        val jsonPayload = payload.parseAsObject()
 
         if (actionIsCreated(jsonPayload)) {
-            val user = saveNewUser(jsonPayload)
-            saveRepositoriesOfTheUser(jsonPayload, user)
-            logger.info { "Webhook: Integration: registered new user ${user.name}, github id ${user.githubId}" }
+            saveNewUser(jsonPayload).also {
+                saveRepositoriesOfTheUser(jsonPayload, it)
+            }.also(logger::newUser)
         }
     }
 
     private fun saveRepositoriesOfTheUser(
-        jsonPayload: JSONObject,
+        jsonPayload: JsonObject,
         user: User
     ) {
-        val repositories = jsonPayload.getJSONArray("repositories")
-
-        for (i in 0 until repositories.length()) {
-            val jsonRepository = repositories.getJSONObject(i)
-            repositoryRepository.save(
-                Repository(
-                    owner = user,
-                    name = jsonRepository.getString("full_name"),
-                    repoGithubId = jsonRepository.getLong("id")
-                )
+        jsonPayload.array<JsonObject>("repositories")!!.map { repo ->
+            Repository(
+                language = TEXT,
+                owner = user,
+                name = repo.string("full_name")!!,
+                repoGithubId = repo.long("id")!!
             )
-        }
+        }.let { repositoryRepository.saveAll(it) }
     }
 
-    private fun saveNewUser(jsonPayload: JSONObject): User {
-        val installation = jsonPayload.getJSONObject("installation")
-        val account = installation.getJSONObject("account")
+    private fun saveNewUser(jsonPayload: JsonObject): User {
+        val installation = jsonPayload.obj("installation")!!
+        val account = installation.obj("account")!!
 
         val user = User(
-            name = account.getString("login"),
-            githubId = account.getLong("id"),
-            installationId = installation.getLong("id")
+            name = account.string("login")!!,
+            githubId = account.long("id")!!,
+            installationId = installation.long("id")!!
         )
 
         userRepository.save(user)
         return user
     }
 
-    private fun actionIsCreated(jsonPayload: JSONObject) =
-        jsonPayload.getString("action") == "created"
+    private fun actionIsCreated(jsonPayload: JsonObject) =
+        jsonPayload["action"] == "created"
 
 }

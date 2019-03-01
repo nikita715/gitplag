@@ -3,9 +3,9 @@ package ru.nikstep.redink.checks
 import com.google.gson.Gson
 import mu.KotlinLogging
 import ru.nikstep.redink.model.entity.PullRequest
-import ru.nikstep.redink.util.RequestUtil.Companion.sendStatusCheckRequest
 import ru.nikstep.redink.util.asIsoString
 import ru.nikstep.redink.util.auth.AuthorizationService
+import ru.nikstep.redink.util.sendGithubStatusCheckRequest
 import java.util.*
 
 class GithubAnalysisStatusCheckService(private val authorizationService: AuthorizationService) :
@@ -15,7 +15,7 @@ class GithubAnalysisStatusCheckService(private val authorizationService: Authori
     override fun send(pullRequest: PullRequest, analysisData: AnalysisResultData) {
         val accessToken = authorizationService.getAuthorizationToken(pullRequest.installationId)
         val body = createBody(pullRequest, analysisData)
-        sendStatusCheckRequest(pullRequest.repoFullName, accessToken, body)
+        sendGithubStatusCheckRequest(pullRequest.repoFullName, accessToken, body)
         logger.info { "AnalysisResult: sent for ${pullRequest.repoFullName}, creator ${pullRequest.creatorName}" }
     }
 
