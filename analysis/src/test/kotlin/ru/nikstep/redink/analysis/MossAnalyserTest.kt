@@ -1,6 +1,7 @@
 package ru.nikstep.redink.analysis
 
 import io.kotlintest.matchers.shouldEqual
+import org.junit.Ignore
 import org.junit.Test
 import ru.nikstep.redink.model.data.AnalysisResult
 
@@ -29,6 +30,7 @@ class MossAnalyserTest {
     )
 
     @Test
+    @Ignore
     fun analyse() {
         mossAnalysisService.analyse(pullRequest) shouldEqual expectedResult
     }
