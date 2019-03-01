@@ -11,17 +11,17 @@ import ru.nikstep.redink.checks.GithubAnalysisStatus
 import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
-import ru.nikstep.redink.util.Analyser
-import ru.nikstep.redink.util.Git
-import ru.nikstep.redink.util.Git.GITHUB
+import ru.nikstep.redink.util.AnalyserProperty
+import ru.nikstep.redink.util.GitProperty
+import ru.nikstep.redink.util.GitProperty.GITHUB
 
 open class AnalysisScheduler(
     private val pullRequestRepository: PullRequestRepository,
     private val analysisResultRepository: AnalysisResultRepository,
     private val analysisStatusCheckService: AnalysisStatusCheckService,
     private val taskExecutor: TaskExecutor,
-    private val gitServiceLoaders: Map<Git, GitServiceLoader>,
-    private val analysers: Map<Analyser, AnalysisService>
+    private val gitServiceLoaders: Map<GitProperty, GitServiceLoader>,
+    private val analysers: Map<AnalyserProperty, Analyser>
 ) {
 
     private val logger = KotlinLogging.logger {}
@@ -67,7 +67,7 @@ open class AnalysisScheduler(
             val gitServiceLoader = gitServiceLoaders[pullRequest.gitService]
                 ?: throw AnalysisException("Analysis: git service ${pullRequest.gitService} is not supported")
 
-            val analysisService = analysers[Analyser.MOSS]
+            val analysisService = analysers[AnalyserProperty.MOSS]
                 ?: throw AnalysisException("Analysis: analyser is not supported")
 
             try {

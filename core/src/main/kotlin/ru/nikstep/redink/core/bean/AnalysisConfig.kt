@@ -5,10 +5,10 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.core.task.TaskExecutor
+import ru.nikstep.redink.analysis.Analyser
 import ru.nikstep.redink.analysis.AnalysisScheduler
-import ru.nikstep.redink.analysis.AnalysisService
-import ru.nikstep.redink.analysis.JPlagAnalysisService
-import ru.nikstep.redink.analysis.MossAnalysisService
+import ru.nikstep.redink.analysis.JPlagAnalyser
+import ru.nikstep.redink.analysis.MossAnalyser
 import ru.nikstep.redink.analysis.loader.BitbucketServiceLoader
 import ru.nikstep.redink.analysis.loader.GitServiceLoader
 import ru.nikstep.redink.analysis.loader.GithubServiceLoader
@@ -20,11 +20,12 @@ import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SourceCodeRepository
-import ru.nikstep.redink.util.Analyser
-import ru.nikstep.redink.util.Analyser.JPLAG
-import ru.nikstep.redink.util.Analyser.MOSS
-import ru.nikstep.redink.util.Git
-import ru.nikstep.redink.util.Git.*
+import ru.nikstep.redink.util.AnalyserProperty
+import ru.nikstep.redink.util.AnalyserProperty.JPLAG
+import ru.nikstep.redink.util.AnalyserProperty.MOSS
+import ru.nikstep.redink.util.GitProperty
+import ru.nikstep.redink.util.GitProperty.*
+import ru.nikstep.redink.util.asPathInRoot
 import ru.nikstep.redink.util.auth.AuthorizationService
 
 @Configuration
@@ -42,17 +43,17 @@ class AnalysisConfig {
     fun mossAnalysisService(
         solutionStorage: SolutionStorage,
         env: Environment
-    ): MossAnalysisService {
+    ): MossAnalyser {
         val mossId = env.getProperty("MOSS_ID")!!
-        return MossAnalysisService(
+        return MossAnalyser(
             solutionStorage,
             mossId
         )
     }
 
     @Bean
-    fun jplagAnalysisService(solutionStorage: SolutionStorage): JPlagAnalysisService {
-        return JPlagAnalysisService(solutionStorage)
+    fun jplagAnalysisService(solutionStorage: SolutionStorage): JPlagAnalyser {
+        return JPlagAnalyser(solutionStorage, "solutions".asPathInRoot())
     }
 
     @Bean
@@ -61,8 +62,8 @@ class AnalysisConfig {
         analysisResultRepository: AnalysisResultRepository,
         analysisStatusCheckService: AnalysisStatusCheckService,
         @Qualifier("analysisThreadPoolTaskExecutor") taskExecutor: TaskExecutor,
-        gitServiceLoaders: Map<Git, GitServiceLoader>,
-        analysers: Map<Analyser, AnalysisService>
+        gitServiceLoaders: Map<GitProperty, GitServiceLoader>,
+        analysers: Map<AnalyserProperty, Analyser>
     ): AnalysisScheduler {
         return AnalysisScheduler(
             pullRequestRepository,
@@ -104,7 +105,7 @@ class AnalysisConfig {
         githubServiceLoader: GithubServiceLoader,
         bitbucketServiceLoader: BitbucketServiceLoader,
         gitlabServiceLoader: GitlabServiceLoader
-    ): Map<Git, GitServiceLoader> {
+    ): Map<GitProperty, GitServiceLoader> {
         return mapOf(
             GITHUB to githubServiceLoader,
             BITBUCKET to bitbucketServiceLoader,
@@ -114,9 +115,9 @@ class AnalysisConfig {
 
     @Bean
     fun analysers(
-        mossAnalysisService: MossAnalysisService,
-        jPlagAnalysisService: JPlagAnalysisService
-    ): Map<Analyser, AnalysisService> {
+        mossAnalysisService: MossAnalyser,
+        jPlagAnalysisService: JPlagAnalyser
+    ): Map<AnalyserProperty, Analyser> {
         return mapOf(
             MOSS to mossAnalysisService,
             JPLAG to jPlagAnalysisService

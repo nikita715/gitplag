@@ -1,6 +1,6 @@
 package ru.nikstep.redink.model.data
 
-class AnalysisResult(
+data class AnalysisResult(
     val students: Pair<String, String>,
     val countOfLines: Int,
     val percentage: Int,

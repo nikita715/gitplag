@@ -13,12 +13,12 @@ import java.io.File
 import java.util.concurrent.TimeUnit.MINUTES
 import kotlin.math.roundToInt
 
-class JPlagAnalysisService(private val solutionStorage: SolutionStorage) : AnalysisService {
+class JPlagAnalyser(private val solutionStorage: SolutionStorage, private val solutionsPath: String) :
+    Analyser {
 
     private val logger = KotlinLogging.logger {}
 
     private val jplagPath = asPath("libs".asPathInRoot(), "jplag.jar")
-    private val solutionsPath = "solutions".asPathInRoot()
     private val regexUserNames = "^Matches for (.+) & (.+)$".toRegex()
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
@@ -29,10 +29,11 @@ class JPlagAnalysisService(private val solutionStorage: SolutionStorage) : Analy
                     executeJPlag(analysisFiles, resultDir)
                     rangeOfMatchIndexes(analysisFiles).map { index ->
                         index.let(toAnalysisResults(analysisFiles, resultDir))
+                    }.filter {
+                        it.students.first == pullRequest.creatorName || it.students.second == pullRequest.creatorName
                     }
                 }
             }
-
 
     private fun executeJPlag(analysisFiles: PreparedAnalysisFiles, resultDir: String) =
         buildString {
@@ -44,6 +45,7 @@ class JPlagAnalysisService(private val solutionStorage: SolutionStorage) : Analy
             append("-s ")
             append(asPath(solutionsPath, analysisFiles.repoName))
         }.also {
+            logger.info { "Analysis: start execution of $it" }
             Runtime.getRuntime().exec(it).waitFor(5, MINUTES)
         }
 

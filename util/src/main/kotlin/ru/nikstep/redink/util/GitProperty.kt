@@ -1,6 +1,6 @@
 package ru.nikstep.redink.util
 
-enum class Git {
+enum class GitProperty {
     GITHUB,
     BITBUCKET,
     GITLAB
