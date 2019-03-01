@@ -10,7 +10,7 @@ import mu.KotlinLogging
 
 private const val authorization = "Authorization"
 private const val accept = "Accept"
-private const val githubGraphql = "https://api.github.com/graphql"
+private const val githubGraphqlApi = "https://api.github.com/graphql"
 private const val githubAcceptMachineManPreview = "application/vnd.github.machine-man-preview+json"
 private const val githubAcceptAntiopePreview = "application/vnd.github.antiope-preview+json"
 
@@ -23,7 +23,7 @@ fun sendGithubAccessTokenRequest(installationId: Int, token: String): JsonObject
             authorization to token,
             accept to githubAcceptMachineManPreview
         )
-        .send(JsonObjectDeserializer())
+        .send(JsonObjectDeserializer)
 
 fun sendGithubStatusCheckRequest(repo: String, accessToken: String, body: String) =
     "https://api.github.com/repos/$repo/check-runs"
@@ -33,27 +33,27 @@ fun sendGithubStatusCheckRequest(repo: String, accessToken: String, body: String
             accept to githubAcceptAntiopePreview
         )
         .body(body)
-        .send(JsonObjectDeserializer())
+        .send(JsonObjectDeserializer)
 
 fun sendGithubGraphqlRequest(
     body: String,
     accessToken: String,
-    deserializer: JsonObjectDeserializer = JsonObjectDeserializer(),
+    deserializer: JsonObjectDeserializer = JsonObjectDeserializer,
     method: Method = Method.GET
 ): JsonObject =
-    githubGraphql
+    githubGraphqlApi
         .toRequest(method)
         .header(authorization to accessToken)
         .body(body)
         .send(deserializer)
 
-fun sendRestRequest(
+fun <T : Any> sendRestRequest(
     url: String,
     body: String = "",
     accessToken: String = "",
-    deserializer: ResponseDeserializable<Any> = JsonObjectDeserializer(),
+    deserializer: ResponseDeserializable<T>,
     method: Method = Method.GET
-): Any =
+): T =
     url.toRequest(method)
         .header(authorization to accessToken)
         .body(body).send(deserializer)
@@ -68,5 +68,4 @@ private fun String.toRequest(method: Method): Request {
         Method.POST -> this.httpPost()
         else -> this.httpGet()
     }
-
 }

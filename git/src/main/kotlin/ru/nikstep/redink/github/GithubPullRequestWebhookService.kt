@@ -1,6 +1,5 @@
 package ru.nikstep.redink.github
 
-import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
 import ru.nikstep.redink.checks.AnalysisResultData
@@ -8,7 +7,7 @@ import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.checks.GithubAnalysisStatus
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
-import ru.nikstep.redink.util.Git.GITHUB
+import ru.nikstep.redink.util.GitProperty.GITHUB
 import ru.nikstep.redink.util.JsonArrayDeserializer
 import ru.nikstep.redink.util.auth.AuthorizationService
 import ru.nikstep.redink.util.parseAsObject
@@ -42,11 +41,11 @@ class GithubPullRequestWebhookService(
         val repoFullName = this.obj("repository")!!.string("full_name")!!
         val prNumber = this.int("number")!!
 
-        val changeList = (sendRestRequest(
+        val changeList = sendRestRequest(
             url = "https://api.github.com/repos/$repoFullName/pulls/$prNumber/files",
             accessToken = authorizationService.getAuthorizationToken(installationId),
-            deserializer = JsonArrayDeserializer()
-        ) as JsonArray<*>)
+            deserializer = JsonArrayDeserializer
+        )
 
         return PullRequest(
             gitService = GITHUB,
