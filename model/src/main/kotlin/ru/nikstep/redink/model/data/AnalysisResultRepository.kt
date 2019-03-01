@@ -12,15 +12,15 @@ open class AnalysisResultRepository(
 ) {
 
     @Synchronized
-    fun save(analysisResults: Collection<AnalysisResult>) {
+    fun saveAll(analysisResults: Collection<AnalysisResult>) {
         for (analysisResult in analysisResults) {
-            save(analysisResult)
+            saveAll(analysisResult)
         }
     }
 
     @Transactional
     @Synchronized
-    open fun save(analysisResult: AnalysisResult) {
+    open fun saveAll(analysisResult: AnalysisResult) {
         deleteExistingAnalysisResult(analysisResult)
         val analysisPair = saveAnalysisResult(analysisResult)
         saveMatchedLines(analysisResult, analysisPair)

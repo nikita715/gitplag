@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit.MINUTES
 import kotlin.math.roundToInt
 
 class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath: String) :
-    AbstractAnalyser(solutionStorage, solutionsPath) {
+    AbstractAnalyser(solutionStorage) {
 
     private val logger = KotlinLogging.logger {}
     private val jplagPath = asPath("libs".asPathInRoot(), "jplag.jar")
