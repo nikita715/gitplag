@@ -4,7 +4,6 @@ import mu.KLogger
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.User
 
-
 internal fun KLogger.inProgressStatus(pullRequest: PullRequest) {
     this.info {
         pullRequest.run {
