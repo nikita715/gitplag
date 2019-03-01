@@ -18,7 +18,7 @@ open class GithubAuthorizationService : AuthorizationService {
     }
 
     private fun getToken(): String {
-        val file = ResourceUtils.getFile("classpath:keygen.rb")
+        val file = ResourceUtils.getFile("classpath*:keygen.rb")
         val process = Runtime.getRuntime().exec("ruby $file")
         process.waitFor()
         val generatedKey = process.inputStream.bufferedReader().readText()
