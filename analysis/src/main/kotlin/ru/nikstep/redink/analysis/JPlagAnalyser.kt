@@ -40,9 +40,10 @@ class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath:
             append("-p ${analysisFiles.fileName.onlyLastName()} ")
             append("-s ")
             append(asPath(solutionsPath, analysisFiles.repoName))
-        }.also {
-            logger.info { "Analysis: start execution of $it" }
-            Runtime.getRuntime().exec(it).waitFor(5, MINUTES)
+        }.also { task ->
+            logger.logJPlag(task) {
+                Runtime.getRuntime().exec(task).waitFor(5, MINUTES)
+            }
         }
 
 

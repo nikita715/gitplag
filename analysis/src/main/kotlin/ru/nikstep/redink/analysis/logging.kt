@@ -18,3 +18,9 @@ internal fun KLogger.loggedAnalysis(pullRequest: PullRequest, action: () -> Unit
 internal fun KLogger.exceptionAtAnalysisOf(pullRequest: PullRequest) {
     error { "Analysis: exception at the analysis of the pull request with id = ${pullRequest.id}\n" }
 }
+
+internal fun KLogger.logJPlag(task: String, action: () -> Unit) {
+    info { "Analysis: start execution of $task" }
+    action()
+    info { "Analysis: JPlag executed successfully" }
+}
