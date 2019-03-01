@@ -1,54 +1,45 @@
 package ru.nikstep.redink.github
 
+import com.beust.klaxon.JsonArray
+import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
-import org.springframework.boot.configurationprocessor.json.JSONArray
-import org.springframework.boot.configurationprocessor.json.JSONObject
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.Git.BITBUCKET
 import ru.nikstep.redink.util.JsonArrayDeserializer
-import ru.nikstep.redink.util.RequestUtil.Companion.sendRestRequest
+import ru.nikstep.redink.util.parseAsObject
+import ru.nikstep.redink.util.sendRestRequest
 
 class BitbucketPullRequestWebhookService(private val pullRequestRepository: PullRequestRepository) : WebhookService {
 
     private val logger = KotlinLogging.logger {}
 
     override fun saveNewPullRequest(payload: String) {
-        //https://api.bitbucket.org/1.0/repositories/nikita715/plagiarism_test2/changesets/e56f83a49b7692ba482cf1556661dcaf2b7b9140/diffstat
+        payload.parseAsObject().let { jsonPayload ->
 
-        val jsonPayload = JSONObject(payload)
+            val pullRequestJson = jsonPayload.obj("pullrequest")!!
 
-        val pullRequestJson = jsonPayload.getJSONObject("pullrequest")
+            val headSha = pullRequestJson.obj("source")!!.obj("commit")!!.string("hash")!!
+            val repoFullName = pullRequestJson.obj("destination")!!.obj("repository")!!.string("full_name")!!
 
-        val headSha = pullRequestJson.getJSONObject("source").getJSONObject("commit").getString("hash")
-        val repoFullName =
-            pullRequestJson.getJSONObject("destination").getJSONObject("repository").getString("full_name")
+            val jsonChangedFiles = sendRestRequest(
+                url = "https://api.bitbucket.org/1.0/repositories/$repoFullName/changesets/$headSha/diffstat",
+                deserializer = JsonArrayDeserializer()
+            ) as JsonArray<*>
 
-        val jsonChangedFiles = (sendRestRequest(
-            url = "https://api.bitbucket.org/1.0/repositories/$repoFullName/changesets/$headSha/diffstat",
-            deserializer = JsonArrayDeserializer()
-        ) as JSONArray)
-
-        val changedFiles =
-            (0 until jsonChangedFiles.length()).map { (jsonChangedFiles.get(it) as JSONObject).getString("file") }
-
-        val pullRequest = PullRequest(
-            gitService = BITBUCKET,
-            repoId = -1,
-            number = pullRequestJson.getInt("id"),
-            repoFullName = repoFullName,
-            creatorName = pullRequestJson.getJSONObject("author").getString("username"),
-            headSha = headSha,
-            branchName = pullRequestJson.getJSONObject("source").getJSONObject("branch").getString("name"),
-            changedFiles = changedFiles
-        )
-
-        logger.info {
-            "Webhook: PullRequest: new from repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}," +
-                    " branch ${pullRequest.branchName}, url https://github.com/${pullRequest.repoFullName}/pull/${pullRequest.number}"
-        }
-
-        pullRequestRepository.save(pullRequest)
+            PullRequest(
+                gitService = BITBUCKET,
+                repoId = -1,
+                number = pullRequestJson.int("id")!!,
+                repoFullName = repoFullName,
+                creatorName = pullRequestJson.obj("author")!!.string("username")!!,
+                headSha = headSha,
+                branchName = pullRequestJson.obj("source")!!.obj("branch")!!.string("name")!!,
+                changedFiles = jsonChangedFiles.map { (it as JsonObject).string("file")!! }
+            )
+        }.let(pullRequestRepository::save)
+            .apply(logger::newPullRequest)
     }
 
 }
+

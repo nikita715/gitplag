@@ -1,17 +1,17 @@
 package ru.nikstep.redink.analysis.loader
 
+import com.github.kittinunf.fuel.core.Method
 import mu.KotlinLogging
-import org.springframework.http.HttpMethod
 import ru.nikstep.redink.analysis.AnalysisException
-import ru.nikstep.redink.analysis.solutions.SolutionStorageService
+import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.util.RequestUtil.Companion.sendGraphqlRequest
 import ru.nikstep.redink.util.auth.AuthorizationService
+import ru.nikstep.redink.util.sendGithubGraphqlRequest
 import java.io.File
 
 class GithubServiceLoader(
-    private val solutionStorageService: SolutionStorageService,
+    private val solutionStorage: SolutionStorage,
     private val repositoryRepository: RepositoryRepository,
     private val authorizationService: AuthorizationService
 ) : GitServiceLoader {
@@ -30,8 +30,8 @@ class GithubServiceLoader(
             checkBaseExists(pullRequest, fileName)
 
             val args = pullRequest.repoFullName.split("/").toTypedArray()
-            val fileResponse = sendGraphqlRequest(
-                httpMethod = HttpMethod.POST,
+            val fileResponse = sendGithubGraphqlRequest(
+                method = Method.POST,
                 body = String.format(
                     rawGithubFileQuery,
                     *args,
@@ -41,14 +41,14 @@ class GithubServiceLoader(
                 accessToken = authorizationService.getAuthorizationToken(pullRequest.installationId)
             )
 
-            val resultObject = fileResponse.getJSONObject("data").getJSONObject("repository")
+            val resultObject = fileResponse.obj("data")!!.obj("repository")!!
 
-            if (resultObject.isNull("object"))
+            if (resultObject["object"] == null)
                 throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")
 
-            solutionStorageService.saveSolution(
+            solutionStorage.saveSolution(
                 pullRequest, fileName,
-                resultObject.getJSONObject("object").getString("text")
+                resultObject.obj("object")!!.string("text")!!
             )
         }
     }
@@ -60,13 +60,13 @@ class GithubServiceLoader(
     }
 
     private fun checkBaseExists(data: PullRequest, fileName: String) {
-        val base = solutionStorageService.loadBase(data.repoFullName, fileName)
+        val base = solutionStorage.loadBase(data.repoFullName, fileName)
         if (base.notExists()) saveBase(data, fileName)
     }
 
     private fun saveBase(pullRequest: PullRequest, fileName: String) {
-        val fileResponse = sendGraphqlRequest(
-            httpMethod = HttpMethod.POST,
+        val fileResponse = sendGithubGraphqlRequest(
+            method = Method.POST,
             body = String.format(
                 rawGithubFileQuery,
                 *(pullRequest.repoFullName.split("/").toTypedArray()),
@@ -77,14 +77,14 @@ class GithubServiceLoader(
         )
 
 
-        val resultObject = fileResponse.getJSONObject("data").getJSONObject("repository")
+        val resultObject = fileResponse.obj("data")!!.obj("repository")!!
 
-        if (resultObject.isNull("object"))
+        if (resultObject["object"] == null)
             throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")
 
-        val fileText = resultObject.getJSONObject("object").getString("text")
+        val fileText = resultObject.obj("object")!!.string("text")!!
 
-        solutionStorageService.saveBase(pullRequest, fileName, fileText)
+        solutionStorage.saveBase(pullRequest, fileName, fileText)
     }
 }
 

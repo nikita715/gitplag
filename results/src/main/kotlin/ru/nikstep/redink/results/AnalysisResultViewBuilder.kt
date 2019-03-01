@@ -2,19 +2,19 @@ package ru.nikstep.redink.results
 
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
-import ru.nikstep.redink.analysis.solutions.SolutionStorageService
+import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
 
 class AnalysisResultViewBuilder(
     private val analysisPairRepository: AnalysisPairRepository,
-    private val solutionStorageService: SolutionStorageService
+    private val solutionStorage: SolutionStorage
 ) {
     fun build(id: Long): String {
         val analysisPair = analysisPairRepository.findById(id).get()
         return createHTML().html {
             body {
-                val solution1 = solutionStorageService.loadSolution1(analysisPair).readLines()
-                val solution2 = solutionStorageService.loadSolution2(analysisPair).readLines()
+                val solution1 = solutionStorage.loadSolution1(analysisPair).readLines()
+                val solution2 = solutionStorage.loadSolution2(analysisPair).readLines()
                 table {
                     tr {
                         td {

@@ -13,8 +13,8 @@ import ru.nikstep.redink.analysis.loader.BitbucketServiceLoader
 import ru.nikstep.redink.analysis.loader.GitServiceLoader
 import ru.nikstep.redink.analysis.loader.GithubServiceLoader
 import ru.nikstep.redink.analysis.loader.GitlabServiceLoader
-import ru.nikstep.redink.analysis.solutions.FileSystemSolutionStorageService
-import ru.nikstep.redink.analysis.solutions.SolutionStorageService
+import ru.nikstep.redink.analysis.solutions.FileSystemSolutionStorage
+import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.PullRequestRepository
@@ -34,25 +34,25 @@ class AnalysisConfig {
     fun solutionStorageService(
         sourceCodeRepository: SourceCodeRepository,
         repositoryRepository: RepositoryRepository
-    ): SolutionStorageService {
-        return FileSystemSolutionStorageService(sourceCodeRepository, repositoryRepository)
+    ): SolutionStorage {
+        return FileSystemSolutionStorage(sourceCodeRepository, repositoryRepository)
     }
 
     @Bean
     fun mossAnalysisService(
-        solutionStorageService: SolutionStorageService,
+        solutionStorage: SolutionStorage,
         env: Environment
     ): MossAnalysisService {
         val mossId = env.getProperty("MOSS_ID")!!
         return MossAnalysisService(
-            solutionStorageService,
+            solutionStorage,
             mossId
         )
     }
 
     @Bean
-    fun jplagAnalysisService(solutionStorageService: SolutionStorageService): JPlagAnalysisService {
-        return JPlagAnalysisService(solutionStorageService)
+    fun jplagAnalysisService(solutionStorage: SolutionStorage): JPlagAnalysisService {
+        return JPlagAnalysisService(solutionStorage)
     }
 
     @Bean
@@ -76,27 +76,27 @@ class AnalysisConfig {
 
     @Bean
     fun githubServiceLoader(
-        solutionStorageService: SolutionStorageService,
+        solutionStorage: SolutionStorage,
         repositoryRepository: RepositoryRepository,
         authorizationService: AuthorizationService
     ): GithubServiceLoader {
-        return GithubServiceLoader(solutionStorageService, repositoryRepository, authorizationService)
+        return GithubServiceLoader(solutionStorage, repositoryRepository, authorizationService)
     }
 
     @Bean
     fun bitbucketServiceLoader(
-        solutionStorageService: SolutionStorageService,
+        solutionStorage: SolutionStorage,
         repositoryRepository: RepositoryRepository
     ): BitbucketServiceLoader {
-        return BitbucketServiceLoader(solutionStorageService, repositoryRepository)
+        return BitbucketServiceLoader(solutionStorage, repositoryRepository)
     }
 
     @Bean
     fun gitlabServiceLoader(
-        solutionStorageService: SolutionStorageService,
+        solutionStorage: SolutionStorage,
         repositoryRepository: RepositoryRepository
     ): GitlabServiceLoader {
-        return GitlabServiceLoader(solutionStorageService, repositoryRepository)
+        return GitlabServiceLoader(solutionStorage, repositoryRepository)
     }
 
     @Bean

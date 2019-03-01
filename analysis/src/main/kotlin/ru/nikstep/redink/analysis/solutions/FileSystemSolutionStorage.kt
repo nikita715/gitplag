@@ -7,15 +7,16 @@ import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.SourceCode
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SourceCodeRepository
+import ru.nikstep.redink.util.asPath
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Paths
 
-class FileSystemSolutionStorageService(
+class FileSystemSolutionStorage(
     private val sourceCodeRepository: SourceCodeRepository,
     private val repositoryRepository: RepositoryRepository
-) : SolutionStorageService {
+) : SolutionStorage {
     private val logger = KotlinLogging.logger {}
     private val solutionsDir = "solutions"
     private val baseDir = ".base"
@@ -126,9 +127,9 @@ class FileSystemSolutionStorageService(
         val pathBeforeFileName: String = pathElements.dropLast(1).joinToString(separator = "/")
         val path =
             if (isBase)
-                "solutions/$repoFullName/.base/$pathBeforeFileName"
+                asPath(solutionsDir, repoFullName, baseDir, pathBeforeFileName)
             else
-                "solutions/$repoFullName/$creator/$pathBeforeFileName"
+                asPath(solutionsDir, repoFullName, creator, pathBeforeFileName)
         return path to pathElements.last()
     }
 
