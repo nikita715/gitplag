@@ -7,6 +7,7 @@ import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.checks.GithubAnalysisStatus
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
+import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.GITHUB
 import ru.nikstep.redink.util.JsonArrayDeserializer
 import ru.nikstep.redink.util.auth.AuthorizationService
@@ -20,46 +21,50 @@ class GithubPullRequestWebhookService(
 
     private val logger = KotlinLogging.logger {}
 
-    override val jsonToPullRequest: (JsonObject) -> PullRequest = { jsonPayload ->
-        if (jsonPayload.hasInstallationId()) {
-            jsonPayload.toPullRequest().apply(::sendInProgressStatus)
-        } else {
-            throw GitException("Git: no installation id")
-        }
-    }
+    override val JsonObject.gitService: GitProperty
+        get() = GITHUB
 
-    private fun JsonObject.toPullRequest(): PullRequest {
+    override val JsonObject.repoId: Long
+        get() = -1
 
-        val pullRequest = this.obj("pull_request")!!
+    override val JsonObject.number: Int
+        get() = int("number")!!
 
-        val installationId = this.obj("installation")!!.int("id")!!
-        val repoFullName = this.obj("repository")!!.string("full_name")!!
-        val prNumber = this.int("number")!!
+    override val JsonObject.repoFullName: String
+        get() = obj("repository")!!.string("full_name")!!
 
-        val changeList = sendRestRequest(
-            url = "https://api.github.com/repos/$repoFullName/pulls/$prNumber/files",
+    override val JsonObject.creatorName: String
+        get() = obj("pull_request")!!.obj("user")!!.string("login")!!
+
+    override val JsonObject.headSha: String
+        get() = obj("pull_request")!!.obj("head")!!.string("sha")!!
+
+    override val JsonObject.branchName: String
+        get() = obj("pull_request")!!.obj("head")!!.string("ref")!!
+
+    override val JsonObject.installationId: Int
+        get() = obj("installation")!!.int("id")!!
+
+    override val JsonObject.changedFiles: List<String>
+        get() = sendRestRequest(
+            url = "https://api.github.com/repos/$repoFullName/pulls/$number/files",
             accessToken = authorizationService.getAuthorizationToken(installationId),
             deserializer = JsonArrayDeserializer
-        )
+        ).map { (it as JsonObject).string("filename")!! }
 
-        return PullRequest(
-            gitService = GITHUB,
-            number = this.int("number")!!,
-            installationId = installationId,
-            creatorName = pullRequest.obj("user")!!.string("login")!!,
-            repoId = -1,
-            repoFullName = repoFullName,
-            headSha = pullRequest.obj("head")!!.string("sha")!!,
-            branchName = pullRequest.obj("head")!!.string("ref")!!,
-            changedFiles = changeList.map { (it as JsonObject).string("filename")!! }
-        )
+    override val jsonToPullRequest: (JsonObject) -> PullRequest = { jsonPayload ->
+        if (jsonPayload.hasInstallationId())
+            super.jsonToPullRequest(jsonPayload)
+                .apply(::sendInProgressStatus)
+                .also(logger::inProgressStatus)
+        else
+            throw GitException("Git: no installation id")
     }
 
     private fun sendInProgressStatus(pullRequest: PullRequest) {
         AnalysisResultData(status = GithubAnalysisStatus.IN_PROGRESS.value).also {
             analysisStatusCheckService.send(pullRequest, it)
         }
-        logger.inProgressStatus(pullRequest)
     }
 
     private fun JsonObject.hasInstallationId(): Boolean {
