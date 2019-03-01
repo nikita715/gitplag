@@ -1,5 +1,6 @@
 package ru.nikstep.redink.analysis
 
+import it.zielke.moji.SocketClient
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
@@ -7,24 +8,33 @@ import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest
 
 class MossAnalyser(
-    private val solutionStorage: SolutionStorage,
-    private val mossId: String
-) : Analyser {
-
+    solutionStorage: SolutionStorage,
+    private val mossId: String, solutionsPath: String
+) : AbstractAnalyser(solutionStorage, solutionsPath) {
     private val logger = KotlinLogging.logger {}
 
-    override fun analyse(pullRequest: PullRequest): Collection<AnalysisResult> {
-        return solutionStorage.loadAllBasesAndSolutions(pullRequest).flatMap { analysisFiles ->
-            val resultLink = MossClient(mossId, analysisFiles).analyse()
+    override fun PreparedAnalysisFiles.processFiles(pullRequest: PullRequest): Iterable<AnalysisResult> =
+        SocketClient().let { client ->
+            client.userID = mossId
+            client.language = language.ofMoss()
 
-            logger.info {
-                "Analysis: for repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}," +
-                        " file ${analysisFiles.fileName}, url $resultLink "
+            if (solutions.isEmpty()) {
+                throw AnalysisException("Analysis: No solutions for file ${base.canonicalPath}")
             }
 
-            createAnalysisResults(pullRequest, resultLink, analysisFiles.fileName)
-        }
-    }
+            try {
+                client.run()
+                client.uploadFile(base, true)
+                solutions.forEach { client.uploadFile(it) }
+                client.sendQuery()
+            } finally {
+                client.close()
+            }
+
+            client.resultURL.toString().also {
+                logger.info { "Analysis: performed new analysis at $it" }
+            }
+        }.let { resultURL -> createAnalysisResults(pullRequest, resultURL, fileName) }
 
     private fun createAnalysisResults(
         pullRequest: PullRequest,

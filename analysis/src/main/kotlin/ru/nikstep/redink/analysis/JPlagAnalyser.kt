@@ -13,27 +13,23 @@ import java.io.File
 import java.util.concurrent.TimeUnit.MINUTES
 import kotlin.math.roundToInt
 
-class JPlagAnalyser(private val solutionStorage: SolutionStorage, private val solutionsPath: String) :
-    Analyser {
+class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath: String) :
+    AbstractAnalyser(solutionStorage, solutionsPath) {
 
     private val logger = KotlinLogging.logger {}
-
     private val jplagPath = asPath("libs".asPathInRoot(), "jplag.jar")
     private val regexUserNames = "^Matches for (.+) & (.+)$".toRegex()
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
-    override fun analyse(pullRequest: PullRequest): Collection<AnalysisResult> =
-        solutionStorage.loadAllBasesAndSolutions(pullRequest)
-            .flatMap { analysisFiles ->
-                inTempDirectory { resultDir ->
-                    executeJPlag(analysisFiles, resultDir)
-                    rangeOfMatchIndexes(analysisFiles).map { index ->
-                        index.let(toAnalysisResults(analysisFiles, resultDir))
-                    }.filter {
-                        it.students.first == pullRequest.creatorName || it.students.second == pullRequest.creatorName
-                    }
-                }
+    override fun PreparedAnalysisFiles.processFiles(pullRequest: PullRequest): Iterable<AnalysisResult> =
+        inTempDirectory { resultDir ->
+            executeJPlag(this, resultDir)
+            rangeOfMatchIndexes(this).map { index ->
+                index.let(toAnalysisResults(this, resultDir))
+            }.filter {
+                it.students.first == pullRequest.creatorName || it.students.second == pullRequest.creatorName
             }
+        }
 
     private fun executeJPlag(analysisFiles: PreparedAnalysisFiles, resultDir: String) =
         buildString {
