@@ -1,6 +1,6 @@
 package ru.nikstep.redink.model.entity
 
-import ru.nikstep.redink.util.Git
+import ru.nikstep.redink.util.GitProperty
 import javax.persistence.CollectionTable
 import javax.persistence.Column
 import javax.persistence.ElementCollection
@@ -42,7 +42,7 @@ data class PullRequest(
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    val gitService: Git,
+    val gitService: GitProperty,
 
     @Column
     @ElementCollection(fetch = FetchType.EAGER)

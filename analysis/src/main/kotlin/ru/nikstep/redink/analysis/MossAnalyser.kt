@@ -6,10 +6,10 @@ import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest
 
-class MossAnalysisService(
+class MossAnalyser(
     private val solutionStorage: SolutionStorage,
     private val mossId: String
-) : AnalysisService {
+) : Analyser {
 
     private val logger = KotlinLogging.logger {}
 

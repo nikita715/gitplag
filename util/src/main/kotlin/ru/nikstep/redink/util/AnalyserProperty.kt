@@ -1,6 +1,6 @@
 package ru.nikstep.redink.util
 
-enum class Analyser {
+enum class AnalyserProperty {
     MOSS,
     JPLAG
 }
