@@ -29,12 +29,11 @@ class GithubServiceLoader(
         fileNames.map { fileName ->
             checkBaseExists(pullRequest, fileName)
 
-            val args = pullRequest.repoFullName.split("/").toTypedArray()
             val fileResponse = sendGithubGraphqlRequest(
                 method = Method.POST,
                 body = String.format(
                     rawGithubFileQuery,
-                    *args,
+                    *pullRequest.repoFullName.split("/").toTypedArray(),
                     pullRequest.branchName,
                     fileName
                 ),

@@ -1,11 +1,10 @@
 package ru.nikstep.redink.github
 
-import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
-import ru.nikstep.redink.util.Git.BITBUCKET
+import ru.nikstep.redink.util.GitProperty.BITBUCKET
 import ru.nikstep.redink.util.JsonArrayDeserializer
 import ru.nikstep.redink.util.parseAsObject
 import ru.nikstep.redink.util.sendRestRequest
@@ -24,8 +23,8 @@ class BitbucketPullRequestWebhookService(private val pullRequestRepository: Pull
 
             val jsonChangedFiles = sendRestRequest(
                 url = "https://api.bitbucket.org/1.0/repositories/$repoFullName/changesets/$headSha/diffstat",
-                deserializer = JsonArrayDeserializer()
-            ) as JsonArray<*>
+                deserializer = JsonArrayDeserializer
+            )
 
             PullRequest(
                 gitService = BITBUCKET,

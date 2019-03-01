@@ -3,7 +3,8 @@ package ru.nikstep.redink.github
 import com.beust.klaxon.JsonObject
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
-import ru.nikstep.redink.util.Git.GITLAB
+import ru.nikstep.redink.util.GitProperty.GITLAB
+import ru.nikstep.redink.util.JsonObjectDeserializer
 import ru.nikstep.redink.util.parseAsObject
 import ru.nikstep.redink.util.sendRestRequest
 
@@ -31,6 +32,9 @@ class GitlabPullRequestWebhookService(private val pullRequestRepository: PullReq
     }
 
     fun loadMrChanges(repoId: Long, mrNumber: Int): JsonObject {
-        return sendRestRequest("https://gitlab.com/api/v4/projects/$repoId/merge_requests/$mrNumber/changes") as JsonObject
+        return sendRestRequest(
+            "https://gitlab.com/api/v4/projects/$repoId/merge_requests/$mrNumber/changes",
+            deserializer = JsonObjectDeserializer
+        )
     }
 }

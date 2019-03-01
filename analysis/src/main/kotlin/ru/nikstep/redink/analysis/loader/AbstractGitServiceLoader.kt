@@ -26,8 +26,8 @@ abstract class AbstractGitServiceLoader(
 
             val fileText = sendRestRequest(
                 getFileQuery(pullRequest.repoFullName, pullRequest.headSha, fileName),
-                deserializer = StringDeserializer()
-            ) as String
+                deserializer = StringDeserializer
+            )
 
             if (fileText.isBlank())
                 throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")
@@ -51,8 +51,8 @@ abstract class AbstractGitServiceLoader(
     private fun saveBase(pullRequest: PullRequest, fileName: String) {
         val fileText = sendRestRequest(
             getFileQuery(pullRequest.repoFullName, masterBranch, fileName),
-            deserializer = StringDeserializer()
-        ) as String
+            deserializer = StringDeserializer
+        )
 
         if (fileText.isBlank())
             throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")
