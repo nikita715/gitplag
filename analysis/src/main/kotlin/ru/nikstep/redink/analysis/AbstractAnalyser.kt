@@ -4,7 +4,7 @@ import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest
 
-abstract class AbstractAnalyser(private val solutionStorage: SolutionStorage, private val solutionsPath: String) :
+abstract class AbstractAnalyser(private val solutionStorage: SolutionStorage) :
     Analyser {
 
     override fun analyse(pullRequest: PullRequest): Collection<AnalysisResult> =

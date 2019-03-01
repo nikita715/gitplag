@@ -8,6 +8,7 @@ import ru.nikstep.redink.checks.AnalysisResultData
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.checks.GithubAnalysisConclusion
 import ru.nikstep.redink.checks.GithubAnalysisStatus
+import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
@@ -28,87 +29,51 @@ open class AnalysisScheduler(
 
     @Scheduled(fixedDelay = 10000)
     fun runAnalysis() {
-        val countOfRequiredAnalyses = pullRequestRepository.count()
-
-        if (countOfRequiredAnalyses.isZero()) {
-            logger.info { "Analysis: waiting for pull requests" }
-            return
-        }
-
-        logger.info { "Analysis: found $countOfRequiredAnalyses created/changed pull request(s)" }
-        startAnalysisOfNewPullRequests()
+        pullRequestRepository.findAll()
+            .let(withRemovedDuplicates)
+            .forEach { taskExecutor.execute(AnalysisRunnable(it)) }
     }
 
-    private fun startAnalysisOfNewPullRequests() {
-        val allChangedPullRequests = pullRequestRepository.findAll()
-        val pullRequestsToAnalyse = allChangedPullRequests.withoutDuplicates()
-
-        removeDuplicatedPullRequests(allChangedPullRequests.minus(pullRequestsToAnalyse))
-
-        for (pullRequest in pullRequestsToAnalyse) {
-            taskExecutor.execute(AnalysisRunnable(pullRequest))
+    private val withRemovedDuplicates: (List<PullRequest>) -> List<PullRequest> = { allPrs ->
+        allPrs.minusDuplicates().also { uniquePrs ->
+            pullRequestRepository.deleteAll(allPrs.minus(uniquePrs))
         }
     }
 
-    private fun removeDuplicatedPullRequests(pullRequests: List<PullRequest>) {
-        for (pullRequest in pullRequests) {
-            logger.info {
-                "Analysis: delete duplicated analysis request of pr #${pullRequest.number}," +
-                        " repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}"
-            }
-            pullRequestRepository.delete(pullRequest)
-        }
+    private fun List<PullRequest>.minusDuplicates(): List<PullRequest> {
+        return sortedByDescending { it.id }.distinctBy { it.repoFullName to it.creatorName }
     }
 
     inner class AnalysisRunnable(private val pullRequest: PullRequest) : Runnable {
 
         override fun run() {
-
-            val gitServiceLoader = gitServiceLoaders[pullRequest.gitService]
-                ?: throw AnalysisException("Analysis: git service ${pullRequest.gitService} is not supported")
-
-            val analysisService = analysers[AnalyserProperty.MOSS]
-                ?: throw AnalysisException("Analysis: analyser is not supported")
-
+            val gitServiceLoader = gitServiceLoaders.getValue(pullRequest.gitService)
+            val analysisService = analysers.getValue(AnalyserProperty.MOSS)
             try {
-                gitServiceLoader.loadFilesFromGit(pullRequest)
-
-                logger.info {
-                    "Analysis: start analysing of pr #${pullRequest.number}," +
-                            " repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}"
-                }
-
-                val analysisResult = analysisService.analyse(pullRequest)
-                analysisResultRepository.save(analysisResult)
-
-                if (pullRequest.gitService == GITHUB)
-                    analysisStatusCheckService.send(
-                        pullRequest,
-                        AnalysisResultData(
-                            status = GithubAnalysisStatus.COMPLETED.value,
-                            conclusion = GithubAnalysisConclusion.SUCCESS.value
-                        )
-                    )
-
-                pullRequestRepository.delete(pullRequest)
-                logger.info {
-                    "Analysis: complete analysing of pr #${pullRequest.number}," +
-                            " repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}"
+                logger.loggedAnalysis(pullRequest) {
+                    gitServiceLoader.loadFilesFromGit(pullRequest)
+                    analysisService.analyse(pullRequest)
+                        .also(analysisResultRepository::saveAll)
+                        .forEach(::sendStatusCheck)
                 }
             } catch (e: Exception) {
-                logger.error { "Analysis: exception at the analysis of the pull request with id = ${pullRequest.id}" }
-                e.printStackTrace()
+                logger.error { "Analysis: exception at the analysis of the pull request with id = ${pullRequest.id}\n" }
+                throw e
+            }
+        }
+
+        private fun sendStatusCheck(analysisResult: AnalysisResult) {
+            if (pullRequest.gitService == GITHUB) {
+                analysisStatusCheckService.send(
+                    pullRequest,
+                    AnalysisResultData(
+                        status = GithubAnalysisStatus.COMPLETED.value,
+                        conclusion = GithubAnalysisConclusion.SUCCESS.value
+                    )
+                )
             }
         }
 
     }
 
-}
-
-private fun Long.isZero(): Boolean {
-    return this.compareTo(0) == 0
-}
-
-private fun List<PullRequest>.withoutDuplicates(): List<PullRequest> {
-    return this.sortedByDescending { it.id }.distinctBy { (it.repoFullName to it.creatorName) }
 }

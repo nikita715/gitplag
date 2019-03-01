@@ -9,8 +9,8 @@ import ru.nikstep.redink.model.entity.PullRequest
 
 class MossAnalyser(
     solutionStorage: SolutionStorage,
-    private val mossId: String, solutionsPath: String
-) : AbstractAnalyser(solutionStorage, solutionsPath) {
+    private val mossId: String
+) : AbstractAnalyser(solutionStorage) {
     private val logger = KotlinLogging.logger {}
 
     override fun PreparedAnalysisFiles.processFiles(pullRequest: PullRequest): Iterable<AnalysisResult> =
