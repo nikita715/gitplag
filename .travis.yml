@@ -6,4 +6,4 @@ notifications:
   email: false
 
 after_success:
-  - ./gradlew sendCoverageToCodacy
+  - ./gradlew sendAllCoverageToCodacy

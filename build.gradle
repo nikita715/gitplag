@@ -85,7 +85,7 @@ subprojects {
     }
 }
 
-task jacocoRootReport(type: JacocoReport) {
+task sendAllCoverageToCodacy(type: JacocoReport) {
     def requiredSubprojects = subprojects.findAll { it.name in ['analysis', 'git'] }
     dependsOn = requiredSubprojects.sendCoverageToCodacy
 }
