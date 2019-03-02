@@ -12,26 +12,24 @@ internal class MossClient(private val analysisFiles: PreparedAnalysisFiles, priv
         if (analysisFiles.solutions.isEmpty())
             throw AnalysisException("Analysis: No solutions for file ${analysisFiles.base.absolutePath}")
         else
-            SocketClient().use {
-                userID = mossId
-                language = analysisFiles.language.ofMoss()
+            SocketClient().use { client ->
+                client.userID = mossId
+                client.language = analysisFiles.language.ofMoss()
                 run()
-                uploadFile(analysisFiles.base, true)
-                analysisFiles.solutions.forEach { uploadFile(it) }
-                sendQuery()
-                resultURL.toString().also {
+                client.uploadFile(analysisFiles.base, true)
+                analysisFiles.solutions.forEach { client.uploadFile(it) }
+                client.sendQuery()
+                client.resultURL.toString().also {
                     logger.info { "Analysis: performed new analysis at $it" }
                 }
 
             }
 
-
-    private fun <R> SocketClient.use(action: SocketClient.() -> R): R =
+    private fun <R> SocketClient.use(action: (SocketClient) -> R): R =
         try {
             action(this)
         } finally {
             close()
         }
-
 
 }
