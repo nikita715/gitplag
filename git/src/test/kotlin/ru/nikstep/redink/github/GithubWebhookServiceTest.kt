@@ -1,22 +1,20 @@
 package ru.nikstep.redink.github
 
 import io.kotlintest.mock.mock
-import org.mockito.ArgumentCaptor
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.github.webhook.GithubWebhookService
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.GitProperty
 
 class GithubWebhookServiceTest : AbstractWebhookServiceTest() {
-    override val argument: ArgumentCaptor<PullRequest> = ArgumentCaptor.forClass(PullRequest::class.java)
-    override val bitbucketPayload by lazy { readPayloadOf("github") }
+    //    override val argument: ArgumentCaptor<PullRequest> = ArgumentCaptor.forClass(PullRequest::class.java)
+    override val payload by lazy { readPayloadOf("github") }
 
     private val analysisStatusCheckService = mock<AnalysisStatusCheckService>()
 
     override val webhookService =
         GithubWebhookService(
             analysisStatusCheckService,
-            changeLoader,
             pullRequestRepository
         )
 

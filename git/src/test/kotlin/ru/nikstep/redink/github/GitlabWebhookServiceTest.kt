@@ -1,15 +1,13 @@
 package ru.nikstep.redink.github
 
-import org.mockito.ArgumentCaptor
 import ru.nikstep.redink.github.webhook.GitlabWebhookService
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.GitProperty
 
 class GitlabWebhookServiceTest : AbstractWebhookServiceTest() {
-    override val argument: ArgumentCaptor<PullRequest> = ArgumentCaptor.forClass(PullRequest::class.java)
-    override val bitbucketPayload by lazy { readPayloadOf("gitlab") }
-    override val webhookService =
-        GitlabWebhookService(pullRequestRepository, changeLoader)
+    //    override val argument: ArgumentCaptor<PullRequest> = ArgumentCaptor.forClass(PullRequest::class.java)
+    override val payload by lazy { readPayloadOf("gitlab") }
+    override val webhookService = GitlabWebhookService(pullRequestRepository)
     override val pullRequest = PullRequest(
         number = 1,
         secretKey = "",

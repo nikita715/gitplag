@@ -12,16 +12,16 @@ import org.mockito.stubbing.Answer
 import ru.nikstep.redink.github.webhook.WebhookService
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
+import ru.nikstep.redink.util.asPath
+import java.nio.file.Paths
 
 abstract class AbstractWebhookServiceTest {
 
-    abstract val bitbucketPayload: String
-
+    abstract val payload: String
     abstract val webhookService: WebhookService
-
     abstract val pullRequest: PullRequest
 
-    abstract val argument: ArgumentCaptor<PullRequest>
+    private val argument: ArgumentCaptor<PullRequest> = ArgumentCaptor.forClass(PullRequest::class.java)
 
     private object PullRequestAnswer : Answer<PullRequest> {
         override fun answer(invocation: InvocationOnMock?): PullRequest = invocation!!.arguments[0] as PullRequest
@@ -33,8 +33,15 @@ abstract class AbstractWebhookServiceTest {
 
     @Test
     fun saveNewPullRequest() {
-        webhookService.saveNewPullRequest(bitbucketPayload)
+        webhookService.saveNewPullRequest(payload)
         verify(pullRequestRepository).save(argument.capture())
         argument.value shouldEqual pullRequest
+    }
+
+    companion object {
+        private val relSolutionsDir = asPath("src", "test", "resources", "payload")
+
+        internal fun readPayloadOf(gitService: String): String =
+            Paths.get(relSolutionsDir, "$gitService.json").toFile().readText()
     }
 }
