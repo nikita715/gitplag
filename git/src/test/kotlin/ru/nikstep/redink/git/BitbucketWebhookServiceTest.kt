@@ -1,6 +1,6 @@
-package ru.nikstep.redink.github
+package ru.nikstep.redink.git
 
-import ru.nikstep.redink.github.webhook.BitbucketWebhookService
+import ru.nikstep.redink.git.webhook.BitbucketWebhookService
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.GitProperty
 

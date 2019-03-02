@@ -1,10 +1,10 @@
-package ru.nikstep.redink.github.webhook
+package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
-import ru.nikstep.redink.github.GitException
-import ru.nikstep.redink.github.inProgressStatus
+import ru.nikstep.redink.git.GitException
+import ru.nikstep.redink.git.inProgressStatus
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty

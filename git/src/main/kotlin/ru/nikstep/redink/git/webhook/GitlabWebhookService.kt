@@ -1,34 +1,34 @@
-package ru.nikstep.redink.github.webhook
+package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.GitProperty.BITBUCKET
+import ru.nikstep.redink.util.GitProperty.GITLAB
 
-class BitbucketWebhookService(
+class GitlabWebhookService(
     pullRequestRepository: PullRequestRepository
 ) :
     AbstractWebhookService(pullRequestRepository) {
 
     override val JsonObject.gitService: GitProperty
-        get() = BITBUCKET
+        get() = GITLAB
 
     override val JsonObject.repoId: Long?
-        get() = -1
+        get() = obj("project")?.long("id")
 
     override val JsonObject.number: Int?
-        get() = obj("pullrequest")?.int("id")
+        get() = obj("object_attributes")?.int("iid")
 
     override val JsonObject.repoFullName: String?
-        get() = obj("pullrequest")?.obj("destination")?.obj("repository")?.string("full_name")
+        get() = obj("project")?.string("path_with_namespace")
 
     override val JsonObject.creatorName: String?
-        get() = obj("pullrequest")?.obj("author")?.string("username")
+        get() = obj("user")?.string("username")
 
     override val JsonObject.headSha: String?
-        get() = obj("pullrequest")?.obj("source")?.obj("commit")?.string("hash")
+        get() = obj("object_attributes")?.obj("last_commit")?.string("id")
 
     override val JsonObject.branchName: String?
-        get() = obj("pullrequest")?.obj("source")?.obj("branch")?.string("name")
+        get() = obj("object_attributes")?.string("source_branch")
 
 }

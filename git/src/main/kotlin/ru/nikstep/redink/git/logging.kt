@@ -1,4 +1,4 @@
-package ru.nikstep.redink.github
+package ru.nikstep.redink.git
 
 import mu.KLogger
 import ru.nikstep.redink.model.entity.PullRequest

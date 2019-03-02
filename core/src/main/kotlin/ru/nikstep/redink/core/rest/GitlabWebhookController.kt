@@ -5,7 +5,7 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import ru.nikstep.redink.github.webhook.GitlabWebhookService
+import ru.nikstep.redink.git.webhook.GitlabWebhookService
 import javax.servlet.http.HttpServletRequest
 
 @RestController
