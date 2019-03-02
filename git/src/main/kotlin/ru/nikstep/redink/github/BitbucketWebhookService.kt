@@ -15,25 +15,25 @@ class BitbucketWebhookService(
     override val JsonObject.gitService: GitProperty
         get() = BITBUCKET
 
-    override val JsonObject.repoId: Long
+    override val JsonObject.repoId: Long?
         get() = -1
 
-    override val JsonObject.number: Int
-        get() = obj("pullrequest")!!.int("id")!!
+    override val JsonObject.number: Int?
+        get() = obj("pullrequest")?.int("id")
 
-    override val JsonObject.repoFullName: String
-        get() = obj("pullrequest")!!.obj("destination")!!.obj("repository")!!.string("full_name")!!
+    override val JsonObject.repoFullName: String?
+        get() = obj("pullrequest")?.obj("destination")?.obj("repository")?.string("full_name")
 
-    override val JsonObject.creatorName: String
-        get() = obj("pullrequest")!!.obj("author")!!.string("username")!!
+    override val JsonObject.creatorName: String?
+        get() = obj("pullrequest")?.obj("author")?.string("username")
 
-    override val JsonObject.headSha: String
-        get() = obj("pullrequest")!!.obj("source")!!.obj("commit")!!.string("hash")!!
+    override val JsonObject.headSha: String?
+        get() = obj("pullrequest")?.obj("source")?.obj("commit")?.string("hash")
 
-    override val JsonObject.branchName: String
-        get() = obj("pullrequest")!!.obj("source")!!.obj("branch")!!.string("name")!!
+    override val JsonObject.branchName: String?
+        get() = obj("pullrequest")?.obj("source")?.obj("branch")?.string("name")
 
     override val JsonObject.changedFiles: List<String>
-        get() = changeLoader.loadChanges(repoId, repoFullName, number, headSha, secretKey)
+        get() = changeLoader.loadChanges(repoId!!, repoFullName!!, number!!, headSha!!, secretKey!!)
 
 }
