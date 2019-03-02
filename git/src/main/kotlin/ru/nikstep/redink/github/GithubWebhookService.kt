@@ -41,9 +41,6 @@ class GithubPullRequestWebhookService(
     override val JsonObject.secretKey: String?
         get() = obj("installation")?.int("id")?.toString()
 
-    override val JsonObject.changedFiles: List<String>
-        get() = changeLoader.loadChanges(repoId!!, repoFullName!!, number!!, headSha!!, secretKey!!)
-
     override val jsonToPullRequest: (JsonObject) -> PullRequest = { jsonPayload ->
         if (jsonPayload.hasInstallationId())
             super.jsonToPullRequest(jsonPayload)

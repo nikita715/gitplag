@@ -33,6 +33,4 @@ class GitlabWebhookService(
     override val JsonObject.branchName: String?
         get() = obj("object_attributes")?.string("source_branch")
 
-    override val JsonObject.changedFiles: List<String>
-        get() = changeLoader.loadChanges(repoId!!, repoFullName!!, number!!, headSha!!, secretKey!!)
 }
