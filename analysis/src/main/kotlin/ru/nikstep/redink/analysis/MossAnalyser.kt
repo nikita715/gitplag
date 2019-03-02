@@ -22,19 +22,26 @@ class MossAnalyser(
                 throw AnalysisException("Analysis: No solutions for file ${base.absolutePath}")
             }
 
-            try {
+            client.use {
                 client.run()
                 client.uploadFile(base, true)
                 solutions.forEach { client.uploadFile(it) }
                 client.sendQuery()
-            } finally {
-                client.close()
             }
 
             client.resultURL.toString().also {
                 logger.info { "Analysis: performed new analysis at $it" }
             }
+
         }.let { resultURL -> createAnalysisResults(pullRequest, resultURL, fileName) }
+
+    private fun SocketClient.use(action: (SocketClient) -> Unit) {
+        try {
+            action(this)
+        } finally {
+            close()
+        }
+    }
 
     private fun createAnalysisResults(
         pullRequest: PullRequest,
