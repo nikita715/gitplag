@@ -20,6 +20,14 @@ class MossAnalyserTest {
             matchedLines = listOf((7 to 19) to (7 to 20))
         ),
         AnalysisResult(
+            students = "student2" to "student3",
+            countOfLines = 5,
+            percentage = 22,
+            repository = TEST_REPO_NAME,
+            fileName = TEST_FILE_NAME,
+            matchedLines = listOf((16 to 20) to (12 to 16))
+        ),
+        AnalysisResult(
             students = "student1" to "student3",
             countOfLines = 5,
             percentage = 22,

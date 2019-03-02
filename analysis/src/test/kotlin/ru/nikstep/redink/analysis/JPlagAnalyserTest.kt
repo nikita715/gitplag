@@ -20,6 +20,14 @@ class JPlagAnalyserTest {
             matchedLines = listOf((13 to 22) to (12 to 21))
         ),
         AnalysisResult(
+            students = "student3" to "student2",
+            countOfLines = -1,
+            percentage = 55,
+            repository = TEST_REPO_NAME,
+            fileName = TEST_FILE_NAME,
+            matchedLines = listOf((10 to 18) to (15 to 22))
+        ),
+        AnalysisResult(
             students = "student3" to "student1",
             countOfLines = -1,
             percentage = 55,

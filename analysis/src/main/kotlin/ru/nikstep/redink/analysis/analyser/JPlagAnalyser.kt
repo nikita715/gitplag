@@ -25,7 +25,7 @@ class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath:
     ): Iterable<AnalysisResult> =
         inTempDirectory { resultDir ->
             JPlagClient(analysisFiles, solutionsPath, resultDir).run()
-            resultIndexesOf(analysisFiles).map { index ->
+            analysisFiles.indexRangeOfEachToEachStudentPair().map { index ->
                 parseResults(analysisFiles, resultDir, index)
             }
         }
@@ -64,8 +64,8 @@ class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath:
         )
     }
 
-    private fun resultIndexesOf(analysisFiles: PreparedAnalysisFiles): IntRange {
-        val countOfMatches = (0 until analysisFiles.solutions.size).sum()
+    private fun PreparedAnalysisFiles.indexRangeOfEachToEachStudentPair(): IntRange {
+        val countOfMatches = (0 until solutions.size).sum()
         return 0 until countOfMatches
     }
 }
