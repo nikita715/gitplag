@@ -24,9 +24,9 @@ allprojects {
         maven { url "http://dl.bintray.com/typesafe/maven-releases" }
     }
 
-    jacoco {
-        toolVersion = "0.8.2"
-    }
+//    jacoco {
+//        toolVersion = "0.8.2"
+//    }
 
     dependencies {
         codacy 'com.github.codacy:codacy-coverage-reporter:-SNAPSHOT'
@@ -42,17 +42,17 @@ subprojects {
 
     bootJar.enabled = false
     jar.enabled = true
-
-    jacocoTestReport {
-        additionalSourceDirs = files(sourceSets.main.allSource.srcDirs)
-        sourceDirectories = files(sourceSets.main.allSource.srcDirs)
-        classDirectories = files(sourceSets.main.output)
-        reports {
-            html.enabled = true
-            xml.enabled = true
-            csv.enabled = false
-        }
-    }
+//
+//    jacocoTestReport {
+//        additionalSourceDirs = files(sourceSets.main.allSource.srcDirs)
+//        sourceDirectories = files(sourceSets.main.allSource.srcDirs)
+//        classDirectories = files(sourceSets.main.output)
+//        reports {
+//            html.enabled = true
+//            xml.enabled = true
+//            csv.enabled = false
+//        }
+//    }
 
     dependencies {
         compile 'io.github.microutils:kotlin-logging:1.6.22'
@@ -72,20 +72,29 @@ subprojects {
         testCompile 'org.springframework.security:spring-security-test'
     }
 
-    task sendCoverageToCodacy(type: JavaExec, dependsOn: jacocoTestReport) {
-        main = "com.codacy.CodacyCoverageReporter"
-        classpath = configurations.codacy
-        args = [
-                "report",
-                "-l",
-                "Kotlin",
-                "-r",
-                "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
-        ]
+}
+
+task jacocoRootReport(type: JacocoReport) {
+    def requiredSubprojects = subprojects.findAll { it.name in ['analysis', 'git'] }
+    additionalSourceDirs = files(requiredSubprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(requiredSubprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories =  files(requiredSubprojects.sourceSets.main.output)
+    executionData = files(requiredSubprojects.jacocoTestReport.executionData)
+    reports {
+        html.enabled = true
+        xml.enabled = true
+        csv.enabled = false
     }
 }
 
-task sendAllCoverageToCodacy(type: JacocoReport) {
-    def requiredSubprojects = subprojects.findAll { it.name in ['analysis', 'git'] }
-    dependsOn = requiredSubprojects.sendCoverageToCodacy
+task sendCoverageToCodacy(type: JavaExec) {
+    main = "com.codacy.CodacyCoverageReporter"
+    classpath = configurations.codacy
+    args = [
+            "report",
+            "-l",
+            "Kotlin",
+            "-r",
+            "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+    ]
 }

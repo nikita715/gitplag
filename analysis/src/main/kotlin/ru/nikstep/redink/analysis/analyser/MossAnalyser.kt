@@ -25,10 +25,10 @@ class MossAnalyser(
             }
 
             client.use {
-                client.run()
-                client.uploadFile(base, true)
-                solutions.forEach { client.uploadFile(it) }
-                client.sendQuery()
+                run()
+                uploadFile(base, true)
+                solutions.forEach { uploadFile(it) }
+                sendQuery()
             }
 
             client.resultURL.toString().also {
@@ -37,7 +37,7 @@ class MossAnalyser(
 
         }.let { resultURL -> createAnalysisResults(pullRequest, resultURL, fileName) }
 
-    private fun SocketClient.use(action: (SocketClient) -> Unit) {
+    private fun SocketClient.use(action: SocketClient.() -> Unit) {
         try {
             action(this)
         } finally {
