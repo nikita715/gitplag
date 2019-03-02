@@ -5,7 +5,6 @@ import ru.nikstep.redink.analysis.AnalysisException
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.util.StringDeserializer
 import ru.nikstep.redink.util.sendRestRequest
 import java.io.File
 
@@ -24,9 +23,8 @@ abstract class AbstractGitServiceLoader(
         filePatterns.intersect(changedFiles).forEach { fileName ->
             checkBaseExists(pullRequest, fileName)
 
-            val fileText = sendRestRequest(
-                getFileQuery(pullRequest.repoFullName, pullRequest.headSha, fileName),
-                deserializer = StringDeserializer
+            val fileText = sendRestRequest<String>(
+                getFileQuery(pullRequest.repoFullName, pullRequest.headSha, fileName)
             )
 
             if (fileText.isBlank())
@@ -49,9 +47,8 @@ abstract class AbstractGitServiceLoader(
     }
 
     private fun saveBase(pullRequest: PullRequest, fileName: String) {
-        val fileText = sendRestRequest(
-            getFileQuery(pullRequest.repoFullName, masterBranch, fileName),
-            deserializer = StringDeserializer
+        val fileText = sendRestRequest<String>(
+            getFileQuery(pullRequest.repoFullName, masterBranch, fileName)
         )
 
         if (fileText.isBlank())

@@ -1,10 +1,10 @@
 package ru.nikstep.redink.github
 
+import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.BITBUCKET
-import ru.nikstep.redink.util.JsonArrayDeserializer
 import ru.nikstep.redink.util.sendRestRequest
 
 class BitbucketWebhookService(pullRequestRepository: PullRequestRepository) :
@@ -32,9 +32,8 @@ class BitbucketWebhookService(pullRequestRepository: PullRequestRepository) :
         get() = obj("pullrequest")!!.obj("source")!!.obj("branch")!!.string("name")!!
 
     override val JsonObject.changedFiles: List<String>
-        get() = sendRestRequest(
-            url = "https://api.bitbucket.org/1.0/repositories/$repoFullName/changesets/$headSha/diffstat",
-            deserializer = JsonArrayDeserializer
+        get() = sendRestRequest<JsonArray<*>>(
+            url = "https://api.bitbucket.org/1.0/repositories/$repoFullName/changesets/$headSha/diffstat"
         ).map { (it as JsonObject).string("file")!! }
 
 }
