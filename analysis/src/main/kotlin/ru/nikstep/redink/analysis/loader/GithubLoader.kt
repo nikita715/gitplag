@@ -13,11 +13,11 @@ import ru.nikstep.redink.util.sendGithubGraphqlRequest
 import ru.nikstep.redink.util.sendRestRequest
 import java.io.File
 
-class GithubServiceLoader(
+class GithubLoader(
     private val solutionStorage: SolutionStorage,
     private val repositoryRepository: RepositoryRepository,
     private val authorizationService: AuthorizationService
-) : GitServiceLoader {
+) : GitLoader {
 
     private val logger = KotlinLogging.logger {}
 
@@ -98,8 +98,8 @@ class GithubServiceLoader(
 
         solutionStorage.saveBase(pullRequest, fileName, fileText)
     }
-}
 
-private fun File.notExists(): Boolean {
-    return !this.exists()
+    private fun File.notExists(): Boolean {
+        return !this.exists()
+    }
 }

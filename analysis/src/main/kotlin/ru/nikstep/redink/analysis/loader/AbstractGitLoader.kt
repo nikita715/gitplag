@@ -8,10 +8,10 @@ import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.sendRestRequest
 import java.io.File
 
-abstract class AbstractGitServiceLoader(
+abstract class AbstractGitLoader(
     private val solutionStorage: SolutionStorage,
     private val repositoryRepository: RepositoryRepository
-) : GitServiceLoader {
+) : GitLoader {
 
     private val logger = KotlinLogging.logger {}
     private val masterBranch = "master"

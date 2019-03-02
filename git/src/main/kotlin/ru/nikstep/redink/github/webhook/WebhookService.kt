@@ -1,4 +1,4 @@
-package ru.nikstep.redink.github
+package ru.nikstep.redink.github.webhook
 
 interface WebhookService {
 

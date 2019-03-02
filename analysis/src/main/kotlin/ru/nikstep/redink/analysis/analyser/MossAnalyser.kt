@@ -1,8 +1,10 @@
-package ru.nikstep.redink.analysis
+package ru.nikstep.redink.analysis.analyser
 
 import it.zielke.moji.SocketClient
 import mu.KotlinLogging
 import org.jsoup.Jsoup
+import ru.nikstep.redink.analysis.AnalysisException
+import ru.nikstep.redink.analysis.PreparedAnalysisFiles
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest

@@ -3,7 +3,8 @@ package ru.nikstep.redink.analysis
 import mu.KotlinLogging
 import org.springframework.core.task.TaskExecutor
 import org.springframework.scheduling.annotation.Scheduled
-import ru.nikstep.redink.analysis.loader.GitServiceLoader
+import ru.nikstep.redink.analysis.analyser.Analyser
+import ru.nikstep.redink.analysis.loader.GitLoader
 import ru.nikstep.redink.checks.AnalysisResultData
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
 import ru.nikstep.redink.checks.GithubAnalysisConclusion
@@ -21,7 +22,7 @@ open class AnalysisScheduler(
     private val analysisResultRepository: AnalysisResultRepository,
     private val analysisStatusCheckService: AnalysisStatusCheckService,
     private val taskExecutor: TaskExecutor,
-    private val gitServiceLoaders: Map<GitProperty, GitServiceLoader>,
+    private val gitLoaders: Map<GitProperty, GitLoader>,
     private val analysers: Map<AnalyserProperty, Analyser>
 ) {
 
@@ -47,7 +48,7 @@ open class AnalysisScheduler(
     inner class AnalysisRunnable(private val pullRequest: PullRequest) : Runnable {
 
         override fun run() {
-            val gitServiceLoader = gitServiceLoaders.getValue(pullRequest.gitService)
+            val gitServiceLoader = gitLoaders.getValue(pullRequest.gitService)
             val analysisService = analysers.getValue(AnalyserProperty.MOSS)
             try {
                 logger.loggedAnalysis(pullRequest) {

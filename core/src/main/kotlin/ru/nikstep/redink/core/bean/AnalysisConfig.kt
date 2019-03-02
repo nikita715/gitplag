@@ -5,14 +5,14 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.core.task.TaskExecutor
-import ru.nikstep.redink.analysis.Analyser
 import ru.nikstep.redink.analysis.AnalysisScheduler
-import ru.nikstep.redink.analysis.JPlagAnalyser
-import ru.nikstep.redink.analysis.MossAnalyser
-import ru.nikstep.redink.analysis.loader.BitbucketServiceLoader
-import ru.nikstep.redink.analysis.loader.GitServiceLoader
-import ru.nikstep.redink.analysis.loader.GithubServiceLoader
-import ru.nikstep.redink.analysis.loader.GitlabServiceLoader
+import ru.nikstep.redink.analysis.analyser.Analyser
+import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
+import ru.nikstep.redink.analysis.analyser.MossAnalyser
+import ru.nikstep.redink.analysis.loader.BitbucketLoader
+import ru.nikstep.redink.analysis.loader.GitLoader
+import ru.nikstep.redink.analysis.loader.GithubLoader
+import ru.nikstep.redink.analysis.loader.GitlabLoader
 import ru.nikstep.redink.analysis.solutions.FileSystemSolutionStorage
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
@@ -62,7 +62,7 @@ class AnalysisConfig {
         analysisResultRepository: AnalysisResultRepository,
         analysisStatusCheckService: AnalysisStatusCheckService,
         @Qualifier("analysisThreadPoolTaskExecutor") taskExecutor: TaskExecutor,
-        gitServiceLoaders: Map<GitProperty, GitServiceLoader>,
+        gitLoaders: Map<GitProperty, GitLoader>,
         analysers: Map<AnalyserProperty, Analyser>
     ): AnalysisScheduler {
         return AnalysisScheduler(
@@ -70,7 +70,7 @@ class AnalysisConfig {
             analysisResultRepository,
             analysisStatusCheckService,
             taskExecutor,
-            gitServiceLoaders,
+            gitLoaders,
             analysers
         )
     }
@@ -80,32 +80,32 @@ class AnalysisConfig {
         solutionStorage: SolutionStorage,
         repositoryRepository: RepositoryRepository,
         authorizationService: AuthorizationService
-    ): GithubServiceLoader {
-        return GithubServiceLoader(solutionStorage, repositoryRepository, authorizationService)
+    ): GithubLoader {
+        return GithubLoader(solutionStorage, repositoryRepository, authorizationService)
     }
 
     @Bean
     fun bitbucketServiceLoader(
         solutionStorage: SolutionStorage,
         repositoryRepository: RepositoryRepository
-    ): BitbucketServiceLoader {
-        return BitbucketServiceLoader(solutionStorage, repositoryRepository)
+    ): BitbucketLoader {
+        return BitbucketLoader(solutionStorage, repositoryRepository)
     }
 
     @Bean
     fun gitlabServiceLoader(
         solutionStorage: SolutionStorage,
         repositoryRepository: RepositoryRepository
-    ): GitlabServiceLoader {
-        return GitlabServiceLoader(solutionStorage, repositoryRepository)
+    ): GitlabLoader {
+        return GitlabLoader(solutionStorage, repositoryRepository)
     }
 
     @Bean
     fun gitServiceLoaders(
-        githubServiceLoader: GithubServiceLoader,
-        bitbucketServiceLoader: BitbucketServiceLoader,
-        gitlabServiceLoader: GitlabServiceLoader
-    ): Map<GitProperty, GitServiceLoader> {
+        githubServiceLoader: GithubLoader,
+        bitbucketServiceLoader: BitbucketLoader,
+        gitlabServiceLoader: GitlabLoader
+    ): Map<GitProperty, GitLoader> {
         return mapOf(
             GITHUB to githubServiceLoader,
             BITBUCKET to bitbucketServiceLoader,
