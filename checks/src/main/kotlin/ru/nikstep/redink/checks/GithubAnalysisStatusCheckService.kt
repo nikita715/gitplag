@@ -13,10 +13,16 @@ class GithubAnalysisStatusCheckService(private val authorizationService: Authori
     private val logger = KotlinLogging.logger {}
 
     override fun send(pullRequest: PullRequest, analysisData: AnalysisResultData) {
-        val accessToken = authorizationService.getAuthorizationToken(pullRequest.installationId)
+        val accessToken = authorizationService.getAuthorizationToken(pullRequest.secretKey)
         val body = createBody(pullRequest, analysisData)
         sendGithubStatusCheckRequest(pullRequest.repoFullName, accessToken, body)
         logger.info { "AnalysisResult: sent for ${pullRequest.repoFullName}, creator ${pullRequest.creatorName}" }
+    }
+
+    override fun sendInProgressStatus(pullRequest: PullRequest) {
+        AnalysisResultData(status = GithubAnalysisStatus.IN_PROGRESS.value).also {
+            send(pullRequest, it)
+        }
     }
 
     private fun createBody(

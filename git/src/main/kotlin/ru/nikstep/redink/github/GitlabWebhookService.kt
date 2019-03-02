@@ -1,12 +1,15 @@
 package ru.nikstep.redink.github
 
 import com.beust.klaxon.JsonObject
+import ru.nikstep.redink.github.temporary.ChangeLoader
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.GITLAB
-import ru.nikstep.redink.util.sendRestRequest
 
-class GitlabWebhookService(pullRequestRepository: PullRequestRepository) :
+class GitlabWebhookService(
+    pullRequestRepository: PullRequestRepository,
+    private val changeLoader: ChangeLoader
+) :
     AbstractWebhookService(pullRequestRepository) {
 
     override val JsonObject.gitService: GitProperty
@@ -31,9 +34,5 @@ class GitlabWebhookService(pullRequestRepository: PullRequestRepository) :
         get() = obj("object_attributes")!!.string("source_branch")!!
 
     override val JsonObject.changedFiles: List<String>
-        get() = sendRestRequest<JsonObject>(
-            "https://gitlab.com/api/v4/projects/$repoId/merge_requests/$number/changes"
-        ).array<JsonObject>("changes")!!.map { change ->
-            change.string("new_path")!!
-        }
+        get() = changeLoader.loadChanges(repoId, repoFullName, number, headSha, secretKey)
 }

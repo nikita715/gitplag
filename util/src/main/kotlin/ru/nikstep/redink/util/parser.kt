@@ -7,9 +7,9 @@ import com.beust.klaxon.Parser
 private val parser = Parser.default()
 
 fun String.parseAsObject(): JsonObject {
-    return parser.parse(this) as JsonObject
+    return parser.parse(this.reader()) as JsonObject
 }
 
 fun String.parseAsArray(): JsonArray<*> {
-    return parser.parse(this) as JsonArray<*>
+    return parser.parse(this.reader()) as JsonArray<*>
 }

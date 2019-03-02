@@ -27,7 +27,7 @@ abstract class AbstractWebhookService(private val pullRequestRepository: PullReq
                 creatorName = creatorName,
                 headSha = headSha,
                 branchName = branchName,
-                installationId = installationId,
+                secretKey = secretKey,
                 changedFiles = changedFiles
             )
         }
@@ -49,6 +49,6 @@ abstract class AbstractWebhookService(private val pullRequestRepository: PullReq
 
     protected abstract val JsonObject.changedFiles: List<String>
 
-    protected open val JsonObject.installationId: Int
-        get() = -1
+    protected open val JsonObject.secretKey: String
+        get() = ""
 }

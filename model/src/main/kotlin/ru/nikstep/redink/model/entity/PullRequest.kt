@@ -23,7 +23,7 @@ data class PullRequest(
     val number: Int,
 
     @Column(nullable = false)
-    val installationId: Int = -1,
+    val secretKey: String = "",
 
     @Column(nullable = false)
     val creatorName: String,

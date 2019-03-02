@@ -12,7 +12,7 @@ open class GithubAuthorizationService : AuthorizationService {
     private val bearer = "Bearer "
 
     @Cacheable(cacheNames = ["githubAccessTokens"], sync = true)
-    override fun getAuthorizationToken(installationId: Int): String {
+    override fun getAuthorizationToken(installationId: String): String {
         logger.info { "Authorization: new request for access token from github" }
         return bearer + sendGithubAccessTokenRequest(installationId, getToken()).string("token")
     }

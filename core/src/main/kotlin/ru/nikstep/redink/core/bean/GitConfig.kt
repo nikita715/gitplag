@@ -7,6 +7,9 @@ import ru.nikstep.redink.github.BitbucketWebhookService
 import ru.nikstep.redink.github.GithubIntegrationService
 import ru.nikstep.redink.github.GithubPullRequestWebhookService
 import ru.nikstep.redink.github.GitlabWebhookService
+import ru.nikstep.redink.github.temporary.BitbucketChangeLoader
+import ru.nikstep.redink.github.temporary.GithubChangeLoader
+import ru.nikstep.redink.github.temporary.GitlabChangeLoader
 import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.repo.AnalysisPairLinesRepository
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
@@ -20,31 +23,48 @@ class GitConfig {
 
     @Bean
     fun githubPullRequestWebhookService(
-        authorizationService: AuthorizationService,
         analysisStatusCheckService: AnalysisStatusCheckService,
+        githubChangeLoader: GithubChangeLoader,
         pullRequestRepository: PullRequestRepository
     ): GithubPullRequestWebhookService {
         return GithubPullRequestWebhookService(
-            authorizationService,
             analysisStatusCheckService,
+            githubChangeLoader,
             pullRequestRepository
         )
     }
 
     @Bean
+    fun bitbucketChangeLoader(): BitbucketChangeLoader {
+        return BitbucketChangeLoader()
+    }
+
+    @Bean
+    fun gitlabChangeLoader(): GitlabChangeLoader {
+        return GitlabChangeLoader()
+    }
+
+    @Bean
+    fun githubChangeLoader(authorizationService: AuthorizationService): GithubChangeLoader {
+        return GithubChangeLoader(authorizationService)
+    }
+
+    @Bean
     fun bitbucketPullRequestWebhookService(
-        pullRequestRepository: PullRequestRepository
+        pullRequestRepository: PullRequestRepository,
+        bitbucketChangeLoader: BitbucketChangeLoader
     ): BitbucketWebhookService {
-        return BitbucketWebhookService(pullRequestRepository)
+        return BitbucketWebhookService(pullRequestRepository, bitbucketChangeLoader)
     }
 
     @Bean
     fun gitlabPullRequestWebhookService(
         authorizationService: AuthorizationService,
         analysisStatusCheckService: AnalysisStatusCheckService,
-        pullRequestRepository: PullRequestRepository
+        pullRequestRepository: PullRequestRepository,
+        gitlabChangeLoader: GitlabChangeLoader
     ): GitlabWebhookService {
-        return GitlabWebhookService(pullRequestRepository)
+        return GitlabWebhookService(pullRequestRepository, gitlabChangeLoader)
     }
 
     @Bean

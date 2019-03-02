@@ -6,4 +6,5 @@ interface AnalysisStatusCheckService {
 
     fun send(pullRequest: PullRequest, analysisData: AnalysisResultData)
 
+    fun sendInProgressStatus(pullRequest: PullRequest)
 }
