@@ -1,14 +1,12 @@
 package ru.nikstep.redink.github
 
 import com.beust.klaxon.JsonObject
-import ru.nikstep.redink.github.temporary.ChangeLoader
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.GITLAB
 
 class GitlabWebhookService(
-    pullRequestRepository: PullRequestRepository,
-    private val changeLoader: ChangeLoader
+    pullRequestRepository: PullRequestRepository
 ) :
     AbstractWebhookService(pullRequestRepository) {
 
