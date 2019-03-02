@@ -2,6 +2,7 @@ package ru.nikstep.redink.model.entity
 
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
@@ -31,6 +32,6 @@ class AnalysisPair(
     @Column(nullable = false)
     val fileName: String,
 
-    @OneToMany(mappedBy = "analysisPair", orphanRemoval = true)
+    @OneToMany(mappedBy = "analysisPair", orphanRemoval = true, fetch = FetchType.EAGER)
     val analysisPairLines: List<AnalysisPairLines> = emptyList()
 )
