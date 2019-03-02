@@ -16,7 +16,7 @@ private const val githubAcceptAntiopePreview = "application/vnd.github.antiope-p
 
 private val logger = KotlinLogging.logger {}
 
-fun sendGithubAccessTokenRequest(installationId: Int, token: String): JsonObject =
+fun sendGithubAccessTokenRequest(installationId: String, token: String): JsonObject =
     "https://api.github.com/app/installations/$installationId/access_tokens"
         .httpPost()
         .header(

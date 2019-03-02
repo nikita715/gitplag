@@ -78,7 +78,7 @@ subprojects {
         args = [
                 "report",
                 "-l",
-                "Java",
+                "Kotlin",
                 "-r",
                 "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
         ]
@@ -86,6 +86,6 @@ subprojects {
 }
 
 task jacocoRootReport(type: JacocoReport) {
-    def requiredSubprojects = subprojects.findAll { it.name in ['analysis'] }
+    def requiredSubprojects = subprojects.findAll { it.name in ['analysis', 'git'] }
     dependsOn = requiredSubprojects.sendCoverageToCodacy
 }

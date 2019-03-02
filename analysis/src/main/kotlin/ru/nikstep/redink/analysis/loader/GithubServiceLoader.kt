@@ -37,7 +37,7 @@ class GithubServiceLoader(
                     pullRequest.branchName,
                     fileName
                 ),
-                accessToken = authorizationService.getAuthorizationToken(pullRequest.installationId)
+                accessToken = authorizationService.getAuthorizationToken(pullRequest.secretKey)
             )
 
             val resultObject = fileResponse.obj("data")!!.obj("repository")!!
@@ -72,7 +72,7 @@ class GithubServiceLoader(
                 "master",
                 fileName
             ),
-            accessToken = authorizationService.getAuthorizationToken(pullRequest.installationId)
+            accessToken = authorizationService.getAuthorizationToken(pullRequest.secretKey)
         )
 
 

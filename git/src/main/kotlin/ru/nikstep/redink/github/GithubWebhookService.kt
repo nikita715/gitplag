@@ -1,21 +1,17 @@
 package ru.nikstep.redink.github
 
-import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
-import ru.nikstep.redink.checks.AnalysisResultData
 import ru.nikstep.redink.checks.AnalysisStatusCheckService
-import ru.nikstep.redink.checks.GithubAnalysisStatus
+import ru.nikstep.redink.github.temporary.ChangeLoader
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.GITHUB
-import ru.nikstep.redink.util.auth.AuthorizationService
-import ru.nikstep.redink.util.sendRestRequest
 
 class GithubPullRequestWebhookService(
-    private val authorizationService: AuthorizationService,
     private val analysisStatusCheckService: AnalysisStatusCheckService,
+    private val changeLoader: ChangeLoader,
     pullRequestRepository: PullRequestRepository
 ) : AbstractWebhookService(pullRequestRepository) {
 
@@ -42,31 +38,22 @@ class GithubPullRequestWebhookService(
     override val JsonObject.branchName: String
         get() = obj("pull_request")!!.obj("head")!!.string("ref")!!
 
-    override val JsonObject.installationId: Int
-        get() = obj("installation")!!.int("id")!!
+    override val JsonObject.secretKey: String
+        get() = obj("installation")!!.int("id")!!.toString()
 
     override val JsonObject.changedFiles: List<String>
-        get() = sendRestRequest<JsonArray<*>>(
-            url = "https://api.github.com/repos/$repoFullName/pulls/$number/files",
-            accessToken = authorizationService.getAuthorizationToken(installationId)
-        ).map { (it as JsonObject).string("filename")!! }
+        get() = changeLoader.loadChanges(repoId, repoFullName, number, headSha, secretKey)
 
     override val jsonToPullRequest: (JsonObject) -> PullRequest = { jsonPayload ->
         if (jsonPayload.hasInstallationId())
             super.jsonToPullRequest(jsonPayload)
-                .apply(::sendInProgressStatus)
+                .apply(analysisStatusCheckService::sendInProgressStatus)
                 .also(logger::inProgressStatus)
         else
             throw GitException("Git: no installation id")
     }
 
-    private fun sendInProgressStatus(pullRequest: PullRequest) {
-        AnalysisResultData(status = GithubAnalysisStatus.IN_PROGRESS.value).also {
-            analysisStatusCheckService.send(pullRequest, it)
-        }
-    }
-
     private fun JsonObject.hasInstallationId(): Boolean {
-        return this["installation"] == null
+        return obj("installation") != null
     }
 }
