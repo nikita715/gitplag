@@ -1,13 +1,15 @@
-package ru.nikstep.redink.github
+package ru.nikstep.redink.github.webhook
 
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
+import ru.nikstep.redink.github.newPullRequest
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.parseAsObject
 
-abstract class AbstractWebhookService(private val pullRequestRepository: PullRequestRepository) : WebhookService {
+abstract class AbstractWebhookService(private val pullRequestRepository: PullRequestRepository) :
+    WebhookService {
     private val logger = KotlinLogging.logger {}
 
     override fun saveNewPullRequest(payload: String) {

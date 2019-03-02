@@ -7,10 +7,10 @@ import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.sendRestRequest
 
-class BitbucketServiceLoader(
+class BitbucketLoader(
     solutionStorage: SolutionStorage,
     repositoryRepository: RepositoryRepository
-) : AbstractGitServiceLoader(solutionStorage, repositoryRepository) {
+) : AbstractGitLoader(solutionStorage, repositoryRepository) {
 
     override fun loadChangedFiles(pullRequest: PullRequest): List<String> =
         pullRequest.run {

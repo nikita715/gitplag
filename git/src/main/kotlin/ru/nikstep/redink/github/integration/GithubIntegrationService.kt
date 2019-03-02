@@ -1,7 +1,8 @@
-package ru.nikstep.redink.github
+package ru.nikstep.redink.github.integration
 
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
+import ru.nikstep.redink.github.newUser
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.User
 import ru.nikstep.redink.model.repo.RepositoryRepository

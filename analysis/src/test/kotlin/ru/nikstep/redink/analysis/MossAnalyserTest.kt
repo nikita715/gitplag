@@ -3,6 +3,7 @@ package ru.nikstep.redink.analysis
 import io.kotlintest.matchers.shouldEqual
 import org.junit.Ignore
 import org.junit.Test
+import ru.nikstep.redink.analysis.analyser.MossAnalyser
 import ru.nikstep.redink.model.data.AnalysisResult
 
 class MossAnalyserTest {

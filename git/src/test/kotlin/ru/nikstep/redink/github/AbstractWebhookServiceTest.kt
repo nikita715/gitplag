@@ -9,6 +9,7 @@ import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
+import ru.nikstep.redink.github.webhook.WebhookService
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 
