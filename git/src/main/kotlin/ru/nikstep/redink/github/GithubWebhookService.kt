@@ -20,29 +20,29 @@ class GithubPullRequestWebhookService(
     override val JsonObject.gitService: GitProperty
         get() = GITHUB
 
-    override val JsonObject.repoId: Long
+    override val JsonObject.repoId: Long?
         get() = -1
 
-    override val JsonObject.number: Int
-        get() = int("number")!!
+    override val JsonObject.number: Int?
+        get() = int("number")
 
-    override val JsonObject.repoFullName: String
-        get() = obj("repository")!!.string("full_name")!!
+    override val JsonObject.repoFullName: String?
+        get() = obj("repository")?.string("full_name")
 
-    override val JsonObject.creatorName: String
-        get() = obj("pull_request")!!.obj("user")!!.string("login")!!
+    override val JsonObject.creatorName: String?
+        get() = obj("pull_request")?.obj("user")?.string("login")
 
-    override val JsonObject.headSha: String
-        get() = obj("pull_request")!!.obj("head")!!.string("sha")!!
+    override val JsonObject.headSha: String?
+        get() = obj("pull_request")?.obj("head")?.string("sha")
 
-    override val JsonObject.branchName: String
-        get() = obj("pull_request")!!.obj("head")!!.string("ref")!!
+    override val JsonObject.branchName: String?
+        get() = obj("pull_request")?.obj("head")?.string("ref")
 
-    override val JsonObject.secretKey: String
-        get() = obj("installation")!!.int("id")!!.toString()
+    override val JsonObject.secretKey: String?
+        get() = obj("installation")?.int("id")?.toString()
 
     override val JsonObject.changedFiles: List<String>
-        get() = changeLoader.loadChanges(repoId, repoFullName, number, headSha, secretKey)
+        get() = changeLoader.loadChanges(repoId!!, repoFullName!!, number!!, headSha!!, secretKey!!)
 
     override val jsonToPullRequest: (JsonObject) -> PullRequest = { jsonPayload ->
         if (jsonPayload.hasInstallationId())

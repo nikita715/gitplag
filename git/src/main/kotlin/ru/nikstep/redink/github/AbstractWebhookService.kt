@@ -21,34 +21,34 @@ abstract class AbstractWebhookService(private val pullRequestRepository: PullReq
         jsonObject.run {
             PullRequest(
                 gitService = gitService,
-                repoId = repoId,
-                number = number,
-                repoFullName = repoFullName,
-                creatorName = creatorName,
-                headSha = headSha,
-                branchName = branchName,
-                secretKey = secretKey,
-                changedFiles = changedFiles
+                repoId = requireNotNull(repoId) { "repo id is null" },
+                number = requireNotNull(number) { "number is null" },
+                repoFullName = requireNotNull(repoFullName) { "repoFullName is null" },
+                creatorName = requireNotNull(creatorName) { "creatorName is null" },
+                headSha = requireNotNull(headSha) { "headSha is null" },
+                branchName = requireNotNull(branchName) { "branchName is null" },
+                secretKey = requireNotNull(secretKey) { "secretKey is null" },
+                changedFiles = requireNotNull(changedFiles) { "changedFiles is null" }
             )
         }
     }
 
     protected abstract val JsonObject.gitService: GitProperty
 
-    protected abstract val JsonObject.repoId: Long
+    protected abstract val JsonObject.repoId: Long?
 
-    protected abstract val JsonObject.number: Int
+    protected abstract val JsonObject.number: Int?
 
-    protected abstract val JsonObject.repoFullName: String
+    protected abstract val JsonObject.repoFullName: String?
 
-    protected abstract val JsonObject.creatorName: String
+    protected abstract val JsonObject.creatorName: String?
 
-    protected abstract val JsonObject.headSha: String
+    protected abstract val JsonObject.headSha: String?
 
-    protected abstract val JsonObject.branchName: String
+    protected abstract val JsonObject.branchName: String?
 
     protected abstract val JsonObject.changedFiles: List<String>
 
-    protected open val JsonObject.secretKey: String
+    protected open val JsonObject.secretKey: String?
         get() = ""
 }
