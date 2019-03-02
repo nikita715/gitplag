@@ -24,10 +24,6 @@ allprojects {
         maven { url "http://dl.bintray.com/typesafe/maven-releases" }
     }
 
-//    jacoco {
-//        toolVersion = "0.8.2"
-//    }
-
     dependencies {
         codacy 'com.github.codacy:codacy-coverage-reporter:-SNAPSHOT'
     }
@@ -42,17 +38,6 @@ subprojects {
 
     bootJar.enabled = false
     jar.enabled = true
-//
-//    jacocoTestReport {
-//        additionalSourceDirs = files(sourceSets.main.allSource.srcDirs)
-//        sourceDirectories = files(sourceSets.main.allSource.srcDirs)
-//        classDirectories = files(sourceSets.main.output)
-//        reports {
-//            html.enabled = true
-//            xml.enabled = true
-//            csv.enabled = false
-//        }
-//    }
 
     dependencies {
         compile 'io.github.microutils:kotlin-logging:1.6.22'
@@ -75,15 +60,12 @@ subprojects {
 }
 
 task jacocoRootReport(type: JacocoReport) {
-    def requiredSubprojects = subprojects.findAll { it.name in ['analysis', 'git'] }
-    additionalSourceDirs = files(requiredSubprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(requiredSubprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories =  files(requiredSubprojects.sourceSets.main.output)
-    executionData = files(requiredSubprojects.jacocoTestReport.executionData)
+    additionalSourceDirs.from = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories.from = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories.from = files(subprojects.sourceSets.main.output)
+    executionData.from = subprojects.stream().map {fileTree(it.buildDir).include("/jacoco/*.exec")}.collect()
     reports {
-        html.enabled = true
         xml.enabled = true
-        csv.enabled = false
     }
 }
 
