@@ -33,7 +33,4 @@ class BitbucketWebhookService(
     override val JsonObject.branchName: String?
         get() = obj("pullrequest")?.obj("source")?.obj("branch")?.string("name")
 
-    override val JsonObject.changedFiles: List<String>
-        get() = changeLoader.loadChanges(repoId!!, repoFullName!!, number!!, headSha!!, secretKey!!)
-
 }

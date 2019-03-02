@@ -27,8 +27,7 @@ abstract class AbstractWebhookService(private val pullRequestRepository: PullReq
                 creatorName = requireNotNull(creatorName) { "creatorName is null" },
                 headSha = requireNotNull(headSha) { "headSha is null" },
                 branchName = requireNotNull(branchName) { "branchName is null" },
-                secretKey = requireNotNull(secretKey) { "secretKey is null" },
-                changedFiles = requireNotNull(changedFiles) { "changedFiles is null" }
+                secretKey = requireNotNull(secretKey) { "secretKey is null" }
             )
         }
     }
@@ -46,8 +45,6 @@ abstract class AbstractWebhookService(private val pullRequestRepository: PullReq
     protected abstract val JsonObject.headSha: String?
 
     protected abstract val JsonObject.branchName: String?
-
-    protected abstract val JsonObject.changedFiles: List<String>
 
     protected open val JsonObject.secretKey: String?
         get() = ""

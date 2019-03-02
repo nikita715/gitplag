@@ -25,7 +25,7 @@ class FileSystemSolutionStorage(
     override fun loadAllBasesAndSolutions(pullRequest: PullRequest): Collection<PreparedAnalysisFiles> {
         val repoName = pullRequest.repoFullName
         val repo = repositoryRepository.findByName(repoName)
-        val requiredFiles = pullRequest.changedFiles.intersect(repo.filePatterns)
+        val requiredFiles = repo.filePatterns
 
         return requiredFiles.map { fileName ->
             PreparedAnalysisFiles(

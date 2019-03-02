@@ -16,7 +16,6 @@ class BitbucketWebhookServiceTest : AbstractWebhookServiceTest() {
         repoFullName = "nikita715/plagiarism_test2",
         headSha = "1458a8caab0b",
         branchName = "testns2/javacljava-created-online-with-bitbucket-1551121394025",
-        gitService = GitProperty.BITBUCKET,
-        changedFiles = listOf()
+        gitService = GitProperty.BITBUCKET
     )
 }

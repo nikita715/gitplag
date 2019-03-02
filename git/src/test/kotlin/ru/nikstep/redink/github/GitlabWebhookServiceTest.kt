@@ -16,7 +16,6 @@ class GitlabWebhookServiceTest : AbstractWebhookServiceTest() {
         repoFullName = "nikita715/plagiarism_test3",
         headSha = "d647870f53f333e3c0bec84cdd245e7262071331",
         branchName = "br2",
-        gitService = GitProperty.GITLAB,
-        changedFiles = listOf()
+        gitService = GitProperty.GITLAB
     )
 }

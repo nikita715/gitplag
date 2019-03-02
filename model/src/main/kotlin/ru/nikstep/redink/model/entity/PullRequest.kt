@@ -1,17 +1,13 @@
 package ru.nikstep.redink.model.entity
 
 import ru.nikstep.redink.util.GitProperty
-import javax.persistence.CollectionTable
 import javax.persistence.Column
-import javax.persistence.ElementCollection
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
-import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
-import javax.persistence.JoinColumn
 
 @Entity
 data class PullRequest(
@@ -42,10 +38,5 @@ data class PullRequest(
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    val gitService: GitProperty,
-
-    @Column
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "pull_request_changed_file", joinColumns = [JoinColumn(name = "pullRequest")])
-    val changedFiles: List<String>
+    val gitService: GitProperty
 )

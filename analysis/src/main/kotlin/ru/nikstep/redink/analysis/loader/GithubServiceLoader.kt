@@ -1,5 +1,7 @@
 package ru.nikstep.redink.analysis.loader
 
+import com.beust.klaxon.JsonArray
+import com.beust.klaxon.JsonObject
 import com.github.kittinunf.fuel.core.Method
 import mu.KotlinLogging
 import ru.nikstep.redink.analysis.AnalysisException
@@ -8,6 +10,7 @@ import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.auth.AuthorizationService
 import ru.nikstep.redink.util.sendGithubGraphqlRequest
+import ru.nikstep.redink.util.sendRestRequest
 import java.io.File
 
 class GithubServiceLoader(
@@ -23,8 +26,9 @@ class GithubServiceLoader(
 
     override fun loadFilesFromGit(pullRequest: PullRequest) {
 
+        val changedFiles = loadChangedFiles(pullRequest)
         val fileNames =
-            pullRequest.changedFiles.intersect(repositoryRepository.findByName(pullRequest.repoFullName).filePatterns)
+            changedFiles.intersect(repositoryRepository.findByName(pullRequest.repoFullName).filePatterns)
 
         fileNames.map { fileName ->
             checkBaseExists(pullRequest, fileName)
@@ -51,6 +55,15 @@ class GithubServiceLoader(
             )
         }
     }
+
+    fun loadChangedFiles(pullRequest: PullRequest): List<String> =
+        pullRequest.run {
+            sendRestRequest<JsonArray<*>>(
+                url = "https://api.github.com/repos/$repoFullName/pulls/$number/files",
+                accessToken = authorizationService.getAuthorizationToken(secretKey)
+            ).map { (it as JsonObject).string("filename")!! }
+        }
+
 
     fun getFileQuery(repoName: String, branchName: String, fileName: String): String {
         val args = repoName.split("/").toTypedArray()

@@ -23,7 +23,6 @@ class GithubWebhookServiceTest : AbstractWebhookServiceTest() {
         repoFullName = "nikita715/plagiarism_test",
         headSha = "6ec548da744248919dc753deac536722a46c31f1",
         branchName = "testns2-patch-1",
-        gitService = GitProperty.GITHUB,
-        changedFiles = listOf()
+        gitService = GitProperty.GITHUB
     )
 }

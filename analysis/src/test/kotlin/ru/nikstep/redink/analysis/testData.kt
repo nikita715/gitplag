@@ -36,6 +36,5 @@ internal val solutionStorageService = mock<SolutionStorage> {
 
 internal val pullRequest = mock<PullRequest> {
     on { repoFullName } doReturn TEST_REPO_NAME
-    on { changedFiles } doReturn listOf(TEST_FILE_NAME)
     on { creatorName } doReturn "student1"
 }
