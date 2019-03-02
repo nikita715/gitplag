@@ -71,30 +71,21 @@ subprojects {
         testCompile 'org.springframework.boot:spring-boot-starter-test'
         testCompile 'org.springframework.security:spring-security-test'
     }
+
+    task sendCoverageToCodacy(type: JavaExec, dependsOn: jacocoTestReport) {
+        main = "com.codacy.CodacyCoverageReporter"
+        classpath = configurations.codacy
+        args = [
+                "report",
+                "-l",
+                "Java",
+                "-r",
+                "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+        ]
+    }
 }
 
 task jacocoRootReport(type: JacocoReport) {
     def requiredSubprojects = subprojects.findAll { it.name in ['analysis'] }
-    dependsOn = requiredSubprojects.test
-    additionalSourceDirs = files(requiredSubprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(requiredSubprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(requiredSubprojects.sourceSets.main.output)
-    executionData = files(requiredSubprojects.jacocoTestReport.executionData)
-    reports {
-        html.enabled = true
-        xml.enabled = true
-        csv.enabled = false
-    }
-}
-
-task sendCoverageToCodacy(type: JavaExec, dependsOn: jacocoRootReport) {
-    main = "com.codacy.CodacyCoverageReporter"
-    classpath = configurations.codacy
-    args = [
-            "report",
-            "-l",
-            "Java",
-            "-r",
-            "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
-    ]
+    dependsOn = requiredSubprojects.sendCoverageToCodacy
 }
