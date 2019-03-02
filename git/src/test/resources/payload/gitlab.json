@@ -1,0 +1,130 @@
+{
+  "object_kind": "merge_request",
+  "event_type": "merge_request",
+  "user": {
+    "name": "Nikita Stepochkin",
+    "username": "nikita715",
+    "avatar_url": "https://secure.gravatar.com/avatar/ea07a8a38c941ca0de4619d60af4b32b?s=80&d=identicon"
+  },
+  "project": {
+    "id": 11083523,
+    "name": "plagiarism_test3",
+    "description": "",
+    "web_url": "https://gitlab.com/nikita715/plagiarism_test3",
+    "avatar_url": null,
+    "git_ssh_url": "git@gitlab.com:nikita715/plagiarism_test3.git",
+    "git_http_url": "https://gitlab.com/nikita715/plagiarism_test3.git",
+    "namespace": "nikita715",
+    "visibility_level": 20,
+    "path_with_namespace": "nikita715/plagiarism_test3",
+    "default_branch": "master",
+    "ci_config_path": null,
+    "homepage": "https://gitlab.com/nikita715/plagiarism_test3",
+    "url": "git@gitlab.com:nikita715/plagiarism_test3.git",
+    "ssh_url": "git@gitlab.com:nikita715/plagiarism_test3.git",
+    "http_url": "https://gitlab.com/nikita715/plagiarism_test3.git"
+  },
+  "object_attributes": {
+    "assignee_id": null,
+    "author_id": 3621222,
+    "created_at": "2019-02-28 19:14:37 UTC",
+    "description": "",
+    "head_pipeline_id": null,
+    "id": 24989535,
+    "iid": 1,
+    "last_edited_at": "2019-02-28 22:12:32 UTC",
+    "last_edited_by_id": 3621222,
+    "merge_commit_sha": null,
+    "merge_error": null,
+    "merge_params": {
+      "force_remove_source_branch": "1"
+    },
+    "merge_status": "can_be_merged",
+    "merge_user_id": null,
+    "merge_when_pipeline_succeeds": false,
+    "milestone_id": null,
+    "source_branch": "br2",
+    "source_project_id": 11083523,
+    "state": "opened",
+    "target_branch": "master",
+    "target_project_id": 11083523,
+    "time_estimate": 0,
+    "title": "Update javacl.javafgjkdрdf",
+    "updated_at": "2019-02-28 22:12:32 UTC",
+    "updated_by_id": 3621222,
+    "url": "https://gitlab.com/nikita715/plagiarism_test3/merge_requests/1",
+    "source": {
+      "id": 11083523,
+      "name": "plagiarism_test3",
+      "description": "",
+      "web_url": "https://gitlab.com/nikita715/plagiarism_test3",
+      "avatar_url": null,
+      "git_ssh_url": "git@gitlab.com:nikita715/plagiarism_test3.git",
+      "git_http_url": "https://gitlab.com/nikita715/plagiarism_test3.git",
+      "namespace": "nikita715",
+      "visibility_level": 20,
+      "path_with_namespace": "nikita715/plagiarism_test3",
+      "default_branch": "master",
+      "ci_config_path": null,
+      "homepage": "https://gitlab.com/nikita715/plagiarism_test3",
+      "url": "git@gitlab.com:nikita715/plagiarism_test3.git",
+      "ssh_url": "git@gitlab.com:nikita715/plagiarism_test3.git",
+      "http_url": "https://gitlab.com/nikita715/plagiarism_test3.git"
+    },
+    "target": {
+      "id": 11083523,
+      "name": "plagiarism_test3",
+      "description": "",
+      "web_url": "https://gitlab.com/nikita715/plagiarism_test3",
+      "avatar_url": null,
+      "git_ssh_url": "git@gitlab.com:nikita715/plagiarism_test3.git",
+      "git_http_url": "https://gitlab.com/nikita715/plagiarism_test3.git",
+      "namespace": "nikita715",
+      "visibility_level": 20,
+      "path_with_namespace": "nikita715/plagiarism_test3",
+      "default_branch": "master",
+      "ci_config_path": null,
+      "homepage": "https://gitlab.com/nikita715/plagiarism_test3",
+      "url": "git@gitlab.com:nikita715/plagiarism_test3.git",
+      "ssh_url": "git@gitlab.com:nikita715/plagiarism_test3.git",
+      "http_url": "https://gitlab.com/nikita715/plagiarism_test3.git"
+    },
+    "last_commit": {
+      "id": "d647870f53f333e3c0bec84cdd245e7262071331",
+      "message": "Update javacl.java",
+      "timestamp": "2019-02-28T19:14:24Z",
+      "url": "https://gitlab.com/nikita715/plagiarism_test3/commit/d647870f53f333e3c0bec84cdd245e7262071331",
+      "author": {
+        "name": "Nikita Stepochkin",
+        "email": "nikstepbox@gmail.com"
+      }
+    },
+    "work_in_progress": false,
+    "total_time_spent": 0,
+    "human_total_time_spent": null,
+    "human_time_estimate": null,
+    "action": "update"
+  },
+  "labels": [
+  ],
+  "changes": {
+    "last_edited_at": {
+      "previous": "2019-02-28 20:29:35 UTC",
+      "current": "2019-02-28 22:12:32 UTC"
+    },
+    "title": {
+      "previous": "Update javacl.javafgjkdр",
+      "current": "Update javacl.javafgjkdрdf"
+    },
+    "updated_at": {
+      "previous": "2019-02-28 20:29:35 UTC",
+      "current": "2019-02-28 22:12:32 UTC"
+    }
+  },
+  "repository": {
+    "name": "plagiarism_test3",
+    "url": "git@gitlab.com:nikita715/plagiarism_test3.git",
+    "description": "",
+    "homepage": "https://gitlab.com/nikita715/plagiarism_test3"
+  }
+}
