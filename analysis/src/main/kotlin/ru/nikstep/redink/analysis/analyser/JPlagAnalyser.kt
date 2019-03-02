@@ -4,62 +4,43 @@ import mu.KotlinLogging
 import org.jsoup.Jsoup
 import ru.nikstep.redink.analysis.AnalysisException
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
-import ru.nikstep.redink.analysis.logJPlag
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.asPath
-import ru.nikstep.redink.util.asPathInRoot
 import ru.nikstep.redink.util.inTempDirectory
-import ru.nikstep.redink.util.onlyLastName
 import java.io.File
-import java.util.concurrent.TimeUnit.MINUTES
 import kotlin.math.roundToInt
 
 class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath: String) :
     AbstractAnalyser(solutionStorage) {
 
     private val logger = KotlinLogging.logger {}
-    private val jplagPath = asPath("libs".asPathInRoot(), "jplag.jar")
     private val regexUserNames = "^Matches for (.+) & (.+)$".toRegex()
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
-    override fun PreparedAnalysisFiles.processFiles(pullRequest: PullRequest): Iterable<AnalysisResult> =
+    override fun analyseOneFile(
+        pullRequest: PullRequest,
+        analysisFiles: PreparedAnalysisFiles
+    ): Iterable<AnalysisResult> =
         inTempDirectory { resultDir ->
-            executeJPlag(this, resultDir)
-            rangeOfMatchIndexes(this).map { index ->
-                index.let(toAnalysisResults(this, resultDir))
-            }.filter {
-                it.students.first == pullRequest.creatorName || it.students.second == pullRequest.creatorName
+            JPlagClient(analysisFiles, solutionsPath, resultDir).run()
+            resultIndexesOf(analysisFiles).map { index ->
+                parseResults(analysisFiles, resultDir, index)
             }
         }
 
-    private fun executeJPlag(analysisFiles: PreparedAnalysisFiles, resultDir: String) =
-        buildString {
-            append("java -jar $jplagPath ")
-            append("-l ${analysisFiles.language.ofJPlag()} ")
-            append("-bc .base ")
-            append("-r $resultDir ")
-            append("-p ${analysisFiles.fileName.onlyLastName()} ")
-            append("-s ")
-            append(asPath(solutionsPath, analysisFiles.repoName))
-        }.also { task ->
-            logger.logJPlag(task) {
-                Runtime.getRuntime().exec(task).waitFor(5, MINUTES)
-            }
-        }
-
-
-    private fun toAnalysisResults(
+    private fun parseResults(
         analysisFiles: PreparedAnalysisFiles,
-        resultDir: String
-    ): (Int) -> AnalysisResult = { numberOfMatch: Int ->
-        val body = Jsoup.parse(File(asPath(resultDir, "match$numberOfMatch-link.html")).readText())
+        resultDir: String,
+        index: Int
+    ): AnalysisResult {
+        val body = Jsoup.parse(File(asPath(resultDir, "match$index-link.html")).readText())
             .body()
         val (name1, name2) = regexUserNames.find(body.getElementsByTag("H3")[0].text())!!
             .groupValues.subList(1, 3)
         val percentage = body.getElementsByTag("H1")[0].text().replace("%", "").toDouble().roundToInt()
-        val body2 = Jsoup.parse(File(asPath(resultDir, "match$numberOfMatch-top.html")).readText())
+        val body2 = Jsoup.parse(File(asPath(resultDir, "match$index-top.html")).readText())
             .body()
         val rows = body2.getElementsByTag("tr")
         val matchedLines = mutableListOf<Pair<Pair<Int, Int>, Pair<Int, Int>>>()
@@ -73,7 +54,7 @@ class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath:
                 throw AnalysisException("JPlag does not support the analysis of files with the same name")
             matchedLines += (from1.toInt() to to1.toInt()) to (from2.toInt() to to2.toInt())
         }
-        AnalysisResult(
+        return AnalysisResult(
             students = name1 to name2,
             countOfLines = -1,
             percentage = percentage,
@@ -83,7 +64,7 @@ class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath:
         )
     }
 
-    private fun rangeOfMatchIndexes(analysisFiles: PreparedAnalysisFiles): IntRange {
+    private fun resultIndexesOf(analysisFiles: PreparedAnalysisFiles): IntRange {
         val countOfMatches = (0 until analysisFiles.solutions.size).sum()
         return 0 until countOfMatches
     }

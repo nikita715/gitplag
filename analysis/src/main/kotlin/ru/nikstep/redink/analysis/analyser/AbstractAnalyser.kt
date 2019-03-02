@@ -10,8 +10,11 @@ abstract class AbstractAnalyser(private val solutionStorage: SolutionStorage) :
 
     override fun analyse(pullRequest: PullRequest): Collection<AnalysisResult> =
         solutionStorage.loadAllBasesAndSolutions(pullRequest)
-            .flatMap { it.processFiles(pullRequest) }
+            .flatMap { analyseOneFile(pullRequest, it) }
 
-    abstract fun PreparedAnalysisFiles.processFiles(pullRequest: PullRequest): Iterable<AnalysisResult>
+    abstract fun analyseOneFile(
+        pullRequest: PullRequest,
+        analysisFiles: PreparedAnalysisFiles
+    ): Iterable<AnalysisResult>
 
 }

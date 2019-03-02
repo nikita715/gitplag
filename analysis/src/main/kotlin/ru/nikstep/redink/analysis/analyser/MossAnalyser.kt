@@ -1,9 +1,7 @@
 package ru.nikstep.redink.analysis.analyser
 
-import it.zielke.moji.SocketClient
 import mu.KotlinLogging
 import org.jsoup.Jsoup
-import ru.nikstep.redink.analysis.AnalysisException
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
@@ -15,42 +13,22 @@ class MossAnalyser(
 ) : AbstractAnalyser(solutionStorage) {
     private val logger = KotlinLogging.logger {}
 
-    override fun PreparedAnalysisFiles.processFiles(pullRequest: PullRequest): Iterable<AnalysisResult> =
-        SocketClient().let { client ->
-            client.userID = mossId
-            client.language = language.ofMoss()
+    override fun analyseOneFile(
+        pullRequest: PullRequest,
+        analysisFiles: PreparedAnalysisFiles
+    ): Iterable<AnalysisResult> =
+        parseResult(
+            pullRequest,
+            resultLink = MossClient(analysisFiles, mossId).run(),
+            fileName = analysisFiles.fileName
+        )
 
-            if (solutions.isEmpty()) {
-                throw AnalysisException("Analysis: No solutions for file ${base.absolutePath}")
-            }
-
-            client.use {
-                run()
-                uploadFile(base, true)
-                solutions.forEach { uploadFile(it) }
-                sendQuery()
-            }
-
-            client.resultURL.toString().also {
-                logger.info { "Analysis: performed new analysis at $it" }
-            }
-
-        }.let { resultURL -> createAnalysisResults(pullRequest, resultURL, fileName) }
-
-    private fun SocketClient.use(action: SocketClient.() -> Unit) {
-        try {
-            action(this)
-        } finally {
-            close()
-        }
-    }
-
-    private fun createAnalysisResults(
+    private fun parseResult(
         pullRequest: PullRequest,
         resultLink: String,
         fileName: String
-    ): Collection<AnalysisResult> {
-        return Jsoup.connect(resultLink).get()
+    ): Collection<AnalysisResult> =
+        Jsoup.connect(resultLink).get()
             .body()
             .getElementsByTag("table")
             .select("tr")
@@ -67,9 +45,6 @@ class MossAnalyser(
                     firstPath.zip(secondPath)
                         .dropWhile { it.first == it.second }
                         .first()
-
-                if (pullRequest.creatorName != students.first && pullRequest.creatorName != students.second)
-                    return@mapNotNull null
 
                 val lines = tds[2].text().toInt()
 
@@ -96,6 +71,6 @@ class MossAnalyser(
                     fileName = fileName,
                     matchedLines = matchedLines
                 )
+
             }
-    }
 }
