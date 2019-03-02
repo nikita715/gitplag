@@ -1,0 +1,216 @@
+{
+  "pullrequest": {
+    "rendered": {
+      "description": {
+        "raw": "javacl.java created online with Bitbucketdf",
+        "markup": "markdown",
+        "html": "<p>javacl.java created online with Bitbucketdf</p>",
+        "type": "rendered"
+      },
+      "title": {
+        "raw": "javacl.java created online with Bitbucket",
+        "markup": "markdown",
+        "html": "<p>javacl.java created online with Bitbucket</p>",
+        "type": "rendered"
+      }
+    },
+    "type": "pullrequest",
+    "description": "javacl.java created online with Bitbucketdf",
+    "links": {
+      "decline": {
+        "href": "https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2/pullrequests/3/decline"
+      },
+      "commits": {
+        "href": "https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2/pullrequests/3/commits"
+      },
+      "self": {
+        "href": "https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2/pullrequests/3"
+      },
+      "comments": {
+        "href": "https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2/pullrequests/3/comments"
+      },
+      "merge": {
+        "href": "https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2/pullrequests/3/merge"
+      },
+      "html": {
+        "href": "https://bitbucket.org/nikita715/plagiarism_test2/pull-requests/3"
+      },
+      "activity": {
+        "href": "https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2/pullrequests/3/activity"
+      },
+      "diff": {
+        "href": "https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2/pullrequests/3/diff"
+      },
+      "approve": {
+        "href": "https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2/pullrequests/3/approve"
+      },
+      "statuses": {
+        "href": "https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2/pullrequests/3/statuses"
+      }
+    },
+    "title": "javacl.java created online with Bitbucket",
+    "close_source_branch": true,
+    "reviewers": [],
+    "id": 3,
+    "destination": {
+      "commit": {
+        "hash": "00ad9003a648",
+        "type": "commit",
+        "links": {
+          "self": {
+            "href": "https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2/commit/00ad9003a648"
+          },
+          "html": {
+            "href": "https://bitbucket.org/nikita715/plagiarism_test2/commits/00ad9003a648"
+          }
+        }
+      },
+      "repository": {
+        "links": {
+          "self": {
+            "href": "https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2"
+          },
+          "html": {
+            "href": "https://bitbucket.org/nikita715/plagiarism_test2"
+          },
+          "avatar": {
+            "href": "https://bytebucket.org/ravatar/%7Ba6d7ff9d-b66f-443e-812e-54853096e017%7D?ts=default"
+          }
+        },
+        "type": "repository",
+        "name": "plagiarism_test2",
+        "full_name": "nikita715/plagiarism_test2",
+        "uuid": "secret_id"
+      },
+      "branch": {
+        "name": "master"
+      }
+    },
+    "created_on": "2019-02-25T19:03:19.104027+00:00",
+    "summary": {
+      "raw": "javacl.java created online with Bitbucketdf",
+      "markup": "markdown",
+      "html": "<p>javacl.java created online with Bitbucketdf</p>",
+      "type": "rendered"
+    },
+    "source": {
+      "commit": {
+        "hash": "1458a8caab0b",
+        "type": "commit",
+        "links": {
+          "self": {
+            "href": "https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2/commit/1458a8caab0b"
+          },
+          "html": {
+            "href": "https://bitbucket.org/nikita715/plagiarism_test2/commits/1458a8caab0b"
+          }
+        }
+      },
+      "repository": {
+        "links": {
+          "self": {
+            "href": "https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2"
+          },
+          "html": {
+            "href": "https://bitbucket.org/nikita715/plagiarism_test2"
+          },
+          "avatar": {
+            "href": "https://bytebucket.org/ravatar/%7Ba6d7ff9d-b66f-443e-812e-54853096e017%7D?ts=default"
+          }
+        },
+        "type": "repository",
+        "name": "plagiarism_test2",
+        "full_name": "nikita715/plagiarism_test2",
+        "uuid": "secret_id"
+      },
+      "branch": {
+        "name": "testns2/javacljava-created-online-with-bitbucket-1551121394025"
+      }
+    },
+    "comment_count": 0,
+    "state": "OPEN",
+    "task_count": 0,
+    "participants": [],
+    "reason": "",
+    "updated_on": "2019-02-25T20:54:28.815921+00:00",
+    "author": {
+      "username": "testns2",
+      "display_name": "Nikita Stepochkin",
+      "account_id": "secret_id",
+      "links": {
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/users/testns2"
+        },
+        "html": {
+          "href": "https://bitbucket.org/testns2/"
+        },
+        "avatar": {
+          "href": "https://bitbucket.org/account/testns2/avatar/"
+        }
+      },
+      "nickname": "testns2",
+      "type": "user",
+      "uuid": "secret_id"
+    },
+    "merge_commit": null,
+    "closed_by": null
+  },
+  "repository": {
+    "scm": "git",
+    "website": "",
+    "name": "plagiarism_test2",
+    "links": {
+      "self": {
+        "href": "https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2"
+      },
+      "html": {
+        "href": "https://bitbucket.org/nikita715/plagiarism_test2"
+      },
+      "avatar": {
+        "href": "https://bytebucket.org/ravatar/%7Ba6d7ff9d-b66f-443e-812e-54853096e017%7D?ts=default"
+      }
+    },
+    "full_name": "nikita715/plagiarism_test2",
+    "owner": {
+      "username": "nikita715",
+      "display_name": "Nikita Stepochkin",
+      "account_id": "secret_id",
+      "links": {
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/users/nikita715"
+        },
+        "html": {
+          "href": "https://bitbucket.org/nikita715/"
+        },
+        "avatar": {
+          "href": "https://bitbucket.org/account/nikita715/avatar/"
+        }
+      },
+      "nickname": "nikita715",
+      "type": "user",
+      "uuid": "secret_id"
+    },
+    "type": "repository",
+    "is_private": false,
+    "uuid": "secret"
+  },
+  "actor": {
+    "username": "testns2",
+    "display_name": "Nikita Stepochkin",
+    "account_id": "secret_id",
+    "links": {
+      "self": {
+        "href": "https://api.bitbucket.org/2.0/users/testns2"
+      },
+      "html": {
+        "href": "https://bitbucket.org/testns2/"
+      },
+      "avatar": {
+        "href": "https://bitbucket.org/account/testns2/avatar/"
+      }
+    },
+    "nickname": "testns2",
+    "type": "user",
+    "uuid": "secret_id"
+  }
+}
