@@ -8,7 +8,7 @@ import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import mu.KotlinLogging
 
-private const val authorization = "Authorization"
+const val authorization = "Authorization"
 private const val accept = "Accept"
 private const val githubGraphqlApi = "https://api.github.com/graphql"
 private const val githubAcceptMachineManPreview = "application/vnd.github.machine-man-preview+json"
@@ -47,23 +47,30 @@ fun sendGithubGraphqlRequest(
         .body(body)
         .send(deserializer)
 
-fun <T : Any> sendRestRequest(
+inline fun <reified T : Any> sendRestRequest(
     url: String,
     body: String = "",
     accessToken: String = "",
-    deserializer: ResponseDeserializable<T>,
     method: Method = Method.GET
 ): T =
     url.toRequest(method)
         .header(authorization to accessToken)
-        .body(body).send(deserializer)
+        .body(body).send(deserializer<T>()) as T
 
-private fun <T : Any> Request.send(deserializer: ResponseDeserializable<T>): T =
+inline fun <reified T : Any> deserializer(): ResponseDeserializable<*> {
+    return when (T::class) {
+        String::class -> StringDeserializer
+        JsonObject::class -> JsonObjectDeserializer
+        else -> JsonObjectDeserializer
+    }
+}
+
+fun <T : Any> Request.send(deserializer: ResponseDeserializable<T>): T =
     logger.logged(request) {
         request.responseObject(deserializer)
     }.third.get()
 
-private fun String.toRequest(method: Method): Request {
+fun String.toRequest(method: Method): Request {
     return when (method) {
         Method.POST -> this.httpPost()
         else -> this.httpGet()
