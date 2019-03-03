@@ -22,8 +22,8 @@ private val solution2 = Paths.get(relSolutionsDir, TEST_REPO_NAME, "student2", T
 private val solution3 = Paths.get(relSolutionsDir, TEST_REPO_NAME, "student3", TEST_FILE_NAME).toFile()
 
 internal val testPreparedAnalysisFiles = PreparedAnalysisFiles(
-    TEST_REPO_NAME,
     TEST_FILE_NAME,
+    TEST_REPO_NAME,
     Language.JAVA,
     base,
     listOf(solution1, solution2, solution3)
