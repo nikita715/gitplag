@@ -14,9 +14,9 @@ internal class JPlagClient(
     private val resultPath: String
 ) {
 
-    val language = analysisFiles.language.ofJPlag()
-    val repoName = analysisFiles.repoName
-    val fileName = analysisFiles.fileName.onlyLastName()
+    private val language = analysisFiles.language.ofJPlag()
+    private val repoName = analysisFiles.repoName
+    private val fileName = analysisFiles.fileName.onlyLastName()
 
     private val logger = KotlinLogging.logger {}
     private val jplagPath = asPath("libs".asPathInRoot(), "jplag.jar")
