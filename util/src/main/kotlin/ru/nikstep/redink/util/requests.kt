@@ -1,5 +1,6 @@
 package ru.nikstep.redink.util
 
+import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.github.kittinunf.fuel.core.Method
 import com.github.kittinunf.fuel.core.Request
@@ -57,12 +58,11 @@ inline fun <reified T : Any> sendRestRequest(
         .header(authorization to accessToken)
         .body(body).send(deserializer<T>()) as T
 
-inline fun <reified T : Any> deserializer(): ResponseDeserializable<*> {
-    return when (T::class) {
-        String::class -> StringDeserializer
-        JsonObject::class -> JsonObjectDeserializer
-        else -> JsonObjectDeserializer
-    }
+inline fun <reified T : Any> deserializer(): ResponseDeserializable<*> = when (T::class) {
+    String::class -> StringDeserializer
+    JsonObject::class -> JsonObjectDeserializer
+    JsonArray::class -> JsonArrayDeserializer
+    else -> JsonObjectDeserializer
 }
 
 fun <T : Any> Request.send(deserializer: ResponseDeserializable<T>): T =
@@ -70,9 +70,7 @@ fun <T : Any> Request.send(deserializer: ResponseDeserializable<T>): T =
         request.responseObject(deserializer)
     }.third.get()
 
-fun String.toRequest(method: Method): Request {
-    return when (method) {
-        Method.POST -> this.httpPost()
-        else -> this.httpGet()
-    }
+fun String.toRequest(method: Method): Request = when (method) {
+    Method.POST -> this.httpPost()
+    else -> this.httpGet()
 }
