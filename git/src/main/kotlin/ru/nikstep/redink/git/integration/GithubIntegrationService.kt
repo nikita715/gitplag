@@ -10,6 +10,9 @@ import ru.nikstep.redink.model.repo.UserRepository
 import ru.nikstep.redink.util.Language.TEXT
 import ru.nikstep.redink.util.parseAsObject
 
+/**
+ * Service for user/repository integration with github
+ */
 class GithubIntegrationService(
     private val userRepository: UserRepository,
     private val repositoryRepository: RepositoryRepository
@@ -31,28 +34,27 @@ class GithubIntegrationService(
         jsonPayload: JsonObject,
         user: User
     ) {
-        jsonPayload.array<JsonObject>("repositories")!!.map { repo ->
+        jsonPayload.array<JsonObject>("repositories")?.map { repo ->
             Repository(
                 language = TEXT,
                 owner = user,
-                name = repo.string("full_name")!!,
-                repoGithubId = repo.long("id")!!
+                name = requireNotNull(repo.string("full_name")) { "Name is null" },
+                repoGithubId = requireNotNull(repo.long("id")) { "RepoGithubId is null" }
             )
-        }.let { repositoryRepository.saveAll(it) }
+        }.let { repositoryRepository.saveAll(requireNotNull((it)) { "Pull request is null" }) }
     }
 
     private fun saveNewUser(jsonPayload: JsonObject): User {
-        val installation = jsonPayload.obj("installation")!!
-        val account = installation.obj("account")!!
+        val installation = jsonPayload.obj("installation")
+        val account = installation?.obj("account")
 
         val user = User(
-            name = account.string("login")!!,
-            githubId = account.long("id")!!,
-            installationId = installation.long("id")!!
+            name = requireNotNull(account?.string("login")) { "Name is null" },
+            githubId = requireNotNull(account?.long("id")) { "Github id is null" },
+            installationId = requireNotNull(installation?.long("id")) { "InstallationId is null" }
         )
 
-        userRepository.save(user)
-        return user
+        return userRepository.save(user)
     }
 
     private fun actionIsCreated(jsonPayload: JsonObject) =

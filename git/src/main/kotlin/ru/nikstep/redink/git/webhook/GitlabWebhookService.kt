@@ -5,6 +5,9 @@ import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.GITLAB
 
+/**
+ * Implementation of the [AbstractWebhookService] for handling Gitlab webhooks
+ */
 class GitlabWebhookService(
     pullRequestRepository: PullRequestRepository
 ) :

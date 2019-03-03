@@ -8,6 +8,9 @@ import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.sendRestRequest
 import java.io.File
 
+/**
+ * Common implementation of the [GitLoader]
+ */
 abstract class AbstractGitLoader(
     private val solutionStorage: SolutionStorage,
     private val repositoryRepository: RepositoryRepository

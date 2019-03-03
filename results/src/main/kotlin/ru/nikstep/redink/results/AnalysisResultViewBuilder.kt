@@ -1,14 +1,26 @@
 package ru.nikstep.redink.results
 
-import kotlinx.html.*
+import kotlinx.html.body
+import kotlinx.html.html
+import kotlinx.html.pre
 import kotlinx.html.stream.createHTML
+import kotlinx.html.table
+import kotlinx.html.td
+import kotlinx.html.tr
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
 
+/**
+ * Builder of plagiarism analysis result pages
+ */
 class AnalysisResultViewBuilder(
     private val analysisPairRepository: AnalysisPairRepository,
     private val solutionStorage: SolutionStorage
 ) {
+
+    /**
+     * Build a two-column solution comparison page
+     */
     fun build(id: Long): String {
         val analysisPair = analysisPairRepository.findById(id).get()
         return createHTML().html {

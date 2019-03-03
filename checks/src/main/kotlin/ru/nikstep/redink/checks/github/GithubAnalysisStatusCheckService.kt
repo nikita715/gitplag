@@ -1,4 +1,4 @@
-package ru.nikstep.redink.checks
+package ru.nikstep.redink.checks.github
 
 import com.google.gson.Gson
 import mu.KotlinLogging
@@ -12,7 +12,7 @@ class GithubAnalysisStatusCheckService(private val authorizationService: Authori
     AnalysisStatusCheckService {
     private val logger = KotlinLogging.logger {}
 
-    override fun send(pullRequest: PullRequest, analysisData: AnalysisResultData) {
+    override fun send(pullRequest: PullRequest, analysisData: GithubAnalysisResultData) {
         val accessToken = authorizationService.getAuthorizationToken(pullRequest.secretKey)
         val body = createBody(pullRequest, analysisData)
         sendGithubStatusCheckRequest(pullRequest.repoFullName, accessToken, body)
@@ -20,14 +20,15 @@ class GithubAnalysisStatusCheckService(private val authorizationService: Authori
     }
 
     override fun sendInProgressStatus(pullRequest: PullRequest) {
-        AnalysisResultData(status = GithubAnalysisStatus.IN_PROGRESS.value).also {
+        GithubAnalysisResultData(status = GithubAnalysisStatus.IN_PROGRESS.value)
+            .also {
             send(pullRequest, it)
         }
     }
 
     private fun createBody(
         pullRequest: PullRequest,
-        analysisData: AnalysisResultData
+        analysisData: GithubAnalysisResultData
     ): String {
 
         val body = mutableMapOf<String, Any?>(

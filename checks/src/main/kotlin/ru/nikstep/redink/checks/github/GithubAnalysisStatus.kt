@@ -1,5 +1,8 @@
-package ru.nikstep.redink.checks
+package ru.nikstep.redink.checks.github
 
+/**
+ * State of a github check
+ */
 enum class GithubAnalysisStatus {
     COMPLETED,
     IN_PROGRESS,

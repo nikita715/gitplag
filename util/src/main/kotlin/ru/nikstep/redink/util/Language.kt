@@ -1,5 +1,8 @@
 package ru.nikstep.redink.util
 
+/**
+ * Name of a programming language
+ */
 enum class Language {
     C,
     CPP,
@@ -28,6 +31,9 @@ enum class Language {
     VERILOG,
     TCL;
 
+    /**
+     * To moss name of the language
+     */
     fun ofMoss() =
         when (this) {
             C -> "c"
@@ -58,6 +64,9 @@ enum class Language {
             TCL -> "tcl"
         }
 
+    /**
+     * To jplag name of the language
+     */
     fun ofJPlag() =
         when (this) {
             C, CPP -> "c/c++"

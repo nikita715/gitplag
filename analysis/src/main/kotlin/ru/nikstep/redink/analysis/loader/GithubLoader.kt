@@ -13,6 +13,9 @@ import ru.nikstep.redink.util.sendGithubGraphqlRequest
 import ru.nikstep.redink.util.sendRestRequest
 import java.io.File
 
+/**
+ * Loader of files from Github
+ */
 class GithubLoader(
     private val solutionStorage: SolutionStorage,
     private val repositoryRepository: RepositoryRepository,

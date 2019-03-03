@@ -1,7 +1,7 @@
 package ru.nikstep.redink.git
 
 import io.kotlintest.mock.mock
-import ru.nikstep.redink.checks.AnalysisStatusCheckService
+import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
 import ru.nikstep.redink.git.webhook.GithubWebhookService
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.GitProperty

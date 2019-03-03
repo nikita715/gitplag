@@ -8,6 +8,9 @@ import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 
+/**
+ * Lines (of two files with the same name) suspected of plagiarism
+ */
 @Entity
 class AnalysisPairLines(
     @Id

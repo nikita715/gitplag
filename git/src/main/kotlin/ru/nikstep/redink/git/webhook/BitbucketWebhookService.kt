@@ -5,6 +5,9 @@ import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.BITBUCKET
 
+/**
+ * Implementation of the [AbstractWebhookService] for handling Bitbucket webhooks
+ */
 class BitbucketWebhookService(
     pullRequestRepository: PullRequestRepository
 ) :

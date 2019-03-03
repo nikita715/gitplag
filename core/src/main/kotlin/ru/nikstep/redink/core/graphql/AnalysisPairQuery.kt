@@ -14,7 +14,7 @@ class AnalysisPairQuery(
             if (fileName != null) {
                 if (student1 != null) {
                     if (student2 != null) {
-                        listOf(findAllByRepoAndFileNameAndStudent1AndStudent2(repo, fileName, student1, student2))
+                        listOf(findByRepoAndFileNameAndStudent1AndStudent2(repo, fileName, student1, student2))
                     }
                     findAllByRepoAndFileNameAndStudent(repo, fileName, student1)
                 }

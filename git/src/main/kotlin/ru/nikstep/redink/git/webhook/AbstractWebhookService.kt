@@ -8,6 +8,9 @@ import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.parseAsObject
 
+/**
+ * Common implementation of the [WebhookService]
+ */
 abstract class AbstractWebhookService(private val pullRequestRepository: PullRequestRepository) :
     WebhookService {
     private val logger = KotlinLogging.logger {}

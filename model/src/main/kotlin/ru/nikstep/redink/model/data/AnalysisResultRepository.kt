@@ -6,21 +6,30 @@ import ru.nikstep.redink.model.entity.AnalysisPairLines
 import ru.nikstep.redink.model.repo.AnalysisPairLinesRepository
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
 
+/**
+ * Repository for storing analysis pairs data
+ */
 open class AnalysisResultRepository(
     private val analysisPairRepository: AnalysisPairRepository,
     private val analysisPairLinesRepository: AnalysisPairLinesRepository
 ) {
 
+    /**
+     * Save all analysis results
+     */
     @Synchronized
     fun saveAll(analysisResults: Collection<AnalysisResult>) {
         for (analysisResult in analysisResults) {
-            saveAll(analysisResult)
+            save(analysisResult)
         }
     }
 
+    /**
+     * Save an analysis result
+     */
     @Transactional
     @Synchronized
-    open fun saveAll(analysisResult: AnalysisResult) {
+    open fun save(analysisResult: AnalysisResult) {
         deleteExistingAnalysisResult(analysisResult)
         val analysisPair = saveAnalysisResult(analysisResult)
         saveMatchedLines(analysisResult, analysisPair)
