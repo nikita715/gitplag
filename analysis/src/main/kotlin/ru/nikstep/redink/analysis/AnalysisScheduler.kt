@@ -59,7 +59,7 @@ open class AnalysisScheduler(
                 }
             } catch (e: Exception) {
                 logger.exceptionAtAnalysisOf(pullRequest)
-                throw e
+                throw AnalysisException(e)
             }
         }
 
