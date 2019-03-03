@@ -7,7 +7,7 @@ import com.github.kittinunf.result.Result
 import mu.KLogger
 import java.io.ByteArrayOutputStream
 
-fun <T : Any> KLogger.logged(
+internal fun <T : Any> KLogger.logged(
     request: Request,
     action: () -> Triple<Request, Response, Result<T, FuelError>>
 ): Triple<Request, Response, Result<T, FuelError>> {
@@ -17,11 +17,11 @@ fun <T : Any> KLogger.logged(
     return triple
 }
 
-fun KLogger.requestInfo(request: Request) {
+private fun KLogger.requestInfo(request: Request) {
     this.info { "Sending ${request.method.value} ${request.path}" }
 }
 
-fun <T : Any> KLogger.responseInfo(triple: Triple<Request, Response, Result<T, FuelError>>) {
+private fun <T : Any> KLogger.responseInfo(triple: Triple<Request, Response, Result<T, FuelError>>) {
     this.info {
         triple.apply {
             val request = first

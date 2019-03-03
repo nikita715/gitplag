@@ -1,5 +1,8 @@
 package ru.nikstep.redink.model.data
 
+/**
+ * Data class for storing analysis pairs data
+ */
 data class AnalysisResult(
     val students: Pair<String, String>,
     val countOfLines: Int,

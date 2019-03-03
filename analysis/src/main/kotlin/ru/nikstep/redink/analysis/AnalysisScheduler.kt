@@ -5,10 +5,10 @@ import org.springframework.core.task.TaskExecutor
 import org.springframework.scheduling.annotation.Scheduled
 import ru.nikstep.redink.analysis.analyser.Analyser
 import ru.nikstep.redink.analysis.loader.GitLoader
-import ru.nikstep.redink.checks.AnalysisResultData
-import ru.nikstep.redink.checks.AnalysisStatusCheckService
-import ru.nikstep.redink.checks.GithubAnalysisConclusion
-import ru.nikstep.redink.checks.GithubAnalysisStatus
+import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
+import ru.nikstep.redink.checks.github.GithubAnalysisConclusion
+import ru.nikstep.redink.checks.github.GithubAnalysisResultData
+import ru.nikstep.redink.checks.github.GithubAnalysisStatus
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.AnalysisResultRepository
 import ru.nikstep.redink.model.entity.PullRequest
@@ -68,7 +68,7 @@ open class AnalysisScheduler(
             if (pullRequest.gitService == GITHUB) {
                 analysisStatusCheckService.send(
                     pullRequest,
-                    AnalysisResultData(
+                    GithubAnalysisResultData(
                         status = GithubAnalysisStatus.COMPLETED.value,
                         conclusion = GithubAnalysisConclusion.SUCCESS.value
                     )

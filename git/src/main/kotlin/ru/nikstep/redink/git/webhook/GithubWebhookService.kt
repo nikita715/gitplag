@@ -2,7 +2,7 @@ package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
-import ru.nikstep.redink.checks.AnalysisStatusCheckService
+import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
 import ru.nikstep.redink.git.GitException
 import ru.nikstep.redink.git.inProgressStatus
 import ru.nikstep.redink.model.entity.PullRequest
@@ -10,6 +10,9 @@ import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.GITHUB
 
+/**
+ * Implementation of the [AbstractWebhookService] for handling Github webhooks
+ */
 class GithubWebhookService(
     private val analysisStatusCheckService: AnalysisStatusCheckService,
     pullRequestRepository: PullRequestRepository

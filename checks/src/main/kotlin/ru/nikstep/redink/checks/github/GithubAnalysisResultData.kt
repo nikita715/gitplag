@@ -1,6 +1,9 @@
-package ru.nikstep.redink.checks
+package ru.nikstep.redink.checks.github
 
-class AnalysisResultData(
+/**
+ * Result of the plagiarism analysis for a github check
+ */
+class GithubAnalysisResultData(
     val conclusion: String = GithubAnalysisConclusion.NEUTRAL.value,
     val status: String = GithubAnalysisStatus.IN_PROGRESS.value,
     val detailsUrl: String = "https://localhost:8080",

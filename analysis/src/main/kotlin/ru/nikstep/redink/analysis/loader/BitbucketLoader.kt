@@ -7,6 +7,9 @@ import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.sendRestRequest
 
+/**
+ * Loader of files from Bitbucket
+ */
 class BitbucketLoader(
     solutionStorage: SolutionStorage,
     repositoryRepository: RepositoryRepository

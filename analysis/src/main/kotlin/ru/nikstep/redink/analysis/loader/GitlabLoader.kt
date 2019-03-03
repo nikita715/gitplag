@@ -6,6 +6,9 @@ import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.sendRestRequest
 
+/**
+ * Loader of files from Gitlab
+ */
 class GitlabLoader(
     solutionStorage: SolutionStorage,
     repositoryRepository: RepositoryRepository

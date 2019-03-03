@@ -5,6 +5,9 @@ import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest
 
+/**
+ * Common implementation of the [Analyser]
+ */
 abstract class AbstractAnalyser(private val solutionStorage: SolutionStorage) :
     Analyser {
 

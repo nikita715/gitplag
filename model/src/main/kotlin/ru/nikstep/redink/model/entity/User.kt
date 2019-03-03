@@ -6,6 +6,9 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Table
 
+/**
+ * User of the system
+ */
 @Entity
 @Table(name = "p_user")
 open class User(

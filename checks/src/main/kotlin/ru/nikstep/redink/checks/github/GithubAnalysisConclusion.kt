@@ -1,5 +1,8 @@
-package ru.nikstep.redink.checks
+package ru.nikstep.redink.checks.github
 
+/**
+ * Conclusion of a github check
+ */
 enum class GithubAnalysisConclusion {
     SUCCESS,
     FAILURE,

@@ -4,8 +4,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.task.TaskExecutor
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
-import ru.nikstep.redink.checks.AnalysisStatusCheckService
-import ru.nikstep.redink.checks.GithubAnalysisStatusCheckService
+import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
+import ru.nikstep.redink.checks.github.GithubAnalysisStatusCheckService
 import ru.nikstep.redink.util.auth.AuthorizationService
 import ru.nikstep.redink.util.auth.GithubAuthorizationService
 

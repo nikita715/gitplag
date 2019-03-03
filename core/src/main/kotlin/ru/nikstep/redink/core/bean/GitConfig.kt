@@ -2,7 +2,7 @@ package ru.nikstep.redink.core.bean
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import ru.nikstep.redink.checks.AnalysisStatusCheckService
+import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
 import ru.nikstep.redink.git.integration.GithubIntegrationService
 import ru.nikstep.redink.git.webhook.BitbucketWebhookService
 import ru.nikstep.redink.git.webhook.GithubWebhookService
