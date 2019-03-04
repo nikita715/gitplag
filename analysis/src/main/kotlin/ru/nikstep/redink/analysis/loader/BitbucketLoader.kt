@@ -23,6 +23,6 @@ class BitbucketLoader(
         }
 
 
-    override fun loadFileText(repoName: String, branchName: String, fileName: String): String =
-        sendRestRequest("https://bitbucket.org/$repoName/raw/$branchName/$fileName")
+    override fun loadFileText(pullRequest: PullRequest, branchName: String, fileName: String): String =
+        sendRestRequest("https://bitbucket.org/${pullRequest.repoFullName}/raw/$branchName/$fileName")
 }
