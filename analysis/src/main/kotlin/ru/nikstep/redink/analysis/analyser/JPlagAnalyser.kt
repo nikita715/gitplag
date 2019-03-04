@@ -13,8 +13,7 @@ import java.io.File
 import kotlin.math.roundToInt
 
 /**
- * JPlag plagiarism analyser.
- * See https://jplag.ipd.kit.edu
+ * JPlag client wrapper
  */
 class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath: String) :
     AbstractAnalyser(solutionStorage) {

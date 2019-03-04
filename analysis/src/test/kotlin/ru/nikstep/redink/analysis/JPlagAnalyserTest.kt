@@ -7,10 +7,10 @@ import ru.nikstep.redink.model.data.AnalysisResult
 
 class JPlagAnalyserTest {
 
-    val jPlagAnalysisService =
+    private val jPlagAnalysisService =
         JPlagAnalyser(solutionStorageService, solutionsDir)
 
-    val expectedResult = listOf(
+    private val expectedResult = listOf(
         AnalysisResult(
             students = "student2" to "student1",
             countOfLines = -1,
