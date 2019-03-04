@@ -43,21 +43,6 @@ fun sendGithubStatusCheckRequest(repo: String, accessToken: String, body: String
         .send(JsonObjectDeserializer)
 
 /**
- * Send a github graphql request and get [JsonObject]
- */
-fun sendGithubGraphqlRequest(
-    body: String,
-    accessToken: String,
-    deserializer: JsonObjectDeserializer = JsonObjectDeserializer,
-    method: Method = Method.GET
-): JsonObject =
-    githubGraphqlApi
-        .toRequest(method)
-        .header(authorization to accessToken)
-        .body(body)
-        .send(deserializer)
-
-/**
  * Send a common request and get [T]
  */
 inline fun <reified T : Any> sendRestRequest(

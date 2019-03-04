@@ -23,7 +23,7 @@ private fun KLogger.requestInfo(request: Request) {
 
 private fun <T : Any> KLogger.responseInfo(triple: Triple<Request, Response, Result<T, FuelError>>) {
     this.info {
-        triple.apply {
+        triple.run {
             val request = first
             val response = second
             val requestBody = if (response.statusCode in 400..499) " \n" + request.getBody() else ""

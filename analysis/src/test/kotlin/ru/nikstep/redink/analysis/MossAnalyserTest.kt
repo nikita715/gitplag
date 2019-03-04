@@ -7,10 +7,10 @@ import ru.nikstep.redink.model.data.AnalysisResult
 
 class MossAnalyserTest {
 
-    val mossAnalysisService =
+    private val mossAnalysisService =
         MossAnalyser(solutionStorageService, System.getenv("MOSS_ID"))
 
-    val expectedResult = listOf(
+    private val expectedResult = listOf(
         AnalysisResult(
             students = "student1" to "student2",
             countOfLines = 14,

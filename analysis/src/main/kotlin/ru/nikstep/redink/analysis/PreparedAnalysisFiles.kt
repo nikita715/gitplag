@@ -4,7 +4,7 @@ import ru.nikstep.redink.util.Language
 import java.io.File
 
 /**
- * Class for storing information about files
+ * Class for storing information about the file
  * that must be analysed for plagiarism
  */
 class PreparedAnalysisFiles(

@@ -5,7 +5,6 @@ import ru.nikstep.redink.analysis.AnalysisException
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.util.sendRestRequest
 import java.io.File
 
 /**
@@ -26,9 +25,7 @@ abstract class AbstractGitLoader(
         filePatterns.intersect(changedFiles).forEach { fileName ->
             checkBaseExists(pullRequest, fileName)
 
-            val fileText = sendRestRequest<String>(
-                toFileQuery(pullRequest.repoFullName, pullRequest.headSha, fileName)
-            )
+            val fileText = loadFileText(pullRequest, pullRequest.headSha, fileName)
 
             if (fileText.isBlank())
                 throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")
@@ -42,7 +39,7 @@ abstract class AbstractGitLoader(
         }
     }
 
-    abstract fun toFileQuery(repoName: String, branchName: String, fileName: String): String
+    abstract fun loadFileText(pullRequest: PullRequest, branchName: String, fileName: String): String
 
     abstract fun loadChangedFiles(pullRequest: PullRequest): List<String>
 
@@ -52,9 +49,7 @@ abstract class AbstractGitLoader(
     }
 
     private fun saveBase(pullRequest: PullRequest, fileName: String) {
-        val fileText = sendRestRequest<String>(
-            toFileQuery(pullRequest.repoFullName, masterBranch, fileName)
-        )
+        val fileText = loadFileText(pullRequest, masterBranch, fileName)
 
         if (fileText.isBlank())
             throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")

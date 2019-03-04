@@ -8,8 +8,7 @@ import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest
 
 /**
- * Moss plagiarism analyser.
- * See http://moss.stanford.edu
+ * Moss client wrapper
  */
 class MossAnalyser(
     solutionStorage: SolutionStorage,

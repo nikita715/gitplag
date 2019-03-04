@@ -32,7 +32,9 @@ open class AnalysisScheduler(
     fun runAnalysis() {
         pullRequestRepository.findAll()
             .let(withRemovedDuplicates)
-            .forEach { taskExecutor.execute(AnalysisRunnable(it)) }
+            .forEach { pullRequest ->
+                taskExecutor.execute(AnalysisRunnable(pullRequest))
+            }
     }
 
     private val withRemovedDuplicates: (List<PullRequest>) -> List<PullRequest> = { allPrs ->
