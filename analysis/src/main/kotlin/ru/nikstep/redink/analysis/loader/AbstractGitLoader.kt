@@ -39,10 +39,11 @@ abstract class AbstractGitLoader(
         }
     }
 
-    abstract fun loadFileText(pullRequest: PullRequest, branchName: String, fileName: String): String
+    protected abstract fun loadFileText(pullRequest: PullRequest, branchName: String, fileName: String): String
 
-    abstract fun loadChangedFiles(pullRequest: PullRequest): List<String>
+    protected abstract fun loadChangedFiles(pullRequest: PullRequest): List<String>
 
+    //TODO Move out of the class
     private fun checkBaseExists(data: PullRequest, fileName: String) {
         val base = solutionStorage.loadBase(data.repoFullName, fileName)
         if (base.notExists()) saveBase(data, fileName)

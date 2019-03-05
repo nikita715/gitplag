@@ -49,7 +49,7 @@ class GithubLoader(
         }
 
 
-    fun toFileQuery(repoName: String, branchName: String, fileName: String): String {
+    private fun toFileQuery(repoName: String, branchName: String, fileName: String): String {
         val (owner, file) = repoName.split("/").toTypedArray()
         return """{"query": "query {repository(owner: "$owner", name: "$file")
             | {object(expression: "$branchName:$fileName") {... on Blob{text}}}}"}""".trimMargin()
