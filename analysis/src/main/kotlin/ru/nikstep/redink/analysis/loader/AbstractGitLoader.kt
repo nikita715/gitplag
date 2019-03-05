@@ -25,7 +25,7 @@ abstract class AbstractGitLoader(
         filePatterns.intersect(changedFiles).forEach { fileName ->
             checkBaseExists(pullRequest, fileName)
 
-            val fileText = loadFileText(pullRequest, pullRequest.headSha, fileName)
+            val fileText = loadFileText(pullRequest, pullRequest.branchName, fileName)
 
             if (fileText.isBlank())
                 throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")

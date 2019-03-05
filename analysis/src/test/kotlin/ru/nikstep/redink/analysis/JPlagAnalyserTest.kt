@@ -1,16 +1,14 @@
 package ru.nikstep.redink.analysis
 
-import io.kotlintest.matchers.shouldEqual
-import org.junit.Test
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.model.data.AnalysisResult
 
-class JPlagAnalyserTest {
+class JPlagAnalyserTest : AbstractAnalyserTest() {
 
-    private val jPlagAnalysisService =
+    override val analysisService =
         JPlagAnalyser(solutionStorageService, solutionsDir)
 
-    private val expectedResult = listOf(
+    override val expectedResult = listOf(
         AnalysisResult(
             students = "student2" to "student1",
             countOfLines = -1,
@@ -36,9 +34,4 @@ class JPlagAnalyserTest {
             matchedLines = listOf((10 to 18) to (14 to 21))
         )
     )
-
-    @Test
-    fun analyse() {
-        jPlagAnalysisService.analyse(pullRequest) shouldEqual expectedResult
-    }
 }

@@ -1,16 +1,14 @@
 package ru.nikstep.redink.analysis
 
-import io.kotlintest.matchers.shouldEqual
-import org.junit.Test
 import ru.nikstep.redink.analysis.analyser.MossAnalyser
 import ru.nikstep.redink.model.data.AnalysisResult
 
-class MossAnalyserTest {
+class MossAnalyserTest : AbstractAnalyserTest() {
 
-    private val mossAnalysisService =
+    override val analysisService =
         MossAnalyser(solutionStorageService, System.getenv("MOSS_ID"))
 
-    private val expectedResult = listOf(
+    override val expectedResult = listOf(
         AnalysisResult(
             students = "student1" to "student2",
             countOfLines = 14,
@@ -36,9 +34,4 @@ class MossAnalyserTest {
             matchedLines = listOf((15 to 19) to (12 to 16))
         )
     )
-
-    @Test
-    fun analyse() {
-        mossAnalysisService.analyse(pullRequest) shouldEqual expectedResult
-    }
 }
