@@ -1,19 +1,7 @@
 package ru.nikstep.redink.model.entity
 
 import ru.nikstep.redink.util.Language
-import javax.persistence.CollectionTable
-import javax.persistence.Column
-import javax.persistence.ElementCollection
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.FetchType
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
-import javax.persistence.Table
+import javax.persistence.*
 
 /**
  * Git repository
@@ -32,7 +20,7 @@ class Repository(
     @Column(name = "pattern")
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "repository_pattern", joinColumns = [JoinColumn(name = "repository")])
-    val filePatterns: List<String> = listOf(),
+    val filePatterns: Collection<String> = listOf(),
 
     val name: String,
     val repoGithubId: Long,
