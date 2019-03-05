@@ -1,6 +1,5 @@
 package ru.nikstep.redink.analysis.loader
 
-import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.entity.PullRequest
@@ -17,9 +16,9 @@ class BitbucketLoader(
 
     override fun loadChangedFiles(pullRequest: PullRequest): List<String> =
         pullRequest.run {
-            sendRestRequest<JsonArray<*>>(
-                url = "https://api.bitbucket.org/1.0/repositories/$repoFullName/changesets/$headSha/diffstat"
-            ).map { (it as JsonObject).string("file")!! }
+            sendRestRequest<JsonObject>(
+                url = "https://api.bitbucket.org/2.0/repositories/$repoFullName/pullrequests/$number/diffstat"
+            ).array<JsonObject>("values")!!.map { it.obj("new")!!.string("path")!! }
         }
 
 
