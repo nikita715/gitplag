@@ -34,6 +34,7 @@ open class AnalysisScheduler(
             .let(withRemovedDuplicates)
             .forEach { pullRequest ->
                 taskExecutor.execute(AnalysisRunnable(pullRequest))
+                pullRequestRepository.delete(pullRequest)
             }
     }
 
@@ -61,7 +62,6 @@ open class AnalysisScheduler(
                 }
             } catch (e: Exception) {
                 logger.exceptionAtAnalysisOf(pullRequest)
-                throw AnalysisException(e)
             }
         }
 
