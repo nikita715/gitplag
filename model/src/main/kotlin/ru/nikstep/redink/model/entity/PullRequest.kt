@@ -1,7 +1,7 @@
 package ru.nikstep.redink.model.entity
 
 import ru.nikstep.redink.util.GitProperty
-import java.util.*
+import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
@@ -45,5 +45,5 @@ data class PullRequest(
     val gitService: GitProperty,
 
     @Column(nullable = false)
-    val date: Date = Date()
+    val date: LocalDateTime
 )

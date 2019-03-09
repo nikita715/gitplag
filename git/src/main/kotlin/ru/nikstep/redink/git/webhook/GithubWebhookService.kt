@@ -12,6 +12,8 @@ import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.GITHUB
 import ru.nikstep.redink.util.parseAsObject
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Implementation of the [AbstractWebhookService] for handling Github webhooks
@@ -23,6 +25,7 @@ class GithubWebhookService(
 ) : AbstractWebhookService(pullRequestRepository, applicationEventPublisher) {
 
     private val logger = KotlinLogging.logger {}
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
     override val JsonObject.gitService: GitProperty
         get() = GITHUB
@@ -60,6 +63,12 @@ class GithubWebhookService(
     private fun JsonObject.hasInstallationId(): Boolean {
         return obj("installation") != null
     }
+
+    override val JsonObject.date: LocalDateTime?
+        get() = LocalDateTime.parse(
+            obj("pull_request")?.string("updated_at")?.substring(0, 19),
+            dateFormatter
+        )
 
     fun relaunch(payload: String) {
         val payloadObject = payload.parseAsObject()
