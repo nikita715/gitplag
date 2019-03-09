@@ -15,6 +15,7 @@ apply from: 'coverage.gradle'
 
 allprojects {
     repositories {
+        jcenter()
         mavenCentral()
         maven { url "http://repo.spring.io/libs-release" }
         maven { url "https://jitpack.io" }

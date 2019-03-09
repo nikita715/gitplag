@@ -23,5 +23,5 @@ dependencies {
     compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.4.1'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.4'
 
-    compile 'org.codehaus.groovy:groovy-all:2.5.5'
+    compile 'org.jetbrains.kotlinx:kotlinx-html-jvm:0.6.10'
 }
