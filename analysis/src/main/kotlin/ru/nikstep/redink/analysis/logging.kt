@@ -15,6 +15,6 @@ internal inline fun KLogger.loggedAnalysis(pullRequest: PullRequest, action: () 
     }
 }
 
-internal fun KLogger.exceptionAtAnalysisOf(pullRequest: PullRequest) {
-    error { "Analysis: exception at the analysis of the pull request with id = ${pullRequest.id}\n" }
+internal fun KLogger.exceptionAtAnalysisOf(throwable: Throwable, pullRequest: PullRequest) {
+    error(throwable) { "Analysis: exception at the analysis of the pull request with id = ${pullRequest.id}\n" }
 }

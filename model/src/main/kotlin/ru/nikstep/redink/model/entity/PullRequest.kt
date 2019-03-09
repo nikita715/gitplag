@@ -1,6 +1,7 @@
 package ru.nikstep.redink.model.entity
 
 import ru.nikstep.redink.util.GitProperty
+import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
@@ -10,7 +11,7 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 /**
- * Temporary info about new pull request
+ * Received pull request record
  */
 @Entity
 data class PullRequest(
@@ -41,5 +42,8 @@ data class PullRequest(
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    val gitService: GitProperty
+    val gitService: GitProperty,
+
+    @Column(nullable = false)
+    val date: Date = Date()
 )

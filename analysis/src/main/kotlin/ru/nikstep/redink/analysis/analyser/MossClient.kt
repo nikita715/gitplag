@@ -15,6 +15,7 @@ internal class MossClient(analysisFiles: PreparedAnalysisFiles, private val moss
     private val base = analysisFiles.base
     private val solutions = analysisFiles.solutions
 
+    @Synchronized
     fun run(): String =
         logged {
             SocketClient().use { client ->

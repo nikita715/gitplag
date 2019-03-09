@@ -2,6 +2,7 @@ package ru.nikstep.redink.core.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
@@ -17,5 +18,10 @@ class MvcConfig : WebMvcConfigurer {
             )
             .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
             .allowCredentials(true).maxAge(3600)
+    }
+
+    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
+        registry.addResourceHandler("/static/**", "/resources/**")
+            .addResourceLocations("classpath:/static/")
     }
 }

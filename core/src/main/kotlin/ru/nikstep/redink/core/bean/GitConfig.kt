@@ -1,5 +1,6 @@
 package ru.nikstep.redink.core.bean
 
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
@@ -20,26 +21,30 @@ class GitConfig {
     @Bean
     fun githubPullRequestWebhookService(
         analysisStatusCheckService: AnalysisStatusCheckService,
-        pullRequestRepository: PullRequestRepository
+        pullRequestRepository: PullRequestRepository,
+        applicationEventPublisher: ApplicationEventPublisher
     ): GithubWebhookService {
         return GithubWebhookService(
             analysisStatusCheckService,
-            pullRequestRepository
+            pullRequestRepository,
+            applicationEventPublisher
         )
     }
 
     @Bean
     fun bitbucketPullRequestWebhookService(
-        pullRequestRepository: PullRequestRepository
+        pullRequestRepository: PullRequestRepository,
+        applicationEventPublisher: ApplicationEventPublisher
     ): BitbucketWebhookService {
-        return BitbucketWebhookService(pullRequestRepository)
+        return BitbucketWebhookService(pullRequestRepository, applicationEventPublisher)
     }
 
     @Bean
     fun gitlabPullRequestWebhookService(
-        pullRequestRepository: PullRequestRepository
+        pullRequestRepository: PullRequestRepository,
+        applicationEventPublisher: ApplicationEventPublisher
     ): GitlabWebhookService {
-        return GitlabWebhookService(pullRequestRepository)
+        return GitlabWebhookService(pullRequestRepository, applicationEventPublisher)
     }
 
     @Bean

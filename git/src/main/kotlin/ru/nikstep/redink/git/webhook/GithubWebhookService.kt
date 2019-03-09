@@ -2,21 +2,25 @@ package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
+import org.springframework.context.ApplicationEventPublisher
 import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
 import ru.nikstep.redink.git.GitException
 import ru.nikstep.redink.git.inProgressStatus
+import ru.nikstep.redink.model.PullRequestEvent
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.GITHUB
+import ru.nikstep.redink.util.parseAsObject
 
 /**
  * Implementation of the [AbstractWebhookService] for handling Github webhooks
  */
 class GithubWebhookService(
     private val analysisStatusCheckService: AnalysisStatusCheckService,
-    pullRequestRepository: PullRequestRepository
-) : AbstractWebhookService(pullRequestRepository) {
+    private val pullRequestRepository: PullRequestRepository,
+    private val applicationEventPublisher: ApplicationEventPublisher
+) : AbstractWebhookService(pullRequestRepository, applicationEventPublisher) {
 
     private val logger = KotlinLogging.logger {}
 
@@ -55,5 +59,17 @@ class GithubWebhookService(
 
     private fun JsonObject.hasInstallationId(): Boolean {
         return obj("installation") != null
+    }
+
+    fun relaunch(payload: String) {
+        val payloadObject = payload.parseAsObject()
+        if (payloadObject["action"] == "rerequested") {
+            val prNumber =
+                (payloadObject.obj("check_run")?.array<Any>("pull_requests")?.get(0) as JsonObject).int("number")!!
+            val repoFullName = payloadObject.obj("repository")?.string("full_name")!!
+            val pullRequest =
+                pullRequestRepository.findFirstByRepoFullNameAndNumberOrderByIdDesc(repoFullName, prNumber)
+            applicationEventPublisher.publishEvent(PullRequestEvent(this, pullRequest))
+        }
     }
 }

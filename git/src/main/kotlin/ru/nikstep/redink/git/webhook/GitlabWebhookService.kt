@@ -1,6 +1,7 @@
 package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
+import org.springframework.context.ApplicationEventPublisher
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.GITLAB
@@ -9,9 +10,9 @@ import ru.nikstep.redink.util.GitProperty.GITLAB
  * Implementation of the [AbstractWebhookService] for handling Gitlab webhooks
  */
 class GitlabWebhookService(
-    pullRequestRepository: PullRequestRepository
-) :
-    AbstractWebhookService(pullRequestRepository) {
+    pullRequestRepository: PullRequestRepository,
+    applicationEventPublisher: ApplicationEventPublisher
+) : AbstractWebhookService(pullRequestRepository, applicationEventPublisher) {
 
     override val JsonObject.gitService: GitProperty
         get() = GITLAB
