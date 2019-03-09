@@ -1,6 +1,7 @@
 package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
+import org.springframework.context.ApplicationEventPublisher
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.BITBUCKET
@@ -9,9 +10,9 @@ import ru.nikstep.redink.util.GitProperty.BITBUCKET
  * Implementation of the [AbstractWebhookService] for handling Bitbucket webhooks
  */
 class BitbucketWebhookService(
-    pullRequestRepository: PullRequestRepository
-) :
-    AbstractWebhookService(pullRequestRepository) {
+    pullRequestRepository: PullRequestRepository,
+    applicationEventPublisher: ApplicationEventPublisher
+) : AbstractWebhookService(pullRequestRepository, applicationEventPublisher) {
 
     override val JsonObject.gitService: GitProperty
         get() = BITBUCKET

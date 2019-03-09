@@ -8,5 +8,7 @@ enum class GithubAnalysisStatus {
     IN_PROGRESS,
     QUEUED;
 
+    override fun toString(): String = this.name.toLowerCase()
+
     val value: String = this.name.toLowerCase()
 }

@@ -1,11 +1,13 @@
 package ru.nikstep.redink.core.bean
 
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.event.ApplicationEventMulticaster
+import org.springframework.context.event.SimpleApplicationEventMulticaster
 import org.springframework.core.env.Environment
 import org.springframework.core.task.TaskExecutor
-import ru.nikstep.redink.analysis.AnalysisScheduler
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
+import ru.nikstep.redink.analysis.PullRequestListener
 import ru.nikstep.redink.analysis.analyser.Analyser
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.analysis.analyser.MossAnalyser
@@ -17,7 +19,6 @@ import ru.nikstep.redink.analysis.solutions.FileSystemSolutionStorage
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
 import ru.nikstep.redink.model.data.AnalysisResultRepository
-import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SourceCodeRepository
 import ru.nikstep.redink.util.AnalyserProperty
@@ -57,19 +58,15 @@ class AnalysisConfig {
     }
 
     @Bean
-    fun analysisScheduler(
-        pullRequestRepository: PullRequestRepository,
+    fun pullRequestListener(
         analysisResultRepository: AnalysisResultRepository,
         analysisStatusCheckService: AnalysisStatusCheckService,
-        @Qualifier("analysisThreadPoolTaskExecutor") taskExecutor: TaskExecutor,
         gitLoaders: Map<GitProperty, GitLoader>,
         analysers: Map<AnalyserProperty, Analyser>
-    ): AnalysisScheduler {
-        return AnalysisScheduler(
-            pullRequestRepository,
+    ): PullRequestListener {
+        return PullRequestListener(
             analysisResultRepository,
             analysisStatusCheckService,
-            taskExecutor,
             gitLoaders,
             analysers
         )
@@ -122,6 +119,22 @@ class AnalysisConfig {
             MOSS to mossAnalysisService,
             JPLAG to jPlagAnalysisService
         )
+    }
+
+    @Bean
+    fun analysisThreadPoolTaskExecutor(): TaskExecutor {
+        val executor = ThreadPoolTaskExecutor()
+        executor.corePoolSize = 4
+        executor.maxPoolSize = 4
+        executor.initialize()
+        return executor
+    }
+
+    @Bean(name = ["applicationEventMulticaster"])
+    fun simpleApplicationEventMulticaster(): ApplicationEventMulticaster {
+        val eventMulticaster = SimpleApplicationEventMulticaster()
+        eventMulticaster.setTaskExecutor(analysisThreadPoolTaskExecutor())
+        return eventMulticaster
     }
 
 }
