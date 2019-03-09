@@ -2,6 +2,7 @@ package ru.nikstep.redink.analysis.loader
 
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.GitProperty
+import java.time.LocalDateTime
 
 class GitlabLoaderTest : AbstractGitLoaderTest() {
     override val repoName = "testns3/plagiarism_test"
@@ -12,7 +13,8 @@ class GitlabLoaderTest : AbstractGitLoaderTest() {
         repoFullName = repoName,
         headSha = "",
         branchName = branchName,
-        gitService = GitProperty.GITLAB
+        gitService = GitProperty.GITLAB,
+        date = LocalDateTime.now()
     )
     override val loader = GitlabLoader(solutionStorage, repositoryRepository)
 }
