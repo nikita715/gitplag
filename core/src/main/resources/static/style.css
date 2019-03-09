@@ -1,3 +1,38 @@
-body {
-    width: 10px;
+html, body {
+    width: 100%;
+}
+
+.solution-compare-header {
+    display: flex;
+    flex-flow: row wrap;
+    height: 50px;
+    border-bottom: 2px solid black;
+}
+
+.student-name {
+    width: 50%;
+    height: 100%;
+    line-height: 42px;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+}
+
+.solution-compare {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.solution {
+    width: 50%;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Roboto', sans-serif;
+    font-weight: lighter;
+}
+
+.redd {
+    background-color: aqua;
 }

@@ -25,7 +25,7 @@ abstract class AbstractGitLoader(
         filePatterns.intersect(changedFiles).forEach { fileName ->
             checkBaseExists(pullRequest, fileName)
 
-            val fileText = loadFileText(pullRequest, pullRequest.branchName, fileName)
+            val fileText = loadFileText(pullRequest.repoFullName, pullRequest.branchName, fileName)
 
             if (fileText.isBlank())
                 throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")
@@ -39,18 +39,23 @@ abstract class AbstractGitLoader(
         }
     }
 
-    protected abstract fun loadFileText(pullRequest: PullRequest, branchName: String, fileName: String): String
+    override fun loadFileText(
+        repoFullName: String,
+        branchName: String,
+        fileName: String
+    ): String {
+        return loadFileText(repoFullName, branchName, fileName, "")
+    }
 
     protected abstract fun loadChangedFiles(pullRequest: PullRequest): List<String>
 
-    //TODO Move out of the class
     private fun checkBaseExists(data: PullRequest, fileName: String) {
         val base = solutionStorage.loadBase(data.repoFullName, fileName)
         if (base.notExists()) saveBase(data, fileName)
     }
 
     private fun saveBase(pullRequest: PullRequest, fileName: String) {
-        val fileText = loadFileText(pullRequest, masterBranch, fileName)
+        val fileText = loadFileText(pullRequest.repoFullName, masterBranch, fileName, pullRequest.secretKey)
 
         if (fileText.isBlank())
             throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")

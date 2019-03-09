@@ -12,4 +12,6 @@ interface SourceCodeRepository : JpaRepository<SourceCode, Long> {
      * Find all solutions for [repo] and [fileName]
      */
     fun findAllByRepoAndFileName(repo: String, fileName: String): List<SourceCode>
+
+    fun deleteByRepoAndUserAndFileName(repo: String, user: String, fileName: String)
 }

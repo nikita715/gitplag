@@ -13,4 +13,8 @@ interface GitLoader {
      */
     fun loadFilesFromGit(pullRequest: PullRequest)
 
+    fun loadFileText(repoFullName: String, branchName: String, fileName: String): String
+
+    fun loadFileText(repoFullName: String, branchName: String, fileName: String, secretKey: String): String
+
 }

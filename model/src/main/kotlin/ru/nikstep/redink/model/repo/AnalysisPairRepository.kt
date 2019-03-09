@@ -22,18 +22,21 @@ interface AnalysisPairRepository : JpaRepository<AnalysisPair, Long> {
     /**
      * Find all analysis pairs of the [repo]
      */
-    fun findAllByRepo(repo: String): List<AnalysisPair>
+    fun findAllByRepoOrderByIdDesc(repo: String): List<AnalysisPair>
 
     /**
      * Find all analysis pairs of the [repo] and [fileName]
      */
-    fun findAllByRepoAndFileName(repo: String, fileName: String): List<AnalysisPair>
+    fun findAllByRepoAndFileNameOrderByIdDesc(repo: String, fileName: String): List<AnalysisPair>
 
     /**
      * Find all analysis pairs of the [repo], [fileName] and [student]
      */
-    @Query("from AnalysisPair ap where ap.repo = ?1 and ap.fileName = ?2 and (ap.student1 = ?3 OR ap.student2 = ?3)")
-    fun findAllByRepoAndFileNameAndStudent(
+    @Query(
+        "from AnalysisPair ap where ap.repo = ?1 and ap.fileName = ?2" +
+                " and (ap.student1 = ?3 OR ap.student2 = ?3) order by ap.id desc"
+    )
+    fun findAllByRepoAndFileNameAndStudentOrderByIdDesc(
         repo: String,
         fileName: String,
         student: String
@@ -42,7 +45,7 @@ interface AnalysisPairRepository : JpaRepository<AnalysisPair, Long> {
     /**
      * Find an analysis pair
      */
-    fun findByRepoAndFileNameAndStudent1AndStudent2(
+    fun findByRepoAndFileNameAndStudent1AndStudent2OrderByIdDesc(
         repo: String,
         fileName: String,
         student1: String,
@@ -52,11 +55,15 @@ interface AnalysisPairRepository : JpaRepository<AnalysisPair, Long> {
     /**
      * Find all analysis pairs of the [repo] and a [student]
      */
-    @Query("from AnalysisPair ap where ap.repo = ?1 and (ap.student1 = ?2 OR ap.student2 = ?2)")
-    fun findAllByRepoAndStudent(repo: String, student: String): List<AnalysisPair>
+    @Query("from AnalysisPair ap where ap.repo = ?1 and (ap.student1 = ?2 OR ap.student2 = ?2) order by ap.id desc ")
+    fun findAllByRepoAndStudentOrderByIdDesc(repo: String, student: String): List<AnalysisPair>
 
     /**
      * Find all analysis pairs of the [repo] and two students
      */
-    fun findAllByRepoAndStudent1AndStudent2(repo: String, student1: String, student2: String): List<AnalysisPair>
+    fun findAllByRepoAndStudent1AndStudent2OrderByIdDesc(
+        repo: String,
+        student1: String,
+        student2: String
+    ): List<AnalysisPair>
 }
