@@ -22,14 +22,14 @@ class MossAnalyser(
     ): Iterable<AnalysisResult> =
         parseResult(
             pullRequest,
-            resultLink = MossClient(analysisFiles, mossId).run(),
-            fileName = analysisFiles.fileName
+            analysisFiles,
+            resultLink = MossClient(analysisFiles, mossId).run()
         )
 
     private fun parseResult(
         pullRequest: PullRequest,
-        resultLink: String,
-        fileName: String
+        analysisFiles: PreparedAnalysisFiles,
+        resultLink: String
     ): Collection<AnalysisResult> =
         Jsoup.connect(resultLink).get()
             .body()
@@ -68,12 +68,21 @@ class MossAnalyser(
 
                 AnalysisResult(
                     students = students,
+                    sha = analysisFiles.solutions.getValue(students.first).sha
+                            to analysisFiles.solutions.getValue(
+                        students.second
+                    ).sha,
                     countOfLines = lines,
                     percentage = percentage,
                     repository = pullRequest.repoFullName,
-                    fileName = fileName,
-                    matchedLines = matchedLines
+                    fileName = analysisFiles.fileName,
+                    matchedLines = matchedLines,
+                    gitService = pullRequest.gitService
                 )
 
             }
+
+    private fun Pair<String, String>.sort() {
+        first.compareTo(second)
+    }
 }

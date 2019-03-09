@@ -23,7 +23,7 @@ internal class MossClient(analysisFiles: PreparedAnalysisFiles, private val moss
                 client.language = language
                 client.run()
                 client.uploadFile(base, true)
-                solutions.forEach(client::uploadFile)
+                solutions.values.forEach { client.uploadFile(it.file) }
                 client.sendQuery()
                 client.resultURL.toString()
             }

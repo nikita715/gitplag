@@ -32,5 +32,5 @@ class PreparedAnalysisFiles(
     /**
      * Solution files that were created by students
      */
-    val solutions: Collection<File>
+    val solutions: Map<String, CommittedFile>
 )
