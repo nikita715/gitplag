@@ -24,6 +24,6 @@ class GitlabLoader(
             }
         }
 
-    override fun loadFileText(pullRequest: PullRequest, branchName: String, fileName: String): String =
-        sendRestRequest("https://gitlab.com/${pullRequest.repoFullName}/raw/$branchName/$fileName")
+    override fun loadFileText(repoFullName: String, branchName: String, fileName: String, secretKey: String): String =
+        sendRestRequest("https://gitlab.com/$repoFullName/raw/$branchName/$fileName")
 }

@@ -14,18 +14,25 @@ class AnalysisPairQuery(
             if (fileName != null) {
                 if (student1 != null) {
                     if (student2 != null) {
-                        listOf(findByRepoAndFileNameAndStudent1AndStudent2(repo, fileName, student1, student2))
+                        listOf(
+                            findByRepoAndFileNameAndStudent1AndStudent2OrderByIdDesc(
+                                repo,
+                                fileName,
+                                student1,
+                                student2
+                            )
+                        )
                     }
-                    findAllByRepoAndFileNameAndStudent(repo, fileName, student1)
+                    findAllByRepoAndFileNameAndStudentOrderByIdDesc(repo, fileName, student1)
                 }
-                findAllByRepoAndFileName(repo, fileName)
+                findAllByRepoAndFileNameOrderByIdDesc(repo, fileName)
             } else if (student1 != null) {
                 if (student2 != null) {
-                    findAllByRepoAndStudent1AndStudent2(repo, student1, student2)
+                    findAllByRepoAndStudent1AndStudent2OrderByIdDesc(repo, student1, student2)
                 }
-                findAllByRepoAndStudent(repo, student1)
+                findAllByRepoAndStudentOrderByIdDesc(repo, student1)
             }
-            findAllByRepo(repo)
+            findAllByRepoOrderByIdDesc(repo)
         }
 
 }

@@ -20,10 +20,9 @@ class GithubLoader(
 
     private val logger = KotlinLogging.logger {}
 
-    override fun loadFileText(pullRequest: PullRequest, branchName: String, fileName: String): String =
+    override fun loadFileText(repoFullName: String, branchName: String, fileName: String, secretKey: String): String =
         sendRestRequest(
-            url = "https://raw.githubusercontent.com/${pullRequest.repoFullName}/$branchName/$fileName",
-            accessToken = authorizationService.getAuthorizationToken(pullRequest.secretKey)
+            url = "https://raw.githubusercontent.com/$repoFullName/$branchName/$fileName"
         )
 
     override fun loadChangedFiles(pullRequest: PullRequest): List<String> =

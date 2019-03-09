@@ -65,6 +65,7 @@ class FileSystemSolutionStorage(
     @Synchronized
     override fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): File {
         val pathToFile = getPathToFile(pullRequest.repoFullName, fileName, pullRequest.creatorName)
+        sourceCodeRepository.deleteByRepoAndUserAndFileName(pullRequest.repoFullName, pullRequest.creatorName, fileName)
         sourceCodeRepository.save(
             SourceCode(
                 user = pullRequest.creatorName,
