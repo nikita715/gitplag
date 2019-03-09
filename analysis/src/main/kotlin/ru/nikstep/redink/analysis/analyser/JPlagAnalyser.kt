@@ -29,11 +29,12 @@ class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath:
         inTempDirectory { resultDir ->
             JPlagClient(analysisFiles, solutionsPath, resultDir).run()
             analysisFiles.indexRangeOfEachToEachStudentPair().map { index ->
-                parseResults(analysisFiles, resultDir, index)
+                parseResults(pullRequest, analysisFiles, resultDir, index)
             }
         }
 
     private fun parseResults(
+        pullRequest: PullRequest,
         analysisFiles: PreparedAnalysisFiles,
         resultDir: String,
         index: Int
@@ -59,11 +60,14 @@ class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath:
         }
         return AnalysisResult(
             students = name1 to name2,
+            sha = analysisFiles.solutions.getValue(name1).sha
+                    to analysisFiles.solutions.getValue(name2).sha,
             countOfLines = -1,
             percentage = percentage,
             repository = analysisFiles.repoName,
             fileName = analysisFiles.fileName,
-            matchedLines = matchedLines
+            matchedLines = matchedLines,
+            gitService = pullRequest.gitService
         )
     }
 

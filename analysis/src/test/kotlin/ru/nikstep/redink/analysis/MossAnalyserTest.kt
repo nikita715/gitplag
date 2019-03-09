@@ -11,6 +11,8 @@ class MossAnalyserTest : AbstractAnalyserTest() {
     override val expectedResult = listOf(
         AnalysisResult(
             students = "student1" to "student2",
+            sha = sha1 to sha2,
+            gitService = gitService,
             countOfLines = 14,
             percentage = 66,
             repository = TEST_REPO_NAME,
@@ -19,6 +21,8 @@ class MossAnalyserTest : AbstractAnalyserTest() {
         ),
         AnalysisResult(
             students = "student2" to "student3",
+            sha = sha2 to sha3,
+            gitService = gitService,
             countOfLines = 5,
             percentage = 22,
             repository = TEST_REPO_NAME,
@@ -27,6 +31,8 @@ class MossAnalyserTest : AbstractAnalyserTest() {
         ),
         AnalysisResult(
             students = "student1" to "student3",
+            sha = sha1 to sha3,
+            gitService = gitService,
             countOfLines = 5,
             percentage = 22,
             repository = TEST_REPO_NAME,

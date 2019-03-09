@@ -18,5 +18,6 @@ class SourceCode(
     @Column(name = "p_user")
     val user: String,
     val repo: String,
-    val fileName: String
+    val fileName: String,
+    val sha: String
 )

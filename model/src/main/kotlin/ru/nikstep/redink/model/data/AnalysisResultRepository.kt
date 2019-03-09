@@ -58,7 +58,10 @@ open class AnalysisResultRepository(
                 fileName = analysisResult.fileName,
                 lines = analysisResult.countOfLines,
                 repo = analysisResult.repository,
-                percentage = analysisResult.percentage
+                percentage = analysisResult.percentage,
+                student1Sha = analysisResult.sha.first,
+                student2Sha = analysisResult.sha.second,
+                gitService = analysisResult.gitService
             )
         )
     }

@@ -1,7 +1,10 @@
 package ru.nikstep.redink.model.entity
 
+import ru.nikstep.redink.util.GitProperty
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
 import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -36,5 +39,15 @@ class AnalysisPair(
     val fileName: String,
 
     @OneToMany(mappedBy = "analysisPair", orphanRemoval = true, fetch = FetchType.EAGER)
-    val analysisPairLines: List<AnalysisPairLines> = emptyList()
+    val analysisPairLines: List<AnalysisPairLines> = emptyList(),
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    val gitService: GitProperty,
+
+    @Column(nullable = false)
+    val student1Sha: String,
+
+    @Column(nullable = false)
+    val student2Sha: String
 )

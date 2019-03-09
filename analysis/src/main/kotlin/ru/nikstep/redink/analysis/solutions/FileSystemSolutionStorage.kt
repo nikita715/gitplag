@@ -1,6 +1,7 @@
 package ru.nikstep.redink.analysis.solutions
 
 import mu.KotlinLogging
+import ru.nikstep.redink.analysis.CommittedFile
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
 import ru.nikstep.redink.model.entity.AnalysisPair
 import ru.nikstep.redink.model.entity.PullRequest
@@ -42,15 +43,15 @@ class FileSystemSolutionStorage(
         return File(Paths.get(solutionsDir, repoName, baseDir, fileName).toUri())
     }
 
-    private fun loadSolutionFiles(repoName: String, fileName: String): List<File> {
+    private fun loadSolutionFiles(repoName: String, fileName: String): Map<String, CommittedFile> {
         val solutionDirectory = File(Paths.get(solutionsDir, repoName).toUri())
-        val directories = solutionDirectory.list().toList().intersect<String>(
-            sourceCodeRepository.findAllByRepoAndFileName(repoName, fileName).map { it.user }
-        )
-        return directories.mapNotNull {
-            val file = File(Paths.get(solutionsDir, repoName, it, fileName).toUri())
-            if (file.exists()) file else null
-        }
+        val existingDirectories = solutionDirectory.list().toList()
+        return sourceCodeRepository.findAllByRepoAndFileName(repoName, fileName).filter {
+            existingDirectories.contains(it.user)
+        }.mapNotNull {
+            val file = File(Paths.get(solutionsDir, repoName, it.user, fileName).toUri())
+            if (file.exists()) it.user to CommittedFile(file, it.sha) else null
+        }.toMap()
     }
 
     override fun getCountOfSolutionFiles(repoName: String, fileName: String): Int {
@@ -68,7 +69,8 @@ class FileSystemSolutionStorage(
             SourceCode(
                 user = pullRequest.creatorName,
                 repo = pullRequest.repoFullName,
-                fileName = fileName
+                fileName = fileName,
+                sha = pullRequest.headSha
             )
         )
         return save(pathToFile, fileText)
