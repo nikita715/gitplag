@@ -9,6 +9,7 @@ import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.parseAsObject
+import java.time.LocalDateTime
 
 /**
  * Common implementation of the [WebhookService]
@@ -16,8 +17,7 @@ import ru.nikstep.redink.util.parseAsObject
 abstract class AbstractWebhookService(
     private val pullRequestRepository: PullRequestRepository,
     private val applicationEventPublisher: ApplicationEventPublisher
-) :
-    WebhookService {
+) : WebhookService {
     private val logger = KotlinLogging.logger {}
 
     override fun saveNewPullRequest(payload: String) {
@@ -38,7 +38,8 @@ abstract class AbstractWebhookService(
                 creatorName = requireNotNull(creatorName) { "creatorName is null" },
                 headSha = requireNotNull(headSha) { "headSha is null" },
                 branchName = requireNotNull(branchName) { "branchName is null" },
-                secretKey = requireNotNull(secretKey) { "secretKey is null" }
+                secretKey = requireNotNull(secretKey) { "secretKey is null" },
+                date = requireNotNull(date) { "date is null" }
             )
         }
     }
@@ -56,6 +57,8 @@ abstract class AbstractWebhookService(
     protected abstract val JsonObject.headSha: String?
 
     protected abstract val JsonObject.branchName: String?
+
+    protected abstract val JsonObject.date: LocalDateTime?
 
     protected open val JsonObject.secretKey: String?
         get() = ""

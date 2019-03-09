@@ -5,6 +5,8 @@ import org.springframework.context.ApplicationEventPublisher
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.BITBUCKET
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Implementation of the [AbstractWebhookService] for handling Bitbucket webhooks
@@ -13,6 +15,8 @@ class BitbucketWebhookService(
     pullRequestRepository: PullRequestRepository,
     applicationEventPublisher: ApplicationEventPublisher
 ) : AbstractWebhookService(pullRequestRepository, applicationEventPublisher) {
+
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
     override val JsonObject.gitService: GitProperty
         get() = BITBUCKET
@@ -35,4 +39,9 @@ class BitbucketWebhookService(
     override val JsonObject.branchName: String?
         get() = obj("pullrequest")?.obj("source")?.obj("branch")?.string("name")
 
+    override val JsonObject.date: LocalDateTime?
+        get() = LocalDateTime.parse(
+            obj("pullrequest")?.string("updated_on")?.substring(0, 19),
+            dateFormatter
+        )
 }
