@@ -5,7 +5,8 @@ import org.jsoup.Jsoup
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.model.data.MatchedLines
+import ru.nikstep.redink.model.entity.Repository
 
 /**
  * Moss client wrapper
@@ -17,17 +18,17 @@ class MossAnalyser(
     private val logger = KotlinLogging.logger {}
 
     override fun analyseOneFile(
-        pullRequest: PullRequest,
+        repository: Repository,
         analysisFiles: PreparedAnalysisFiles
     ): Iterable<AnalysisResult> =
         parseResult(
-            pullRequest,
+            repository,
             analysisFiles,
             resultLink = MossClient(analysisFiles, mossId).run()
         )
 
     private fun parseResult(
-        pullRequest: PullRequest,
+        repository: Repository,
         analysisFiles: PreparedAnalysisFiles,
         resultLink: String
     ): Collection<AnalysisResult> =
@@ -58,26 +59,26 @@ class MossAnalyser(
 
                 val rows = Jsoup.connect(first.attr("href").replace(".html", "-top.html"))
                     .get().getElementsByTag("tr")
-                val matchedLines = mutableListOf<Pair<Pair<Int, Int>, Pair<Int, Int>>>()
+                val matchedLines = mutableListOf<MatchedLines>()
                 for (row in rows.subList(1, rows.size)) {
                     val cells = row.getElementsByTag("td")
                     val firstMatch = cells[0].selectFirst("a").text().split("-")
                     val secondMatch = cells[2].selectFirst("a").text().split("-")
-                    matchedLines.add((firstMatch[0].toInt() to firstMatch[1].toInt()) to (secondMatch[0].toInt() to secondMatch[1].toInt()))
+                    matchedLines += MatchedLines(
+                        match1 = firstMatch[0].toInt() to firstMatch[1].toInt(),
+                        match2 = secondMatch[0].toInt() to secondMatch[1].toInt(),
+                        files = "" to ""
+                    )
                 }
-
                 AnalysisResult(
-                    students = students,
-                    sha = analysisFiles.solutions.getValue(students.first).sha
-                            to analysisFiles.solutions.getValue(
-                        students.second
-                    ).sha,
-                    countOfLines = lines,
+                    students = students.first to students.second,
+                    sha = analysisFiles.solutions.getValue(students.first).sha to
+                            analysisFiles.solutions.getValue(students.second).sha,
+                    lines = lines,
                     percentage = percentage,
-                    repository = pullRequest.repoFullName,
-                    fileName = analysisFiles.fileName,
+                    repo = repository.name,
                     matchedLines = matchedLines,
-                    gitService = pullRequest.gitService
+                    gitService = repository.gitService
                 )
 
             }

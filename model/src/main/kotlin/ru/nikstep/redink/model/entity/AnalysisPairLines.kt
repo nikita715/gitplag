@@ -29,6 +29,12 @@ class AnalysisPairLines(
     @Column(nullable = false)
     val to2: Int,
 
+    @Column(nullable = false)
+    val fileName1: String,
+
+    @Column(nullable = false)
+    val fileName2: String,
+
     @ManyToOne
     @JoinColumn(nullable = false)
     val analysisPair: AnalysisPair

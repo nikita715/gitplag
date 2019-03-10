@@ -7,6 +7,9 @@ import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.User
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.UserRepository
+import ru.nikstep.redink.util.AnalyserProperty
+import ru.nikstep.redink.util.AnalysisMode
+import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language.TEXT
 import ru.nikstep.redink.util.parseAsObject
 
@@ -39,7 +42,9 @@ class GithubIntegrationService(
                 language = TEXT,
                 owner = user,
                 name = requireNotNull(repo.string("full_name")) { "Name is null" },
-                repoGithubId = requireNotNull(repo.long("id")) { "RepoGithubId is null" }
+                analysisMode = AnalysisMode.STATIC,
+                gitService = GitProperty.GITHUB,
+                analyser = AnalyserProperty.JPLAG
             )
         }.let { repositoryRepository.saveAll(requireNotNull((it)) { "Pull request is null" }) }
     }

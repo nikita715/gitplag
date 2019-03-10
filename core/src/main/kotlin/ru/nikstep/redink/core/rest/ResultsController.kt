@@ -24,9 +24,9 @@ class ResultsController(
     fun getResult(@PathVariable id: Int): String {
         val analysisPair = analysisPairRepository.findById(id.toLong()).get()
         val file1 = loaders.getValue(analysisPair.gitService)
-            .loadFileText(analysisPair.repo, analysisPair.student1Sha, analysisPair.fileName)
+            .loadFileText(analysisPair.repo, analysisPair.student1Sha, analysisPair.analysisPairLines[0].fileName1)
         val file2 = loaders.getValue(analysisPair.gitService)
-            .loadFileText(analysisPair.repo, analysisPair.student2Sha, analysisPair.fileName)
+            .loadFileText(analysisPair.repo, analysisPair.student2Sha, analysisPair.analysisPairLines[0].fileName2)
 
         return createHTML().html {
             head {
@@ -52,10 +52,9 @@ class ResultsController(
                 }
             }
         }
-
     }
 
-    @GetMapping("result/repo/{repoOwner}/{repoName}")
+    @GetMapping("result/{repoOwner}/{repoName}")
     fun getResultsOfRepository(@PathVariable repoOwner: String, @PathVariable repoName: String): String = createHTML()
         .html {
             val repoFullName = "$repoOwner/$repoName"

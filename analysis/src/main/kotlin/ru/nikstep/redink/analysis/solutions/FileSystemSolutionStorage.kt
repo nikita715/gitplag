@@ -3,8 +3,8 @@ package ru.nikstep.redink.analysis.solutions
 import mu.KotlinLogging
 import ru.nikstep.redink.analysis.CommittedFile
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
-import ru.nikstep.redink.model.entity.AnalysisPair
 import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.SourceCode
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SourceCodeRepository
@@ -23,18 +23,15 @@ class FileSystemSolutionStorage(
     private val baseDir = ".base"
 
     @Synchronized
-    override fun loadAllBasesAndSolutions(pullRequest: PullRequest): Collection<PreparedAnalysisFiles> {
-        val repoName = pullRequest.repoFullName
-        val repo = repositoryRepository.findByName(repoName)
-        val requiredFiles = repo.filePatterns
+    override fun loadAllBasesAndSolutions(repository: Repository): Collection<PreparedAnalysisFiles> {
 
-        return requiredFiles.map { fileName ->
+        return repository.filePatterns.map { fileName ->
             PreparedAnalysisFiles(
-                repoName = repoName,
+                repoName = repository.name,
                 fileName = fileName,
-                language = repo.language,
-                base = loadBase(repoName, fileName),
-                solutions = loadSolutionFiles(repoName, fileName)
+                language = repository.language,
+                base = loadBase(repository.name, fileName),
+                solutions = loadSolutionFiles(repository.name, fileName)
             )
         }.filter { it.solutions.size > 1 }
     }
@@ -75,22 +72,6 @@ class FileSystemSolutionStorage(
             )
         )
         return save(pathToFile, fileText)
-    }
-
-    override fun loadSolution1(analysisPair: AnalysisPair): File {
-        return loadSolution(
-            analysisPair.repo,
-            analysisPair.student1,
-            analysisPair.fileName
-        )
-    }
-
-    override fun loadSolution2(analysisPair: AnalysisPair): File {
-        return loadSolution(
-            analysisPair.repo,
-            analysisPair.student2,
-            analysisPair.fileName
-        )
     }
 
     override fun saveBase(pullRequest: PullRequest, fileName: String, fileText: String): File {

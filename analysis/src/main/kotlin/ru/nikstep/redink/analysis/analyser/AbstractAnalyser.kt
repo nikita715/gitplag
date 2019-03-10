@@ -3,7 +3,7 @@ package ru.nikstep.redink.analysis.analyser
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.model.entity.Repository
 
 /**
  * Common implementation of the [Analyser]
@@ -11,12 +11,12 @@ import ru.nikstep.redink.model.entity.PullRequest
 abstract class AbstractAnalyser(private val solutionStorage: SolutionStorage) :
     Analyser {
 
-    override fun analyse(pullRequest: PullRequest): Collection<AnalysisResult> =
-        solutionStorage.loadAllBasesAndSolutions(pullRequest)
-            .flatMap { analyseOneFile(pullRequest, it) }
+    override fun analyse(repository: Repository): Collection<AnalysisResult> =
+        solutionStorage.loadAllBasesAndSolutions(repository)
+            .flatMap { analyseOneFile(repository, it) }
 
     abstract fun analyseOneFile(
-        pullRequest: PullRequest,
+        repository: Repository,
         analysisFiles: PreparedAnalysisFiles
     ): Iterable<AnalysisResult>
 

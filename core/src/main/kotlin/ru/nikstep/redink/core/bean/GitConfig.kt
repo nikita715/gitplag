@@ -8,9 +8,6 @@ import ru.nikstep.redink.git.integration.GithubIntegrationService
 import ru.nikstep.redink.git.webhook.BitbucketWebhookService
 import ru.nikstep.redink.git.webhook.GithubWebhookService
 import ru.nikstep.redink.git.webhook.GitlabWebhookService
-import ru.nikstep.redink.model.data.AnalysisResultRepository
-import ru.nikstep.redink.model.repo.AnalysisPairLinesRepository
-import ru.nikstep.redink.model.repo.AnalysisPairRepository
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.UserRepository
@@ -53,16 +50,5 @@ class GitConfig {
         repositoryRepository: RepositoryRepository
     ): GithubIntegrationService {
         return GithubIntegrationService(userRepository, repositoryRepository)
-    }
-
-    @Bean
-    fun analysisResultRepository(
-        analysisPairRepository: AnalysisPairRepository,
-        analysisPairLinesRepository: AnalysisPairLinesRepository
-    ): AnalysisResultRepository {
-        return AnalysisResultRepository(
-            analysisPairRepository,
-            analysisPairLinesRepository
-        )
     }
 }

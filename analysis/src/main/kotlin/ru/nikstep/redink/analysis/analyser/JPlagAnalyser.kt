@@ -6,7 +6,8 @@ import ru.nikstep.redink.analysis.AnalysisException
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.model.data.MatchedLines
+import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.inTempDirectory
 import java.io.File
@@ -23,18 +24,18 @@ class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath:
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
     override fun analyseOneFile(
-        pullRequest: PullRequest,
+        repository: Repository,
         analysisFiles: PreparedAnalysisFiles
     ): Iterable<AnalysisResult> =
         inTempDirectory { resultDir ->
             JPlagClient(analysisFiles, solutionsPath, resultDir).run()
             analysisFiles.indexRangeOfEachToEachStudentPair().map { index ->
-                parseResults(pullRequest, analysisFiles, resultDir, index)
+                parseResults(repository, analysisFiles, resultDir, index)
             }
         }
 
     private fun parseResults(
-        pullRequest: PullRequest,
+        repository: Repository,
         analysisFiles: PreparedAnalysisFiles,
         resultDir: String,
         index: Int
@@ -47,7 +48,7 @@ class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath:
         val body2 = Jsoup.parse(File(asPath(resultDir, "match$index-top.html")).readText())
             .body()
         val rows = body2.getElementsByTag("tr")
-        val matchedLines = mutableListOf<Pair<Pair<Int, Int>, Pair<Int, Int>>>()
+        val matchedLines = mutableListOf<MatchedLines>()
         for (rowNumber in 1 until rows.size - 1) {
             val columns = rows[rowNumber].getElementsByTag("td")
             val (fileName1, from1, to1) = regexMatchedRows.find(columns[1].text())!!
@@ -56,18 +57,20 @@ class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath:
                 .groupValues.subList(1, 4)
             if (fileName1 != analysisFiles.fileName || fileName2 != analysisFiles.fileName)
                 throw AnalysisException("JPlag does not support the analysis of files with the same name")
-            matchedLines += (from1.toInt() to to1.toInt()) to (from2.toInt() to to2.toInt())
+            matchedLines += MatchedLines(
+                match1 = from1.toInt() to to1.toInt(),
+                match2 = from2.toInt() to to2.toInt(),
+                files = fileName1 to fileName2
+            )
         }
         return AnalysisResult(
             students = name1 to name2,
-            sha = analysisFiles.solutions.getValue(name1).sha
-                    to analysisFiles.solutions.getValue(name2).sha,
-            countOfLines = -1,
+            sha = analysisFiles.solutions.getValue(name1).sha to analysisFiles.solutions.getValue(name2).sha,
+            lines = -1,
             percentage = percentage,
-            repository = analysisFiles.repoName,
-            fileName = analysisFiles.fileName,
-            matchedLines = matchedLines,
-            gitService = pullRequest.gitService
+            repo = analysisFiles.repoName,
+            gitService = repository.gitService,
+            matchedLines = matchedLines
         )
     }
 

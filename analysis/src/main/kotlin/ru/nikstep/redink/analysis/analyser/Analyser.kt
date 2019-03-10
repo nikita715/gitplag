@@ -1,7 +1,7 @@
 package ru.nikstep.redink.analysis.analyser
 
 import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.model.entity.Repository
 
 /**
  * Analyzer for plagiarism in pull requests
@@ -13,5 +13,5 @@ interface Analyser {
      *
      * @return student-to-student matches for each file
      */
-    fun analyse(pullRequest: PullRequest): Collection<AnalysisResult>
+    fun analyse(repository: Repository): Collection<AnalysisResult>
 }

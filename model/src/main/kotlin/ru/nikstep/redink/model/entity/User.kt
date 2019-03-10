@@ -11,7 +11,7 @@ import javax.persistence.Table
  */
 @Entity
 @Table(name = "p_user")
-open class User(
+class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = -1,
