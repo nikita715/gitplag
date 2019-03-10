@@ -9,6 +9,7 @@ import ru.nikstep.redink.analysis.analyser.Analyser
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language
 import ru.nikstep.redink.util.asPath
@@ -64,8 +65,13 @@ abstract class AbstractAnalyserTest {
 
     protected abstract val expectedResult: List<AnalysisResult>
 
+    private val repository = mock<Repository> {
+        on { gitService } doReturn GitProperty.GITHUB
+        on { name } doReturn TEST_REPO_NAME
+    }
+
     @Test
     fun analyse() {
-        analysisService.analyse(pullRequest) shouldEqual expectedResult
+        analysisService.analyse(repository) shouldEqual expectedResult
     }
 }

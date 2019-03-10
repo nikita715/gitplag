@@ -12,11 +12,10 @@ interface AnalysisPairRepository : JpaRepository<AnalysisPair, Long> {
     /**
      * Delete [AnalysisPair]
      */
-    fun deleteByStudent1AndStudent2AndRepoAndFileName(
+    fun deleteByStudent1AndStudent2AndRepo(
         student1: String,
         student2: String,
-        repo: String,
-        fileName: String
+        repo: String
     )
 
     /**
@@ -25,29 +24,10 @@ interface AnalysisPairRepository : JpaRepository<AnalysisPair, Long> {
     fun findAllByRepoOrderByIdDesc(repo: String): List<AnalysisPair>
 
     /**
-     * Find all analysis pairs of the [repo] and [fileName]
-     */
-    fun findAllByRepoAndFileNameOrderByIdDesc(repo: String, fileName: String): List<AnalysisPair>
-
-    /**
-     * Find all analysis pairs of the [repo], [fileName] and [student]
-     */
-    @Query(
-        "from AnalysisPair ap where ap.repo = ?1 and ap.fileName = ?2" +
-                " and (ap.student1 = ?3 OR ap.student2 = ?3) order by ap.id desc"
-    )
-    fun findAllByRepoAndFileNameAndStudentOrderByIdDesc(
-        repo: String,
-        fileName: String,
-        student: String
-    ): List<AnalysisPair>
-
-    /**
      * Find an analysis pair
      */
-    fun findByRepoAndFileNameAndStudent1AndStudent2OrderByIdDesc(
+    fun findByRepoAndStudent1AndStudent2OrderByIdDesc(
         repo: String,
-        fileName: String,
         student1: String,
         student2: String
     ): AnalysisPair?

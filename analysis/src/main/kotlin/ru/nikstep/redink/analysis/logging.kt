@@ -1,20 +1,18 @@
 package ru.nikstep.redink.analysis
 
 import mu.KLogger
-import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.model.entity.Repository
 
-internal inline fun KLogger.loggedAnalysis(pullRequest: PullRequest, action: () -> Unit) {
+internal inline fun KLogger.loggedAnalysis(repository: Repository, action: () -> Unit) {
     info {
-        "Analysis: start analysing of pr #${pullRequest.number}," +
-                " repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}"
+        "Analysis: start analysing of repository  ${repository.name}"
     }
     action()
     info {
-        "Analysis: complete analysing of pr #${pullRequest.number}," +
-                " repo ${pullRequest.repoFullName}, user ${pullRequest.creatorName}"
+        "Analysis: complete analysing of repository  ${repository.name}"
     }
 }
 
-internal fun KLogger.exceptionAtAnalysisOf(throwable: Throwable, pullRequest: PullRequest) {
-    error(throwable) { "Analysis: exception at the analysis of the pull request with id = ${pullRequest.id}\n" }
+internal fun KLogger.exceptionAtAnalysisOf(throwable: Throwable, repository: Repository) {
+    error(throwable) { "Analysis: exception at the analysis of repo ${repository.name}\n" }
 }

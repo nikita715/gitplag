@@ -7,6 +7,7 @@ import org.springframework.context.event.SimpleApplicationEventMulticaster
 import org.springframework.core.env.Environment
 import org.springframework.core.task.TaskExecutor
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
+import ru.nikstep.redink.analysis.AnalysisManager
 import ru.nikstep.redink.analysis.PullRequestListener
 import ru.nikstep.redink.analysis.analyser.Analyser
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
@@ -59,17 +60,9 @@ class AnalysisConfig {
 
     @Bean
     fun pullRequestListener(
-        analysisResultRepository: AnalysisResultRepository,
-        analysisStatusCheckService: AnalysisStatusCheckService,
-        gitLoaders: Map<GitProperty, GitLoader>,
-        analysers: Map<AnalyserProperty, Analyser>
+        gitLoaders: Map<GitProperty, GitLoader>
     ): PullRequestListener {
-        return PullRequestListener(
-            analysisResultRepository,
-            analysisStatusCheckService,
-            gitLoaders,
-            analysers
-        )
+        return PullRequestListener(gitLoaders)
     }
 
     @Bean
@@ -135,6 +128,19 @@ class AnalysisConfig {
         val eventMulticaster = SimpleApplicationEventMulticaster()
         eventMulticaster.setTaskExecutor(analysisThreadPoolTaskExecutor())
         return eventMulticaster
+    }
+
+    @Bean
+    fun analysisManager(
+        analysisStatusCheckService: AnalysisStatusCheckService,
+        analysers: Map<AnalyserProperty, Analyser>,
+        analysisResultRepository: AnalysisResultRepository
+    ): AnalysisManager {
+        return AnalysisManager(
+            analysisStatusCheckService,
+            analysers,
+            analysisResultRepository
+        )
     }
 
 }

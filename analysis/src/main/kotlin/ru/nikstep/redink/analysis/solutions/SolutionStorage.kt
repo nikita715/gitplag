@@ -3,6 +3,7 @@ package ru.nikstep.redink.analysis.solutions
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
 import ru.nikstep.redink.model.entity.AnalysisPair
 import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.model.entity.Repository
 import java.io.File
 
 /**
@@ -29,13 +30,13 @@ interface SolutionStorage {
      * Load solution file of the [AnalysisPair.student1] from local storage
      * @param analysisPair result of the analysis
      */
-    fun loadSolution1(analysisPair: AnalysisPair): File
+//    fun loadSolution1(analysisPair: AnalysisPair): File
 
     /**
      * Load solution file of the [AnalysisPair.student2] from local storage
      * @param analysisPair result of the analysis
      */
-    fun loadSolution2(analysisPair: AnalysisPair): File
+//    fun loadSolution2(analysisPair: AnalysisPair): File
 
     /**
      * Save solution of [fileName] for [PullRequest.creatorName]
@@ -47,7 +48,7 @@ interface SolutionStorage {
      * @return all required files for each fileName
      * and information about them. See [PreparedAnalysisFiles]
      */
-    fun loadAllBasesAndSolutions(pullRequest: PullRequest): Collection<PreparedAnalysisFiles>
+    fun loadAllBasesAndSolutions(repository: Repository): Collection<PreparedAnalysisFiles>
 
     fun getCountOfSolutionFiles(repoName: String, fileName: String): Int
 }
