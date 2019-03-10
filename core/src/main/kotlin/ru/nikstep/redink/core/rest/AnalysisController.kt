@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import ru.nikstep.redink.analysis.AnalysisManager
+import ru.nikstep.redink.analysis.AnalysisSettings
+import ru.nikstep.redink.analysis.analyser
+import ru.nikstep.redink.analysis.language
 import ru.nikstep.redink.core.exceptionAtAnalysisOf
 import ru.nikstep.redink.core.loggedAnalysis
-import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.AnalysisRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
@@ -24,16 +26,22 @@ class AnalysisController(
     private val logger = KotlinLogging.logger {}
 
     @GetMapping("/analysis/run")
-    fun analysisLazy(@RequestParam("git") git: String, @RequestParam("repoName") repoName: String): ResponseEntity<*> {
+    fun analysisLazy(
+        @RequestParam("git") git: String,
+        @RequestParam("repoName") repoName: String,
+        @RequestParam("analyser", required = false) analyser: String,
+        @RequestParam("language", required = false) language: String
+    ): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
-        try {
-            val analysis = analysisManager.initiateAnalysis(repository)
-            return ResponseEntity.ok(logger.loggedAnalysis(repository) {
+        val analysisSettings = AnalysisSettings(repository).language(language).analyser(analyser)
+        return try {
+            val analysis = analysisManager.initiateAnalysis(analysisSettings)
+            ResponseEntity.ok(logger.loggedAnalysis(repository) {
                 analysisRepository.findById(analysis.id).get()
             })
         } catch (e: Exception) {
             logger.exceptionAtAnalysisOf(e, repository)
-            return ResponseEntity<Any>(HttpStatus.INTERNAL_SERVER_ERROR)
+            ResponseEntity<Any>(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -45,15 +53,21 @@ class AnalysisController(
     }
 
     @GetMapping("/analysis/trigger")
-    fun analysisStatic(@RequestParam("git") git: String, @RequestParam("repoName") repoName: String): ResponseEntity<*> {
+    fun analysisStatic(
+        @RequestParam("git") git: String,
+        @RequestParam("repoName") repoName: String,
+        @RequestParam("analyser", required = false) analyser: String,
+        @RequestParam("language", required = false) language: String
+    ): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
-        run(repository)
+        val analysisSettings = AnalysisSettings(repository).language(language).analyser(analyser)
+        run(analysisSettings)
         return ResponseEntity<Any>(HttpStatus.ACCEPTED)
     }
 
     @Async("analysisThreadPoolTaskExecutor")
-    fun run(repository: Repository) {
-        analysisManager.initiateAnalysis(repository)
+    fun run(analysisSettings: AnalysisSettings) {
+        analysisManager.initiateAnalysis(analysisSettings)
     }
 
 }
