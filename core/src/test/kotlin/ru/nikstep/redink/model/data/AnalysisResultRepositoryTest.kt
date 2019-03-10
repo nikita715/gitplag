@@ -1,6 +1,7 @@
 package ru.nikstep.redink.model.data
 
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,6 +17,7 @@ import ru.nikstep.redink.util.AnalysisMode
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner::class)
 @SpringBootTest(classes = [RedinkApplication::class])
 class AnalysisResultRepositoryTest {
