@@ -23,7 +23,7 @@ class AnalysisManager(
     private val logger = KotlinLogging.logger {}
 
     fun initiateAnalysis(repository: Repository): Analysis {
-        val analysisService = analysers.getValue(AnalyserProperty.JPLAG)
+        val analysisService = analysers.getValue(repository.analyser)
         return analysisService.analyse(repository)
             .let { analysisResultRepository.saveAnalysis(repository, it) }
     }

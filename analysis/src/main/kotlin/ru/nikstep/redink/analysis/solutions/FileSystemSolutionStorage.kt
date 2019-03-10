@@ -12,42 +12,45 @@ import ru.nikstep.redink.util.asPath
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.stream.Collectors.toList
 
 class FileSystemSolutionStorage(
     private val sourceCodeRepository: SourceCodeRepository,
     private val repositoryRepository: RepositoryRepository
 ) : SolutionStorage {
-    private val logger = KotlinLogging.logger {}
-    private val solutionsDir = "solutions"
-    private val baseDir = ".base"
-
-    @Synchronized
-    override fun loadAllBasesAndSolutions(repository: Repository): Collection<PreparedAnalysisFiles> {
-
-        return repository.filePatterns.map { fileName ->
-            PreparedAnalysisFiles(
-                repoName = repository.name,
-                fileName = fileName,
-                language = repository.language,
-                base = loadBase(repository.name, fileName),
-                solutions = loadSolutionFiles(repository.name, fileName)
-            )
-        }.filter { it.solutions.size > 1 }
-    }
 
     override fun loadBase(repoName: String, fileName: String): File {
         return File(Paths.get(solutionsDir, repoName, baseDir, fileName).toUri())
     }
 
-    private fun loadSolutionFiles(repoName: String, fileName: String): Map<String, CommittedFile> {
+    private val logger = KotlinLogging.logger {}
+    private val solutionsDir = "solutions"
+    private val baseDir = ".base"
+
+    @Synchronized
+    override fun loadAllBasesAndSolutions(repository: Repository) = PreparedAnalysisFiles(
+        repoName = repository.name,
+        language = repository.language,
+        analyser = repository.analyser,
+        bases = loadBases(repository.name),
+        solutions = loadSolutionFiles(repository.name)
+    )
+
+    override fun loadBases(repoName: String): List<File> {
+        return Files.walk(Paths.get(solutionsDir, repoName, baseDir)).filter { path -> Files.isRegularFile(path) }
+            .map(Path::toFile).collect(toList())
+    }
+
+    private fun loadSolutionFiles(repoName: String): Map<String, CommittedFile> {
         val solutionDirectory = File(Paths.get(solutionsDir, repoName).toUri())
         val existingDirectories = solutionDirectory.list().toList()
-        return sourceCodeRepository.findAllByRepoAndFileName(repoName, fileName).filter {
+        return sourceCodeRepository.findAllByRepo(repoName).filter {
             existingDirectories.contains(it.user)
         }.mapNotNull {
-            val file = File(Paths.get(solutionsDir, repoName, it.user, fileName).toUri())
-            if (file.exists()) it.user to CommittedFile(file, it.sha) else null
+            val file = File(Paths.get(solutionsDir, repoName, it.user, it.fileName).toUri())
+            if (file.exists()) it.user to CommittedFile(file, it.sha, it.fileName) else null
         }.toMap()
     }
 

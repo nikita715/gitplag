@@ -12,7 +12,7 @@ internal class MossClient(analysisFiles: PreparedAnalysisFiles, private val moss
     private val logger = KotlinLogging.logger {}
 
     private val language = analysisFiles.language.ofMoss()
-    private val base = analysisFiles.base
+    private val bases = analysisFiles.bases
     private val solutions = analysisFiles.solutions
 
     @Synchronized
@@ -22,7 +22,7 @@ internal class MossClient(analysisFiles: PreparedAnalysisFiles, private val moss
                 client.userID = mossId
                 client.language = language
                 client.run()
-                client.uploadFile(base, true)
+                bases.forEach { client.uploadFile(it, true) }
                 solutions.values.forEach { client.uploadFile(it.file) }
                 client.sendQuery()
                 client.resultURL.toString()

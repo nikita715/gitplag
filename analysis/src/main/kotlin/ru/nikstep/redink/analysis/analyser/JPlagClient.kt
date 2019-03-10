@@ -4,7 +4,6 @@ import mu.KotlinLogging
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.asPathInRoot
-import ru.nikstep.redink.util.onlyLastName
 import java.util.concurrent.TimeUnit
 
 /**
@@ -22,11 +21,10 @@ internal class JPlagClient(
 
     private val language = analysisFiles.language.ofJPlag()
     private val repoName = analysisFiles.repoName
-    private val fileName = analysisFiles.fileName.onlyLastName()
 
     fun run() =
         buildString {
-            append("java -jar $jplagPath  -l $language -bc .base -r $resultPath  -p $fileName -s ")
+            append("java -jar $jplagPath  -l $language -bc .base -r $resultPath -s ")
             append(asPath(solutionsPath, repoName))
         }.also { task ->
             logged(task) {

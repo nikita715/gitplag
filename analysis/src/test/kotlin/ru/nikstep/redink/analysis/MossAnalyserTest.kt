@@ -18,12 +18,12 @@ class MossAnalyserTest : AbstractAnalyserTest() {
             gitService = gitService,
             lines = 14,
             percentage = 66,
-            repo = TEST_REPO_NAME,
+            repo = testRepoName,
             matchedLines = listOf(
                 MatchedLines(
                     match1 = 7 to 19,
                     match2 = 7 to 20,
-                    files = TEST_FILE_NAME to TEST_FILE_NAME
+                    files = testFileName to testFileName
                 )
             )
         ),
@@ -33,12 +33,12 @@ class MossAnalyserTest : AbstractAnalyserTest() {
             gitService = gitService,
             lines = 5,
             percentage = 22,
-            repo = TEST_REPO_NAME,
+            repo = testRepoName,
             matchedLines = listOf(
                 MatchedLines(
                     match1 = 16 to 20,
                     match2 = 12 to 16,
-                    files = TEST_FILE_NAME to TEST_FILE_NAME
+                    files = testFileName to testFileName
                 )
             )
         ),
@@ -48,12 +48,12 @@ class MossAnalyserTest : AbstractAnalyserTest() {
             gitService = gitService,
             lines = 5,
             percentage = 22,
-            repo = TEST_REPO_NAME,
+            repo = testRepoName,
             matchedLines = listOf(
                 MatchedLines(
                     match1 = 15 to 19,
                     match2 = 12 to 16,
-                    files = TEST_FILE_NAME to TEST_FILE_NAME
+                    files = testFileName to testFileName
                 )
             )
         )
