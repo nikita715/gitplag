@@ -21,6 +21,8 @@ abstract class AbstractAnalyserTest {
     protected val testRepoName = "nikita715/plagiarism_test"
     protected val testFileName = "dir/FileTest.java"
 
+    protected val gitService = GitProperty.GITHUB
+
     private val relSolutionsDir = asPath("src", "test", "resources", "test_solutions")
 
     internal val solutionsDir = Paths.get(relSolutionsDir).toFile().absolutePath
@@ -29,12 +31,14 @@ abstract class AbstractAnalyserTest {
     private val student2 = "student2"
     private val student3 = "student3"
 
-    private val bases = listOf(Paths.get(relSolutionsDir, testRepoName, ".bases", testFileName).toFile())
-    private val solution1 = Paths.get(relSolutionsDir, testRepoName, student1, testFileName).toFile()
-    private val solution2 = Paths.get(relSolutionsDir, testRepoName, student2, testFileName).toFile()
-    private val solution3 = Paths.get(relSolutionsDir, testRepoName, student3, testFileName).toFile()
-
-    protected val gitService = GitProperty.GITHUB
+    private val bases =
+        listOf(Paths.get(relSolutionsDir, gitService.toString(), testRepoName, ".base", testFileName).toFile())
+    private val solution1 =
+        Paths.get(relSolutionsDir, gitService.toString(), testRepoName, student1, testFileName).toFile()
+    private val solution2 =
+        Paths.get(relSolutionsDir, gitService.toString(), testRepoName, student2, testFileName).toFile()
+    private val solution3 =
+        Paths.get(relSolutionsDir, gitService.toString(), testRepoName, student3, testFileName).toFile()
     protected val sha1 = "sha1"
     protected val sha2 = "sha2"
     protected val sha3 = "sha3"
@@ -52,7 +56,7 @@ abstract class AbstractAnalyserTest {
     )
 
     internal val solutionStorageService = mock<SolutionStorage> {
-        on { getCountOfSolutionFiles(testRepoName, testFileName) } doReturn 3
+        on { getCountOfSolutionFiles(repository, testFileName) } doReturn 3
         on { loadAllBasesAndSolutions(any()) } doReturn testPreparedAnalysisFiles
     }
 

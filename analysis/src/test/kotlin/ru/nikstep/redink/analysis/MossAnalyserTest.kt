@@ -1,11 +1,9 @@
 package ru.nikstep.redink.analysis
 
-import org.junit.Ignore
 import ru.nikstep.redink.analysis.analyser.MossAnalyser
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.MatchedLines
 
-@Ignore
 class MossAnalyserTest : AbstractAnalyserTest() {
 
     override val analysisService =

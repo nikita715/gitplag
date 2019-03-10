@@ -22,17 +22,18 @@ abstract class AbstractGitLoaderTest {
     abstract val repoName: String
     val branchName = "test"
 
-    private val relSolutionsDir = asPath("src", "test", "resources", "test_solutions")
+    private val relSolutionsDir = asPath("src", "test", "resources", "loader")
 
     private val baseFileNamesToFileTexts = mapOf("class1.java" to "empty class1\n", "class2.java" to "empty class2\n")
     private val fileNamesToFileTexts = mapOf("class1.java" to "class1 content\n", "class2.java" to "class2 content\n")
 
-    private val baseClass1 = Paths.get(relSolutionsDir, "loader/.base", "class1.java").toFile()
-    private val baseClass2 = Paths.get(relSolutionsDir, "loader/.base", "class2.java").toFile()
-    private val class1 = Paths.get(relSolutionsDir, "loader/class1.java").toFile()
-    private val class2 = Paths.get(relSolutionsDir, "loader/class2.java").toFile()
+    private val baseClass1 = Paths.get(relSolutionsDir, ".base", "class1.java").toFile()
+    private val baseClass2 = Paths.get(relSolutionsDir, ".base", "class2.java").toFile()
+    private val class1 = Paths.get(relSolutionsDir, "class1.java").toFile()
+    private val class2 = Paths.get(relSolutionsDir, "class2.java").toFile()
 
     private val repository = mock<Repository> {
+        on { name } doReturn repoName
         on { it.filePatterns } doReturn fileNamesToFileTexts.keys
     }
 
@@ -61,8 +62,16 @@ abstract class AbstractGitLoaderTest {
 
     @Test
     fun loadFileTextAndBases() {
-        `when`(solutionStorage.loadBase(repoName, class1.name)).thenReturn(File(""))
-        `when`(solutionStorage.loadBase(repoName, class2.name)).thenReturn(File(""))
+        `when`(solutionStorage.loadBase(pullRequest.gitService, pullRequest.repoFullName, class1.name)).thenReturn(
+            File(
+                ""
+            )
+        )
+        `when`(solutionStorage.loadBase(pullRequest.gitService, pullRequest.repoFullName, class2.name)).thenReturn(
+            File(
+                ""
+            )
+        )
 
         loader.loadFilesFromGit(pullRequest)
 
@@ -78,8 +87,12 @@ abstract class AbstractGitLoaderTest {
 
     @Test
     fun loadFileTextWithoutBases() {
-        `when`(solutionStorage.loadBase(repoName, class1.name)).thenReturn(baseClass1)
-        `when`(solutionStorage.loadBase(repoName, class2.name)).thenReturn(baseClass2)
+        `when`(solutionStorage.loadBase(pullRequest.gitService, pullRequest.repoFullName, class1.name)).thenReturn(
+            baseClass1
+        )
+        `when`(solutionStorage.loadBase(pullRequest.gitService, pullRequest.repoFullName, class2.name)).thenReturn(
+            baseClass2
+        )
 
         loader.loadFilesFromGit(pullRequest)
 
