@@ -16,7 +16,7 @@ import javax.persistence.OneToMany
 @Entity
 data class Analysis(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long = -1,
 
     @ManyToOne

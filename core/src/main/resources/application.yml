@@ -31,3 +31,7 @@ security:
 
 server:
   port: 80
+
+redink:
+  mossId: ${MOSS_ID}
+  solutionsDir: solutions

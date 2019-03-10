@@ -8,6 +8,7 @@ import ru.nikstep.redink.git.integration.GithubIntegrationService
 import ru.nikstep.redink.git.webhook.BitbucketWebhookService
 import ru.nikstep.redink.git.webhook.GithubWebhookService
 import ru.nikstep.redink.git.webhook.GitlabWebhookService
+import ru.nikstep.redink.model.data.RepositoryDataManager
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.UserRepository
@@ -47,8 +48,15 @@ class GitConfig {
     @Bean
     fun githubIntegrationService(
         userRepository: UserRepository,
-        repositoryRepository: RepositoryRepository
+        repositoryDataManager: RepositoryDataManager
     ): GithubIntegrationService {
-        return GithubIntegrationService(userRepository, repositoryRepository)
+        return GithubIntegrationService(userRepository, repositoryDataManager)
     }
+
+    @Bean
+    fun repositoryDataManager(
+        repositoryRepository: RepositoryRepository,
+        userRepository: UserRepository
+    ): RepositoryDataManager =
+        RepositoryDataManager(repositoryRepository, userRepository)
 }

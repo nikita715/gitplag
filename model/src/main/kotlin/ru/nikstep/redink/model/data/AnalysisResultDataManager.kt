@@ -10,7 +10,7 @@ import ru.nikstep.redink.model.repo.AnalysisPairRepository
 import ru.nikstep.redink.model.repo.AnalysisRepository
 import java.time.LocalDateTime
 
-open class AnalysisResultRepository(
+open class AnalysisResultDataManager(
     private val analysisRepository: AnalysisRepository,
     private val analysisPairRepository: AnalysisPairRepository,
     private val analysisPairLinesRepository: AnalysisPairLinesRepository

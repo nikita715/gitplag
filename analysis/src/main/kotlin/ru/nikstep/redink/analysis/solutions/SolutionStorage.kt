@@ -3,6 +3,8 @@ package ru.nikstep.redink.analysis.solutions
 import ru.nikstep.redink.analysis.AnalysisSettings
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
 import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.model.entity.Repository
+import ru.nikstep.redink.util.GitProperty
 import java.io.File
 
 /**
@@ -13,12 +15,17 @@ interface SolutionStorage {
     /**
      * Load all base files from local storage
      */
-    fun loadBases(repoName: String): List<File>
+    fun loadBases(repository: Repository): List<File>
 
     /**
      * Load base file from local storage
      */
-    fun loadBase(repoName: String, fileName: String): File
+    fun loadBase(repository: Repository, fileName: String): File
+
+    /**
+     * Load base file from local storage
+     */
+    fun loadBase(gitProperty: GitProperty, repoName: String, fileName: String): File
 
     /**
      * Save base file to local storage
@@ -28,7 +35,7 @@ interface SolutionStorage {
     /**
      * Load solution file of the student from local storage
      */
-    fun loadSolution(repoName: String, userName: String, fileName: String): File
+    fun loadSolution(repository: Repository, userName: String, fileName: String): File
 
     /**
      * Save solution of [fileName] for [PullRequest.creatorName]
@@ -42,5 +49,5 @@ interface SolutionStorage {
      */
     fun loadAllBasesAndSolutions(analysisSettings: AnalysisSettings): PreparedAnalysisFiles
 
-    fun getCountOfSolutionFiles(repoName: String, fileName: String): Int
+    fun getCountOfSolutionFiles(repository: Repository, fileName: String): Int
 }

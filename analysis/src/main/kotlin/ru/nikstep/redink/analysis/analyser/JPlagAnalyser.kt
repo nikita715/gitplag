@@ -8,6 +8,7 @@ import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.MatchedLines
 import ru.nikstep.redink.util.asPath
+import ru.nikstep.redink.util.asPathInRoot
 import ru.nikstep.redink.util.inTempDirectory
 import java.io.File
 import kotlin.math.roundToInt
@@ -15,7 +16,7 @@ import kotlin.math.roundToInt
 /**
  * JPlag client wrapper
  */
-class JPlagAnalyser(private val solutionStorage: SolutionStorage, private val solutionsPath: String) :
+class JPlagAnalyser(private val solutionStorage: SolutionStorage, private val solutionsDir: String) :
     Analyser {
 
     private val logger = KotlinLogging.logger {}
@@ -25,6 +26,7 @@ class JPlagAnalyser(private val solutionStorage: SolutionStorage, private val so
     override fun analyse(analysisSettings: AnalysisSettings): Collection<AnalysisResult> =
         inTempDirectory { resultDir ->
             val analysisFiles = solutionStorage.loadAllBasesAndSolutions(analysisSettings)
+            val solutionsPath = solutionsDir.asPathInRoot() + "/" + analysisSettings.gitService.toString()
             JPlagClient(analysisFiles, solutionsPath, resultDir).run()
             analysisFiles.indexRangeOfEachToEachStudentPair().map { index ->
                 parseResults(analysisSettings, analysisFiles, resultDir, index)
