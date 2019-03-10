@@ -10,6 +10,7 @@ import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
+import ru.nikstep.redink.util.AnalyserProperty
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language
 import ru.nikstep.redink.util.asPath
@@ -17,8 +18,8 @@ import java.nio.file.Paths
 
 abstract class AbstractAnalyserTest {
 
-    protected val TEST_REPO_NAME = "nikita715/plagiarism_test"
-    protected val TEST_FILE_NAME = "dir/FileTest.java"
+    protected val testRepoName = "nikita715/plagiarism_test"
+    protected val testFileName = "dir/FileTest.java"
 
     private val relSolutionsDir = asPath("src", "test", "resources", "test_solutions")
 
@@ -28,10 +29,10 @@ abstract class AbstractAnalyserTest {
     private val student2 = "student2"
     private val student3 = "student3"
 
-    private val base = Paths.get(relSolutionsDir, TEST_REPO_NAME, ".base", TEST_FILE_NAME).toFile()
-    private val solution1 = Paths.get(relSolutionsDir, TEST_REPO_NAME, student1, TEST_FILE_NAME).toFile()
-    private val solution2 = Paths.get(relSolutionsDir, TEST_REPO_NAME, student2, TEST_FILE_NAME).toFile()
-    private val solution3 = Paths.get(relSolutionsDir, TEST_REPO_NAME, student3, TEST_FILE_NAME).toFile()
+    private val bases = listOf(Paths.get(relSolutionsDir, testRepoName, ".bases", testFileName).toFile())
+    private val solution1 = Paths.get(relSolutionsDir, testRepoName, student1, testFileName).toFile()
+    private val solution2 = Paths.get(relSolutionsDir, testRepoName, student2, testFileName).toFile()
+    private val solution3 = Paths.get(relSolutionsDir, testRepoName, student3, testFileName).toFile()
 
     protected val gitService = GitProperty.GITHUB
     protected val sha1 = "sha1"
@@ -39,24 +40,24 @@ abstract class AbstractAnalyserTest {
     protected val sha3 = "sha3"
 
     private val testPreparedAnalysisFiles = PreparedAnalysisFiles(
-        TEST_FILE_NAME,
-        TEST_REPO_NAME,
+        testRepoName,
         Language.JAVA,
-        base,
+        AnalyserProperty.JPLAG,
+        bases,
         mapOf(
-            student1 to CommittedFile(solution1, sha1),
-            student2 to CommittedFile(solution2, sha2),
-            student3 to CommittedFile(solution3, sha3)
+            student1 to CommittedFile(solution1, sha1, testFileName),
+            student2 to CommittedFile(solution2, sha2, testFileName),
+            student3 to CommittedFile(solution3, sha3, testFileName)
         )
     )
 
     internal val solutionStorageService = mock<SolutionStorage> {
-        on { getCountOfSolutionFiles(TEST_REPO_NAME, TEST_FILE_NAME) } doReturn 3
-        on { loadAllBasesAndSolutions(any()) } doReturn listOf(testPreparedAnalysisFiles)
+        on { getCountOfSolutionFiles(testRepoName, testFileName) } doReturn 3
+        on { loadAllBasesAndSolutions(any()) } doReturn testPreparedAnalysisFiles
     }
 
     private val pullRequest = mock<PullRequest> {
-        on { repoFullName } doReturn TEST_REPO_NAME
+        on { repoFullName } doReturn testRepoName
         on { creatorName } doReturn student1
         on { gitService } doReturn gitService
     }
@@ -67,7 +68,7 @@ abstract class AbstractAnalyserTest {
 
     private val repository = mock<Repository> {
         on { gitService } doReturn GitProperty.GITHUB
-        on { name } doReturn TEST_REPO_NAME
+        on { name } doReturn testRepoName
     }
 
     @Test

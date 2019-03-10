@@ -2,7 +2,6 @@ package ru.nikstep.redink.analysis.analyser
 
 import mu.KotlinLogging
 import org.jsoup.Jsoup
-import ru.nikstep.redink.analysis.AnalysisException
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
@@ -16,18 +15,16 @@ import kotlin.math.roundToInt
 /**
  * JPlag client wrapper
  */
-class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath: String) :
-    AbstractAnalyser(solutionStorage) {
+class JPlagAnalyser(private val solutionStorage: SolutionStorage, private val solutionsPath: String) :
+    Analyser {
 
     private val logger = KotlinLogging.logger {}
     private val regexUserNames = "^Matches for (.+) & (.+)$".toRegex()
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
-    override fun analyseOneFile(
-        repository: Repository,
-        analysisFiles: PreparedAnalysisFiles
-    ): Iterable<AnalysisResult> =
+    override fun analyse(repository: Repository): Collection<AnalysisResult> =
         inTempDirectory { resultDir ->
+            val analysisFiles = solutionStorage.loadAllBasesAndSolutions(repository)
             JPlagClient(analysisFiles, solutionsPath, resultDir).run()
             analysisFiles.indexRangeOfEachToEachStudentPair().map { index ->
                 parseResults(repository, analysisFiles, resultDir, index)
@@ -55,8 +52,6 @@ class JPlagAnalyser(solutionStorage: SolutionStorage, private val solutionsPath:
                 .groupValues.subList(1, 4)
             val (fileName2, from2, to2) = regexMatchedRows.find(columns[2].text())!!
                 .groupValues.subList(1, 4)
-            if (fileName1 != analysisFiles.fileName || fileName2 != analysisFiles.fileName)
-                throw AnalysisException("JPlag does not support the analysis of files with the same name")
             matchedLines += MatchedLines(
                 match1 = from1.toInt() to to1.toInt(),
                 match2 = from2.toInt() to to2.toInt(),

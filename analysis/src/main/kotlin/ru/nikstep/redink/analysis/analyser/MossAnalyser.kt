@@ -12,20 +12,19 @@ import ru.nikstep.redink.model.entity.Repository
  * Moss client wrapper
  */
 class MossAnalyser(
-    solutionStorage: SolutionStorage,
+    private val solutionStorage: SolutionStorage,
     private val mossId: String
-) : AbstractAnalyser(solutionStorage) {
+) : Analyser {
     private val logger = KotlinLogging.logger {}
 
-    override fun analyseOneFile(
-        repository: Repository,
-        analysisFiles: PreparedAnalysisFiles
-    ): Iterable<AnalysisResult> =
-        parseResult(
+    override fun analyse(repository: Repository): Collection<AnalysisResult> {
+        val analysisFiles = solutionStorage.loadAllBasesAndSolutions(repository)
+        return parseResult(
             repository,
             analysisFiles,
             resultLink = MossClient(analysisFiles, mossId).run()
         )
+    }
 
     private fun parseResult(
         repository: Repository,
@@ -67,7 +66,8 @@ class MossAnalyser(
                     matchedLines += MatchedLines(
                         match1 = firstMatch[0].toInt() to firstMatch[1].toInt(),
                         match2 = secondMatch[0].toInt() to secondMatch[1].toInt(),
-                        files = "" to ""
+                        files = analysisFiles.solutions.getValue(students.first).fileName
+                                to analysisFiles.solutions.getValue(students.second).fileName
                     )
                 }
                 AnalysisResult(
@@ -80,7 +80,6 @@ class MossAnalyser(
                     matchedLines = matchedLines,
                     gitService = repository.gitService
                 )
-
             }
 
     private fun Pair<String, String>.sort() {

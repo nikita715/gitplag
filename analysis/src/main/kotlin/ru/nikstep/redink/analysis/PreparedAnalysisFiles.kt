@@ -1,5 +1,6 @@
 package ru.nikstep.redink.analysis
 
+import ru.nikstep.redink.util.AnalyserProperty
 import ru.nikstep.redink.util.Language
 import java.io.File
 
@@ -8,11 +9,6 @@ import java.io.File
  * that must be analysed for plagiarism
  */
 class PreparedAnalysisFiles(
-
-    /**
-     * Name of the file that must be analysed
-     */
-    val fileName: String,
 
     /**
      * Name of the repo with the file
@@ -24,10 +20,12 @@ class PreparedAnalysisFiles(
      */
     val language: Language,
 
+    val analyser: AnalyserProperty,
+
     /**
-     * Base file of the file
+     * Base files and solution files that were created by students
      */
-    val base: File,
+    val bases: List<File>,
 
     /**
      * Solution files that were created by students

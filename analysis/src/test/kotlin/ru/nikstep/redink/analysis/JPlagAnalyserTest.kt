@@ -16,12 +16,12 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
             gitService = gitService,
             lines = -1,
             percentage = 100,
-            repo = TEST_REPO_NAME,
+            repo = testRepoName,
             matchedLines = listOf(
                 MatchedLines(
                     match1 = 13 to 22,
                     match2 = 12 to 21,
-                    files = TEST_FILE_NAME to TEST_FILE_NAME
+                    files = testFileName to testFileName
                 )
             )
         ),
@@ -31,12 +31,12 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
             gitService = gitService,
             lines = -1,
             percentage = 55,
-            repo = TEST_REPO_NAME,
+            repo = testRepoName,
             matchedLines = listOf(
                 MatchedLines(
                     match1 = 10 to 18,
                     match2 = 15 to 22,
-                    files = TEST_FILE_NAME to TEST_FILE_NAME
+                    files = testFileName to testFileName
                 )
             )
         ),
@@ -46,12 +46,12 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
             gitService = gitService,
             lines = -1,
             percentage = 55,
-            repo = TEST_REPO_NAME,
+            repo = testRepoName,
             matchedLines = listOf(
                 MatchedLines(
                     match1 = 10 to 18,
                     match2 = 14 to 21,
-                    files = TEST_FILE_NAME to TEST_FILE_NAME
+                    files = testFileName to testFileName
                 )
             )
         )

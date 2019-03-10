@@ -10,6 +10,11 @@ import ru.nikstep.redink.model.entity.SourceCode
 interface SourceCodeRepository : JpaRepository<SourceCode, Long> {
 
     /**
+     * Find all solutions for [repo]
+     */
+    fun findAllByRepo(repo: String): List<SourceCode>
+
+    /**
      * Find all solutions for [repo] and [fileName]
      */
     fun findAllByRepoAndFileName(repo: String, fileName: String): List<SourceCode>
