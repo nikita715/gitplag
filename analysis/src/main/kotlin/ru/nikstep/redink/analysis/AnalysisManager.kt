@@ -7,6 +7,7 @@ import ru.nikstep.redink.checks.github.GithubAnalysisConclusion
 import ru.nikstep.redink.checks.github.GithubAnalysisResultData
 import ru.nikstep.redink.checks.github.GithubAnalysisStatus
 import ru.nikstep.redink.model.data.AnalysisResultRepository
+import ru.nikstep.redink.model.entity.Analysis
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.util.AnalyserProperty
@@ -21,16 +22,10 @@ class AnalysisManager(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    fun initiateAnalysis(repository: Repository) {
+    fun initiateAnalysis(repository: Repository): Analysis {
         val analysisService = analysers.getValue(AnalyserProperty.JPLAG)
-        try {
-            logger.loggedAnalysis(repository) {
-                analysisService.analyse(repository)
-                    .also { analysisResultRepository.saveAll(repository, it) }
-            }
-        } catch (e: Exception) {
-            logger.exceptionAtAnalysisOf(e, repository)
-        }
+        return analysisService.analyse(repository)
+            .let { analysisResultRepository.saveAnalysis(repository, it) }
     }
 
     private fun sendSuccessStatusCheck(pullRequest: PullRequest) {

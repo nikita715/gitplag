@@ -1,16 +1,17 @@
-package ru.nikstep.redink.analysis
+package ru.nikstep.redink.core
 
 import mu.KLogger
 import ru.nikstep.redink.model.entity.Repository
 
-internal inline fun KLogger.loggedAnalysis(repository: Repository, action: () -> Unit) {
+internal inline fun <T> KLogger.loggedAnalysis(repository: Repository, action: () -> T): T {
     info {
         "Analysis: start analysing of repository  ${repository.name}"
     }
-    action()
+    val result = action()
     info {
         "Analysis: complete analysing of repository  ${repository.name}"
     }
+    return result
 }
 
 internal fun KLogger.exceptionAtAnalysisOf(throwable: Throwable, repository: Repository) {

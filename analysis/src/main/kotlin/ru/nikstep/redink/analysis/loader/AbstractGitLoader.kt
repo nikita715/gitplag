@@ -19,7 +19,8 @@ abstract class AbstractGitLoader(
     private val masterBranch = "master"
 
     override fun loadFilesFromGit(pullRequest: PullRequest) {
-        val filePatterns = repositoryRepository.findByName(pullRequest.repoFullName).filePatterns
+        val filePatterns =
+            repositoryRepository.findByGitServiceAndName(pullRequest.gitService, pullRequest.repoFullName).filePatterns
         val changedFiles = loadChangedFiles(pullRequest)
 
         filePatterns.intersect(changedFiles).forEach { fileName ->

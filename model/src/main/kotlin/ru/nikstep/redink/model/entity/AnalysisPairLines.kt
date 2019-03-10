@@ -1,5 +1,7 @@
 package ru.nikstep.redink.model.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
@@ -12,7 +14,7 @@ import javax.persistence.ManyToOne
  * Lines (of two files with the same name) suspected of plagiarism
  */
 @Entity
-class AnalysisPairLines(
+data class AnalysisPairLines(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = -1,
@@ -36,6 +38,13 @@ class AnalysisPairLines(
     val fileName2: String,
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(nullable = false)
     val analysisPair: AnalysisPair
-)
+) {
+    override fun toString() = "${this::class.simpleName}(id=$id)"
+
+    override fun hashCode() = Objects.hash(id)
+
+    override fun equals(other: Any?) = this::class.isInstance(other)
+}
