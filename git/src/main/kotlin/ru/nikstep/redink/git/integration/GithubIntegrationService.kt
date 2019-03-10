@@ -3,9 +3,9 @@ package ru.nikstep.redink.git.integration
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
 import ru.nikstep.redink.git.newUser
+import ru.nikstep.redink.model.data.RepositoryDataManager
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.User
-import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.UserRepository
 import ru.nikstep.redink.util.AnalyserProperty
 import ru.nikstep.redink.util.AnalysisMode
@@ -18,8 +18,27 @@ import ru.nikstep.redink.util.parseAsObject
  */
 class GithubIntegrationService(
     private val userRepository: UserRepository,
-    private val repositoryRepository: RepositoryRepository
+    private val repositoryDataManager: RepositoryDataManager
 ) : IntegrationService {
+
+    override fun manageRepositories(payload: String) {
+        val jsonPayload = payload.parseAsObject()
+        val addedRepositories = jsonPayload.array<JsonObject>("repositories_added")
+        if (addedRepositories != null && addedRepositories.size > 0) {
+            val repoNames =
+                addedRepositories.map { jsonRepository ->
+                    requireNotNull(jsonRepository.string("full_name")) { "Repo name is null" }
+                }
+            repositoryDataManager.create(jsonPayload.obj("sender")?.string("login")!!, GitProperty.GITHUB, repoNames)
+        }
+        val removedRepositories = jsonPayload.array<JsonObject>("repositories_removed")
+        if (removedRepositories != null && removedRepositories.size > 0) {
+            val repoNames = removedRepositories.map { jsonRepository ->
+                requireNotNull(jsonRepository.string("full_name")) { "Repo name is null" }
+            }
+            repositoryDataManager.delete(repoNames)
+        }
+    }
 
     private val logger = KotlinLogging.logger {}
 
@@ -41,12 +60,12 @@ class GithubIntegrationService(
             Repository(
                 language = TEXT,
                 owner = user,
-                name = requireNotNull(repo.string("full_name")) { "Name is null" },
+                name = requireNotNull(repo.string("full_name")) { "Repo name is null" },
                 analysisMode = AnalysisMode.STATIC,
                 gitService = GitProperty.GITHUB,
-                analyser = AnalyserProperty.JPLAG
+                analyser = AnalyserProperty.MOSS
             )
-        }.let { repositoryRepository.saveAll(requireNotNull((it)) { "Pull request is null" }) }
+        }.let { repositoryDataManager.saveAll(requireNotNull((it)) { "Pull request is null" }) }
     }
 
     private fun saveNewUser(jsonPayload: JsonObject): User {

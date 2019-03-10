@@ -6,7 +6,7 @@ import ru.nikstep.redink.analysis.AnalysisManager
 import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
 import ru.nikstep.redink.checks.github.GithubAnalysisStatusCheckService
 import ru.nikstep.redink.core.AnalysisScheduler
-import ru.nikstep.redink.model.data.AnalysisResultRepository
+import ru.nikstep.redink.model.data.AnalysisResultDataManager
 import ru.nikstep.redink.model.repo.AnalysisPairLinesRepository
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
 import ru.nikstep.redink.model.repo.AnalysisRepository
@@ -18,30 +18,28 @@ import ru.nikstep.redink.util.auth.GithubAuthorizationService
 class CoreConfig {
 
     @Bean
-    fun authenticationService(): GithubAuthorizationService {
-        return GithubAuthorizationService()
-    }
+    fun authenticationService(): GithubAuthorizationService = GithubAuthorizationService()
+
 
     @Bean
-    fun analysisResultService(authorizationService: AuthorizationService): AnalysisStatusCheckService {
-        return GithubAnalysisStatusCheckService(authorizationService)
-    }
+    fun analysisResultService(authorizationService: AuthorizationService): AnalysisStatusCheckService =
+        GithubAnalysisStatusCheckService(authorizationService)
+
 
     @Bean
     fun analysisScheduler(
         analysisManager: AnalysisManager,
         repositoryRepository: RepositoryRepository
-    ): AnalysisScheduler {
-        return AnalysisScheduler(analysisManager, repositoryRepository)
-    }
+    ): AnalysisScheduler = AnalysisScheduler(analysisManager, repositoryRepository)
+
 
     @Bean
     fun analysisResultRepository(
         analysisRepository: AnalysisRepository,
         analysisPairRepository: AnalysisPairRepository,
         analysisPairLinesRepository: AnalysisPairLinesRepository
-    ): AnalysisResultRepository {
-        return AnalysisResultRepository(analysisRepository, analysisPairRepository, analysisPairLinesRepository)
-    }
+    ): AnalysisResultDataManager =
+        AnalysisResultDataManager(analysisRepository, analysisPairRepository, analysisPairLinesRepository)
+
 
 }

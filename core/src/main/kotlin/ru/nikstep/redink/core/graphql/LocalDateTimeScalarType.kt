@@ -8,8 +8,10 @@ import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
 @Component
-class LocalDateTimeScalarType :
-    GraphQLScalarType("LocalDateTime", "LocalDateTime value", object : Coercing<LocalDateTime, String> {
+class LocalDateTimeScalarType : GraphQLScalarType(
+    "LocalDateTime",
+    "LocalDateTime value",
+    object : Coercing<LocalDateTime, String> {
         override fun parseValue(input: Any?): LocalDateTime {
             if (input is String) {
                 return LocalDateTime.parse(input)
@@ -18,20 +20,21 @@ class LocalDateTimeScalarType :
             }
         }
 
-        override fun parseLiteral(input: Any?): LocalDateTime {
+        override fun parseLiteral(input: Any?): LocalDateTime =
             if (input is StringValue) {
-                return LocalDateTime.parse(input.value)
+                LocalDateTime.parse(input.value)
             } else {
                 throw CoercingParseValueException()
             }
-        }
 
-        override fun serialize(dataFetcherResult: Any?): String {
+
+        override fun serialize(dataFetcherResult: Any?): String =
             if (dataFetcherResult is LocalDateTime) {
-                return dataFetcherResult.toString()
+                dataFetcherResult.toString()
             } else {
                 throw CoercingParseValueException()
             }
-        }
 
-    })
+
+    }
+)

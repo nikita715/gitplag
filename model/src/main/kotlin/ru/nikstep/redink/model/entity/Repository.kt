@@ -1,5 +1,8 @@
 package ru.nikstep.redink.model.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import org.hibernate.annotations.LazyCollection
+import org.hibernate.annotations.LazyCollectionOption
 import ru.nikstep.redink.util.AnalyserProperty
 import ru.nikstep.redink.util.AnalysisMode
 import ru.nikstep.redink.util.GitProperty
@@ -16,6 +19,7 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
 import javax.persistence.Table
 
 /**
@@ -25,7 +29,7 @@ import javax.persistence.Table
 @Table(name = "repository")
 class Repository(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long = -1,
 
     @ManyToOne
@@ -55,5 +59,10 @@ class Repository(
     val gitService: GitProperty,
 
     @Enumerated(EnumType.STRING)
-    val language: Language
+    val language: Language,
+
+    @JsonIgnore
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @OneToMany(mappedBy = "repository", orphanRemoval = true)
+    val analyzes: List<Analysis> = mutableListOf()
 )

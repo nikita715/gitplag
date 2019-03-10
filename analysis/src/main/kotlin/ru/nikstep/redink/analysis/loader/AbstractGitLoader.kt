@@ -23,7 +23,7 @@ abstract class AbstractGitLoader(
             repositoryRepository.findByGitServiceAndName(pullRequest.gitService, pullRequest.repoFullName).filePatterns
         val changedFiles = loadChangedFiles(pullRequest)
 
-        filePatterns.intersect(changedFiles).forEach { fileName ->
+        changedFiles.forEach { fileName ->
             checkBaseExists(pullRequest, fileName)
 
             val fileText = loadFileText(pullRequest.repoFullName, pullRequest.branchName, fileName)
@@ -51,7 +51,7 @@ abstract class AbstractGitLoader(
     protected abstract fun loadChangedFiles(pullRequest: PullRequest): List<String>
 
     private fun checkBaseExists(data: PullRequest, fileName: String) {
-        val base = solutionStorage.loadBase(data.repoFullName, fileName)
+        val base = solutionStorage.loadBase(data.gitService, data.repoFullName, fileName)
         if (base.notExists()) saveBase(data, fileName)
     }
 

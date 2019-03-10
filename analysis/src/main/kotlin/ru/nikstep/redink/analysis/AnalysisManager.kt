@@ -6,7 +6,7 @@ import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
 import ru.nikstep.redink.checks.github.GithubAnalysisConclusion
 import ru.nikstep.redink.checks.github.GithubAnalysisResultData
 import ru.nikstep.redink.checks.github.GithubAnalysisStatus
-import ru.nikstep.redink.model.data.AnalysisResultRepository
+import ru.nikstep.redink.model.data.AnalysisResultDataManager
 import ru.nikstep.redink.model.entity.Analysis
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.AnalyserProperty
@@ -17,14 +17,14 @@ import java.io.StringWriter
 class AnalysisManager(
     private val analysisStatusCheckService: AnalysisStatusCheckService,
     private val analysers: Map<AnalyserProperty, Analyser>,
-    private val analysisResultRepository: AnalysisResultRepository
+    private val analysisResultDataManager: AnalysisResultDataManager
 ) {
     private val logger = KotlinLogging.logger {}
 
     fun initiateAnalysis(analysisSettings: AnalysisSettings): Analysis {
         val analysisService = analysers.getValue(analysisSettings.analyser)
         return analysisService.analyse(analysisSettings)
-            .let { analysisResultRepository.saveAnalysis(analysisSettings.repository, it) }
+            .let { analysisResultDataManager.saveAnalysis(analysisSettings.repository, it) }
     }
 
     private fun sendSuccessStatusCheck(pullRequest: PullRequest) {

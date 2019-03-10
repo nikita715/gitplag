@@ -10,4 +10,6 @@ interface IntegrationService {
      * and save it as a new user
      */
     fun createNewUser(payload: String)
+
+    fun manageRepositories(payload: String)
 }

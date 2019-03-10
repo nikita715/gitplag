@@ -24,4 +24,6 @@ where repository.analysis_mode = 'PERIODIC' and extract(epoch from now() - (sele
                                   limit 1) at time zone 'MSK') / 60 > repository.analysis_delay;"""
     )
     fun findRequiredToAnalyse(): List<Repository>
+
+    fun deleteByGitServiceAndName(gitService: GitProperty, name: String)
 }

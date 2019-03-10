@@ -17,15 +17,14 @@ class CachingConfig {
     @Bean
     fun cacheManager(): CacheManager {
         return object : ConcurrentMapCacheManager("githubAccessTokens") {
-            override fun createConcurrentMapCache(name: String): Cache {
-                return ConcurrentMapCache(
-                    name,
-                    CacheBuilder.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .build<Any, Any>().asMap(),
-                    false
-                )
-            }
+            override fun createConcurrentMapCache(name: String): Cache = ConcurrentMapCache(
+                name,
+                CacheBuilder.newBuilder()
+                    .expireAfterWrite(30, TimeUnit.MINUTES)
+                    .build<Any, Any>().asMap(),
+                false
+            )
+
         }
     }
 }
