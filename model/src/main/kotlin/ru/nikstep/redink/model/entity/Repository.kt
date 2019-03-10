@@ -35,7 +35,7 @@ class Repository(
     @Column(name = "pattern")
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "repository_pattern", joinColumns = [JoinColumn(name = "repository")])
-    val filePatterns: List<String> = emptyList(),
+    val filePatterns: Collection<String> = emptyList(),
 
     val name: String,
 
