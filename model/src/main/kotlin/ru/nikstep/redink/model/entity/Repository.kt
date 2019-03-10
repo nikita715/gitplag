@@ -26,7 +26,7 @@ import javax.persistence.Table
 class Repository(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long = -1,
+    val id: Long = -1,
 
     @ManyToOne
     @JoinColumn(name = "owner")
@@ -35,7 +35,7 @@ class Repository(
     @Column(name = "pattern")
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "repository_pattern", joinColumns = [JoinColumn(name = "repository")])
-    val filePatterns: Collection<String> = listOf(),
+    val filePatterns: List<String> = emptyList(),
 
     val name: String,
 

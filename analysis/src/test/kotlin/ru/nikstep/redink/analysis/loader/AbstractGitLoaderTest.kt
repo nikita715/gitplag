@@ -1,6 +1,11 @@
 package ru.nikstep.redink.analysis.loader
 
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.verify
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.`when`
@@ -8,6 +13,7 @@ import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.RepositoryRepository
+import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.auth.AuthorizationService
 import java.io.File
@@ -43,7 +49,9 @@ abstract class AbstractGitLoaderTest {
 
     @Before
     fun setUp() {
-        `when`(repositoryRepository.findByName(pullRequest.repoFullName)).thenReturn(repository)
+        `when`(repositoryRepository.findByGitServiceAndName(GitProperty.GITHUB, pullRequest.repoFullName)).thenReturn(
+            repository
+        )
         `when`(authorizationService.getAuthorizationToken(pullRequest.secretKey)).thenReturn("")
     }
 

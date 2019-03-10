@@ -11,7 +11,6 @@ open class AnalysisScheduler(
     private val analysisManager: AnalysisManager,
     private val repositoryRepository: RepositoryRepository
 ) {
-
     private val logger = KotlinLogging.logger {}
 
     @Scheduled(cron = "0 * * * * *")
@@ -25,7 +24,12 @@ open class AnalysisScheduler(
 
     @Async("analysisThreadPoolTaskExecutor")
     open fun initiateAsync(repository: Repository) {
-        analysisManager.initiateAnalysis(repository)
+        try {
+            logger.loggedAnalysis(repository) {
+                analysisManager.initiateAnalysis(repository)
+            }
+        } catch (e: Exception) {
+            logger.exceptionAtAnalysisOf(e, repository)
+        }
     }
-
 }

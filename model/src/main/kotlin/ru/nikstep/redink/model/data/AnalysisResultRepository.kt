@@ -20,57 +20,41 @@ open class AnalysisResultRepository(
      * Save all analysis results
      */
     @Transactional
-    open fun saveAll(repository: Repository, analysisResults: Collection<AnalysisResult>) {
+    open fun saveAnalysis(repository: Repository, analysisResults: Collection<AnalysisResult>): Analysis {
         val analysis = analysisRepository.save(
             Analysis(
                 repository = repository,
                 executionDate = LocalDateTime.now()
             )
         )
-        for (analysisResult in analysisResults) {
-            save(analysis, analysisResult)
+        val analysisPairs = analysisResults.map {
+            val analysisPair = analysisPairRepository.save(
+                AnalysisPair(
+                    student1 = it.students.first,
+                    student2 = it.students.second,
+                    lines = it.lines,
+                    repo = it.repo,
+                    percentage = it.percentage,
+                    student1Sha = it.sha.first,
+                    student2Sha = it.sha.second,
+                    gitService = it.gitService,
+                    analysis = analysis
+                )
+            )
+            val analysisPairLines = analysisPairLinesRepository.saveAll(it.matchedLines.map {
+                AnalysisPairLines(
+                    from1 = it.match1.first,
+                    to1 = it.match1.second,
+                    from2 = it.match2.first,
+                    to2 = it.match2.second,
+                    fileName1 = it.files.first,
+                    fileName2 = it.files.second,
+                    analysisPair = analysisPair
+                )
+            })
+            analysisPair to analysisPairLines
         }
-    }
-
-    /**
-     * Save an analysis result
-     */
-    @Transactional
-    open fun save(analysis: Analysis, analysisResult: AnalysisResult) {
-        val analysisPair = saveAnalysisResult(analysis, analysisResult)
-        saveMatchedLines(analysisResult, analysisPair)
-    }
-
-    private fun saveMatchedLines(
-        analysisResult: AnalysisResult,
-        analysisPair: AnalysisPair
-    ) {
-        analysisPairLinesRepository.saveAll(analysisResult.matchedLines.map {
-            AnalysisPairLines(
-                from1 = it.match1.first,
-                to1 = it.match1.second,
-                from2 = it.match2.first,
-                to2 = it.match2.second,
-                fileName1 = it.files.first,
-                fileName2 = it.files.second,
-                analysisPair = analysisPair
-            )
-        })
-    }
-
-    private fun saveAnalysisResult(analysis: Analysis, analysisResult: AnalysisResult): AnalysisPair {
-        return analysisPairRepository.save(analysisResult.run {
-            AnalysisPair(
-                student1 = students.first,
-                student2 = students.second,
-                lines = lines,
-                repo = repo,
-                percentage = percentage,
-                student1Sha = sha.first,
-                student2Sha = sha.second,
-                gitService = gitService,
-                analysis = analysis
-            )
-        })
+        val res = analysisPairs.map { analysisPairRepository.save(it.first.copy(analysisPairLines = it.second)) }
+        return analysisRepository.save(analysis.copy(analysisPairs = res))
     }
 }

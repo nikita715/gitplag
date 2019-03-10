@@ -1,6 +1,8 @@
 package ru.nikstep.redink.model.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import ru.nikstep.redink.util.GitProperty
+import java.util.*
 import javax.persistence.Column
 import javax.persistence.ElementCollection
 import javax.persistence.Entity
@@ -18,7 +20,7 @@ import javax.persistence.OneToMany
  * Result of the plagiarism analysis of two files
  */
 @Entity
-class AnalysisPair(
+data class AnalysisPair(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = -1,
@@ -38,9 +40,9 @@ class AnalysisPair(
     @Column(nullable = false)
     val repo: String,
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @OneToMany(mappedBy = "analysisPair", orphanRemoval = true)
-    val analysisPairLines: List<AnalysisPairLines> = emptyList(),
+    val analysisPairLines: List<AnalysisPairLines> = mutableListOf(),
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -52,7 +54,14 @@ class AnalysisPair(
     @Column(nullable = false)
     val student2Sha: String,
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(nullable = false)
-    val analysis: Analysis
-)
+    var analysis: Analysis
+) {
+    override fun toString() = "${this::class.simpleName}(id=$id)"
+
+    override fun hashCode() = Objects.hash(id)
+
+    override fun equals(other: Any?) = this::class.isInstance(other)
+}

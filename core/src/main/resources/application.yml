@@ -11,9 +11,11 @@ spring:
           lob:
             non_contextual_creation: true
     generate-ddl: true
-
   devtools:
-    add-properties: false
+    restart:
+      enabled: true
+    livereload:
+      enabled: false
 
 security:
   oauth2:
