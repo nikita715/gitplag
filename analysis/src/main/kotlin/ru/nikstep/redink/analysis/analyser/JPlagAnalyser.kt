@@ -2,11 +2,11 @@ package ru.nikstep.redink.analysis.analyser
 
 import mu.KotlinLogging
 import org.jsoup.Jsoup
+import ru.nikstep.redink.analysis.AnalysisSettings
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.inTempDirectory
 import java.io.File
@@ -22,17 +22,17 @@ class JPlagAnalyser(private val solutionStorage: SolutionStorage, private val so
     private val regexUserNames = "^Matches for (.+) & (.+)$".toRegex()
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
-    override fun analyse(repository: Repository): Collection<AnalysisResult> =
+    override fun analyse(analysisSettings: AnalysisSettings): Collection<AnalysisResult> =
         inTempDirectory { resultDir ->
-            val analysisFiles = solutionStorage.loadAllBasesAndSolutions(repository)
+            val analysisFiles = solutionStorage.loadAllBasesAndSolutions(analysisSettings)
             JPlagClient(analysisFiles, solutionsPath, resultDir).run()
             analysisFiles.indexRangeOfEachToEachStudentPair().map { index ->
-                parseResults(repository, analysisFiles, resultDir, index)
+                parseResults(analysisSettings, analysisFiles, resultDir, index)
             }
         }
 
     private fun parseResults(
-        repository: Repository,
+        analysisSettings: AnalysisSettings,
         analysisFiles: PreparedAnalysisFiles,
         resultDir: String,
         index: Int
@@ -64,7 +64,7 @@ class JPlagAnalyser(private val solutionStorage: SolutionStorage, private val so
             lines = -1,
             percentage = percentage,
             repo = analysisFiles.repoName,
-            gitService = repository.gitService,
+            gitService = analysisSettings.gitService,
             matchedLines = matchedLines
         )
     }

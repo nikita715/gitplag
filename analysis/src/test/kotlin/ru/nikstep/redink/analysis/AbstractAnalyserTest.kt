@@ -71,8 +71,14 @@ abstract class AbstractAnalyserTest {
         on { name } doReturn testRepoName
     }
 
+    private val analysisSettings = mock<AnalysisSettings> {
+        on { gitService } doReturn GitProperty.GITHUB
+        on { repository } doReturn repository
+        on { language } doReturn Language.JAVA
+    }
+
     @Test
     fun analyse() {
-        analysisService.analyse(repository) shouldEqual expectedResult
+        analysisService.analyse(analysisSettings) shouldEqual expectedResult
     }
 }

@@ -2,11 +2,11 @@ package ru.nikstep.redink.analysis.analyser
 
 import mu.KotlinLogging
 import org.jsoup.Jsoup
+import ru.nikstep.redink.analysis.AnalysisSettings
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.entity.Repository
 
 /**
  * Moss client wrapper
@@ -17,17 +17,17 @@ class MossAnalyser(
 ) : Analyser {
     private val logger = KotlinLogging.logger {}
 
-    override fun analyse(repository: Repository): Collection<AnalysisResult> {
-        val analysisFiles = solutionStorage.loadAllBasesAndSolutions(repository)
+    override fun analyse(analysisSettings: AnalysisSettings): Collection<AnalysisResult> {
+        val analysisFiles = solutionStorage.loadAllBasesAndSolutions(analysisSettings)
         return parseResult(
-            repository,
+            analysisSettings,
             analysisFiles,
             resultLink = MossClient(analysisFiles, mossId).run()
         )
     }
 
     private fun parseResult(
-        repository: Repository,
+        analysisSettings: AnalysisSettings,
         analysisFiles: PreparedAnalysisFiles,
         resultLink: String
     ): Collection<AnalysisResult> =
@@ -76,9 +76,9 @@ class MossAnalyser(
                             analysisFiles.solutions.getValue(students.second).sha,
                     lines = lines,
                     percentage = percentage,
-                    repo = repository.name,
+                    repo = analysisSettings.repository.name,
                     matchedLines = matchedLines,
-                    gitService = repository.gitService
+                    gitService = analysisSettings.gitService
                 )
             }
 

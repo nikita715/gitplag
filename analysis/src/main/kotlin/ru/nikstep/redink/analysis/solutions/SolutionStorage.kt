@@ -1,8 +1,8 @@
 package ru.nikstep.redink.analysis.solutions
 
+import ru.nikstep.redink.analysis.AnalysisSettings
 import ru.nikstep.redink.analysis.PreparedAnalysisFiles
 import ru.nikstep.redink.model.entity.PullRequest
-import ru.nikstep.redink.model.entity.Repository
 import java.io.File
 
 /**
@@ -40,7 +40,7 @@ interface SolutionStorage {
      * @return all required files for each fileName
      * and information about them. See [PreparedAnalysisFiles]
      */
-    fun loadAllBasesAndSolutions(repository: Repository): PreparedAnalysisFiles
+    fun loadAllBasesAndSolutions(analysisSettings: AnalysisSettings): PreparedAnalysisFiles
 
     fun getCountOfSolutionFiles(repoName: String, fileName: String): Int
 }

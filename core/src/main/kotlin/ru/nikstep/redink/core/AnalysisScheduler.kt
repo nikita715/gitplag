@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
 import ru.nikstep.redink.analysis.AnalysisManager
+import ru.nikstep.redink.analysis.AnalysisSettings
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 
@@ -26,7 +27,7 @@ open class AnalysisScheduler(
     open fun initiateAsync(repository: Repository) {
         try {
             logger.loggedAnalysis(repository) {
-                analysisManager.initiateAnalysis(repository)
+                analysisManager.initiateAnalysis(AnalysisSettings(repository))
             }
         } catch (e: Exception) {
             logger.exceptionAtAnalysisOf(e, repository)
