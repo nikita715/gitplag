@@ -13,7 +13,6 @@ import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.auth.AuthorizationService
 import java.io.File
@@ -49,7 +48,12 @@ abstract class AbstractGitLoaderTest {
 
     @Before
     fun setUp() {
-        `when`(repositoryRepository.findByGitServiceAndName(GitProperty.GITHUB, pullRequest.repoFullName)).thenReturn(
+        `when`(
+            repositoryRepository.findByGitServiceAndName(
+                pullRequest.gitService,
+                pullRequest.repoFullName
+            )
+        ).thenReturn(
             repository
         )
         `when`(authorizationService.getAuthorizationToken(pullRequest.secretKey)).thenReturn("")
