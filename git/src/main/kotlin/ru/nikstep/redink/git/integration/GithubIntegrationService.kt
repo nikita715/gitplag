@@ -64,7 +64,8 @@ class GithubIntegrationService(
                 name = requireNotNull(repo.string("full_name")),
                 analysisMode = AnalysisMode.STATIC,
                 gitService = GitProperty.GITHUB,
-                analyser = AnalyserProperty.MOSS
+                analyser = AnalyserProperty.MOSS,
+                branches = listOf("master")
             )
         }.let { repositoryDataManager.saveAll(requireNotNull(it)) }
 

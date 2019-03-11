@@ -14,6 +14,7 @@ fun AnalysisSettings.analyser(analyser: AnalyserProperty): AnalysisSettings =
         repository = repository,
         analyser = analyser,
         gitService = gitService,
+        branch = branch,
         language = language
     )
 
@@ -39,6 +40,7 @@ fun AnalysisSettings.language(language: Language): AnalysisSettings =
         repository = repository,
         analyser = analyser,
         gitService = gitService,
+        branch = branch,
         language = language
     )
 
@@ -51,6 +53,26 @@ fun AnalysisSettings.language(language: String?): AnalysisSettings {
             return this.language(enumValueOf<Language>(language.toUpperCase()))
         } catch (e: IllegalArgumentException) {
             logger.error { "Analysis: wrong language name \"$language\"" }
+        }
+    }
+    return this
+}
+
+/**
+ * Set the [branches] to the [AnalysisSettings]
+ */
+fun AnalysisSettings.branch(branch: String?): AnalysisSettings {
+    if (branch != null) {
+        try {
+            AnalysisSettings(
+                repository = repository,
+                analyser = analyser,
+                gitService = gitService,
+                branch = branch,
+                language = language
+            )
+        } catch (e: IllegalArgumentException) {
+            logger.error { "Analysis: wrong branches \"$language\"" }
         }
     }
     return this

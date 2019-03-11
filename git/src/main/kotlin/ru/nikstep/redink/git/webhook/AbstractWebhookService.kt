@@ -32,12 +32,16 @@ abstract class AbstractWebhookService(
         jsonObject.run {
             PullRequest(
                 gitService = gitService,
-                repoId = requireNotNull(repoId),
                 number = requireNotNull(number),
-                repoFullName = requireNotNull(repoFullName),
                 creatorName = requireNotNull(creatorName),
-                headSha = requireNotNull(headSha),
-                branchName = requireNotNull(branchName),
+                sourceRepoId = requireNotNull(sourceRepoId),
+                mainRepoId = requireNotNull(mainRepoId),
+                sourceRepoFullName = requireNotNull(sourceRepoFullName),
+                mainRepoFullName = requireNotNull(mainRepoFullName),
+                sourceHeadSha = requireNotNull(sourceHeadSha),
+                mainHeadSha = requireNotNull(mainHeadSha),
+                sourceBranchName = requireNotNull(sourceBranchName),
+                mainBranchName = requireNotNull(mainBranchName),
                 secretKey = requireNotNull(secretKey),
                 date = requireNotNull(date)
             )
@@ -46,20 +50,28 @@ abstract class AbstractWebhookService(
 
     protected abstract val JsonObject.gitService: GitProperty
 
-    protected abstract val JsonObject.repoId: Long?
+    protected abstract val JsonObject.sourceRepoId: Long?
 
     protected abstract val JsonObject.number: Int?
 
-    protected abstract val JsonObject.repoFullName: String?
+    protected abstract val JsonObject.mainRepoFullName: String?
 
     protected abstract val JsonObject.creatorName: String?
 
-    protected abstract val JsonObject.headSha: String?
+    protected abstract val JsonObject.sourceHeadSha: String?
 
-    protected abstract val JsonObject.branchName: String?
+    protected abstract val JsonObject.mainHeadSha: String?
+
+    protected abstract val JsonObject.sourceBranchName: String?
 
     protected abstract val JsonObject.date: LocalDateTime?
 
     protected open val JsonObject.secretKey: String?
         get() = ""
+
+    protected abstract val JsonObject.sourceRepoFullName: String?
+
+    protected abstract val JsonObject.mainBranchName: String?
+
+    abstract val JsonObject.mainRepoId: Long?
 }

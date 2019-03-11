@@ -46,11 +46,12 @@ class AnalysisResultDataManagerTest {
             analyser = AnalyserProperty.MOSS,
             analysisMode = AnalysisMode.PERIODIC,
             gitService = GitProperty.GITHUB,
-            language = Language.JAVA
+            language = Language.JAVA,
+            branches = listOf("master")
         )
     )
 
-    private val analysisSettings = AnalysisSettings(repo)
+    private val analysisSettings = AnalysisSettings(repo, "qwe")
 
     private val analysisResult = AnalysisResult(
         students = "st1" to "st2",

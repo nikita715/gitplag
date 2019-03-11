@@ -52,7 +52,7 @@ abstract class AbstractGitLoaderTest {
         `when`(
             repositoryRepository.findByGitServiceAndName(
                 pullRequest.gitService,
-                pullRequest.repoFullName
+                pullRequest.mainRepoFullName
             )
         ).thenReturn(
             repository
@@ -62,12 +62,26 @@ abstract class AbstractGitLoaderTest {
 
     @Test
     fun loadFileTextAndBases() {
-        `when`(solutionStorage.loadBase(pullRequest.gitService, pullRequest.repoFullName, class1.name)).thenReturn(
+        `when`(
+            solutionStorage.loadBase(
+                pullRequest.gitService,
+                pullRequest.mainRepoFullName,
+                pullRequest.sourceBranchName,
+                class1.name
+            )
+        ).thenReturn(
             File(
                 ""
             )
         )
-        `when`(solutionStorage.loadBase(pullRequest.gitService, pullRequest.repoFullName, class2.name)).thenReturn(
+        `when`(
+            solutionStorage.loadBase(
+                pullRequest.gitService,
+                pullRequest.mainRepoFullName,
+                pullRequest.sourceBranchName,
+                class2.name
+            )
+        ).thenReturn(
             File(
                 ""
             )
@@ -87,10 +101,24 @@ abstract class AbstractGitLoaderTest {
 
     @Test
     fun loadFileTextWithoutBases() {
-        `when`(solutionStorage.loadBase(pullRequest.gitService, pullRequest.repoFullName, class1.name)).thenReturn(
+        `when`(
+            solutionStorage.loadBase(
+                pullRequest.gitService,
+                pullRequest.mainRepoFullName,
+                pullRequest.sourceBranchName,
+                class1.name
+            )
+        ).thenReturn(
             baseClass1
         )
-        `when`(solutionStorage.loadBase(pullRequest.gitService, pullRequest.repoFullName, class2.name)).thenReturn(
+        `when`(
+            solutionStorage.loadBase(
+                pullRequest.gitService,
+                pullRequest.mainRepoFullName,
+                pullRequest.sourceBranchName,
+                class2.name
+            )
+        ).thenReturn(
             baseClass2
         )
 

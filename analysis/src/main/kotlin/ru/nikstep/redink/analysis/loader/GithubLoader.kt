@@ -28,7 +28,7 @@ class GithubLoader(
     override fun loadChangedFiles(pullRequest: PullRequest): List<String> =
         pullRequest.run {
             sendRestRequest<JsonArray<*>>(
-                url = "https://api.github.com/repos/$repoFullName/pulls/$number/files",
+                url = "https://api.github.com/repos/$mainRepoFullName/pulls/$number/files",
                 accessToken = authorizationService.getAuthorizationToken(secretKey)
             ).map { requireNotNull((it as JsonObject).string("filename")) }
         }

@@ -37,7 +37,7 @@ open class AnalysisScheduler(
     open fun initiateAsync(repository: Repository) {
         try {
             logger.loggedAnalysis(repository) {
-                analysisRunner.run(AnalysisSettings(repository))
+                analysisRunner.run(repository.branches.map { branch -> AnalysisSettings(repository, branch) })
             }
         } catch (e: Exception) {
             logger.exceptionAtAnalysisOf(e, repository)

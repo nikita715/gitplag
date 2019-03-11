@@ -9,12 +9,16 @@ class GitlabLoaderTest : AbstractGitLoaderTest() {
     override val pullRequest = PullRequest(
         number = 1,
         creatorName = "testns3",
-        repoId = 11158542,
-        repoFullName = repoName,
-        headSha = "",
-        branchName = branchName,
+        sourceRepoId = 11158542,
+        mainRepoFullName = repoName,
+        sourceHeadSha = "",
+        sourceBranchName = branchName,
         gitService = GitProperty.GITLAB,
-        date = LocalDateTime.now()
+        date = LocalDateTime.now(),
+        sourceRepoFullName = "",
+        mainRepoId = 1,
+        mainHeadSha = "",
+        mainBranchName = ""
     )
     override val loader = GitlabLoader(solutionStorage, repositoryRepository)
 }

@@ -2,10 +2,8 @@ package ru.nikstep.redink.analysis.solutions
 
 import mu.KotlinLogging
 import ru.nikstep.redink.model.data.AnalysisSettings
-import ru.nikstep.redink.model.data.CommittedFile
-import ru.nikstep.redink.model.data.PreparedAnalysisFiles
+import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.model.entity.PullRequest
-import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.SourceCode
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SourceCodeRepository
@@ -27,116 +25,107 @@ class FileSystemSolutionStorage(
     private val solutionsDir = "solutions"
     private val baseDir = ".base"
 
-    override fun loadBase(gitProperty: GitProperty, repoName: String, fileName: String): File =
-        File(
-            Paths.get(
-                solutionsDir,
-                gitProperty.toString(),
-                repoName,
-                baseDir,
-                fileName
-            ).toUri()
-        )
+    override fun loadBase(gitProperty: GitProperty, repoName: String, branchName: String, fileName: String): File =
+        pathToBase(gitProperty, repoName, branchName, fileName).asFile()
 
     @Synchronized
     override fun loadAllBasesAndSolutions(analysisSettings: AnalysisSettings) =
-        PreparedAnalysisFiles(
+        PreparedAnalysisData(
             repoName = analysisSettings.repository.name,
             language = analysisSettings.language,
             analyser = analysisSettings.analyser,
-            bases = loadBases(analysisSettings.repository),
-            solutions = loadSolutionFiles(analysisSettings.repository)
+            bases = loadBases(analysisSettings),
+            solutions = loadSolutions(analysisSettings)
         )
 
-    override fun loadBases(repository: Repository): List<File> {
-        return Files.walk(Paths.get(solutionsDir, repository.gitService.toString(), repository.name, baseDir))
+    override fun loadBases(analysisSettings: AnalysisSettings): List<File> =
+        Files.walk(pathToBases(analysisSettings).asPath())
             .filter { path -> Files.isRegularFile(path) }
             .map(Path::toFile).collect(toList())
-    }
 
-    private fun loadSolutionFiles(repository: Repository): Map<String, CommittedFile> {
-        val solutionDirectory = File(Paths.get(solutionsDir, repository.gitService.toString(), repository.name).toUri())
-        val existingDirectories = solutionDirectory.list().toList()
-        return sourceCodeRepository.findAllByRepo(repository.name).filter {
-            existingDirectories.contains(it.user)
+    private fun loadSolutions(analysisSettings: AnalysisSettings): List<File> {
+        val solutionDirectories = pathToSolutions(analysisSettings).asFile().subfiles()
+        return sourceCodeRepository.findAllByRepo(analysisSettings.repository.name).filter {
+            solutionDirectories.contains(it.user)
         }.mapNotNull {
-            val file = File(
-                Paths.get(
-                    solutionsDir,
-                    repository.gitService.toString(),
-                    repository.name,
-                    it.user,
-                    it.fileName
-                ).toUri()
-            )
-            if (file.exists()) it.user to CommittedFile(file, it.sha, it.fileName) else null
-        }.toMap()
+            val file = pathToSolution(analysisSettings, it).asFile()
+            if (file.exists()) file else null
+        }
     }
 
     @Synchronized
     override fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): File {
-        val pathToFile =
-            getPathToSolution(pullRequest.gitService, pullRequest.repoFullName, fileName, "", pullRequest.creatorName)
-        sourceCodeRepository.deleteByRepoAndUserAndFileName(pullRequest.repoFullName, pullRequest.creatorName, fileName)
+        val pathToSolution = pathToSolution(pullRequest, fileName)
+        sourceCodeRepository.deleteByRepoAndUserAndFileNameAndBranch(
+            pullRequest.mainRepoFullName,
+            pullRequest.creatorName,
+            fileName,
+            pullRequest.sourceBranchName
+        )
         sourceCodeRepository.save(
             SourceCode(
                 user = pullRequest.creatorName,
-                repo = pullRequest.repoFullName,
+                repo = pullRequest.mainRepoFullName,
+                branch = pullRequest.sourceBranchName,
                 fileName = fileName,
-                sha = pullRequest.headSha
+                sha = pullRequest.sourceHeadSha
             )
         )
-        return save(pathToFile, fileText)
+        return save(pathToSolution, fileText)
     }
 
     @Synchronized
     override fun saveBase(pullRequest: PullRequest, fileName: String, fileText: String): File {
-        return saveBase(pullRequest.gitService, pullRequest.repoFullName, fileName, fileText)
+        val pathToBase =
+            pathToBase(pullRequest.gitService, pullRequest.mainRepoFullName, pullRequest.sourceBranchName, fileName)
+        return save(pathToBase, fileText)
     }
 
-    private fun saveBase(gitService: GitProperty, repoName: String, fileName: String, fileText: String): File {
-        val pathToFile = getPathToBase(gitService, repoName, "", fileName)
-        return save(pathToFile, fileText)
-    }
-
-    private fun save(pathToFile: PathToFile, fileText: String): File {
-        val tempDirectory = Files.createDirectories(Paths.get(pathToFile.path))
-        val path = Paths.get(tempDirectory.toString(), pathToFile.fileName)
-        Files.deleteIfExists(path)
-        val file = Files.createFile(path).toFile()
+    private fun save(pathToFile: String, fileText: String): File {
+        Files.createDirectories(pathToFile.substringBeforeLast("/").asPath())
+        Files.deleteIfExists(pathToFile.asPath())
+        val file = Files.createFile(pathToFile.asPath()).toFile()
         FileOutputStream(file).use { fileOutputStream -> fileOutputStream.write(fileText.toByteArray()) }
-        logger.info { "File storage: saved file ${pathToFile.path}/${pathToFile.fileName}" }
+        logger.info { "File storage: saved file $pathToFile" }
         return file
     }
 
-    private fun getPathToBase(
-        gitService: GitProperty,
-        repoFullName: String,
-        branchName: String,
-        fileName: String
-    ): PathToFile {
-        val pathElements: List<String> = fileName.split("/")
-        val pathBeforeFileName: String = pathElements.dropLast(1).joinToString(separator = "/")
-        val path = asPath(solutionsDir, gitService.toString(), repoFullName, baseDir, branchName, pathBeforeFileName)
-        return PathToFile(path, pathElements.last())
-    }
+    private fun pathToBases(git: GitProperty, repo: String, branch: String): String =
+        asPath(solutionsDir, git, repo, branch, baseDir)
 
-    private fun getPathToSolution(
-        gitService: GitProperty,
-        repoFullName: String,
-        creator: String,
-        branchName: String,
-        fileName: String
-    ): PathToFile {
-        val pathElements: List<String> = fileName.split("/")
-        val pathBeforeFileName: String = pathElements.dropLast(1).joinToString(separator = "/")
-        val path = asPath(solutionsDir, gitService.toString(), repoFullName, creator, branchName, pathBeforeFileName)
-        return PathToFile(path, pathElements.last())
-    }
+    private fun pathToBase(git: GitProperty, repo: String, branch: String, file: String): String =
+        asPath(solutionsDir, git, repo, branch, baseDir, file)
 
-    private data class PathToFile(
-        val path: String,
-        val fileName: String
-    )
+    private fun pathToSolutions(git: GitProperty, repo: String, branch: String): String =
+        asPath(solutionsDir, git, repo, branch)
 
+    private fun pathToSolution(git: GitProperty, repo: String, branch: String, creator: String, file: String): String =
+        asPath(solutionsDir, git, repo, branch, creator, file)
+
+    private fun pathToBases(analysisSettings: AnalysisSettings): String =
+        pathToBases(analysisSettings.gitService, analysisSettings.repository.name, analysisSettings.branch)
+
+    private fun pathToSolutions(analysisSettings: AnalysisSettings): String =
+        pathToSolutions(analysisSettings.gitService, analysisSettings.repository.name, analysisSettings.branch)
+
+    private fun pathToSolution(analysisSettings: AnalysisSettings, sourceCode: SourceCode): String =
+        pathToSolution(
+            analysisSettings.gitService, analysisSettings.repository.name,
+            sourceCode.branch, sourceCode.user, sourceCode.fileName
+        )
+
+    private fun pathToSolution(pullRequest: PullRequest, fileName: String): String =
+        pathToSolution(
+            pullRequest.gitService,
+            pullRequest.mainRepoFullName,
+            pullRequest.sourceBranchName,
+            pullRequest.creatorName,
+            fileName
+        )
+
+    private fun String.asPath() = Paths.get(this)
+
+    private fun String.asFile() = File(this.asPath().toUri())
+
+    private fun File.subfiles() = this.list().toList()
 }

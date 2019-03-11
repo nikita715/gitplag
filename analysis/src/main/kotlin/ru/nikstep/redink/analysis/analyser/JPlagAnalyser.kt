@@ -6,7 +6,7 @@ import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.data.PreparedAnalysisFiles
+import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.asPathInRoot
 import ru.nikstep.redink.util.inTempDirectory
@@ -35,7 +35,7 @@ class JPlagAnalyser(private val solutionStorage: SolutionStorage, private val so
 
     private fun parseResults(
         analysisSettings: AnalysisSettings,
-        analysisFiles: PreparedAnalysisFiles,
+        analysisData: PreparedAnalysisData,
         resultDir: String,
         index: Int
     ): AnalysisResult {
@@ -62,16 +62,16 @@ class JPlagAnalyser(private val solutionStorage: SolutionStorage, private val so
         }
         return AnalysisResult(
             students = name1 to name2,
-            sha = analysisFiles.solutions.getValue(name1).sha to analysisFiles.solutions.getValue(name2).sha,
+            sha = "" to "",
             lines = -1,
             percentage = percentage,
-            repo = analysisFiles.repoName,
+            repo = analysisData.repoName,
             gitService = analysisSettings.gitService,
             matchedLines = matchedLines
         )
     }
 
-    private fun PreparedAnalysisFiles.indexRangeOfEachToEachStudentPair(): IntRange {
+    private fun PreparedAnalysisData.indexRangeOfEachToEachStudentPair(): IntRange {
         val countOfMatches = (0 until solutions.size).sum()
         return 0 until countOfMatches
     }

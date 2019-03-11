@@ -17,7 +17,7 @@ class GitlabLoader(
     override fun loadChangedFiles(pullRequest: PullRequest): List<String> =
         pullRequest.run {
             requireNotNull(sendRestRequest<JsonObject>(
-                "https://gitlab.com/api/v4/projects/$repoId/merge_requests/$number/changes"
+                "https://gitlab.com/api/v4/projects/$sourceRepoId/merge_requests/$number/changes"
             ).array<JsonObject>("changes")?.map { change ->
                 requireNotNull(change.string("new_path"))
             })

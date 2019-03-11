@@ -6,7 +6,7 @@ import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.data.PreparedAnalysisFiles
+import ru.nikstep.redink.model.data.PreparedAnalysisData
 
 /**
  * Moss client wrapper
@@ -28,7 +28,7 @@ class MossAnalyser(
 
     private fun parseResult(
         analysisSettings: AnalysisSettings,
-        analysisFiles: PreparedAnalysisFiles,
+        analysisData: PreparedAnalysisData,
         resultLink: String
     ): Collection<AnalysisResult> =
         Jsoup.connect(resultLink).get()
@@ -66,14 +66,12 @@ class MossAnalyser(
                     matchedLines += MatchedLines(
                         match1 = firstMatch[0].toInt() to firstMatch[1].toInt(),
                         match2 = secondMatch[0].toInt() to secondMatch[1].toInt(),
-                        files = analysisFiles.solutions.getValue(students.first).fileName
-                                to analysisFiles.solutions.getValue(students.second).fileName
+                        files = "" to ""
                     )
                 }
                 AnalysisResult(
                     students = students.first to students.second,
-                    sha = analysisFiles.solutions.getValue(students.first).sha to
-                            analysisFiles.solutions.getValue(students.second).sha,
+                    sha = "" to "",
                     lines = lines,
                     percentage = percentage,
                     repo = analysisSettings.repository.name,

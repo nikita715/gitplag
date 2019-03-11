@@ -38,10 +38,12 @@ class AnalysisController(
         @RequestParam("git") git: String,
         @RequestParam("repoName") repoName: String,
         @RequestParam("analyser", required = false) analyser: String?,
-        @RequestParam("language", required = false) language: String?
+        @RequestParam("language", required = false) language: String?,
+        @RequestParam("branch", required = false) branch: String?
     ): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
-        val analysisSettings = AnalysisSettings(repository).language(language).analyser(analyser)
+        val analysisSettings =
+            AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
         return try {
             val analysis = analysisRunner.run(analysisSettings)
             ResponseEntity.ok(logger.loggedAnalysis(repository) {
@@ -72,10 +74,12 @@ class AnalysisController(
         @RequestParam("repoName") repoName: String,
         @RequestParam("analyser", required = false) analyser: String?,
         @RequestParam("language", required = false) language: String?,
+        @RequestParam("branch", required = false) branch: String?,
         @RequestParam("responseUrl", required = false) responseUrl: String?
     ): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
-        val analysisSettings = AnalysisSettings(repository).language(language).analyser(analyser)
+        val analysisSettings =
+            AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
         run(analysisSettings, responseUrl)
         return ResponseEntity<Any>(HttpStatus.ACCEPTED)
     }

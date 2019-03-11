@@ -39,6 +39,9 @@ data class Analysis(
     val language: Language,
 
     @Column(nullable = false)
+    val branch: String,
+
+    @Column(nullable = false)
     val executionDate: LocalDateTime,
 
     @LazyCollection(LazyCollectionOption.FALSE)

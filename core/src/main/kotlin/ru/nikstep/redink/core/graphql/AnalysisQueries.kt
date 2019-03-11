@@ -24,9 +24,9 @@ class AnalysisQueries(
         repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(gitService.toUpperCase()), repo)
             .let(analysisRepository::findFirstByRepositoryOrderByExecutionDateDesc)
 
-    fun analyse(gitService: String, repo: String, analyser: String?, language: String?): Analysis? {
+    fun analyse(gitService: String, repo: String, branch: String, analyser: String?, language: String?): Analysis? {
         val repoValue =
             repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(gitService.toUpperCase()), repo)
-        return analysisRunner.run(AnalysisSettings(repoValue).language(language).analyser(analyser))
+        return analysisRunner.run(AnalysisSettings(repoValue, branch).language(language).analyser(analyser))
     }
 }

@@ -30,7 +30,8 @@ open class AnalysisResultDataManager(
                 repository = analysisSettings.repository,
                 executionDate = LocalDateTime.now(),
                 language = analysisSettings.language,
-                analyser = analysisSettings.analyser
+                analyser = analysisSettings.analyser,
+                branch = analysisSettings.branch
             )
         )
         val analysisPairs = analysisResults.map {
