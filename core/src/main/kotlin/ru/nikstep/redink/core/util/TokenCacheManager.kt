@@ -1,4 +1,4 @@
-package ru.nikstep.redink.util
+package ru.nikstep.redink.core.util
 
 import com.google.common.cache.CacheBuilder
 import org.springframework.cache.Cache

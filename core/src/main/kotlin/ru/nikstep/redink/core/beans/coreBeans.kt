@@ -10,9 +10,9 @@ import ru.nikstep.redink.checks.github.GithubAnalysisStatusCheckService
 import ru.nikstep.redink.core.analysis.AnalysisScheduler
 import ru.nikstep.redink.core.graphql.AnalysisQueries
 import ru.nikstep.redink.core.graphql.LocalDateTimeScalarType
+import ru.nikstep.redink.core.util.TokenCacheManager
 import ru.nikstep.redink.model.manager.AnalysisResultDataManager
 import ru.nikstep.redink.model.manager.RepositoryDataManager
-import ru.nikstep.redink.util.TokenCacheManager
 import ru.nikstep.redink.util.auth.GithubAuthorizationService
 
 val coreBeans = beans {
