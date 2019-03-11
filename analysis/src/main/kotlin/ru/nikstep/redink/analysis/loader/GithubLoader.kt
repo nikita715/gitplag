@@ -30,6 +30,6 @@ class GithubLoader(
             sendRestRequest<JsonArray<*>>(
                 url = "https://api.github.com/repos/$repoFullName/pulls/$number/files",
                 accessToken = authorizationService.getAuthorizationToken(secretKey)
-            ).map { (it as JsonObject).string("filename")!! }
+            ).map { requireNotNull((it as JsonObject).string("filename")) }
         }
 }

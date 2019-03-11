@@ -20,22 +20,12 @@ interface SolutionStorage {
     /**
      * Load base file from local storage
      */
-    fun loadBase(repository: Repository, fileName: String): File
-
-    /**
-     * Load base file from local storage
-     */
     fun loadBase(gitProperty: GitProperty, repoName: String, fileName: String): File
 
     /**
      * Save base file to local storage
      */
     fun saveBase(pullRequest: PullRequest, fileName: String, fileText: String): File
-
-    /**
-     * Load solution file of the student from local storage
-     */
-    fun loadSolution(repository: Repository, userName: String, fileName: String): File
 
     /**
      * Save solution of [fileName] for [PullRequest.creatorName]
@@ -48,9 +38,4 @@ interface SolutionStorage {
      * and information about them. See [PreparedAnalysisFiles]
      */
     fun loadAllBasesAndSolutions(analysisSettings: AnalysisSettings): PreparedAnalysisFiles
-
-    /**
-     * Get count of files that belong to the [repository]
-     */
-    fun getCountOfSolutionFiles(repository: Repository, fileName: String): Int
 }

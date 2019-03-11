@@ -11,5 +11,8 @@ interface IntegrationService {
      */
     fun createNewUser(payload: String)
 
+    /**
+     * Create and delete repositories mentioned in the [payload]
+     */
     fun manageRepositories(payload: String)
 }

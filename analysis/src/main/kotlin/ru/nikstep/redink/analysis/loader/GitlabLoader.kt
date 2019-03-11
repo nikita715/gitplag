@@ -16,12 +16,11 @@ class GitlabLoader(
 
     override fun loadChangedFiles(pullRequest: PullRequest): List<String> =
         pullRequest.run {
-            sendRestRequest<JsonObject>(
+            requireNotNull(sendRestRequest<JsonObject>(
                 "https://gitlab.com/api/v4/projects/$repoId/merge_requests/$number/changes"
-            ).array<JsonObject>("changes")!!.map { change ->
-                change.string("new_path")!!
-
-            }
+            ).array<JsonObject>("changes")?.map { change ->
+                requireNotNull(change.string("new_path"))
+            })
         }
 
     override fun loadFileText(repoFullName: String, branchName: String, fileName: String, secretKey: String): String =

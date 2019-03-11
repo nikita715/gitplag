@@ -34,18 +34,6 @@ class FileSystemSolutionStorage(
             ).toUri()
         )
 
-    override fun loadBase(repository: Repository, fileName: String): File =
-        File(
-            Paths.get(
-                solutionsDir,
-                repository.gitService.toString(),
-                repository.name,
-                baseDir,
-                fileName
-            ).toUri()
-        )
-
-
     private val logger = KotlinLogging.logger {}
     private val solutionsDir = "solutions"
     private val baseDir = ".base"
@@ -85,24 +73,6 @@ class FileSystemSolutionStorage(
         }.toMap()
     }
 
-    override fun getCountOfSolutionFiles(repository: Repository, fileName: String): Int {
-        val solutionDirectory = File(Paths.get(solutionsDir, repository.gitService.toString(), repository.name).toUri())
-        val directories = solutionDirectory.list().toList().intersect<String>(
-            sourceCodeRepository.findAllByRepoAndFileName(repository.name, fileName).map { it.user }
-        )
-        return directories.count {
-            Files.exists(
-                Paths.get(
-                    solutionsDir,
-                    repository.gitService.toString(),
-                    repository.name,
-                    it,
-                    fileName
-                )
-            )
-        }
-    }
-
     @Synchronized
     override fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): File {
         val pathToFile =
@@ -119,12 +89,12 @@ class FileSystemSolutionStorage(
         return save(pathToFile, fileText)
     }
 
+    @Synchronized
     override fun saveBase(pullRequest: PullRequest, fileName: String, fileText: String): File {
         return saveBase(pullRequest.gitService, pullRequest.repoFullName, fileName, fileText)
     }
 
-    @Synchronized
-    fun saveBase(gitService: GitProperty, repoName: String, fileName: String, fileText: String): File {
+    private fun saveBase(gitService: GitProperty, repoName: String, fileName: String, fileText: String): File {
         val pathToFile = getPathToFile(gitService, repoName, fileName, isBase = true)
         return save(pathToFile, fileText)
     }
@@ -137,13 +107,6 @@ class FileSystemSolutionStorage(
         FileOutputStream(file).use { fileOutputStream -> fileOutputStream.write(fileText.toByteArray()) }
         logger.info { "File storage: saved file ${pathToFile.first}/${pathToFile.second}" }
         return file
-    }
-
-    @Synchronized
-    override fun loadSolution(repository: Repository, userName: String, fileName: String): File {
-        val pathToFile = Paths.get(solutionsDir, repository.gitService.toString(), repository.name, userName, fileName)
-        logger.info { "File storage: loaded file ${repository.name}/$userName/$fileName" }
-        return File(pathToFile.toUri())
     }
 
     private fun getPathToFile(
