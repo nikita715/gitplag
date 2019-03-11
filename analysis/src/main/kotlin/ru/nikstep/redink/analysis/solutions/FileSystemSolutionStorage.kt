@@ -23,6 +23,10 @@ class FileSystemSolutionStorage(
     private val repositoryRepository: RepositoryRepository
 ) : SolutionStorage {
 
+    private val logger = KotlinLogging.logger {}
+    private val solutionsDir = "solutions"
+    private val baseDir = ".base"
+
     override fun loadBase(gitProperty: GitProperty, repoName: String, fileName: String): File =
         File(
             Paths.get(
@@ -33,10 +37,6 @@ class FileSystemSolutionStorage(
                 fileName
             ).toUri()
         )
-
-    private val logger = KotlinLogging.logger {}
-    private val solutionsDir = "solutions"
-    private val baseDir = ".base"
 
     @Synchronized
     override fun loadAllBasesAndSolutions(analysisSettings: AnalysisSettings) =
@@ -76,7 +76,7 @@ class FileSystemSolutionStorage(
     @Synchronized
     override fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): File {
         val pathToFile =
-            getPathToFile(pullRequest.gitService, pullRequest.repoFullName, fileName, pullRequest.creatorName)
+            getPathToSolution(pullRequest.gitService, pullRequest.repoFullName, fileName, "", pullRequest.creatorName)
         sourceCodeRepository.deleteByRepoAndUserAndFileName(pullRequest.repoFullName, pullRequest.creatorName, fileName)
         sourceCodeRepository.save(
             SourceCode(
@@ -95,35 +95,48 @@ class FileSystemSolutionStorage(
     }
 
     private fun saveBase(gitService: GitProperty, repoName: String, fileName: String, fileText: String): File {
-        val pathToFile = getPathToFile(gitService, repoName, fileName, isBase = true)
+        val pathToFile = getPathToBase(gitService, repoName, "", fileName)
         return save(pathToFile, fileText)
     }
 
-    private fun save(pathToFile: Pair<String, String>, fileText: String): File {
-        val tempDirectory = Files.createDirectories(Paths.get(pathToFile.first))
-        val path = Paths.get(tempDirectory.toString(), pathToFile.second)
+    private fun save(pathToFile: PathToFile, fileText: String): File {
+        val tempDirectory = Files.createDirectories(Paths.get(pathToFile.path))
+        val path = Paths.get(tempDirectory.toString(), pathToFile.fileName)
         Files.deleteIfExists(path)
         val file = Files.createFile(path).toFile()
         FileOutputStream(file).use { fileOutputStream -> fileOutputStream.write(fileText.toByteArray()) }
-        logger.info { "File storage: saved file ${pathToFile.first}/${pathToFile.second}" }
+        logger.info { "File storage: saved file ${pathToFile.path}/${pathToFile.fileName}" }
         return file
     }
 
-    private fun getPathToFile(
+    private fun getPathToBase(
         gitService: GitProperty,
         repoFullName: String,
-        repoFilePath: String,
-        creator: String = "",
-        isBase: Boolean = false
-    ): Pair<String, String> {
-        val pathElements: List<String> = repoFilePath.split("/")
+        branchName: String,
+        fileName: String
+    ): PathToFile {
+        val pathElements: List<String> = fileName.split("/")
         val pathBeforeFileName: String = pathElements.dropLast(1).joinToString(separator = "/")
-        val path =
-            if (isBase)
-                asPath(solutionsDir, gitService.toString(), repoFullName, baseDir, pathBeforeFileName)
-            else
-                asPath(solutionsDir, gitService.toString(), repoFullName, creator, pathBeforeFileName)
-        return path to pathElements.last()
+        val path = asPath(solutionsDir, gitService.toString(), repoFullName, baseDir, branchName, pathBeforeFileName)
+        return PathToFile(path, pathElements.last())
     }
+
+    private fun getPathToSolution(
+        gitService: GitProperty,
+        repoFullName: String,
+        creator: String,
+        branchName: String,
+        fileName: String
+    ): PathToFile {
+        val pathElements: List<String> = fileName.split("/")
+        val pathBeforeFileName: String = pathElements.dropLast(1).joinToString(separator = "/")
+        val path = asPath(solutionsDir, gitService.toString(), repoFullName, creator, branchName, pathBeforeFileName)
+        return PathToFile(path, pathElements.last())
+    }
+
+    private data class PathToFile(
+        val path: String,
+        val fileName: String
+    )
 
 }
