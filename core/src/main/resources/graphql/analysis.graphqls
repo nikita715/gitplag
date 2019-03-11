@@ -58,21 +58,28 @@ type AnalysisPairLines {
 
 type Query {
 
-    # Get a result of analysis of two solutions
+    # Get a result of the analysis of two solutions
     analysis(
 
+    # Git service of the repository
     gitService: String!,
 
+    # Name of the repository
     repo: String!):Analysis!
 
+    # Run analysis for a repository
     analyse(
 
+    # Git service of the repository
     gitService: String!,
 
+    # Name of the repository
     repo: String!,
 
+    # Chosen plagiarism analyser (moss/jplag)
     analyser: String,
 
+    # Chosen programming language
     language: String):Analysis!
 
 }
