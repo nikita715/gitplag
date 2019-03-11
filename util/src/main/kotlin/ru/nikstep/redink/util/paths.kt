@@ -9,7 +9,7 @@ private const val rootName = "redink"
 /**
  * Combine [parts] to file system path with [separator]
  */
-fun asPath(vararg parts: String): String {
+fun asPath(vararg parts: Any): String {
     return parts.joinToString(separator = separator)
 }
 

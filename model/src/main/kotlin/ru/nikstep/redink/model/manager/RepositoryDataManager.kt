@@ -31,7 +31,8 @@ open class RepositoryDataManager(
                     name = repoName,
                     analysisMode = AnalysisMode.STATIC,
                     gitService = gitProperty,
-                    analyser = AnalyserProperty.MOSS
+                    analyser = AnalyserProperty.MOSS,
+                    branches = listOf("master")
                 )
             )
         }

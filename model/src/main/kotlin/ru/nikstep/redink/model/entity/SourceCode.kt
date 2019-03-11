@@ -19,5 +19,6 @@ class SourceCode(
     val user: String,
     val repo: String,
     val fileName: String,
-    val sha: String
+    val sha: String,
+    val branch: String
 )

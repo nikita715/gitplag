@@ -2,18 +2,18 @@ package ru.nikstep.redink.analysis.analyser
 
 import it.zielke.moji.SocketClient
 import mu.KotlinLogging
-import ru.nikstep.redink.model.data.PreparedAnalysisFiles
+import ru.nikstep.redink.model.data.PreparedAnalysisData
 
 /**
  * Client of the Moss plagiarism analysis service.
  * See http://moss.stanford.edu
  */
-internal class MossClient(analysisFiles: PreparedAnalysisFiles, private val mossId: String) {
+internal class MossClient(analysisData: PreparedAnalysisData, private val mossId: String) {
     private val logger = KotlinLogging.logger {}
 
-    private val language = analysisFiles.language.ofMoss()
-    private val bases = analysisFiles.bases
-    private val solutions = analysisFiles.solutions
+    private val language = analysisData.language.ofMoss()
+    private val bases = analysisData.bases
+    private val solutions = analysisData.solutions
 
     @Synchronized
     fun run(): String =
@@ -23,7 +23,7 @@ internal class MossClient(analysisFiles: PreparedAnalysisFiles, private val moss
                 client.language = language
                 client.run()
                 bases.forEach { client.uploadFile(it, true) }
-                solutions.values.forEach { client.uploadFile(it.file) }
+                solutions.forEach { client.uploadFile(it) }
                 client.sendQuery()
                 client.resultURL.toString()
             }

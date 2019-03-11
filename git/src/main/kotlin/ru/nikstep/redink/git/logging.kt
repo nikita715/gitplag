@@ -7,8 +7,8 @@ import ru.nikstep.redink.model.entity.User
 internal fun KLogger.inProgressStatus(pullRequest: PullRequest) {
     this.info {
         pullRequest.run {
-            "Webhook: PullRequest: sent in progress status to repo $repoFullName, user $creatorName," +
-                    " branch $branchName, url https://github.com/$repoFullName/pull/$number"
+            "Webhook: PullRequest: sent in progress status to repo $mainRepoFullName, user $creatorName," +
+                    " branch $sourceBranchName, url https://github.com/$mainRepoFullName/pull/$number"
         }
     }
 }
@@ -16,8 +16,8 @@ internal fun KLogger.inProgressStatus(pullRequest: PullRequest) {
 internal fun KLogger.newPullRequest(pullRequest: PullRequest) {
     this.info {
         pullRequest.run {
-            "Webhook: PullRequest: new from repo $repoFullName, user $creatorName," +
-                    " branch $branchName, $gitService"
+            "Webhook: PullRequest: new from repo $mainRepoFullName, user $creatorName," +
+                    " branch $sourceBranchName, $gitService"
         }
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.context.support.beans
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.analysis.analyser.MossAnalyser
 import ru.nikstep.redink.analysis.loader.BitbucketLoader
+import ru.nikstep.redink.analysis.loader.GitLoader
 import ru.nikstep.redink.analysis.loader.GithubLoader
 import ru.nikstep.redink.analysis.loader.GitlabLoader
 import ru.nikstep.redink.util.AnalyserProperty
@@ -16,7 +17,7 @@ val analysisBeans = beans {
     bean<GithubLoader>()
     bean<BitbucketLoader>()
     bean<GitlabLoader>()
-    bean {
+    bean<Map<GitProperty, GitLoader>>("gitLoaders") {
         mapOf(
             GitProperty.GITHUB to ref<GithubLoader>(),
             GitProperty.BITBUCKET to ref<BitbucketLoader>(),
@@ -27,7 +28,7 @@ val analysisBeans = beans {
     // Analysers
     bean { MossAnalyser(ref(), env.safeEnvVar("redink.mossId")) }
     bean { JPlagAnalyser(ref(), env.safeEnvVar("redink.solutionsDir")) }
-    bean {
+    bean("analysers") {
         mapOf(
             AnalyserProperty.MOSS to ref<MossAnalyser>(),
             AnalyserProperty.JPLAG to ref<JPlagAnalyser>()

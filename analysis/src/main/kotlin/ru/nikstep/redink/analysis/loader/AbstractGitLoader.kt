@@ -20,21 +20,21 @@ abstract class AbstractGitLoader(
 
     override fun loadFilesFromGit(pullRequest: PullRequest) {
 //        val filePatterns =
-//            repositoryRepository.findByGitServiceAndName(pullRequest.gitService, pullRequest.repoFullName).filePatterns
+//            repositoryRepository.findByGitServiceAndName(pullRequest.gitService, pullRequest.mainRepoFullName).filePatterns
         val changedFiles = loadChangedFiles(pullRequest)
 
         changedFiles.forEach { fileName ->
             checkBaseExists(pullRequest, fileName)
 
-            val fileText = loadFileText(pullRequest.repoFullName, pullRequest.branchName, fileName)
+            val fileText = loadFileText(pullRequest.sourceRepoFullName, pullRequest.sourceBranchName, fileName)
 
             if (fileText.isBlank())
-                throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")
+                throw AnalysisException("$fileName is not found in ${pullRequest.sourceBranchName} branch, ${pullRequest.sourceRepoFullName} repo")
 
             solutionStorage.saveSolution(pullRequest, fileName, fileText)
 
             logger.info {
-                "Analysis: loaded file ${pullRequest.repoFullName}/$fileName" +
+                "Analysis: loaded file ${pullRequest.mainRepoFullName}/$fileName" +
                         " of user ${pullRequest.creatorName}, pr number ${pullRequest.number}"
             }
         }
@@ -51,19 +51,24 @@ abstract class AbstractGitLoader(
     protected abstract fun loadChangedFiles(pullRequest: PullRequest): List<String>
 
     private fun checkBaseExists(data: PullRequest, fileName: String) {
-        val base = solutionStorage.loadBase(data.gitService, data.repoFullName, fileName)
+        val base = solutionStorage.loadBase(data.gitService, data.mainRepoFullName, data.sourceBranchName, fileName)
         if (base.notExists()) saveBase(data, fileName)
     }
 
     private fun saveBase(pullRequest: PullRequest, fileName: String) {
-        val fileText = loadFileText(pullRequest.repoFullName, masterBranch, fileName, pullRequest.secretKey)
+        try {
+            val fileText =
+                loadFileText(pullRequest.mainRepoFullName, pullRequest.mainBranchName, fileName, pullRequest.secretKey)
 
-        if (fileText.isBlank())
-            throw AnalysisException("$fileName is not found in ${pullRequest.branchName} branch, ${pullRequest.repoFullName} repo")
+            if (fileText.isBlank())
+                throw AnalysisException("$fileName is not found in ${pullRequest.sourceBranchName} branch, ${pullRequest.mainRepoFullName} repo")
 
-        solutionStorage.saveBase(pullRequest, fileName, fileText)
+            solutionStorage.saveBase(pullRequest, fileName, fileText)
 
-        logger.info { "Analysis: loaded base file ${pullRequest.repoFullName}/$fileName" }
+            logger.info { "Analysis: loaded base file ${pullRequest.mainRepoFullName}/$fileName" }
+        } catch (e: Exception) {
+            logger.info { "No base" }
+        }
     }
 
     private fun File.notExists(): Boolean {

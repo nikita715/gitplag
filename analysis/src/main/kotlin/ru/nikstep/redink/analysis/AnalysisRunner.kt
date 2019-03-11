@@ -34,6 +34,12 @@ class AnalysisRunner(
             .let { analysisResultDataManager.saveAnalysis(analysisSettings, it) }
     }
 
+    /**
+     * Run analysis with [analysisSettings]
+     */
+    fun run(analysisSettings: List<AnalysisSettings>): List<Analysis> =
+        analysisSettings.map { run(it) }
+
     private fun sendSuccessStatusCheck(pullRequest: PullRequest) {
         if (pullRequest.gitService == GitProperty.GITHUB) {
             analysisStatusCheckService.send(

@@ -1,9 +1,8 @@
 package ru.nikstep.redink.analysis.solutions
 
 import ru.nikstep.redink.model.data.AnalysisSettings
-import ru.nikstep.redink.model.data.PreparedAnalysisFiles
+import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.model.entity.PullRequest
-import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.util.GitProperty
 import java.io.File
 
@@ -15,12 +14,12 @@ interface SolutionStorage {
     /**
      * Load all base files from local storage
      */
-    fun loadBases(repository: Repository): List<File>
+    fun loadBases(analysisSettings: AnalysisSettings): List<File>
 
     /**
      * Load base file from local storage
      */
-    fun loadBase(gitProperty: GitProperty, repoName: String, fileName: String): File
+    fun loadBase(gitProperty: GitProperty, repoName: String, branchName: String, fileName: String): File
 
     /**
      * Save base file to local storage
@@ -35,7 +34,7 @@ interface SolutionStorage {
     /**
      * Load all base solution files and corresponding solution files of the [pullRequest]
      * @return all required files for each fileName
-     * and information about them. See [PreparedAnalysisFiles]
+     * and information about them. See [PreparedAnalysisData]
      */
-    fun loadAllBasesAndSolutions(analysisSettings: AnalysisSettings): PreparedAnalysisFiles
+    fun loadAllBasesAndSolutions(analysisSettings: AnalysisSettings): PreparedAnalysisData
 }

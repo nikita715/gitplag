@@ -30,23 +30,35 @@ class GithubWebhookService(
     override val JsonObject.gitService: GitProperty
         get() = GITHUB
 
-    override val JsonObject.repoId: Long?
-        get() = -1
+    override val JsonObject.sourceRepoId: Long?
+        get() = obj("pull_request")?.obj("head")?.obj("repo")?.long("id")
+
+    override val JsonObject.mainRepoId: Long?
+        get() = obj("pull_request")?.obj("base")?.obj("repo")?.long("id")
 
     override val JsonObject.number: Int?
         get() = int("number")
 
-    override val JsonObject.repoFullName: String?
-        get() = obj("repository")?.string("full_name")
+    override val JsonObject.mainRepoFullName: String?
+        get() = obj("pull_request")?.obj("base")?.obj("repo")?.string("full_name")
+
+    override val JsonObject.sourceRepoFullName: String?
+        get() = obj("pull_request")?.obj("head")?.obj("repo")?.string("full_name")
 
     override val JsonObject.creatorName: String?
-        get() = obj("pull_request")?.obj("user")?.string("login")
+        get() = obj("pull_request")?.obj("head")?.obj("user")?.string("login")
 
-    override val JsonObject.headSha: String?
+    override val JsonObject.sourceHeadSha: String?
         get() = obj("pull_request")?.obj("head")?.string("sha")
 
-    override val JsonObject.branchName: String?
+    override val JsonObject.mainHeadSha: String?
+        get() = obj("pull_request")?.obj("base")?.string("sha")
+
+    override val JsonObject.sourceBranchName: String?
         get() = obj("pull_request")?.obj("head")?.string("ref")
+
+    override val JsonObject.mainBranchName: String?
+        get() = obj("pull_request")?.obj("base")?.string("ref")
 
     override val JsonObject.secretKey: String?
         get() = obj("installation")?.int("id")?.toString()
@@ -79,7 +91,7 @@ class GithubWebhookService(
             )
             val repoFullName = requireNotNull(payloadObject.obj("repository")?.string("full_name"))
             val pullRequest =
-                pullRequestRepository.findFirstByRepoFullNameAndNumberOrderByIdDesc(repoFullName, prNumber)
+                pullRequestRepository.findFirstBySourceRepoFullNameAndNumberOrderByIdDesc(repoFullName, prNumber)
             applicationEventPublisher.publishEvent(PullRequestEvent(this, pullRequest))
         }
     }

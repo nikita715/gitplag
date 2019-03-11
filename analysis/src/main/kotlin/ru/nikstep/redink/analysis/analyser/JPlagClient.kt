@@ -1,7 +1,7 @@
 package ru.nikstep.redink.analysis.analyser
 
 import mu.KotlinLogging
-import ru.nikstep.redink.model.data.PreparedAnalysisFiles
+import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.asPathInRoot
 import java.util.concurrent.TimeUnit
@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
  * See https://jplag.ipd.kit.edu
  */
 internal class JPlagClient(
-    analysisFiles: PreparedAnalysisFiles,
+    analysisData: PreparedAnalysisData,
     private val solutionsPath: String,
     private val resultPath: String
 ) {
@@ -19,8 +19,8 @@ internal class JPlagClient(
     private val logger = KotlinLogging.logger {}
     private val jplagPath = asPath("libs".asPathInRoot(), "jplag.jar")
 
-    private val language = analysisFiles.language.ofJPlag()
-    private val repoName = analysisFiles.repoName
+    private val language = analysisData.language.ofJPlag()
+    private val repoName = analysisData.repoName
 
     fun run() =
         buildString {

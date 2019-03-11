@@ -10,6 +10,7 @@ import ru.nikstep.redink.util.Language
  */
 class AnalysisSettings(
     val repository: Repository,
+    val branch: String,
     val analyser: AnalyserProperty = repository.analyser,
     val gitService: GitProperty = repository.gitService,
     val language: Language = repository.language

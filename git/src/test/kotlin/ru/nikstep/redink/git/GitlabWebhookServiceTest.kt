@@ -13,10 +13,10 @@ class GitlabWebhookServiceTest : AbstractWebhookServiceTest() {
         number = 1,
         secretKey = "",
         creatorName = "nikita715",
-        repoId = 11083523,
-        repoFullName = "nikita715/plagiarism_test3",
-        headSha = "d647870f53f333e3c0bec84cdd245e7262071331",
-        branchName = "br2",
+        sourceRepoId = 11083523,
+        mainRepoFullName = "nikita715/plagiarism_test3",
+        sourceHeadSha = "d647870f53f333e3c0bec84cdd245e7262071331",
+        sourceBranchName = "br2",
         gitService = GitProperty.GITLAB,
         date = LocalDateTime.of(2019, Month.FEBRUARY, 28, 22, 12, 32)
     )

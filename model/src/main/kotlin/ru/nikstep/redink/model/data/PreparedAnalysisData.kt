@@ -8,7 +8,7 @@ import java.io.File
  * Class for storing information about the file
  * that must be analysed for plagiarism
  */
-class PreparedAnalysisFiles(
+class PreparedAnalysisData(
 
     /**
      * Name of the repo with the file
@@ -30,5 +30,5 @@ class PreparedAnalysisFiles(
     /**
      * Solution files that were created by students
      */
-    val solutions: Map<String, CommittedFile>
+    val solutions: List<File>
 )

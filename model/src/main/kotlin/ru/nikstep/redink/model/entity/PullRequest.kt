@@ -23,27 +23,39 @@ data class PullRequest(
     val number: Int,
 
     @Column(nullable = false)
-    val secretKey: String = "",
-
-    @Column(nullable = false)
     val creatorName: String,
 
     @Column(nullable = false)
-    val repoId: Long,
+    val sourceRepoId: Long,
 
     @Column(nullable = false)
-    val repoFullName: String,
+    val mainRepoId: Long,
 
     @Column(nullable = false)
-    val headSha: String,
+    val sourceRepoFullName: String,
 
     @Column(nullable = false)
-    val branchName: String,
+    val mainRepoFullName: String,
+
+    @Column(nullable = false)
+    val sourceHeadSha: String,
+
+    @Column(nullable = false)
+    val mainHeadSha: String,
+
+    @Column(nullable = false)
+    val sourceBranchName: String,
+
+    @Column(nullable = false)
+    val mainBranchName: String,
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     val gitService: GitProperty,
 
     @Column(nullable = false)
-    val date: LocalDateTime
+    val date: LocalDateTime,
+
+    @Column(nullable = false)
+    val secretKey: String = ""
 )

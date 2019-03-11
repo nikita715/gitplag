@@ -18,11 +18,11 @@ import ru.nikstep.redink.util.auth.GithubAuthorizationService
 val coreBeans = beans {
     bean<GithubAuthorizationService>()
     bean<FileSystemSolutionStorage>()
-    bean<PullRequestListener>()
+    bean { PullRequestListener(ref("gitLoaders")) }
     bean<AnalysisResultDataManager>()
     bean<AnalysisScheduler>()
     bean<GithubAnalysisStatusCheckService>()
-    bean<AnalysisRunner>()
+    bean { AnalysisRunner(ref(), ref("analysers"), ref()) }
     bean<RepositoryDataManager>()
     bean { TokenCacheManager("githubAccessTokens") }
 

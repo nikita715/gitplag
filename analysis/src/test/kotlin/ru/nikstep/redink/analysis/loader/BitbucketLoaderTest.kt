@@ -10,12 +10,16 @@ class BitbucketLoaderTest : AbstractGitLoaderTest() {
     override val pullRequest = PullRequest(
         number = 4,
         creatorName = "nikita715",
-        repoId = 1,
-        repoFullName = repoName,
-        headSha = "",
-        branchName = branchName,
+        sourceRepoId = 1,
+        mainRepoFullName = repoName,
+        sourceHeadSha = "",
+        sourceBranchName = branchName,
         gitService = GitProperty.BITBUCKET,
-        date = LocalDateTime.now()
+        date = LocalDateTime.now(),
+        sourceRepoFullName = "",
+        mainRepoId = 1,
+        mainHeadSha = "",
+        mainBranchName = ""
     )
 
     override val loader = BitbucketLoader(solutionStorage, repositoryRepository)

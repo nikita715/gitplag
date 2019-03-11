@@ -59,6 +59,11 @@ class Repository(
     val gitService: GitProperty,
 
     @Column(nullable = false)
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "analysed_branch", joinColumns = [JoinColumn(name = "repository")])
+    val branches: List<String> = emptyList(),
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     val language: Language,
 

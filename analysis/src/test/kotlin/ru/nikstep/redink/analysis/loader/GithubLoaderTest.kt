@@ -13,12 +13,16 @@ class GithubLoaderTest : AbstractGitLoaderTest() {
         number = 1,
         secretKey = "key",
         creatorName = "testns",
-        repoId = 1,
-        repoFullName = repoName,
-        headSha = "",
-        branchName = branchName,
+        sourceRepoId = 1,
+        mainRepoFullName = repoName,
+        sourceHeadSha = "",
+        sourceBranchName = branchName,
         gitService = GitProperty.GITHUB,
-        date = LocalDateTime.now()
+        date = LocalDateTime.now(),
+        sourceRepoFullName = "",
+        mainRepoId = 1,
+        mainHeadSha = "",
+        mainBranchName = ""
     )
 
     override val loader = GithubLoader(solutionStorage, repositoryRepository, authorizationService)

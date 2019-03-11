@@ -76,6 +76,9 @@ type Query {
     # Name of the repository
     repo: String!,
 
+    # Branch to analyse
+    branch: String!,
+
     # Chosen plagiarism analyser (moss/jplag)
     analyser: String,
 

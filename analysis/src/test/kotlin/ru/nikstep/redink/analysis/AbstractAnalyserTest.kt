@@ -9,8 +9,7 @@ import ru.nikstep.redink.analysis.analyser.Analyser
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.AnalysisSettings
-import ru.nikstep.redink.model.data.CommittedFile
-import ru.nikstep.redink.model.data.PreparedAnalysisFiles
+import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.util.AnalyserProperty
@@ -46,16 +45,12 @@ abstract class AbstractAnalyserTest {
     protected val sha2 = "sha2"
     protected val sha3 = "sha3"
 
-    private val testPreparedAnalysisFiles = PreparedAnalysisFiles(
+    private val testPreparedAnalysisFiles = PreparedAnalysisData(
         testRepoName,
         Language.JAVA,
         AnalyserProperty.JPLAG,
         bases,
-        mapOf(
-            student1 to CommittedFile(solution1, sha1, testFileName),
-            student2 to CommittedFile(solution2, sha2, testFileName),
-            student3 to CommittedFile(solution3, sha3, testFileName)
-        )
+        listOf(solution1, solution2, solution3)
     )
 
     internal val solutionStorageService = mock<SolutionStorage> {
@@ -63,7 +58,7 @@ abstract class AbstractAnalyserTest {
     }
 
     private val pullRequest = mock<PullRequest> {
-        on { repoFullName } doReturn testRepoName
+        on { mainRepoFullName } doReturn testRepoName
         on { creatorName } doReturn student1
         on { gitService } doReturn gitService
     }

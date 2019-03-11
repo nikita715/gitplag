@@ -15,8 +15,8 @@ class GithubAnalysisStatusCheckService(private val authorizationService: Authori
     override fun send(pullRequest: PullRequest, analysisData: GithubAnalysisResultData) {
         val accessToken = authorizationService.getAuthorizationToken(pullRequest.secretKey)
         val body = createBody(pullRequest, analysisData)
-        sendGithubStatusCheckRequest(pullRequest.repoFullName, accessToken, body)
-        logger.info { "AnalysisResult: sent for ${pullRequest.repoFullName}, creator ${pullRequest.creatorName}" }
+        sendGithubStatusCheckRequest(pullRequest.mainRepoFullName, accessToken, body)
+        logger.info { "AnalysisResult: sent for ${pullRequest.mainRepoFullName}, creator ${pullRequest.creatorName}" }
     }
 
     override fun sendInProgressStatus(pullRequest: PullRequest) {
@@ -33,7 +33,7 @@ class GithubAnalysisStatusCheckService(private val authorizationService: Authori
 
         val body = mutableMapOf<String, Any?>(
             "name" to "Plagiarism tests",
-            "head_sha" to pullRequest.headSha,
+            "head_sha" to pullRequest.sourceHeadSha,
             "status" to analysisData.status
         )
 
