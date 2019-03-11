@@ -2,9 +2,20 @@ package ru.nikstep.redink.model.entity
 
 import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
+import ru.nikstep.redink.util.AnalyserProperty
+import ru.nikstep.redink.util.Language
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
 
 /**
  * Result of the plagiarism analysis
@@ -18,6 +29,14 @@ data class Analysis(
     @ManyToOne
     @JoinColumn
     val repository: Repository,
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    val analyser: AnalyserProperty,
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    val language: Language,
 
     @Column(nullable = false)
     val executionDate: LocalDateTime,

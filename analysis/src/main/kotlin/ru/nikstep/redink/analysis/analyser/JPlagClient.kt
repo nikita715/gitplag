@@ -1,7 +1,7 @@
 package ru.nikstep.redink.analysis.analyser
 
 import mu.KotlinLogging
-import ru.nikstep.redink.analysis.data.PreparedAnalysisFiles
+import ru.nikstep.redink.model.data.PreparedAnalysisFiles
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.asPathInRoot
 import java.util.concurrent.TimeUnit

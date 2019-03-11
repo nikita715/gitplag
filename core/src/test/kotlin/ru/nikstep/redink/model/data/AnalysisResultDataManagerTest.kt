@@ -9,6 +9,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import ru.nikstep.redink.core.RedinkApplication
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.User
+import ru.nikstep.redink.model.manager.AnalysisResultDataManager
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.UserRepository
 import ru.nikstep.redink.util.AnalyserProperty
@@ -49,6 +50,8 @@ class AnalysisResultDataManagerTest {
         )
     )
 
+    private val analysisSettings = AnalysisSettings(repo)
+
     private val analysisResult = AnalysisResult(
         students = "st1" to "st2",
         sha = "sha1" to "sha2",
@@ -61,6 +64,6 @@ class AnalysisResultDataManagerTest {
 
     @Test
     fun saveAll() {
-        analysisResultDataManager.saveAnalysis(repo, listOf(analysisResult))
+        analysisResultDataManager.saveAnalysis(analysisSettings, listOf(analysisResult))
     }
 }

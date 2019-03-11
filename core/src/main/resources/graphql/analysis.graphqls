@@ -5,6 +5,10 @@ type Analysis {
 
     executionDate: LocalDateTime!,
 
+    analyser: String!,
+
+    language: String!,
+
     analysisPairs: [AnalysisPair]!
 }
 
@@ -60,4 +64,15 @@ type Query {
     gitService: String!,
 
     repo: String!):Analysis!
+
+    analyse(
+
+    gitService: String!,
+
+    repo: String!,
+
+    analyser: String,
+
+    language: String):Analysis!
+
 }

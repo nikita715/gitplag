@@ -2,7 +2,8 @@ package ru.nikstep.redink.core.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import ru.nikstep.redink.core.graphql.AnalysisPairQuery
+import ru.nikstep.redink.analysis.AnalysisRunner
+import ru.nikstep.redink.core.graphql.AnalysisQueries
 import ru.nikstep.redink.core.graphql.LocalDateTimeScalarType
 import ru.nikstep.redink.model.repo.AnalysisRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
@@ -14,11 +15,15 @@ import ru.nikstep.redink.model.repo.RepositoryRepository
 class GraphqlConfig {
 
     /**
-     * [AnalysisPairQuery] bean
+     * [AnalysisQueries] bean
      */
     @Bean
-    fun analysisPairQuery(repositoryRepository: RepositoryRepository, analysisRepository: AnalysisRepository) =
-        AnalysisPairQuery(repositoryRepository, analysisRepository)
+    fun analysisPairQuery(
+        repositoryRepository: RepositoryRepository,
+        analysisRepository: AnalysisRepository,
+        analysisRunner: AnalysisRunner
+    ) =
+        AnalysisQueries(repositoryRepository, analysisRepository, analysisRunner)
 
 
     /**

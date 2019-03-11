@@ -3,9 +3,9 @@ package ru.nikstep.redink.git.integration
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
 import ru.nikstep.redink.git.newUser
-import ru.nikstep.redink.model.data.RepositoryDataManager
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.User
+import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.UserRepository
 import ru.nikstep.redink.util.AnalyserProperty
 import ru.nikstep.redink.util.AnalysisMode

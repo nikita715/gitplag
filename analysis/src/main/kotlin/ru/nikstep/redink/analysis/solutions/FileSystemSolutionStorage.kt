@@ -1,9 +1,9 @@
 package ru.nikstep.redink.analysis.solutions
 
 import mu.KotlinLogging
-import ru.nikstep.redink.analysis.data.AnalysisSettings
-import ru.nikstep.redink.analysis.data.CommittedFile
-import ru.nikstep.redink.analysis.data.PreparedAnalysisFiles
+import ru.nikstep.redink.model.data.AnalysisSettings
+import ru.nikstep.redink.model.data.CommittedFile
+import ru.nikstep.redink.model.data.PreparedAnalysisFiles
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.SourceCode

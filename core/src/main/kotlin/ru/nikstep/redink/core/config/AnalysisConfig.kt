@@ -15,7 +15,7 @@ import ru.nikstep.redink.analysis.loader.GitlabLoader
 import ru.nikstep.redink.analysis.solutions.FileSystemSolutionStorage
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
-import ru.nikstep.redink.model.data.AnalysisResultDataManager
+import ru.nikstep.redink.model.manager.AnalysisResultDataManager
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SourceCodeRepository
 import ru.nikstep.redink.util.AnalyserProperty

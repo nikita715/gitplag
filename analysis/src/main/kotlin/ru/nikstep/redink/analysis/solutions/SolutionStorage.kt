@@ -1,7 +1,7 @@
 package ru.nikstep.redink.analysis.solutions
 
-import ru.nikstep.redink.analysis.data.AnalysisSettings
-import ru.nikstep.redink.analysis.data.PreparedAnalysisFiles
+import ru.nikstep.redink.model.data.AnalysisSettings
+import ru.nikstep.redink.model.data.PreparedAnalysisFiles
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.util.GitProperty

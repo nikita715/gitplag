@@ -1,10 +1,11 @@
-package ru.nikstep.redink.model.data
+package ru.nikstep.redink.model.manager
 
 import org.springframework.transaction.annotation.Transactional
+import ru.nikstep.redink.model.data.AnalysisResult
+import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.entity.Analysis
 import ru.nikstep.redink.model.entity.AnalysisPair
 import ru.nikstep.redink.model.entity.AnalysisPairLines
-import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.AnalysisPairLinesRepository
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
 import ru.nikstep.redink.model.repo.AnalysisRepository
@@ -23,11 +24,13 @@ open class AnalysisResultDataManager(
      * Save all analysis results
      */
     @Transactional
-    open fun saveAnalysis(repository: Repository, analysisResults: Collection<AnalysisResult>): Analysis {
+    open fun saveAnalysis(analysisSettings: AnalysisSettings, analysisResults: Collection<AnalysisResult>): Analysis {
         val analysis = analysisRepository.save(
             Analysis(
-                repository = repository,
-                executionDate = LocalDateTime.now()
+                repository = analysisSettings.repository,
+                executionDate = LocalDateTime.now(),
+                language = analysisSettings.language,
+                analyser = analysisSettings.analyser
             )
         )
         val analysisPairs = analysisResults.map {

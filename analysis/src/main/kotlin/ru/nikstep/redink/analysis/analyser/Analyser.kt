@@ -1,7 +1,7 @@
 package ru.nikstep.redink.analysis.analyser
 
-import ru.nikstep.redink.analysis.data.AnalysisSettings
 import ru.nikstep.redink.model.data.AnalysisResult
+import ru.nikstep.redink.model.data.AnalysisSettings
 
 /**
  * Analyzer for plagiarism in pull requests

@@ -1,4 +1,4 @@
-package ru.nikstep.redink.model.data
+package ru.nikstep.redink.model.manager
 
 import org.springframework.transaction.annotation.Transactional
 import ru.nikstep.redink.model.entity.Repository

@@ -2,7 +2,7 @@ package ru.nikstep.redink.analysis.analyser
 
 import it.zielke.moji.SocketClient
 import mu.KotlinLogging
-import ru.nikstep.redink.analysis.data.PreparedAnalysisFiles
+import ru.nikstep.redink.model.data.PreparedAnalysisFiles
 
 /**
  * Client of the Moss plagiarism analysis service.

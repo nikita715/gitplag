@@ -17,7 +17,7 @@ import ru.nikstep.redink.analysis.loader.GitlabLoader
 import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
 import ru.nikstep.redink.checks.github.GithubAnalysisStatusCheckService
 import ru.nikstep.redink.core.analysis.AnalysisScheduler
-import ru.nikstep.redink.model.data.AnalysisResultDataManager
+import ru.nikstep.redink.model.manager.AnalysisResultDataManager
 import ru.nikstep.redink.model.repo.AnalysisPairLinesRepository
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
 import ru.nikstep.redink.model.repo.AnalysisRepository
@@ -65,7 +65,11 @@ class CoreConfig {
         analysisPairRepository: AnalysisPairRepository,
         analysisPairLinesRepository: AnalysisPairLinesRepository
     ): AnalysisResultDataManager =
-        AnalysisResultDataManager(analysisRepository, analysisPairRepository, analysisPairLinesRepository)
+        AnalysisResultDataManager(
+            analysisRepository,
+            analysisPairRepository,
+            analysisPairLinesRepository
+        )
 
 
     /**
