@@ -19,6 +19,9 @@ interface SourceCodeRepository : JpaRepository<SourceCode, Long> {
      */
     fun findAllByRepoAndFileName(repo: String, fileName: String): List<SourceCode>
 
+    /**
+     * Delete [SourceCode] record by its parameters
+     */
     @Transactional
     fun deleteByRepoAndUserAndFileName(repo: String, user: String, fileName: String)
 }

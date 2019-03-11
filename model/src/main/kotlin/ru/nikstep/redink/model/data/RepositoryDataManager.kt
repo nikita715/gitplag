@@ -9,11 +9,17 @@ import ru.nikstep.redink.util.AnalysisMode
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language
 
+/**
+ * Data manager of [Repository]
+ */
 open class RepositoryDataManager(
     private val repositoryRepository: RepositoryRepository,
     private val userRepository: UserRepository
 ) {
 
+    /**
+     * Create repositories by [repoNames]
+     */
     @Transactional
     open fun create(ownerName: String, gitProperty: GitProperty, repoNames: List<String>) {
         val owner = userRepository.findByName(ownerName)
@@ -31,6 +37,9 @@ open class RepositoryDataManager(
         }
     }
 
+    /**
+     * Delete repositories by [repoNames]
+     */
     @Transactional
     open fun delete(repoNames: List<String>) {
         repoNames.forEach { repoName ->
@@ -41,6 +50,9 @@ open class RepositoryDataManager(
         }
     }
 
+    /**
+     * Save all [repositories]
+     */
     @Transactional
     open fun saveAll(repositories: List<Repository>) {
         repositoryRepository.saveAll(repositories)
