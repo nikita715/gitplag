@@ -1,4 +1,4 @@
-package ru.nikstep.redink.analysis
+package ru.nikstep.redink.analysis.data
 
 import ru.nikstep.redink.util.AnalyserProperty
 import ru.nikstep.redink.util.Language

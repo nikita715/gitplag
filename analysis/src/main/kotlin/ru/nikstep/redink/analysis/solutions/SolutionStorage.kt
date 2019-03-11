@@ -1,7 +1,7 @@
 package ru.nikstep.redink.analysis.solutions
 
-import ru.nikstep.redink.analysis.AnalysisSettings
-import ru.nikstep.redink.analysis.PreparedAnalysisFiles
+import ru.nikstep.redink.analysis.data.AnalysisSettings
+import ru.nikstep.redink.analysis.data.PreparedAnalysisFiles
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.util.GitProperty
@@ -49,5 +49,8 @@ interface SolutionStorage {
      */
     fun loadAllBasesAndSolutions(analysisSettings: AnalysisSettings): PreparedAnalysisFiles
 
+    /**
+     * Get count of files that belong to the [repository]
+     */
     fun getCountOfSolutionFiles(repository: Repository, fileName: String): Int
 }

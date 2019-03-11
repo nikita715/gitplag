@@ -1,5 +1,6 @@
 dependencies {
     compile project(':checks')
+    compile project(':git')
     compile project(':model')
     compile project(':util')
 

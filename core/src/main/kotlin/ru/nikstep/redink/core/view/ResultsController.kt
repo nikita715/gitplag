@@ -1,4 +1,4 @@
-package ru.nikstep.redink.core.rest
+package ru.nikstep.redink.core.view
 
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
@@ -9,6 +9,9 @@ import ru.nikstep.redink.analysis.loader.GitLoader
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
 import ru.nikstep.redink.util.GitProperty
 
+/**
+ * Analysis results views controller
+ */
 @RestController
 class ResultsController(
     private val analysisPairRepository: AnalysisPairRepository,
@@ -20,6 +23,9 @@ class ResultsController(
         link(href = "https://fonts.googleapis.com/css?family=Roboto", rel = LinkRel.stylesheet)
     }
 
+    /**
+     * Get two solutions on one page
+     */
     @GetMapping("result/{id}")
     fun getResult(@PathVariable id: Int): String {
         val analysisPair = analysisPairRepository.findById(id.toLong()).get()
@@ -54,6 +60,9 @@ class ResultsController(
         }
     }
 
+    /**
+     * Get list of analysis results by the [repoName]
+     */
     @GetMapping("result/{repoOwner}/{repoName}")
     fun getResultsOfRepository(@PathVariable repoOwner: String, @PathVariable repoName: String): String = createHTML()
         .html {
@@ -70,6 +79,9 @@ class ResultsController(
             }
         }
 
+    /**
+     * Get list of analysis results by the [repoName] and [studentName]
+     */
     @GetMapping("result/{repoOwner}/{repoName}/{studentName}")
     fun getResultsOfRepositoryAndStudent(
         @PathVariable repoOwner: String,

@@ -2,6 +2,7 @@ package ru.nikstep.redink.analysis
 
 import mu.KotlinLogging
 import ru.nikstep.redink.analysis.analyser.Analyser
+import ru.nikstep.redink.analysis.data.AnalysisSettings
 import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
 import ru.nikstep.redink.checks.github.GithubAnalysisConclusion
 import ru.nikstep.redink.checks.github.GithubAnalysisResultData
@@ -14,14 +15,20 @@ import ru.nikstep.redink.util.GitProperty
 import java.io.PrintWriter
 import java.io.StringWriter
 
-class AnalysisManager(
+/**
+ * Main analysis class
+ */
+class AnalysisRunner(
     private val analysisStatusCheckService: AnalysisStatusCheckService,
     private val analysers: Map<AnalyserProperty, Analyser>,
     private val analysisResultDataManager: AnalysisResultDataManager
 ) {
     private val logger = KotlinLogging.logger {}
 
-    fun initiateAnalysis(analysisSettings: AnalysisSettings): Analysis {
+    /**
+     * Run analysis with [analysisSettings]
+     */
+    fun run(analysisSettings: AnalysisSettings): Analysis {
         val analysisService = analysers.getValue(analysisSettings.analyser)
         return analysisService.analyse(analysisSettings)
             .let { analysisResultDataManager.saveAnalysis(analysisSettings.repository, it) }

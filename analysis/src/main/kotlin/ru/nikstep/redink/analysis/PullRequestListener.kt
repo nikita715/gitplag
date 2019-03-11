@@ -3,7 +3,7 @@ package ru.nikstep.redink.analysis
 import mu.KotlinLogging
 import org.springframework.context.ApplicationListener
 import ru.nikstep.redink.analysis.loader.GitLoader
-import ru.nikstep.redink.model.PullRequestEvent
+import ru.nikstep.redink.git.PullRequestEvent
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.GitProperty
 
@@ -12,9 +12,9 @@ class PullRequestListener(
 ) : ApplicationListener<PullRequestEvent> {
     private val logger = KotlinLogging.logger {}
 
-    override fun onApplicationEvent(event: PullRequestEvent) = initiateAnalysis(event.pullRequest)
+    override fun onApplicationEvent(event: PullRequestEvent) = loadChangedFiles(event.pullRequest)
 
-    private fun initiateAnalysis(pullRequest: PullRequest) {
+    private fun loadChangedFiles(pullRequest: PullRequest) {
         val gitServiceLoader = gitLoaders.getValue(pullRequest.gitService)
         gitServiceLoader.loadFilesFromGit(pullRequest)
     }

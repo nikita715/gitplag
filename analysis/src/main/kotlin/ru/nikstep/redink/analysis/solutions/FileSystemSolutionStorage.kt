@@ -1,9 +1,9 @@
 package ru.nikstep.redink.analysis.solutions
 
 import mu.KotlinLogging
-import ru.nikstep.redink.analysis.AnalysisSettings
-import ru.nikstep.redink.analysis.CommittedFile
-import ru.nikstep.redink.analysis.PreparedAnalysisFiles
+import ru.nikstep.redink.analysis.data.AnalysisSettings
+import ru.nikstep.redink.analysis.data.CommittedFile
+import ru.nikstep.redink.analysis.data.PreparedAnalysisFiles
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.SourceCode
@@ -51,13 +51,14 @@ class FileSystemSolutionStorage(
     private val baseDir = ".base"
 
     @Synchronized
-    override fun loadAllBasesAndSolutions(analysisSettings: AnalysisSettings) = PreparedAnalysisFiles(
-        repoName = analysisSettings.repository.name,
-        language = analysisSettings.language,
-        analyser = analysisSettings.analyser,
-        bases = loadBases(analysisSettings.repository),
-        solutions = loadSolutionFiles(analysisSettings.repository)
-    )
+    override fun loadAllBasesAndSolutions(analysisSettings: AnalysisSettings) =
+        PreparedAnalysisFiles(
+            repoName = analysisSettings.repository.name,
+            language = analysisSettings.language,
+            analyser = analysisSettings.analyser,
+            bases = loadBases(analysisSettings.repository),
+            solutions = loadSolutionFiles(analysisSettings.repository)
+        )
 
     override fun loadBases(repository: Repository): List<File> {
         return Files.walk(Paths.get(solutionsDir, repository.gitService.toString(), repository.name, baseDir))

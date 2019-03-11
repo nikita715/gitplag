@@ -2,8 +2,8 @@ package ru.nikstep.redink.analysis.analyser
 
 import mu.KotlinLogging
 import org.jsoup.Jsoup
-import ru.nikstep.redink.analysis.AnalysisSettings
-import ru.nikstep.redink.analysis.PreparedAnalysisFiles
+import ru.nikstep.redink.analysis.data.AnalysisSettings
+import ru.nikstep.redink.analysis.data.PreparedAnalysisFiles
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.MatchedLines

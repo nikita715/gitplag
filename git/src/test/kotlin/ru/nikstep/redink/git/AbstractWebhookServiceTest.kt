@@ -12,7 +12,6 @@ import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.springframework.context.ApplicationEventPublisher
 import ru.nikstep.redink.git.webhook.WebhookService
-import ru.nikstep.redink.model.PullRequestEvent
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.asPath
@@ -41,7 +40,14 @@ abstract class AbstractWebhookServiceTest {
         webhookService.saveNewPullRequest(payload)
         verify(pullRequestRepository).save(argument.capture())
         argument.value shouldEqual pullRequest
-        verify(applicationEventPublisher).publishEvent(eq(PullRequestEvent(webhookService, pullRequest)))
+        verify(applicationEventPublisher).publishEvent(
+            eq(
+                PullRequestEvent(
+                    webhookService,
+                    pullRequest
+                )
+            )
+        )
     }
 
     companion object {

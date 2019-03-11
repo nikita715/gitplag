@@ -4,10 +4,11 @@ import graphql.language.StringValue
 import graphql.schema.Coercing
 import graphql.schema.CoercingParseValueException
 import graphql.schema.GraphQLScalarType
-import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
-@Component
+/**
+ * [LocalDateTime] translator for graphql
+ */
 class LocalDateTimeScalarType : GraphQLScalarType(
     "LocalDateTime",
     "LocalDateTime value",

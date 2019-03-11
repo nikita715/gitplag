@@ -5,6 +5,9 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
+/**
+ * Mvc config of the application
+ */
 @Configuration
 class MvcConfig : WebMvcConfigurer {
 

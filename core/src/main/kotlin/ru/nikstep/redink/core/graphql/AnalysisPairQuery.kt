@@ -6,6 +6,9 @@ import ru.nikstep.redink.model.repo.AnalysisRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
 
+/**
+ * Graphql analysis requests resolver
+ */
 @Suppress("unused")
 class AnalysisPairQuery(
     private val repositoryRepository: RepositoryRepository,

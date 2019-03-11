@@ -5,8 +5,8 @@ import mu.KotlinLogging
 import org.springframework.context.ApplicationEventPublisher
 import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
 import ru.nikstep.redink.git.GitException
+import ru.nikstep.redink.git.PullRequestEvent
 import ru.nikstep.redink.git.inProgressStatus
-import ru.nikstep.redink.model.PullRequestEvent
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
