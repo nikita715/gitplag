@@ -1,4 +1,4 @@
-package ru.nikstep.redink.core.bean
+package ru.nikstep.redink.core.config
 
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
@@ -13,11 +13,17 @@ import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.UserRepository
 
+/**
+ * Configuration of git module
+ */
 @Configuration
 class GitConfig {
 
+    /**
+     * [GithubWebhookService] bean
+     */
     @Bean
-    fun githubPullRequestWebhookService(
+    fun githubWebhookService(
         analysisStatusCheckService: AnalysisStatusCheckService,
         pullRequestRepository: PullRequestRepository,
         applicationEventPublisher: ApplicationEventPublisher
@@ -29,22 +35,33 @@ class GitConfig {
         )
     }
 
+    /**
+     * [BitbucketWebhookService] bean
+     */
     @Bean
-    fun bitbucketPullRequestWebhookService(
+    fun bitbucketWebhookService(
         pullRequestRepository: PullRequestRepository,
         applicationEventPublisher: ApplicationEventPublisher
     ): BitbucketWebhookService {
         return BitbucketWebhookService(pullRequestRepository, applicationEventPublisher)
     }
 
+
+    /**
+     * [GitlabWebhookService] bean
+     */
     @Bean
-    fun gitlabPullRequestWebhookService(
+    fun gitlabWebhookService(
         pullRequestRepository: PullRequestRepository,
         applicationEventPublisher: ApplicationEventPublisher
     ): GitlabWebhookService {
         return GitlabWebhookService(pullRequestRepository, applicationEventPublisher)
     }
 
+
+    /**
+     * [GithubIntegrationService] bean
+     */
     @Bean
     fun githubIntegrationService(
         userRepository: UserRepository,
@@ -53,6 +70,10 @@ class GitConfig {
         return GithubIntegrationService(userRepository, repositoryDataManager)
     }
 
+
+    /**
+     * [RepositoryDataManager] bean
+     */
     @Bean
     fun repositoryDataManager(
         repositoryRepository: RepositoryRepository,

@@ -1,4 +1,4 @@
-package ru.nikstep.redink.core.rest
+package ru.nikstep.redink.core.webhook
 
 import mu.KotlinLogging
 import org.springframework.http.MediaType
@@ -9,6 +9,9 @@ import ru.nikstep.redink.git.integration.IntegrationService
 import ru.nikstep.redink.git.webhook.GithubWebhookService
 import javax.servlet.http.HttpServletRequest
 
+/**
+ * Receiver of github webhook messages
+ */
 @RestController
 class GithubWebhookController(
     private val githubWebhookService: GithubWebhookService,
@@ -16,6 +19,9 @@ class GithubWebhookController(
 ) {
     private val logger = KotlinLogging.logger {}
 
+    /**
+     * Receive and process [payload] from github
+     */
     @PostMapping("/webhook/github", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun processGithubWebhookRequest(@RequestBody payload: String, httpServletRequest: HttpServletRequest) {
         val event = httpServletRequest.getHeader("X-GitHub-Event")

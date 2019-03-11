@@ -1,6 +1,6 @@
 package ru.nikstep.redink.analysis.analyser
 
-import ru.nikstep.redink.analysis.AnalysisSettings
+import ru.nikstep.redink.analysis.data.AnalysisSettings
 import ru.nikstep.redink.model.data.AnalysisResult
 
 /**

@@ -1,4 +1,4 @@
-package ru.nikstep.redink.core.rest
+package ru.nikstep.redink.core.analysis
 
 import com.github.kittinunf.fuel.core.Method
 import mu.KotlinLogging
@@ -9,26 +9,30 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import ru.nikstep.redink.analysis.AnalysisManager
-import ru.nikstep.redink.analysis.AnalysisSettings
-import ru.nikstep.redink.analysis.analyser
-import ru.nikstep.redink.analysis.language
-import ru.nikstep.redink.core.exceptionAtAnalysisOf
-import ru.nikstep.redink.core.loggedAnalysis
+import ru.nikstep.redink.analysis.AnalysisRunner
+import ru.nikstep.redink.analysis.data.AnalysisSettings
+import ru.nikstep.redink.analysis.data.analyser
+import ru.nikstep.redink.analysis.data.language
 import ru.nikstep.redink.model.repo.AnalysisRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.sendRestRequest
 
+/**
+ * Analysis api controller
+ */
 @RestController
 class AnalysisController(
-    private val analysisManager: AnalysisManager,
+    private val analysisRunner: AnalysisRunner,
     private val analysisRepository: AnalysisRepository,
     private val repositoryRepository: RepositoryRepository
 ) {
     private val logger = KotlinLogging.logger {}
     private val objectMapper = ObjectMapper()
 
+    /**
+     * Receive analysis, wait and receive results
+     */
     @GetMapping("/analysis/run")
     fun analysisLazy(
         @RequestParam("git") git: String,
@@ -39,7 +43,7 @@ class AnalysisController(
         val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
         val analysisSettings = AnalysisSettings(repository).language(language).analyser(analyser)
         return try {
-            val analysis = analysisManager.initiateAnalysis(analysisSettings)
+            val analysis = analysisRunner.run(analysisSettings)
             ResponseEntity.ok(logger.loggedAnalysis(repository) {
                 analysisRepository.findById(analysis.id).get()
             })
@@ -49,6 +53,9 @@ class AnalysisController(
         }
     }
 
+    /**
+     * Receive analysis, find last executed analysis result
+     */
     @GetMapping("/analysis")
     fun analysis(@RequestParam("git") git: String, @RequestParam("repoName") repoName: String): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
@@ -56,6 +63,9 @@ class AnalysisController(
         return if (analysis != null) ResponseEntity.ok(analysis) else ResponseEntity.ok("Not analyzed")
     }
 
+    /**
+     * Receive analysis, run analysis silently, send results to [responseUrl]
+     */
     @GetMapping("/analysis/trigger")
     fun analysisStatic(
         @RequestParam("git") git: String,
@@ -70,9 +80,12 @@ class AnalysisController(
         return ResponseEntity<Any>(HttpStatus.ACCEPTED)
     }
 
+    /**
+     * Async runner of analyzes
+     */
     @Async("analysisThreadPoolTaskExecutor")
     fun run(analysisSettings: AnalysisSettings, responseUrl: String?) {
-        val analysis = analysisManager.initiateAnalysis(analysisSettings)
+        val analysis = analysisRunner.run(analysisSettings)
         if (responseUrl != null) sendRestRequest<Any>(
             url = responseUrl,
             method = Method.POST,

@@ -3,8 +3,8 @@ package ru.nikstep.redink.git.webhook
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
 import org.springframework.context.ApplicationEventPublisher
+import ru.nikstep.redink.git.PullRequestEvent
 import ru.nikstep.redink.git.newPullRequest
-import ru.nikstep.redink.model.PullRequestEvent
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty

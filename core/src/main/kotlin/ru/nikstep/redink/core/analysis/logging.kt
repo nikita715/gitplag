@@ -1,4 +1,4 @@
-package ru.nikstep.redink.core
+package ru.nikstep.redink.core.analysis
 
 import mu.KLogger
 import ru.nikstep.redink.model.entity.Repository

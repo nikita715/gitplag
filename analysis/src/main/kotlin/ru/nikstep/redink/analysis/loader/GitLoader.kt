@@ -13,8 +13,14 @@ interface GitLoader {
      */
     fun loadFilesFromGit(pullRequest: PullRequest)
 
+    /**
+     * Load text of file from git
+     */
     fun loadFileText(repoFullName: String, branchName: String, fileName: String): String
 
+    /**
+     * Load text of file from git with [secretKey] of the git service
+     */
     fun loadFileText(repoFullName: String, branchName: String, fileName: String, secretKey: String): String
 
 }

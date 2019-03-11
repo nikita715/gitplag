@@ -1,4 +1,4 @@
-package ru.nikstep.redink.core.bean
+package ru.nikstep.redink.core.config
 
 import com.google.common.cache.CacheBuilder
 import org.springframework.cache.Cache
@@ -10,10 +10,16 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.util.concurrent.TimeUnit
 
+/**
+ * Application caching configuration
+ */
 @Configuration
 @EnableCaching
 class CachingConfig {
 
+    /**
+     * [CacheManager] bean for github passwords
+     */
     @Bean
     fun cacheManager(): CacheManager {
         return object : ConcurrentMapCacheManager("githubAccessTokens") {

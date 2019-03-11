@@ -1,19 +1,26 @@
-package ru.nikstep.redink.core
+package ru.nikstep.redink.core.analysis
 
 import mu.KotlinLogging
 import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
-import ru.nikstep.redink.analysis.AnalysisManager
-import ru.nikstep.redink.analysis.AnalysisSettings
+import ru.nikstep.redink.analysis.AnalysisRunner
+import ru.nikstep.redink.analysis.data.AnalysisSettings
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.RepositoryRepository
+import ru.nikstep.redink.util.AnalysisMode
 
+/**
+ * Scheduler of [AnalysisMode.PERIODIC] analysis tasks
+ */
 open class AnalysisScheduler(
-    private val analysisManager: AnalysisManager,
+    private val analysisRunner: AnalysisRunner,
     private val repositoryRepository: RepositoryRepository
 ) {
     private val logger = KotlinLogging.logger {}
 
+    /**
+     * Find repositories required to analyse and run analyzes
+     */
     @Scheduled(cron = "0 * * * * *")
     fun initiateAnalysis() {
         logger.info { "Core: look for periodic analyzes" }
@@ -23,11 +30,14 @@ open class AnalysisScheduler(
         logger.info { "Core: end analyzes" }
     }
 
+    /**
+     * Initiate analysis of the [repository] async
+     */
     @Async("analysisThreadPoolTaskExecutor")
     open fun initiateAsync(repository: Repository) {
         try {
             logger.loggedAnalysis(repository) {
-                analysisManager.initiateAnalysis(AnalysisSettings(repository))
+                analysisRunner.run(AnalysisSettings(repository))
             }
         } catch (e: Exception) {
             logger.exceptionAtAnalysisOf(e, repository)

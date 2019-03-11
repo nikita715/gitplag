@@ -1,4 +1,4 @@
-package ru.nikstep.redink.core.bean
+package ru.nikstep.redink.core.config
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -7,7 +7,7 @@ import org.springframework.context.event.ApplicationEventMulticaster
 import org.springframework.context.event.SimpleApplicationEventMulticaster
 import org.springframework.core.task.TaskExecutor
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
-import ru.nikstep.redink.analysis.AnalysisManager
+import ru.nikstep.redink.analysis.AnalysisRunner
 import ru.nikstep.redink.analysis.PullRequestListener
 import ru.nikstep.redink.analysis.analyser.Analyser
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
@@ -29,18 +29,27 @@ import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.*
 import ru.nikstep.redink.util.auth.AuthorizationService
 
+/**
+ * Configuration of analysis module
+ */
 @Configuration
 class AnalysisConfig {
 
+    /**
+     * [FileSystemSolutionStorage] bean
+     */
     @Bean
     fun solutionStorageService(
         sourceCodeRepository: SourceCodeRepository,
         repositoryRepository: RepositoryRepository
-    ): SolutionStorage = FileSystemSolutionStorage(sourceCodeRepository, repositoryRepository)
+    ): FileSystemSolutionStorage = FileSystemSolutionStorage(sourceCodeRepository, repositoryRepository)
 
 
+    /**
+     * [MossAnalyser] bean
+     */
     @Bean
-    fun mossAnalysisService(
+    fun mossAnalyser(
         solutionStorage: SolutionStorage,
         @Value("\${redink.mossId}") mossId: String
     ): MossAnalyser = MossAnalyser(
@@ -48,41 +57,60 @@ class AnalysisConfig {
         mossId
     )
 
+
+    /**
+     * [JPlagAnalyser] bean
+     */
     @Bean
-    fun jplagAnalysisService(
+    fun jplagAnalyser(
         solutionStorage: SolutionStorage,
         @Value("\${redink.solutionsDir}") solutionsDir: String
     ): JPlagAnalyser = JPlagAnalyser(solutionStorage, solutionsDir)
 
 
+    /**
+     * [PullRequestListener] bean
+     */
     @Bean
     fun pullRequestListener(
         gitLoaders: Map<GitProperty, GitLoader>
     ): PullRequestListener = PullRequestListener(gitLoaders)
 
 
+    /**
+     * [GithubLoader] bean
+     */
     @Bean
-    fun githubServiceLoader(
+    fun githubLoader(
         solutionStorage: SolutionStorage,
         repositoryRepository: RepositoryRepository,
         authorizationService: AuthorizationService
     ): GithubLoader = GithubLoader(solutionStorage, repositoryRepository, authorizationService)
 
 
+    /**
+     * [BitbucketLoader] bean
+     */
     @Bean
-    fun bitbucketServiceLoader(
+    fun bitbucketLoader(
         solutionStorage: SolutionStorage,
         repositoryRepository: RepositoryRepository
     ): BitbucketLoader = BitbucketLoader(solutionStorage, repositoryRepository)
 
 
+    /**
+     * [GitlabLoader] bean
+     */
     @Bean
-    fun gitlabServiceLoader(
+    fun gitlabLoader(
         solutionStorage: SolutionStorage,
         repositoryRepository: RepositoryRepository
     ): GitlabLoader = GitlabLoader(solutionStorage, repositoryRepository)
 
 
+    /**
+     * Map bean with all [GitLoader]s
+     */
     @Bean
     fun gitServiceLoaders(
         githubServiceLoader: GithubLoader,
@@ -95,6 +123,9 @@ class AnalysisConfig {
     )
 
 
+    /**
+     * Map bean with all [Analyser]s
+     */
     @Bean
     fun analysers(
         mossAnalysisService: MossAnalyser,
@@ -105,6 +136,9 @@ class AnalysisConfig {
     )
 
 
+    /**
+     * [TaskExecutor] bean for analysis tasks
+     */
     @Bean
     fun analysisThreadPoolTaskExecutor(): TaskExecutor {
         val executor = ThreadPoolTaskExecutor()
@@ -114,6 +148,10 @@ class AnalysisConfig {
         return executor
     }
 
+
+    /**
+     * [ApplicationEventMulticaster] bean
+     */
     @Bean(name = ["applicationEventMulticaster"])
     fun simpleApplicationEventMulticaster(): ApplicationEventMulticaster {
         val eventMulticaster = SimpleApplicationEventMulticaster()
@@ -121,12 +159,16 @@ class AnalysisConfig {
         return eventMulticaster
     }
 
+
+    /**
+     * [AnalysisRunner] bean
+     */
     @Bean
     fun analysisManager(
         analysisStatusCheckService: AnalysisStatusCheckService,
         analysers: Map<AnalyserProperty, Analyser>,
         analysisResultDataManager: AnalysisResultDataManager
-    ): AnalysisManager = AnalysisManager(
+    ): AnalysisRunner = AnalysisRunner(
         analysisStatusCheckService,
         analysers,
         analysisResultDataManager

@@ -1,4 +1,4 @@
-package ru.nikstep.redink.analysis
+package ru.nikstep.redink.analysis.data
 
 import mu.KotlinLogging
 import ru.nikstep.redink.util.AnalyserProperty
@@ -6,12 +6,13 @@ import ru.nikstep.redink.util.Language
 
 private val logger = KotlinLogging.logger {}
 
-fun AnalysisSettings.analyser(analyser: AnalyserProperty): AnalysisSettings = AnalysisSettings(
-    repository = repository,
-    analyser = analyser,
-    gitService = gitService,
-    language = language
-)
+fun AnalysisSettings.analyser(analyser: AnalyserProperty): AnalysisSettings =
+    AnalysisSettings(
+        repository = repository,
+        analyser = analyser,
+        gitService = gitService,
+        language = language
+    )
 
 fun AnalysisSettings.analyser(analyser: String?): AnalysisSettings {
     if (analyser != null) {
@@ -24,12 +25,13 @@ fun AnalysisSettings.analyser(analyser: String?): AnalysisSettings {
     return this
 }
 
-fun AnalysisSettings.language(language: Language): AnalysisSettings = AnalysisSettings(
-    repository = repository,
-    analyser = analyser,
-    gitService = gitService,
-    language = language
-)
+fun AnalysisSettings.language(language: Language): AnalysisSettings =
+    AnalysisSettings(
+        repository = repository,
+        analyser = analyser,
+        gitService = gitService,
+        language = language
+    )
 
 fun AnalysisSettings.language(language: String?): AnalysisSettings {
     if (language != null) {

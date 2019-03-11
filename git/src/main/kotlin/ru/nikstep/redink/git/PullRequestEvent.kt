@@ -1,4 +1,4 @@
-package ru.nikstep.redink.model
+package ru.nikstep.redink.git
 
 import org.springframework.context.ApplicationEvent
 import ru.nikstep.redink.model.entity.PullRequest

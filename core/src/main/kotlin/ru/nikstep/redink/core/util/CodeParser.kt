@@ -5,7 +5,7 @@ import java.io.File
 private val beforePattern = """[({}<>,.:=&|^\-+%/ ]""".toRegex()
 private val afterPattern = """[){}<>,.:=&|^\-+%/ ]""".toRegex()
 
-fun parseLines(fileName: String): List<String> {
+private fun parseLines(fileName: String): List<String> {
     val lines = mutableListOf<String>()
     File(fileName).useLines { lines.addAll(it) }
     return replaceNoise(lines)
