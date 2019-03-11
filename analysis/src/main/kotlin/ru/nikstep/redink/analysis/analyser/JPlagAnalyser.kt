@@ -41,7 +41,7 @@ class JPlagAnalyser(private val solutionStorage: SolutionStorage, private val so
     ): AnalysisResult {
         val body = Jsoup.parse(File(asPath(resultDir, "match$index-link.html")).readText())
             .body()
-        val (name1, name2) = regexUserNames.find(body.getElementsByTag("H3")[0].text())!!
+        val (name1, name2) = requireNotNull(regexUserNames.find(body.getElementsByTag("H3")[0].text()))
             .groupValues.subList(1, 3)
         val percentage = body.getElementsByTag("H1")[0].text().replace("%", "").toDouble().roundToInt()
         val body2 = Jsoup.parse(File(asPath(resultDir, "match$index-top.html")).readText())
@@ -50,9 +50,9 @@ class JPlagAnalyser(private val solutionStorage: SolutionStorage, private val so
         val matchedLines = mutableListOf<MatchedLines>()
         for (rowNumber in 1 until rows.size - 1) {
             val columns = rows[rowNumber].getElementsByTag("td")
-            val (fileName1, from1, to1) = regexMatchedRows.find(columns[1].text())!!
+            val (fileName1, from1, to1) = requireNotNull(regexMatchedRows.find(columns[1].text()))
                 .groupValues.subList(1, 4)
-            val (fileName2, from2, to2) = regexMatchedRows.find(columns[2].text())!!
+            val (fileName2, from2, to2) = requireNotNull(regexMatchedRows.find(columns[2].text()))
                 .groupValues.subList(1, 4)
             matchedLines += MatchedLines(
                 match1 = from1.toInt() to to1.toInt(),

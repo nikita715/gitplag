@@ -3,10 +3,6 @@ package ru.nikstep.redink.core.config
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.event.ApplicationEventMulticaster
-import org.springframework.context.event.SimpleApplicationEventMulticaster
-import org.springframework.core.task.TaskExecutor
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 import ru.nikstep.redink.analysis.AnalysisRunner
 import ru.nikstep.redink.analysis.PullRequestListener
 import ru.nikstep.redink.analysis.analyser.Analyser
@@ -23,10 +19,7 @@ import ru.nikstep.redink.model.data.AnalysisResultDataManager
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SourceCodeRepository
 import ru.nikstep.redink.util.AnalyserProperty
-import ru.nikstep.redink.util.AnalyserProperty.JPLAG
-import ru.nikstep.redink.util.AnalyserProperty.MOSS
 import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.GitProperty.*
 import ru.nikstep.redink.util.auth.AuthorizationService
 
 /**
@@ -43,7 +36,6 @@ class AnalysisConfig {
         sourceCodeRepository: SourceCodeRepository,
         repositoryRepository: RepositoryRepository
     ): FileSystemSolutionStorage = FileSystemSolutionStorage(sourceCodeRepository, repositoryRepository)
-
 
     /**
      * [MossAnalyser] bean
@@ -109,58 +101,6 @@ class AnalysisConfig {
 
 
     /**
-     * Map bean with all [GitLoader]s
-     */
-    @Bean
-    fun gitServiceLoaders(
-        githubServiceLoader: GithubLoader,
-        bitbucketServiceLoader: BitbucketLoader,
-        gitlabServiceLoader: GitlabLoader
-    ): Map<GitProperty, GitLoader> = mapOf(
-        GITHUB to githubServiceLoader,
-        BITBUCKET to bitbucketServiceLoader,
-        GITLAB to gitlabServiceLoader
-    )
-
-
-    /**
-     * Map bean with all [Analyser]s
-     */
-    @Bean
-    fun analysers(
-        mossAnalysisService: MossAnalyser,
-        jPlagAnalysisService: JPlagAnalyser
-    ): Map<AnalyserProperty, Analyser> = mapOf(
-        MOSS to mossAnalysisService,
-        JPLAG to jPlagAnalysisService
-    )
-
-
-    /**
-     * [TaskExecutor] bean for analysis tasks
-     */
-    @Bean
-    fun analysisThreadPoolTaskExecutor(): TaskExecutor {
-        val executor = ThreadPoolTaskExecutor()
-        executor.corePoolSize = 4
-        executor.maxPoolSize = 4
-        executor.initialize()
-        return executor
-    }
-
-
-    /**
-     * [ApplicationEventMulticaster] bean
-     */
-    @Bean(name = ["applicationEventMulticaster"])
-    fun simpleApplicationEventMulticaster(): ApplicationEventMulticaster {
-        val eventMulticaster = SimpleApplicationEventMulticaster()
-        eventMulticaster.setTaskExecutor(analysisThreadPoolTaskExecutor())
-        return eventMulticaster
-    }
-
-
-    /**
      * [AnalysisRunner] bean
      */
     @Bean
@@ -173,6 +113,5 @@ class AnalysisConfig {
         analysers,
         analysisResultDataManager
     )
-
 
 }

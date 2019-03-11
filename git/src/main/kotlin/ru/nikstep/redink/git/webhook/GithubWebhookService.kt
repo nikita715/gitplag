@@ -73,9 +73,11 @@ class GithubWebhookService(
     fun relaunch(payload: String) {
         val payloadObject = payload.parseAsObject()
         if (payloadObject["action"] == "rerequested") {
-            val prNumber =
-                (payloadObject.obj("check_run")?.array<Any>("pull_requests")?.get(0) as JsonObject).int("number")!!
-            val repoFullName = payloadObject.obj("repository")?.string("full_name")!!
+            val prNumber = requireNotNull(
+                (
+                        payloadObject.obj("check_run")?.array<Any>("pull_requests")?.get(0) as JsonObject).int("number")
+            )
+            val repoFullName = requireNotNull(payloadObject.obj("repository")?.string("full_name"))
             val pullRequest =
                 pullRequestRepository.findFirstByRepoFullNameAndNumberOrderByIdDesc(repoFullName, prNumber)
             applicationEventPublisher.publishEvent(PullRequestEvent(this, pullRequest))

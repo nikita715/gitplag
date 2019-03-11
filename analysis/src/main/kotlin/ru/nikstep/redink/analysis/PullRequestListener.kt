@@ -7,6 +7,10 @@ import ru.nikstep.redink.git.PullRequestEvent
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.GitProperty
 
+/**
+ * Listener of [PullRequestEvent]s.
+ * Loads files from the received [PullRequest]
+ */
 class PullRequestListener(
     private val gitLoaders: Map<GitProperty, GitLoader>
 ) : ApplicationListener<PullRequestEvent> {

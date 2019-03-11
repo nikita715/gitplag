@@ -59,7 +59,6 @@ abstract class AbstractAnalyserTest {
     )
 
     internal val solutionStorageService = mock<SolutionStorage> {
-        on { getCountOfSolutionFiles(repository, testFileName) } doReturn 3
         on { loadAllBasesAndSolutions(any()) } doReturn testPreparedAnalysisFiles
     }
 

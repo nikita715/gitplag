@@ -16,9 +16,9 @@ class BitbucketLoader(
 
     override fun loadChangedFiles(pullRequest: PullRequest): List<String> =
         pullRequest.run {
-            sendRestRequest<JsonObject>(
+            requireNotNull(sendRestRequest<JsonObject>(
                 url = "https://api.bitbucket.org/2.0/repositories/$repoFullName/pullrequests/$number/diffstat"
-            ).array<JsonObject>("values")!!.map { it.obj("new")!!.string("path")!! }
+            ).array<JsonObject>("values")?.map { requireNotNull(it.obj("new")?.string("path")) })
         }
 
 
