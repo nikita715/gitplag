@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
 import ru.nikstep.redink.analysis.AnalysisRunner
-import ru.nikstep.redink.analysis.data.AnalysisSettings
+import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.AnalysisMode

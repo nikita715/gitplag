@@ -58,6 +58,7 @@ class Repository(
     @Enumerated(EnumType.STRING)
     val gitService: GitProperty,
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     val language: Language,
 

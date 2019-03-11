@@ -1,4 +1,4 @@
-package ru.nikstep.redink.analysis.data
+package ru.nikstep.redink.model.data
 
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.util.AnalyserProperty

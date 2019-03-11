@@ -6,11 +6,11 @@ import com.nhaarman.mockitokotlin2.mock
 import io.kotlintest.matchers.shouldEqual
 import org.junit.Test
 import ru.nikstep.redink.analysis.analyser.Analyser
-import ru.nikstep.redink.analysis.data.AnalysisSettings
-import ru.nikstep.redink.analysis.data.CommittedFile
-import ru.nikstep.redink.analysis.data.PreparedAnalysisFiles
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
+import ru.nikstep.redink.model.data.AnalysisSettings
+import ru.nikstep.redink.model.data.CommittedFile
+import ru.nikstep.redink.model.data.PreparedAnalysisFiles
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.util.AnalyserProperty

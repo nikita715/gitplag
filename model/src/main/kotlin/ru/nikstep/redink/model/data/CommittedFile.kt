@@ -1,4 +1,4 @@
-package ru.nikstep.redink.analysis.data
+package ru.nikstep.redink.model.data
 
 import java.io.File
 

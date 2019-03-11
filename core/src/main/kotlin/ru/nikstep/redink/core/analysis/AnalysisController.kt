@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import ru.nikstep.redink.analysis.AnalysisRunner
-import ru.nikstep.redink.analysis.data.AnalysisSettings
-import ru.nikstep.redink.analysis.data.analyser
-import ru.nikstep.redink.analysis.data.language
+import ru.nikstep.redink.model.data.AnalysisSettings
+import ru.nikstep.redink.model.data.analyser
+import ru.nikstep.redink.model.data.language
 import ru.nikstep.redink.model.repo.AnalysisRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
