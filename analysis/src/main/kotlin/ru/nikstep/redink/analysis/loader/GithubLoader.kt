@@ -13,8 +13,8 @@ import ru.nikstep.redink.util.sendRestRequest
  * Loader of files from Github
  */
 class GithubLoader(
-    private val solutionStorage: SolutionStorage,
-    private val repositoryRepository: RepositoryRepository,
+    solutionStorage: SolutionStorage,
+    repositoryRepository: RepositoryRepository,
     private val authorizationService: AuthorizationService
 ) : AbstractGitLoader(solutionStorage, repositoryRepository) {
 
