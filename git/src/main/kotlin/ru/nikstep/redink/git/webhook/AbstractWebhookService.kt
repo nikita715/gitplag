@@ -32,14 +32,14 @@ abstract class AbstractWebhookService(
         jsonObject.run {
             PullRequest(
                 gitService = gitService,
-                repoId = requireNotNull(repoId) { "repo id is null" },
-                number = requireNotNull(number) { "number is null" },
-                repoFullName = requireNotNull(repoFullName) { "repoFullName is null" },
-                creatorName = requireNotNull(creatorName) { "creatorName is null" },
-                headSha = requireNotNull(headSha) { "headSha is null" },
-                branchName = requireNotNull(branchName) { "branchName is null" },
-                secretKey = requireNotNull(secretKey) { "secretKey is null" },
-                date = requireNotNull(date) { "date is null" }
+                repoId = requireNotNull(repoId),
+                number = requireNotNull(number),
+                repoFullName = requireNotNull(repoFullName),
+                creatorName = requireNotNull(creatorName),
+                headSha = requireNotNull(headSha),
+                branchName = requireNotNull(branchName),
+                secretKey = requireNotNull(secretKey),
+                date = requireNotNull(date)
             )
         }
     }

@@ -2,6 +2,9 @@ package ru.nikstep.redink.model.data
 
 import ru.nikstep.redink.util.GitProperty
 
+/**
+ * Data class for saving analysis results
+ */
 data class AnalysisResult(
     val students: Pair<String, String>,
     val sha: Pair<String, String>,

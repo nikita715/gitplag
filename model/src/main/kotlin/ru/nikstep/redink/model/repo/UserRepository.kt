@@ -8,7 +8,9 @@ import ru.nikstep.redink.model.entity.User
  */
 interface UserRepository : JpaRepository<User, Long> {
 
+    /**
+     * Find [User] by [name]
+     */
     fun findByName(name: String): User
-    fun findByInstallationId(installationId: Long): User
 
 }

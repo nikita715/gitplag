@@ -5,6 +5,9 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.util.ResourceUtils
 import ru.nikstep.redink.util.sendGithubAccessTokenRequest
 
+/**
+ * Github authorisation service
+ */
 open class GithubAuthorizationService : AuthorizationService {
 
     private val logger = KotlinLogging.logger {}

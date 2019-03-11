@@ -3,6 +3,7 @@ package ru.nikstep.redink.model.repo
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import ru.nikstep.redink.model.entity.Repository
+import ru.nikstep.redink.util.AnalysisMode
 import ru.nikstep.redink.util.GitProperty
 
 /**
@@ -15,6 +16,9 @@ interface RepositoryRepository : JpaRepository<Repository, Long> {
      */
     fun findByGitServiceAndName(gitService: GitProperty, name: String): Repository
 
+    /**
+     * Find repositories with [AnalysisMode.PERIODIC] that must be analysed now
+     */
     @Query(
         nativeQuery = true, value = """select * from repository
 where repository.analysis_mode = 'PERIODIC' and extract(epoch from now() - (select execution_date
@@ -25,5 +29,8 @@ where repository.analysis_mode = 'PERIODIC' and extract(epoch from now() - (sele
     )
     fun findRequiredToAnalyse(): List<Repository>
 
+    /**
+     * Delete repository by [gitService] and [name]
+     */
     fun deleteByGitServiceAndName(gitService: GitProperty, name: String)
 }
