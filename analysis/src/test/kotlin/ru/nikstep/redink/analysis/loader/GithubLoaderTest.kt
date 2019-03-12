@@ -1,9 +1,11 @@
 package ru.nikstep.redink.analysis.loader
 
+import org.junit.Ignore
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.GitProperty
 import java.time.LocalDateTime
 
+@Ignore
 class GithubLoaderTest : AbstractGitLoaderTest() {
     override val repoName = "testns/plagiarism_test"
 
