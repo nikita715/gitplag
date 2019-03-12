@@ -1,5 +1,6 @@
 package ru.nikstep.redink.core.config
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
@@ -10,6 +11,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
  */
 @Configuration
 class MvcConfig : WebMvcConfigurer {
+
+    @Value("\${redink.jplagResultDir}")
+    private lateinit var jplagResultDir: String
 
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
@@ -23,8 +27,10 @@ class MvcConfig : WebMvcConfigurer {
             .allowCredentials(true).maxAge(3600)
     }
 
+
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler("/static/**", "/resources/**")
             .addResourceLocations("classpath:/static/")
+        registry.addResourceHandler("/jplagresult/**").addResourceLocations("file:$jplagResultDir")
     }
 }

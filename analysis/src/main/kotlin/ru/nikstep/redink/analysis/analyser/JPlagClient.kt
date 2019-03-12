@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit
 internal class JPlagClient(
     analysisData: PreparedAnalysisData,
     private val solutionsPath: String,
+    private val branchName: String,
     private val resultPath: String
 ) {
 
@@ -25,7 +26,7 @@ internal class JPlagClient(
     fun run() =
         buildString {
             append("java -jar $jplagPath  -l $language -bc .base -r $resultPath -s ")
-            append(asPath(solutionsPath, repoName))
+            append(asPath(solutionsPath, repoName, branchName))
         }.also { task ->
             logged(task) {
                 execute(task)

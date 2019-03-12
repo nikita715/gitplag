@@ -52,17 +52,22 @@ class AnalysisResultDataManagerTest {
     private val analysisSettings = AnalysisSettings(repo, "qwe")
 
     private val analysisResult = AnalysisResult(
-        students = "st1" to "st2",
-        sha = "sha1" to "sha2",
-        lines = 10,
-        percentage = 20,
-        repo = repo.name,
-        gitService = repo.gitService,
-        matchedLines = listOf(MatchedLines(match1 = 1 to 2, match2 = 2 to 3, files = "f1" to "f2"))
+        repo.name,
+        repo.gitService,
+        "",
+        listOf(
+            AnalysisMatch(
+                students = "st1" to "st2",
+                sha = "sha1" to "sha2",
+                lines = 10,
+                percentage = 20,
+                matchedLines = listOf(MatchedLines(match1 = 1 to 2, match2 = 2 to 3, files = "f1" to "f2"))
+            )
+        )
     )
 
     @Test
     fun saveAll() {
-        analysisResultDataManager.saveAnalysis(analysisSettings, listOf(analysisResult))
+        analysisResultDataManager.saveAnalysis(analysisSettings, analysisResult)
     }
 }

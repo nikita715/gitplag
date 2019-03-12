@@ -19,6 +19,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
             .antMatchers("/**")
             .permitAll()
             .and().logout().logoutSuccessUrl("/").permitAll()
+            .and().headers().frameOptions().sameOrigin()
     }
 
 }

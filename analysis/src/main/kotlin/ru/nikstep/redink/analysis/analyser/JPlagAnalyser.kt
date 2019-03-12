@@ -1,44 +1,50 @@
 package ru.nikstep.redink.analysis.analyser
 
 import mu.KotlinLogging
+import org.apache.commons.lang3.RandomStringUtils
 import org.jsoup.Jsoup
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
-import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.data.AnalysisSettings
-import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.data.PreparedAnalysisData
+import ru.nikstep.redink.model.data.*
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.asPathInRoot
-import ru.nikstep.redink.util.inTempDirectory
 import java.io.File
+import java.nio.file.Files
 import kotlin.math.roundToInt
 
 /**
  * JPlag client wrapper
  */
-class JPlagAnalyser(private val solutionStorage: SolutionStorage, private val solutionsDir: String) :
+class JPlagAnalyser(
+    private val solutionStorage: SolutionStorage,
+    private val solutionsDir: String,
+    private val jplagResultDir: String,
+    private val serverUrl: String
+) :
     Analyser {
 
     private val logger = KotlinLogging.logger {}
     private val regexUserNames = "^Matches for (.+) & (.+)$".toRegex()
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
-    override fun analyse(analysisSettings: AnalysisSettings): Collection<AnalysisResult> =
-        inTempDirectory { resultDir ->
-            val analysisFiles = solutionStorage.loadAllBasesAndSolutions(analysisSettings)
-            val solutionsPath = solutionsDir.asPathInRoot() + "/" + analysisSettings.gitService.toString()
-            JPlagClient(analysisFiles, solutionsPath, resultDir).run()
-            analysisFiles.indexRangeOfEachToEachStudentPair().map { index ->
-                parseResults(analysisSettings, analysisFiles, resultDir, index)
-            }
+    override fun analyse(analysisSettings: AnalysisSettings): AnalysisResult {
+        val hash = RandomStringUtils.randomAlphanumeric(10)
+        val file = File(jplagResultDir + hash)
+        Files.createDirectory(file.toPath())
+        val resultDir = file.absolutePath
+        val analysisFiles = solutionStorage.loadAllBasesAndSolutions(analysisSettings)
+        val solutionsPath = solutionsDir.asPathInRoot() + "/" + analysisSettings.gitService.toString()
+        JPlagClient(analysisFiles, solutionsPath, analysisSettings.branch, resultDir).run()
+        val matchLines = analysisFiles.toSolutionPairIndexes().map { index ->
+            parseResults(resultDir, index)
         }
+        val resultLink = serverUrl + "/jplagresult/" + hash + "/index.html"
+        return AnalysisResult(analysisSettings, resultLink, matchLines)
+    }
 
     private fun parseResults(
-        analysisSettings: AnalysisSettings,
-        analysisData: PreparedAnalysisData,
         resultDir: String,
         index: Int
-    ): AnalysisResult {
+    ): AnalysisMatch {
         val body = Jsoup.parse(File(asPath(resultDir, "match$index-link.html")).readText())
             .body()
         val (name1, name2) = requireNotNull(regexUserNames.find(body.getElementsByTag("H3")[0].text()))
@@ -60,18 +66,16 @@ class JPlagAnalyser(private val solutionStorage: SolutionStorage, private val so
                 files = fileName1 to fileName2
             )
         }
-        return AnalysisResult(
+        return AnalysisMatch(
             students = name1 to name2,
             sha = "" to "",
             lines = -1,
             percentage = percentage,
-            repo = analysisData.repoName,
-            gitService = analysisSettings.gitService,
             matchedLines = matchedLines
         )
     }
 
-    private fun PreparedAnalysisData.indexRangeOfEachToEachStudentPair(): IntRange {
+    private fun PreparedAnalysisData.toSolutionPairIndexes(): IntRange {
         val countOfMatches = (0 until solutions.size).sum()
         return 0 until countOfMatches
     }

@@ -13,5 +13,5 @@ interface Analyser {
      *
      * @return student-to-student matches for each file
      */
-    fun analyse(analysisSettings: AnalysisSettings): Collection<AnalysisResult>
+    fun analyse(analysisSettings: AnalysisSettings): AnalysisResult
 }
