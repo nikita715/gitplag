@@ -14,7 +14,7 @@ class SolutionsController(
     @GetMapping("/solutions")
     fun solutions(
         @RequestParam("git") git: String,
-        @RequestParam("repo", required = false) repo: String,
+        @RequestParam("repo") repo: String,
         @RequestParam("sourceBranch", required = false) sourceBranch: String?,
         @RequestParam("targetBranch", required = false) targetBranch: String?,
         @RequestParam("student", required = false) student: String?,
