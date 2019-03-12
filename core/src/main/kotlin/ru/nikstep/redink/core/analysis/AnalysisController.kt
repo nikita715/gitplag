@@ -1,10 +1,8 @@
 package ru.nikstep.redink.core.analysis
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.scheduling.annotation.Async
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -16,7 +14,6 @@ import ru.nikstep.redink.model.data.language
 import ru.nikstep.redink.model.repo.AnalysisRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.sendAnalysisResult
 
 /**
  * Analysis api controller
@@ -25,10 +22,10 @@ import ru.nikstep.redink.util.sendAnalysisResult
 class AnalysisController(
     private val analysisRunner: AnalysisRunner,
     private val analysisRepository: AnalysisRepository,
-    private val repositoryRepository: RepositoryRepository
+    private val repositoryRepository: RepositoryRepository,
+    private val analysisAsyncRunner: AnalysisAsyncRunner
 ) {
     private val logger = KotlinLogging.logger {}
-    private val objectMapper = ObjectMapper()
 
     /**
      * Receive analysis, wait and receive results
@@ -84,22 +81,8 @@ class AnalysisController(
         val analysisSettings =
             AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
                 .branchMode(branchMode)
-        run(analysisSettings, responseUrl)
+        analysisAsyncRunner.run(analysisSettings, responseUrl)
         return ResponseEntity.ok("Accepted")
-    }
-
-    /**
-     * Async runner of analyzes
-     */
-    @Async("analysisThreadPoolTaskExecutor")
-    fun run(analysisSettings: AnalysisSettings, responseUrl: String?) {
-        logger.loggedAnalysis(analysisSettings) {
-            val analysis = analysisRunner.run(analysisSettings)
-            if (responseUrl != null) sendAnalysisResult(
-                url = responseUrl,
-                body = objectMapper.writeValueAsString(analysis)
-            )
-        }
     }
 
 }
