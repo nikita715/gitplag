@@ -29,7 +29,7 @@ class AnalysisScheduler(
             repository.branches.map { branch ->
                 AnalysisSettings(repository, branch)
             }
-        }.forEach { analysisAsyncRunner.initiateAsync(it) }
+        }.forEach { analysisAsyncRunner.run(it) }
         logger.info { "Core: end analyzes" }
     }
 }

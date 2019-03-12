@@ -1,6 +1,13 @@
 package ru.nikstep.redink.model.entity
 
-import javax.persistence.*
+import ru.nikstep.redink.util.GitProperty
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
 
 /**
  * Info class about stored solutions
@@ -17,7 +24,10 @@ class SourceCode(
     val fileName: String,
     val sha: String,
     val sourceBranch: String,
-    val targetBranch: String
+    val targetBranch: String,
+
+    @Enumerated(EnumType.STRING)
+    val gitService: GitProperty
 ) {
     constructor(pullRequest: PullRequest, fileName: String) : this(
         user = pullRequest.creatorName,
@@ -25,6 +35,7 @@ class SourceCode(
         sourceBranch = pullRequest.sourceBranchName,
         targetBranch = pullRequest.mainBranchName,
         fileName = fileName,
-        sha = pullRequest.headSha
+        sha = pullRequest.headSha,
+        gitService = pullRequest.gitService
     )
 }
