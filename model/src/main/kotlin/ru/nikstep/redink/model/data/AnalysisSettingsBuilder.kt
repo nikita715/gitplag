@@ -2,6 +2,7 @@ package ru.nikstep.redink.model.data
 
 import mu.KotlinLogging
 import ru.nikstep.redink.util.AnalyserProperty
+import ru.nikstep.redink.util.AnalysisBranchMode
 import ru.nikstep.redink.util.Language
 
 private val logger = KotlinLogging.logger {}
@@ -15,6 +16,7 @@ fun AnalysisSettings.analyser(analyser: AnalyserProperty): AnalysisSettings =
         analyser = analyser,
         gitService = gitService,
         branch = branch,
+        branchMode = branchMode,
         language = language
     )
 
@@ -41,6 +43,7 @@ fun AnalysisSettings.language(language: Language): AnalysisSettings =
         analyser = analyser,
         gitService = gitService,
         branch = branch,
+        branchMode = branchMode,
         language = language
     )
 
@@ -69,6 +72,7 @@ fun AnalysisSettings.branch(branch: String?): AnalysisSettings {
                 analyser = analyser,
                 gitService = gitService,
                 branch = branch,
+                branchMode = branchMode,
                 language = language
             )
         } catch (e: IllegalArgumentException) {
@@ -77,3 +81,30 @@ fun AnalysisSettings.branch(branch: String?): AnalysisSettings {
     }
     return this
 }
+
+/**
+ * Set the [language] to the [AnalysisSettings]
+ */
+fun AnalysisSettings.branchMode(branchMode: String?): AnalysisSettings {
+    if (branchMode != null) {
+        try {
+            return branchMode(enumValueOf<AnalysisBranchMode>(branchMode.toUpperCase()))
+        } catch (e: IllegalArgumentException) {
+            logger.error { "Analysis: wrong branch mode name \"$branchMode\"" }
+        }
+    }
+    return this
+}
+
+/**
+ * Set the [language] to the [AnalysisSettings]
+ */
+fun AnalysisSettings.branchMode(branchMode: AnalysisBranchMode): AnalysisSettings =
+    AnalysisSettings(
+        repository = repository,
+        analyser = analyser,
+        gitService = gitService,
+        branch = branch,
+        branchMode = branchMode,
+        language = language
+    )

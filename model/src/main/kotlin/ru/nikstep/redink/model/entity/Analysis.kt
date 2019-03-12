@@ -1,21 +1,14 @@
 package ru.nikstep.redink.model.entity
 
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
 import ru.nikstep.redink.util.AnalyserProperty
 import ru.nikstep.redink.util.Language
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
-import javax.persistence.OneToMany
+import javax.persistence.*
 
 /**
  * Result of the plagiarism analysis
@@ -28,6 +21,8 @@ data class Analysis(
 
     @ManyToOne
     @JoinColumn
+    @field:JsonBackReference
+    @get:JsonBackReference
     val repository: Repository,
 
     @Column(nullable = false)
@@ -44,7 +39,9 @@ data class Analysis(
     @Column(nullable = false)
     val executionDate: LocalDateTime,
 
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @field:JsonManagedReference
+    @get:JsonManagedReference
+    @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany(mappedBy = "analysis", orphanRemoval = true)
     val analysisPairs: List<AnalysisPair> = mutableListOf()
 ) {

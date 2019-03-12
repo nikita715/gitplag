@@ -5,8 +5,8 @@ import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.SourceCode
-import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SourceCodeRepository
+import ru.nikstep.redink.util.AnalysisBranchMode.*
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.asPath
 import java.io.File
@@ -17,8 +17,7 @@ import java.nio.file.Paths
 import java.util.stream.Collectors.toList
 
 class FileSystemSolutionStorage(
-    private val sourceCodeRepository: SourceCodeRepository,
-    private val repositoryRepository: RepositoryRepository
+    private val sourceCodeRepository: SourceCodeRepository
 ) : SolutionStorage {
 
     private val logger = KotlinLogging.logger {}
@@ -43,45 +42,48 @@ class FileSystemSolutionStorage(
             .filter { path -> Files.isRegularFile(path) }
             .map(Path::toFile).collect(toList())
 
-    private fun loadSolutions(analysisSettings: AnalysisSettings): List<File> {
-        val solutionDirectories = pathToSolutions(analysisSettings).asFile().subfiles()
-        return sourceCodeRepository.findAllByRepo(analysisSettings.repository.name).filter {
-            solutionDirectories.contains(it.user)
-        }.mapNotNull {
+    private fun loadSolutions(analysisSettings: AnalysisSettings): List<File> =
+        loadSourceCodeForAnalysis(analysisSettings).map {
             val file = pathToSolution(analysisSettings, it).asFile()
-            if (file.exists()) file else null
+            if (file.exists())
+                file
+            else
+                throw SolutionNotFoundException(
+                    "Loader: solution ${it.repo}/${it.sourceBranch}/${it.fileName} not found"
+                )
         }
-    }
+
+    private fun loadSourceCodeForAnalysis(analysisSettings: AnalysisSettings) =
+        when (analysisSettings.branchMode) {
+            BY_TARGET -> sourceCodeRepository
+                .findAllByRepoAndTargetBranch(analysisSettings.repository.name, analysisSettings.branch)
+            BY_SOURCE -> sourceCodeRepository
+                .findAllByRepoAndSourceBranch(analysisSettings.repository.name, analysisSettings.branch)
+            ANY -> sourceCodeRepository
+                .findAllByRepo(analysisSettings.repository.name)
+        }
 
     @Synchronized
     override fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): File {
         val pathToSolution = pathToSolution(pullRequest, fileName)
-        sourceCodeRepository.deleteByRepoAndUserAndFileNameAndBranch(
+        sourceCodeRepository.deleteByRepoAndUserAndFileNameAndSourceBranch(
             pullRequest.mainRepoFullName,
             pullRequest.creatorName,
             fileName,
             pullRequest.sourceBranchName
         )
-        sourceCodeRepository.save(
-            SourceCode(
-                user = pullRequest.creatorName,
-                repo = pullRequest.mainRepoFullName,
-                branch = pullRequest.sourceBranchName,
-                fileName = fileName,
-                sha = pullRequest.sourceHeadSha
-            )
-        )
-        return save(pathToSolution, fileText)
+        sourceCodeRepository.save(SourceCode(pullRequest, fileName))
+        return saveLocally(pathToSolution, fileText)
     }
 
     @Synchronized
     override fun saveBase(pullRequest: PullRequest, fileName: String, fileText: String): File {
         val pathToBase =
             pathToBase(pullRequest.gitService, pullRequest.mainRepoFullName, pullRequest.sourceBranchName, fileName)
-        return save(pathToBase, fileText)
+        return saveLocally(pathToBase, fileText)
     }
 
-    private fun save(pathToFile: String, fileText: String): File {
+    private fun saveLocally(pathToFile: String, fileText: String): File {
         Files.createDirectories(pathToFile.substringBeforeLast("/").asPath())
         Files.deleteIfExists(pathToFile.asPath())
         val file = Files.createFile(pathToFile.asPath()).toFile()
@@ -111,7 +113,7 @@ class FileSystemSolutionStorage(
     private fun pathToSolution(analysisSettings: AnalysisSettings, sourceCode: SourceCode): String =
         pathToSolution(
             analysisSettings.gitService, analysisSettings.repository.name,
-            sourceCode.branch, sourceCode.user, sourceCode.fileName
+            sourceCode.sourceBranch, sourceCode.user, sourceCode.fileName
         )
 
     private fun pathToSolution(pullRequest: PullRequest, fileName: String): String =

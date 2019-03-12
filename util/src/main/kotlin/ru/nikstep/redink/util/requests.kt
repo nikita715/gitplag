@@ -56,6 +56,20 @@ inline fun <reified T : Any> sendRestRequest(
         .body(body).send(deserializer<T>()) as T
 
 /**
+ * Send a common request and get [T]
+ */
+fun sendAnalysisResult(
+    url: String,
+    body: String = "",
+    accessToken: String = ""
+) {
+    val request = url.httpPost().body(body)
+    request.headers["Content-Type"] = "application/json"
+    request.headers[authorization] = accessToken
+    request.response()
+}
+
+/**
  * Get [ResponseDeserializable] by [T]
  */
 inline fun <reified T : Any> deserializer(): ResponseDeserializable<*> = when (T::class) {

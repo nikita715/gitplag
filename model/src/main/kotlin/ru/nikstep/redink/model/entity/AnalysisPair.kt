@@ -1,20 +1,10 @@
 package ru.nikstep.redink.model.entity
 
-import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import ru.nikstep.redink.util.GitProperty
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.ElementCollection
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.FetchType
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
-import javax.persistence.OneToMany
+import javax.persistence.*
 
 /**
  * Result of the plagiarism analysis of two files
@@ -40,6 +30,8 @@ data class AnalysisPair(
     @Column(nullable = false)
     val repo: String,
 
+    @field:JsonManagedReference
+    @get:JsonManagedReference
     @ElementCollection(fetch = FetchType.LAZY)
     @OneToMany(mappedBy = "analysisPair", orphanRemoval = true)
     val analysisPairLines: List<AnalysisPairLines> = mutableListOf(),
@@ -54,8 +46,9 @@ data class AnalysisPair(
     @Column(nullable = false)
     val student2Sha: String,
 
-    @JsonIgnore
     @ManyToOne
+    @field:JsonBackReference
+    @get:JsonBackReference
     @JoinColumn(nullable = false)
     var analysis: Analysis
 ) {
