@@ -1,9 +1,8 @@
 package ru.nikstep.redink.core.analysis
 
 import mu.KotlinLogging
-import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
-import ru.nikstep.redink.analysis.AnalysisRunner
+import org.springframework.stereotype.Component
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.AnalysisMode
@@ -11,8 +10,9 @@ import ru.nikstep.redink.util.AnalysisMode
 /**
  * Scheduler of [AnalysisMode.PERIODIC] analysis tasks
  */
-open class AnalysisScheduler(
-    private val analysisRunner: AnalysisRunner,
+@Component
+class AnalysisScheduler(
+    private val analysisAsyncRunner: AnalysisAsyncRunner,
     private val repositoryRepository: RepositoryRepository
 ) {
     private val logger = KotlinLogging.logger {}
@@ -29,21 +29,7 @@ open class AnalysisScheduler(
             repository.branches.map { branch ->
                 AnalysisSettings(repository, branch)
             }
-        }.forEach { initiateAsync(it) }
+        }.forEach { analysisAsyncRunner.initiateAsync(it) }
         logger.info { "Core: end analyzes" }
-    }
-
-    /**
-     * Initiate analysis of the [repository] async
-     */
-    @Async("analysisThreadPoolTaskExecutor")
-    open fun initiateAsync(settings: AnalysisSettings) {
-        try {
-            logger.loggedAnalysis(settings) {
-                analysisRunner.run(settings)
-            }
-        } catch (e: Exception) {
-            logger.exceptionAtAnalysisOf(e, settings)
-        }
     }
 }
