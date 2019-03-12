@@ -1,20 +1,34 @@
 package ru.nikstep.redink.analysis
 
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
+import io.kotlintest.matchers.shouldEqual
+import org.junit.Test
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.model.data.AnalysisMatch
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.MatchedLines
+import ru.nikstep.redink.util.RandomGenerator
+import java.nio.file.Files
 
 class JPlagAnalyserTest : AbstractAnalyserTest() {
 
-    override val analysisService =
-        JPlagAnalyser(solutionStorageService, solutionsDir)
+    private val resultDir = Files.createTempDirectory("dir").toFile().absolutePath + "/"
+    private val serverUrl = "url"
 
-    override val expectedResult = listOf(
+    private val prefix = "prefix"
+    private val randomGenerator = mock<RandomGenerator> {
+        on { randomAlphanumeric(10) } doReturn prefix
+    }
+
+    override val analysisService =
+        JPlagAnalyser(solutionStorageService, randomGenerator, solutionsDir, resultDir, serverUrl)
+
+    override val expectedResult =
         AnalysisResult(
             gitService = gitService,
             repo = testRepoName,
-            resultLink = "",
+            resultLink = "$serverUrl/jplagresult/$prefix/index.html",
             matchData = listOf(
                 AnalysisMatch(
                     students = "student2" to "student1",
@@ -29,15 +43,7 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
                             files = testFileName to testFileName
                         )
                     )
-                )
-            )
-        ),
-        AnalysisResult(
-            repo = testRepoName,
-            gitService = gitService,
-            resultLink = "",
-            matchData = listOf(
-                AnalysisMatch(
+                ), AnalysisMatch(
                     students = "student3" to "student2",
 //            sha = sha3 to sha2,
                     sha = "" to "",
@@ -50,15 +56,7 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
                             files = testFileName to testFileName
                         )
                     )
-                )
-            )
-        ),
-        AnalysisResult(
-            repo = testRepoName,
-            gitService = gitService,
-            resultLink = "",
-            matchData = listOf(
-                AnalysisMatch(
+                ), AnalysisMatch(
 //            sha = sha3 to sha1,
                     sha = "" to "",
                     students = "student3" to "student1",
@@ -72,7 +70,13 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
                         )
                     )
                 )
+
             )
         )
-    )
+
+    @Test
+    fun analyse() {
+        val analysisResult = analysisService.analyse(analysisSettings)
+        analysisResult shouldEqual expectedResult
+    }
 }

@@ -8,7 +8,6 @@ dependencies {
     compile "org.springframework.boot:spring-boot-configuration-processor"
 
     compile 'commons-io:commons-io:2.6'
-    compile 'org.apache.commons:commons-lang3:3.8.1'
 
     compile 'it.zielke:moji:1.0.1'
 

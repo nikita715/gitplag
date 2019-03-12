@@ -3,8 +3,6 @@ package ru.nikstep.redink.analysis
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
-import io.kotlintest.matchers.shouldEqual
-import org.junit.Test
 import ru.nikstep.redink.analysis.analyser.Analyser
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.AnalysisResult
@@ -33,14 +31,17 @@ abstract class AbstractAnalyserTest {
     private val student2 = "student2"
     private val student3 = "student3"
 
-    private val bases =
-        listOf(Paths.get(relSolutionsDir, gitService.toString(), testRepoName, ".base", testFileName).toFile())
+    protected val masterBranch = "master"
+
+    private val base =
+        Paths.get(relSolutionsDir, gitService.toString(), testRepoName, masterBranch, ".base", testFileName).toFile()
     private val solution1 =
-        Paths.get(relSolutionsDir, gitService.toString(), testRepoName, student1, testFileName).toFile()
+        Paths.get(relSolutionsDir, gitService.toString(), testRepoName, masterBranch, student1, testFileName).toFile()
     private val solution2 =
-        Paths.get(relSolutionsDir, gitService.toString(), testRepoName, student2, testFileName).toFile()
+        Paths.get(relSolutionsDir, gitService.toString(), testRepoName, masterBranch, student2, testFileName).toFile()
     private val solution3 =
-        Paths.get(relSolutionsDir, gitService.toString(), testRepoName, student3, testFileName).toFile()
+        Paths.get(relSolutionsDir, gitService.toString(), testRepoName, masterBranch, student3, testFileName).toFile()
+
     protected val sha1 = "sha1"
     protected val sha2 = "sha2"
     protected val sha3 = "sha3"
@@ -49,7 +50,7 @@ abstract class AbstractAnalyserTest {
         testRepoName,
         Language.JAVA,
         AnalyserProperty.JPLAG,
-        bases,
+        listOf(base),
         listOf(solution1, solution2, solution3)
     )
 
@@ -65,21 +66,17 @@ abstract class AbstractAnalyserTest {
 
     protected abstract val analysisService: Analyser
 
-    protected abstract val expectedResult: List<AnalysisResult>
+    protected abstract val expectedResult: AnalysisResult
 
     private val repository = mock<Repository> {
         on { gitService } doReturn GitProperty.GITHUB
         on { name } doReturn testRepoName
     }
 
-    private val analysisSettings = mock<AnalysisSettings> {
+    protected val analysisSettings = mock<AnalysisSettings> {
         on { gitService } doReturn GitProperty.GITHUB
         on { repository } doReturn repository
         on { language } doReturn Language.JAVA
-    }
-
-    @Test
-    fun analyse() {
-        analysisService.analyse(analysisSettings) shouldEqual expectedResult
+        on { branch } doReturn "master"
     }
 }

@@ -1,5 +1,7 @@
 package ru.nikstep.redink.analysis
 
+import io.kotlintest.matchers.shouldEqual
+import org.junit.Test
 import ru.nikstep.redink.analysis.analyser.MossAnalyser
 import ru.nikstep.redink.model.data.AnalysisMatch
 import ru.nikstep.redink.model.data.AnalysisResult
@@ -10,7 +12,7 @@ class MossAnalyserTest : AbstractAnalyserTest() {
     override val analysisService =
         MossAnalyser(solutionStorageService, System.getenv("MOSS_ID"))
 
-    override val expectedResult = listOf(
+    override val expectedResult =
         AnalysisResult(
             repo = testRepoName,
             gitService = gitService,
@@ -31,15 +33,7 @@ class MossAnalyserTest : AbstractAnalyserTest() {
                             files = "" to ""
                         )
                     )
-                )
-            )
-        ),
-        AnalysisResult(
-            repo = testRepoName,
-            gitService = gitService,
-            resultLink = "",
-            matchData = listOf(
-                AnalysisMatch(
+                ), AnalysisMatch(
 
                     students = "student2" to "student3",
 //            sha = sha2 to sha3,
@@ -54,16 +48,7 @@ class MossAnalyserTest : AbstractAnalyserTest() {
                             files = "" to ""
                         )
                     )
-                )
-            )
-        ),
-        AnalysisResult(
-            repo = testRepoName,
-            gitService = gitService,
-            resultLink = "",
-            matchData = listOf(
-                AnalysisMatch(
-
+                ), AnalysisMatch(
                     students = "student1" to "student3",
 //            sha = sha1 to sha3,
                     sha = "" to "",
@@ -79,6 +64,12 @@ class MossAnalyserTest : AbstractAnalyserTest() {
                     )
                 )
             )
+
         )
-    )
+
+    @Test
+    fun analyse() {
+        val analysisResult = analysisService.analyse(analysisSettings)
+        analysisResult shouldEqual expectedResult.copy(resultLink = analysisResult.resultLink)
+    }
 }

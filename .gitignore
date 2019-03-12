@@ -28,4 +28,5 @@ hs_err_pid*
 !/libs/jplag.jar
 /.res/
 
-*/build
+*/build/
+*/out/
