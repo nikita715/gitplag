@@ -15,6 +15,16 @@ interface SourceCodeRepository : JpaRepository<SourceCode, Long> {
     fun findAllByRepo(repo: String): List<SourceCode>
 
     /**
+     * Find all solutions for [repo]
+     */
+    fun findAllByRepoAndSourceBranch(repo: String, sourceBranch: String): List<SourceCode>
+
+    /**
+     * Find all solutions for [repo]
+     */
+    fun findAllByRepoAndTargetBranch(repo: String, targetBranch: String): List<SourceCode>
+
+    /**
      * Find all solutions for [repo] and [fileName]
      */
     fun findAllByRepoAndFileName(repo: String, fileName: String): List<SourceCode>
@@ -23,5 +33,10 @@ interface SourceCodeRepository : JpaRepository<SourceCode, Long> {
      * Delete [SourceCode] record by its parameters
      */
     @Transactional
-    fun deleteByRepoAndUserAndFileNameAndBranch(repo: String, user: String, fileName: String, branch: String)
+    fun deleteByRepoAndUserAndFileNameAndSourceBranch(
+        repo: String,
+        user: String,
+        fileName: String,
+        sourceBranch: String
+    )
 }

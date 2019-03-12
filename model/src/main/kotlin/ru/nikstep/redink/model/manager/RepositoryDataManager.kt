@@ -4,10 +4,7 @@ import org.springframework.transaction.annotation.Transactional
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.UserRepository
-import ru.nikstep.redink.util.AnalyserProperty
-import ru.nikstep.redink.util.AnalysisMode
-import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.Language
+import ru.nikstep.redink.util.*
 
 /**
  * Data manager of [Repository]
@@ -32,7 +29,8 @@ open class RepositoryDataManager(
                     analysisMode = AnalysisMode.STATIC,
                     gitService = gitProperty,
                     analyser = AnalyserProperty.MOSS,
-                    branches = listOf("master")
+                    branches = listOf("master"),
+                    analysisBranchMode = AnalysisBranchMode.ANY
                 )
             )
         }

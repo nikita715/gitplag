@@ -1,6 +1,6 @@
 package ru.nikstep.redink.model.entity
 
-import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonBackReference
 import java.util.*
 import javax.persistence.*
 
@@ -32,7 +32,8 @@ data class AnalysisPairLines(
     val fileName2: String,
 
     @ManyToOne
-    @JsonIgnore
+    @field:JsonBackReference
+    @get:JsonBackReference
     @JoinColumn(nullable = false)
     val analysisPair: AnalysisPair
 ) {

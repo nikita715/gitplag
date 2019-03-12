@@ -5,7 +5,6 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
 import ru.nikstep.redink.analysis.AnalysisRunner
 import ru.nikstep.redink.model.data.AnalysisSettings
-import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.AnalysisMode
 
@@ -26,7 +25,11 @@ open class AnalysisScheduler(
         logger.info { "Core: look for periodic analyzes" }
         val requiredToAnalyse = repositoryRepository.findRequiredToAnalyse()
         logger.info { "Core: found ${requiredToAnalyse.size} required analyzes" }
-        requiredToAnalyse.forEach { initiateAsync(it) }
+        requiredToAnalyse.flatMap { repository ->
+            repository.branches.map { branch ->
+                AnalysisSettings(repository, branch)
+            }
+        }.forEach { initiateAsync(it) }
         logger.info { "Core: end analyzes" }
     }
 
@@ -34,13 +37,13 @@ open class AnalysisScheduler(
      * Initiate analysis of the [repository] async
      */
     @Async("analysisThreadPoolTaskExecutor")
-    open fun initiateAsync(repository: Repository) {
+    open fun initiateAsync(settings: AnalysisSettings) {
         try {
-            logger.loggedAnalysis(repository) {
-                analysisRunner.run(repository.branches.map { branch -> AnalysisSettings(repository, branch) })
+            logger.loggedAnalysis(settings) {
+                analysisRunner.run(settings)
             }
         } catch (e: Exception) {
-            logger.exceptionAtAnalysisOf(e, repository)
+            logger.exceptionAtAnalysisOf(e, settings)
         }
     }
 }

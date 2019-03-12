@@ -1,8 +1,7 @@
 package ru.nikstep.redink.core.analysis
 
-import com.github.kittinunf.fuel.core.Method
+import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
-import org.codehaus.jackson.map.ObjectMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.scheduling.annotation.Async
@@ -12,11 +11,12 @@ import org.springframework.web.bind.annotation.RestController
 import ru.nikstep.redink.analysis.AnalysisRunner
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.analyser
+import ru.nikstep.redink.model.data.branchMode
 import ru.nikstep.redink.model.data.language
 import ru.nikstep.redink.model.repo.AnalysisRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.sendRestRequest
+import ru.nikstep.redink.util.sendAnalysisResult
 
 /**
  * Analysis api controller
@@ -39,18 +39,20 @@ class AnalysisController(
         @RequestParam("repoName") repoName: String,
         @RequestParam("analyser", required = false) analyser: String?,
         @RequestParam("language", required = false) language: String?,
-        @RequestParam("branch", required = false) branch: String?
+        @RequestParam("branch", required = false) branch: String?,
+        @RequestParam("branchMode", required = false) branchMode: String?
     ): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
         val analysisSettings =
             AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
+                .branchMode(branchMode)
         return try {
             val analysis = analysisRunner.run(analysisSettings)
-            ResponseEntity.ok(logger.loggedAnalysis(repository) {
+            ResponseEntity.ok(logger.loggedAnalysis(analysisSettings) {
                 analysisRepository.findById(analysis.id).get()
             })
         } catch (e: Exception) {
-            logger.exceptionAtAnalysisOf(e, repository)
+            logger.exceptionAtAnalysisOf(e, analysisSettings)
             ResponseEntity<Any>(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
@@ -75,13 +77,15 @@ class AnalysisController(
         @RequestParam("analyser", required = false) analyser: String?,
         @RequestParam("language", required = false) language: String?,
         @RequestParam("branch", required = false) branch: String?,
+        @RequestParam("branchMode", required = false) branchMode: String?,
         @RequestParam("responseUrl", required = false) responseUrl: String?
     ): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
         val analysisSettings =
             AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
+                .branchMode(branchMode)
         run(analysisSettings, responseUrl)
-        return ResponseEntity<Any>(HttpStatus.ACCEPTED)
+        return ResponseEntity.ok("Accepted")
     }
 
     /**
@@ -89,12 +93,13 @@ class AnalysisController(
      */
     @Async("analysisThreadPoolTaskExecutor")
     fun run(analysisSettings: AnalysisSettings, responseUrl: String?) {
-        val analysis = analysisRunner.run(analysisSettings)
-        if (responseUrl != null) sendRestRequest<Any>(
-            url = responseUrl,
-            method = Method.POST,
-            body = objectMapper.writeValueAsString(analysis)
-        )
+        logger.loggedAnalysis(analysisSettings) {
+            val analysis = analysisRunner.run(analysisSettings)
+            if (responseUrl != null) sendAnalysisResult(
+                url = responseUrl,
+                body = objectMapper.writeValueAsString(analysis)
+            )
+        }
     }
 
 }
