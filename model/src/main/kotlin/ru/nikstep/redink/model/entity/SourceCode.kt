@@ -25,6 +25,6 @@ class SourceCode(
         sourceBranch = pullRequest.sourceBranchName,
         targetBranch = pullRequest.mainBranchName,
         fileName = fileName,
-        sha = pullRequest.sourceHeadSha
+        sha = pullRequest.headSha
     )
 }

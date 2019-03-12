@@ -10,14 +10,17 @@ class GitlabWebhookServiceTest : AbstractWebhookServiceTest() {
     override val payload by lazy { readPayloadOf("gitlab") }
     override val webhookService = GitlabWebhookService(pullRequestRepository, applicationEventPublisher)
     override val pullRequest = PullRequest(
+        gitService = GitProperty.GITLAB,
         number = 1,
-        secretKey = "",
         creatorName = "nikita715",
         sourceRepoId = 11083523,
+        mainRepoId = 1108352312,
+        sourceRepoFullName = "nikita715/plagiarism_test3",
         mainRepoFullName = "nikita715/plagiarism_test3",
-        sourceHeadSha = "d647870f53f333e3c0bec84cdd245e7262071331",
+        headSha = "d647870f53f333e3c0bec84cdd245e7262071331",
         sourceBranchName = "br2",
-        gitService = GitProperty.GITLAB,
+        mainBranchName = "master",
+        secretKey = "",
         date = LocalDateTime.of(2019, Month.FEBRUARY, 28, 22, 12, 32)
     )
 }
