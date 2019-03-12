@@ -20,7 +20,6 @@ dependencies {
     compile 'com.graphql-java:graphql-spring-boot-starter:5.0.2'
     compile 'com.graphql-java:graphql-java-tools:5.2.4'
 
-//    compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.4.1'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.4'
 
     compile 'org.jetbrains.kotlinx:kotlinx-html-jvm:0.6.10'

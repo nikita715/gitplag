@@ -1,10 +1,10 @@
 package ru.nikstep.redink.analysis.analyser
 
 import mu.KotlinLogging
-import org.apache.commons.lang3.RandomStringUtils
 import org.jsoup.Jsoup
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.util.RandomGenerator
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.asPathInRoot
 import java.io.File
@@ -16,6 +16,7 @@ import kotlin.math.roundToInt
  */
 class JPlagAnalyser(
     private val solutionStorage: SolutionStorage,
+    private val randomGenerator: RandomGenerator,
     private val solutionsDir: String,
     private val jplagResultDir: String,
     private val serverUrl: String
@@ -27,18 +28,23 @@ class JPlagAnalyser(
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
     override fun analyse(analysisSettings: AnalysisSettings): AnalysisResult {
-        val hash = RandomStringUtils.randomAlphanumeric(10)
-        val file = File(jplagResultDir + hash)
-        Files.createDirectory(file.toPath())
-        val resultDir = file.absolutePath
+        val (hash, resultDir) = generateResultDir()
         val analysisFiles = solutionStorage.loadAllBasesAndSolutions(analysisSettings)
         val solutionsPath = solutionsDir.asPathInRoot() + "/" + analysisSettings.gitService.toString()
         JPlagClient(analysisFiles, solutionsPath, analysisSettings.branch, resultDir).run()
         val matchLines = analysisFiles.toSolutionPairIndexes().map { index ->
             parseResults(resultDir, index)
         }
-        val resultLink = serverUrl + "/jplagresult/" + hash + "/index.html"
+        val resultLink = "$serverUrl/jplagresult/$hash/index.html"
         return AnalysisResult(analysisSettings, resultLink, matchLines)
+    }
+
+    private fun generateResultDir(): Pair<String, String> {
+        val hash = randomGenerator.randomAlphanumeric(10)
+        val file = File(jplagResultDir + hash)
+        Files.createDirectory(file.toPath())
+        val resultDir = file.absolutePath
+        return Pair(hash, resultDir)
     }
 
     private fun parseResults(

@@ -16,7 +16,7 @@ class GitlabLoaderTest : AbstractGitLoaderTest() {
         gitService = GitProperty.GITLAB,
         date = LocalDateTime.now(),
         sourceRepoFullName = repoName,
-        mainRepoId = 1,
+        mainRepoId = 11158542,
         mainBranchName = "master"
     )
     override val loader = GitlabLoader(solutionStorage, repositoryRepository)
