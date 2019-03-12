@@ -18,7 +18,7 @@ class AnalysisAsyncRunner(private val analysisRunner: AnalysisRunner) {
      * Initiate analysis of the [repository] async
      */
     @Async("analysisTaskExecutor")
-    fun initiateAsync(settings: AnalysisSettings) {
+    fun run(settings: AnalysisSettings) {
         try {
             logger.loggedAnalysis(settings) {
                 analysisRunner.run(settings)
@@ -32,7 +32,7 @@ class AnalysisAsyncRunner(private val analysisRunner: AnalysisRunner) {
      * Async runner of analyzes
      */
     @Async("analysisTaskExecutor")
-    fun run(analysisSettings: AnalysisSettings, responseUrl: String?) {
+    fun runAndRespond(analysisSettings: AnalysisSettings, responseUrl: String?) {
         logger.loggedAnalysis(analysisSettings) {
             val analysis = analysisRunner.run(analysisSettings)
             if (responseUrl != null) sendAnalysisResult(

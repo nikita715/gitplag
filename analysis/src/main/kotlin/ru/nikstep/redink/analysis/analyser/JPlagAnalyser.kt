@@ -3,7 +3,11 @@ package ru.nikstep.redink.analysis.analyser
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
-import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.model.data.AnalysisMatch
+import ru.nikstep.redink.model.data.AnalysisResult
+import ru.nikstep.redink.model.data.AnalysisSettings
+import ru.nikstep.redink.model.data.MatchedLines
+import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.util.RandomGenerator
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.asPathInRoot
@@ -32,7 +36,7 @@ class JPlagAnalyser(
         val analysisFiles = solutionStorage.loadAllBasesAndSolutions(analysisSettings)
         val solutionsPath = solutionsDir.asPathInRoot() + "/" + analysisSettings.gitService.toString()
         JPlagClient(analysisFiles, solutionsPath, analysisSettings.branch, resultDir).run()
-        val matchLines = analysisFiles.toSolutionPairIndexes().map { index ->
+        val matchLines = analysisFiles.toSolutionPairIndexes().mapNotNull { index ->
             parseResults(resultDir, index)
         }
         val resultLink = "$serverUrl/jplagresult/$hash/index.html"
@@ -50,8 +54,10 @@ class JPlagAnalyser(
     private fun parseResults(
         resultDir: String,
         index: Int
-    ): AnalysisMatch {
-        val body = Jsoup.parse(File(asPath(resultDir, "match$index-link.html")).readText())
+    ): AnalysisMatch? {
+        val resultFile = File(asPath(resultDir, "match$index-link.html"))
+        if (!resultFile.exists()) return null
+        val body = Jsoup.parse(resultFile.readText())
             .body()
         val (name1, name2) = requireNotNull(regexUserNames.find(body.getElementsByTag("H3")[0].text()))
             .groupValues.subList(1, 3)

@@ -81,7 +81,7 @@ class AnalysisController(
         val analysisSettings =
             AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
                 .branchMode(branchMode)
-        analysisAsyncRunner.run(analysisSettings, responseUrl)
+        analysisAsyncRunner.runAndRespond(analysisSettings, responseUrl)
         return ResponseEntity.ok("Accepted")
     }
 
