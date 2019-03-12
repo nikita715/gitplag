@@ -80,7 +80,7 @@
         "type": "repository",
         "name": "plagiarism_test2",
         "full_name": "nikita715/plagiarism_test2",
-        "uuid": "secret_id"
+        "uuid": "12345"
       },
       "branch": {
         "name": "master"
@@ -121,7 +121,7 @@
         "type": "repository",
         "name": "plagiarism_test2",
         "full_name": "nikita715/plagiarism_test2",
-        "uuid": "secret_id"
+        "uuid": "23456"
       },
       "branch": {
         "name": "testns2/javacljava-created-online-with-bitbucket-1551121394025"

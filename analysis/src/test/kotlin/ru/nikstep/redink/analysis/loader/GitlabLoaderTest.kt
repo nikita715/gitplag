@@ -11,14 +11,13 @@ class GitlabLoaderTest : AbstractGitLoaderTest() {
         creatorName = "testns3",
         sourceRepoId = 11158542,
         mainRepoFullName = repoName,
-        sourceHeadSha = "",
+        headSha = "",
         sourceBranchName = branchName,
         gitService = GitProperty.GITLAB,
         date = LocalDateTime.now(),
-        sourceRepoFullName = "",
+        sourceRepoFullName = repoName,
         mainRepoId = 1,
-        mainHeadSha = "",
-        mainBranchName = ""
+        mainBranchName = "master"
     )
     override val loader = GitlabLoader(solutionStorage, repositoryRepository)
 }

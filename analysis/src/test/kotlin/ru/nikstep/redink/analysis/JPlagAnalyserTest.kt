@@ -12,7 +12,8 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
     override val expectedResult = listOf(
         AnalysisResult(
             students = "student2" to "student1",
-            sha = sha2 to sha1,
+//            sha = sha2 to sha1,
+            sha = "" to "",
             gitService = gitService,
             lines = -1,
             percentage = 100,
@@ -27,7 +28,8 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
         ),
         AnalysisResult(
             students = "student3" to "student2",
-            sha = sha3 to sha2,
+//            sha = sha3 to sha2,
+            sha = "" to "",
             gitService = gitService,
             lines = -1,
             percentage = 55,
@@ -42,7 +44,8 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
         ),
         AnalysisResult(
             students = "student3" to "student1",
-            sha = sha3 to sha1,
+//            sha = sha3 to sha1,
+            sha = "" to "",
             gitService = gitService,
             lines = -1,
             percentage = 55,

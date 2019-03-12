@@ -2,13 +2,7 @@ package ru.nikstep.redink.model.entity
 
 import ru.nikstep.redink.util.GitProperty
 import java.time.LocalDateTime
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import javax.persistence.*
 
 /**
  * Received pull request record
@@ -38,10 +32,7 @@ data class PullRequest(
     val mainRepoFullName: String,
 
     @Column(nullable = false)
-    val sourceHeadSha: String,
-
-    @Column(nullable = false)
-    val mainHeadSha: String,
+    val headSha: String,
 
     @Column(nullable = false)
     val sourceBranchName: String,

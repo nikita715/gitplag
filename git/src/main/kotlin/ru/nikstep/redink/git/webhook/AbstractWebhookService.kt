@@ -38,8 +38,7 @@ abstract class AbstractWebhookService(
                 mainRepoId = requireNotNull(mainRepoId),
                 sourceRepoFullName = requireNotNull(sourceRepoFullName),
                 mainRepoFullName = requireNotNull(mainRepoFullName),
-                sourceHeadSha = requireNotNull(sourceHeadSha),
-                mainHeadSha = requireNotNull(mainHeadSha),
+                headSha = requireNotNull(sourceHeadSha),
                 sourceBranchName = requireNotNull(sourceBranchName),
                 mainBranchName = requireNotNull(mainBranchName),
                 secretKey = requireNotNull(secretKey),
@@ -59,8 +58,6 @@ abstract class AbstractWebhookService(
     protected abstract val JsonObject.creatorName: String?
 
     protected abstract val JsonObject.sourceHeadSha: String?
-
-    protected abstract val JsonObject.mainHeadSha: String?
 
     protected abstract val JsonObject.sourceBranchName: String?
 

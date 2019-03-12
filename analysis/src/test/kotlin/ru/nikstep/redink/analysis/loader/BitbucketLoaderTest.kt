@@ -12,14 +12,13 @@ class BitbucketLoaderTest : AbstractGitLoaderTest() {
         creatorName = "nikita715",
         sourceRepoId = 1,
         mainRepoFullName = repoName,
-        sourceHeadSha = "",
+        headSha = "",
         sourceBranchName = branchName,
         gitService = GitProperty.BITBUCKET,
         date = LocalDateTime.now(),
-        sourceRepoFullName = "",
+        sourceRepoFullName = repoName,
         mainRepoId = 1,
-        mainHeadSha = "",
-        mainBranchName = ""
+        mainBranchName = "master"
     )
 
     override val loader = BitbucketLoader(solutionStorage, repositoryRepository)

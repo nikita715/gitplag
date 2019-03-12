@@ -15,20 +15,22 @@ class GithubWebhookServiceTest : AbstractWebhookServiceTest() {
 
     override val webhookService =
         GithubWebhookService(
-            analysisStatusCheckService,
-            pullRequestRepository,
+            analysisStatusCheckService, pullRequestRepository,
             applicationEventPublisher
         )
 
     override val pullRequest = PullRequest(
-        number = 8,
-        secretKey = "123",
-        creatorName = "testns2",
-        sourceRepoId = -1,
-        mainRepoFullName = "nikita715/plagiarism_test",
-        sourceHeadSha = "6ec548da744248919dc753deac536722a46c31f1",
-        sourceBranchName = "testns2-patch-1",
         gitService = GitProperty.GITHUB,
+        number = 8,
+        creatorName = "nikita715",
+        sourceRepoId = 155913197,
+        mainRepoId = 12345,
+        sourceRepoFullName = "nikita715/plagiarism_test",
+        mainRepoFullName = "nikita715/plagiarism_test",
+        headSha = "6ec548da744248919dc753deac536722a46c31f1",
+        sourceBranchName = "testns2-patch-1",
+        mainBranchName = "master",
+        secretKey = "123",
         date = LocalDateTime.of(2019, Month.FEBRUARY, 27, 21, 31, 43)
     )
 }

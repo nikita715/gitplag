@@ -30,29 +30,26 @@ class GithubWebhookService(
     override val JsonObject.gitService: GitProperty
         get() = GITHUB
 
+    override val JsonObject.number: Int?
+        get() = int("number")
+
+    override val JsonObject.creatorName: String?
+        get() = obj("pull_request")?.obj("head")?.obj("user")?.string("login")
+
     override val JsonObject.sourceRepoId: Long?
         get() = obj("pull_request")?.obj("head")?.obj("repo")?.long("id")
 
     override val JsonObject.mainRepoId: Long?
         get() = obj("pull_request")?.obj("base")?.obj("repo")?.long("id")
 
-    override val JsonObject.number: Int?
-        get() = int("number")
+    override val JsonObject.sourceRepoFullName: String?
+        get() = obj("pull_request")?.obj("head")?.obj("repo")?.string("full_name")
 
     override val JsonObject.mainRepoFullName: String?
         get() = obj("pull_request")?.obj("base")?.obj("repo")?.string("full_name")
 
-    override val JsonObject.sourceRepoFullName: String?
-        get() = obj("pull_request")?.obj("head")?.obj("repo")?.string("full_name")
-
-    override val JsonObject.creatorName: String?
-        get() = obj("pull_request")?.obj("head")?.obj("user")?.string("login")
-
     override val JsonObject.sourceHeadSha: String?
         get() = obj("pull_request")?.obj("head")?.string("sha")
-
-    override val JsonObject.mainHeadSha: String?
-        get() = obj("pull_request")?.obj("base")?.string("sha")
 
     override val JsonObject.sourceBranchName: String?
         get() = obj("pull_request")?.obj("head")?.string("ref")
@@ -62,6 +59,12 @@ class GithubWebhookService(
 
     override val JsonObject.secretKey: String?
         get() = obj("installation")?.int("id")?.toString()
+
+    override val JsonObject.date: LocalDateTime?
+        get() = LocalDateTime.parse(
+            obj("pull_request")?.string("updated_at")?.substring(0, 19),
+            dateFormatter
+        )
 
     override val jsonToPullRequest: (JsonObject) -> PullRequest = { jsonPayload ->
         if (jsonPayload.hasInstallationId())
@@ -75,12 +78,6 @@ class GithubWebhookService(
     private fun JsonObject.hasInstallationId(): Boolean {
         return obj("installation") != null
     }
-
-    override val JsonObject.date: LocalDateTime?
-        get() = LocalDateTime.parse(
-            obj("pull_request")?.string("updated_at")?.substring(0, 19),
-            dateFormatter
-        )
 
     fun relaunch(payload: String) {
         val payloadObject = payload.parseAsObject()

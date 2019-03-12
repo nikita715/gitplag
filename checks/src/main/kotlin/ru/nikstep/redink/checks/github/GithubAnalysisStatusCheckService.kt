@@ -33,7 +33,7 @@ class GithubAnalysisStatusCheckService(private val authorizationService: Authori
 
         val body = mutableMapOf<String, Any?>(
             "name" to "Plagiarism tests",
-            "head_sha" to pullRequest.sourceHeadSha,
+            "head_sha" to pullRequest.headSha,
             "status" to analysisData.status
         )
 
