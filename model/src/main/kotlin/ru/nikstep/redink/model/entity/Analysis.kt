@@ -39,6 +39,9 @@ data class Analysis(
     @Column(nullable = false)
     val executionDate: LocalDateTime,
 
+    @Column(nullable = false)
+    val resultLink: String,
+
     @field:JsonManagedReference
     @get:JsonManagedReference
     @LazyCollection(LazyCollectionOption.TRUE)

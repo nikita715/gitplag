@@ -30,7 +30,15 @@ val analysisBeans = beans {
 
     // Analysers
     bean { MossAnalyser(ref(), env.safeEnvVar("redink.mossId")) }
-    bean { JPlagAnalyser(ref(), env.safeEnvVar("redink.solutionsDir")) }
+    bean {
+        JPlagAnalyser(
+            ref(),
+            env.safeEnvVar("redink.solutionsDir"),
+            env.safeEnvVar("redink.jplagResultDir"),
+            env.safeEnvVar("redink.serverUrl")
+        )
+    }
+
     bean("analysers") {
         mapOf(
             AnalyserProperty.MOSS to ref<MossAnalyser>(),

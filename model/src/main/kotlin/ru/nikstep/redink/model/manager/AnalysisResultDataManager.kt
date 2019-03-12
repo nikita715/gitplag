@@ -24,27 +24,28 @@ open class AnalysisResultDataManager(
      * Save all analysis results
      */
     @Transactional
-    open fun saveAnalysis(analysisSettings: AnalysisSettings, analysisResults: Collection<AnalysisResult>): Analysis {
+    open fun saveAnalysis(analysisSettings: AnalysisSettings, analysisResults: AnalysisResult): Analysis {
         val analysis = analysisRepository.save(
             Analysis(
                 repository = analysisSettings.repository,
                 executionDate = LocalDateTime.now(),
                 language = analysisSettings.language,
                 analyser = analysisSettings.analyser,
-                branch = analysisSettings.branch
+                branch = analysisSettings.branch,
+                resultLink = analysisResults.resultLink
             )
         )
-        val analysisPairs = analysisResults.map {
+        val analysisPairs = analysisResults.matchData.map {
             val analysisPair = analysisPairRepository.save(
                 AnalysisPair(
                     student1 = it.students.first,
                     student2 = it.students.second,
                     lines = it.lines,
-                    repo = it.repo,
+                    repo = analysisResults.repo,
                     percentage = it.percentage,
                     student1Sha = it.sha.first,
                     student2Sha = it.sha.second,
-                    gitService = it.gitService,
+                    gitService = analysisResults.gitService,
                     analysis = analysis
                 )
             )

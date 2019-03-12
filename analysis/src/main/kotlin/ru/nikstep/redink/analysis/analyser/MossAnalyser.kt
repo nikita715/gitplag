@@ -3,10 +3,10 @@ package ru.nikstep.redink.analysis.analyser
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
+import ru.nikstep.redink.model.data.AnalysisMatch
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.data.PreparedAnalysisData
 
 /**
  * Moss client wrapper
@@ -17,20 +17,15 @@ class MossAnalyser(
 ) : Analyser {
     private val logger = KotlinLogging.logger {}
 
-    override fun analyse(analysisSettings: AnalysisSettings): Collection<AnalysisResult> {
+    override fun analyse(analysisSettings: AnalysisSettings): AnalysisResult {
         val analysisFiles = solutionStorage.loadAllBasesAndSolutions(analysisSettings)
-        return parseResult(
-            analysisSettings,
-            analysisFiles,
-            resultLink = MossClient(analysisFiles, mossId).run()
-        )
+        val resultLink = MossClient(analysisFiles, mossId).run()
+        return AnalysisResult(analysisSettings, resultLink, parseResult(resultLink))
     }
 
     private fun parseResult(
-        analysisSettings: AnalysisSettings,
-        analysisData: PreparedAnalysisData,
         resultLink: String
-    ): Collection<AnalysisResult> =
+    ): List<AnalysisMatch> =
         Jsoup.connect(resultLink).get()
             .body()
             .getElementsByTag("table")
@@ -69,18 +64,13 @@ class MossAnalyser(
                         files = "" to ""
                     )
                 }
-                AnalysisResult(
+                AnalysisMatch(
                     students = students.first to students.second,
                     sha = "" to "",
                     lines = lines,
                     percentage = percentage,
-                    repo = analysisSettings.repository.name,
-                    matchedLines = matchedLines,
-                    gitService = analysisSettings.gitService
+                    matchedLines = matchedLines
                 )
             }
 
-    private fun Pair<String, String>.sort() {
-        first.compareTo(second)
-    }
 }
