@@ -30,5 +30,18 @@ class PreparedAnalysisData(
     /**
      * Solution files that were created by students
      */
-    val solutions: List<File>
+    val solutions: List<Solution>
 )
+
+class Solution(
+    val student: String,
+    val fileName: String,
+    val file: File,
+    val sha: String
+)
+
+fun findSha(solutions: List<Solution>, student: String, fileName: String) =
+    requireNotNull(
+        solutions
+            .find { it.student == student && it.fileName == fileName }?.sha
+    )

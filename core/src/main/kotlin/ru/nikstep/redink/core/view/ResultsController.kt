@@ -29,10 +29,12 @@ class ResultsController(
     @GetMapping("result/{id}")
     fun getResult(@PathVariable id: Int): String {
         val analysisPair = analysisPairRepository.findById(id.toLong()).get()
-        val file1 = loaders.getValue(analysisPair.gitService)
-            .loadFileText(analysisPair.repo, analysisPair.student1Sha, analysisPair.analysisPairLines[0].fileName1)
-        val file2 = loaders.getValue(analysisPair.gitService)
-            .loadFileText(analysisPair.repo, analysisPair.student2Sha, analysisPair.analysisPairLines[0].fileName2)
+        val file1 = ""
+//            loaders.getValue(analysisPair.gitService)
+//            .loadFileText(analysisPair.repo, analysisPair.student1Sha, analysisPair.analysisPairLines[0].fileName1)
+        val file2 = ""
+//            loaders.getValue(analysisPair.gitService)
+//            .loadFileText(analysisPair.repo, analysisPair.student2Sha, analysisPair.analysisPairLines[0].fileName2)
 
         return createHTML().html {
             head {
