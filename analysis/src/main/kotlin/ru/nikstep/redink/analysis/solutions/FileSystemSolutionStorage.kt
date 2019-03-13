@@ -17,11 +17,11 @@ import java.nio.file.Paths
 import java.util.stream.Collectors.toList
 
 class FileSystemSolutionStorage(
-    private val sourceCodeRepository: SourceCodeRepository
+    private val sourceCodeRepository: SourceCodeRepository,
+    private val solutionsDir: String
 ) : SolutionStorage {
 
     private val logger = KotlinLogging.logger {}
-    private val solutionsDir = "solutions"
     private val baseDir = ".base"
 
     override fun loadBase(gitProperty: GitProperty, repoName: String, branchName: String, fileName: String): File =
