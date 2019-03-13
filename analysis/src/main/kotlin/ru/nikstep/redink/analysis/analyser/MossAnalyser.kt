@@ -7,6 +7,7 @@ import ru.nikstep.redink.model.data.AnalysisMatch
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.MatchedLines
+import java.time.LocalDateTime
 
 /**
  * Moss client wrapper
@@ -20,7 +21,9 @@ class MossAnalyser(
     override fun analyse(analysisSettings: AnalysisSettings): AnalysisResult {
         val analysisFiles = solutionStorage.loadAllBasesAndSolutions(analysisSettings)
         val resultLink = MossClient(analysisFiles, mossId).run()
-        return AnalysisResult(analysisSettings, resultLink, parseResult(resultLink))
+        val matchData = parseResult(resultLink)
+        val executionDate = LocalDateTime.now()
+        return AnalysisResult(analysisSettings, resultLink, executionDate, matchData)
     }
 
     private fun parseResult(

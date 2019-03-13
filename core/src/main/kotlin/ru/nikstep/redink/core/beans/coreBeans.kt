@@ -10,6 +10,7 @@ import ru.nikstep.redink.core.graphql.AnalysisQueries
 import ru.nikstep.redink.core.graphql.LocalDateTimeScalarType
 import ru.nikstep.redink.core.util.TokenCacheManager
 import ru.nikstep.redink.model.manager.AnalysisResultDataManager
+import ru.nikstep.redink.model.manager.JPlagReportDataManager
 import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.util.RandomGenerator
 import ru.nikstep.redink.util.auth.GithubAuthorizationService
@@ -47,4 +48,5 @@ val coreBeans = beans {
     }
 
     bean<RandomGenerator>()
+    bean<JPlagReportDataManager>()
 }

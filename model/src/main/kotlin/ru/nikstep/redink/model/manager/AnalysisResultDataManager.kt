@@ -9,7 +9,6 @@ import ru.nikstep.redink.model.entity.AnalysisPairLines
 import ru.nikstep.redink.model.repo.AnalysisPairLinesRepository
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
 import ru.nikstep.redink.model.repo.AnalysisRepository
-import java.time.LocalDateTime
 
 /**
  * Data manager of [AnalysisResult]
@@ -28,7 +27,7 @@ open class AnalysisResultDataManager(
         val analysis = analysisRepository.save(
             Analysis(
                 repository = analysisSettings.repository,
-                executionDate = LocalDateTime.now(),
+                executionDate = analysisResults.executionDate,
                 language = analysisSettings.language,
                 analyser = analysisSettings.analyser,
                 branch = analysisSettings.branch,

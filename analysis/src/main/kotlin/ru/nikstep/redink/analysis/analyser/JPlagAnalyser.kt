@@ -3,16 +3,15 @@ package ru.nikstep.redink.analysis.analyser
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
-import ru.nikstep.redink.model.data.AnalysisMatch
-import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.data.AnalysisSettings
-import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.data.PreparedAnalysisData
+import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.model.entity.JPlagReport
+import ru.nikstep.redink.model.repo.JPlagReportRepository
 import ru.nikstep.redink.util.RandomGenerator
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.asPathInRoot
 import java.io.File
 import java.nio.file.Files
+import java.time.LocalDateTime
 import kotlin.math.roundToInt
 
 /**
@@ -21,6 +20,7 @@ import kotlin.math.roundToInt
 class JPlagAnalyser(
     private val solutionStorage: SolutionStorage,
     private val randomGenerator: RandomGenerator,
+    private val jPlagReportRepository: JPlagReportRepository,
     private val solutionsDir: String,
     private val jplagResultDir: String,
     private val serverUrl: String
@@ -40,7 +40,9 @@ class JPlagAnalyser(
             parseResults(resultDir, index)
         }
         val resultLink = "$serverUrl/jplagresult/$hash/index.html"
-        return AnalysisResult(analysisSettings, resultLink, matchLines)
+        val executionDate = LocalDateTime.now()
+        jPlagReportRepository.save(JPlagReport(createdAt = executionDate, hash = hash))
+        return AnalysisResult(analysisSettings, resultLink, executionDate, matchLines)
     }
 
     private fun generateResultDir(): Pair<String, String> {

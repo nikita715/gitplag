@@ -1,4 +1,4 @@
-package ru.nikstep.redink.analysis
+package ru.nikstep.redink.core.analysis
 
 import mu.KotlinLogging
 import org.springframework.context.ApplicationListener
