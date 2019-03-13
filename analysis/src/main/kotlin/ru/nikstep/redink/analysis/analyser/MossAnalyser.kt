@@ -7,6 +7,8 @@ import ru.nikstep.redink.model.data.AnalysisMatch
 import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.MatchedLines
+import ru.nikstep.redink.model.data.Solution
+import ru.nikstep.redink.model.data.findSha
 import java.time.LocalDateTime
 
 /**
@@ -21,12 +23,13 @@ class MossAnalyser(
     override fun analyse(analysisSettings: AnalysisSettings): AnalysisResult {
         val analysisFiles = solutionStorage.loadAllBasesAndSolutions(analysisSettings)
         val resultLink = MossClient(analysisFiles, mossId).run()
-        val matchData = parseResult(resultLink)
+        val matchData = parseResult(analysisFiles.solutions, resultLink)
         val executionDate = LocalDateTime.now()
         return AnalysisResult(analysisSettings, resultLink, executionDate, matchData)
     }
 
     private fun parseResult(
+        solutions: List<Solution>,
         resultLink: String
     ): List<AnalysisMatch> =
         Jsoup.connect(resultLink).get()
@@ -71,15 +74,18 @@ class MossAnalyser(
                     val cells = row.getElementsByTag("td")
                     val firstMatch = cells[0].selectFirst("a").text().split("-")
                     val secondMatch = cells[2].selectFirst("a").text().split("-")
+                    val fullFileName1 = firstFileName + firstFile
+                    val fullFileName2 = secondFileName + secondFile
                     matchedLines += MatchedLines(
                         match1 = firstMatch[0].toInt() to firstMatch[1].toInt(),
                         match2 = secondMatch[0].toInt() to secondMatch[1].toInt(),
-                        files = firstFileName + firstFile to secondFileName + secondFile
+                        files = fullFileName1 to fullFileName2,
+                        sha = findSha(solutions, students.first, fullFileName1)
+                                to findSha(solutions, students.second, fullFileName2)
                     )
                 }
                 AnalysisMatch(
                     students = students.first to students.second,
-                    sha = "" to "",
                     lines = lines,
                     percentage = percentage,
                     matchedLines = matchedLines

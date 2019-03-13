@@ -4,7 +4,18 @@ import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import ru.nikstep.redink.util.GitProperty
 import java.util.*
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.ElementCollection
+import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.FetchType
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
 
 /**
  * Result of the plagiarism analysis of two files
@@ -39,12 +50,6 @@ data class AnalysisPair(
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     val gitService: GitProperty,
-
-    @Column(nullable = false)
-    val student1Sha: String,
-
-    @Column(nullable = false)
-    val student2Sha: String,
 
     @ManyToOne
     @field:JsonBackReference

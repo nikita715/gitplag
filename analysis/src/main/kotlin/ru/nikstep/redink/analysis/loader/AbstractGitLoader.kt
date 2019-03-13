@@ -26,7 +26,7 @@ abstract class AbstractGitLoader(
         changedFiles.forEach { fileName ->
             checkBaseExists(pullRequest, fileName)
 
-            val fileText = loadFileText(pullRequest.sourceRepoFullName, pullRequest.sourceBranchName, fileName)
+            val fileText = loadFileText(pullRequest.sourceRepoFullName, pullRequest.headSha, fileName)
 
             if (fileText.isBlank())
                 throw AnalysisException("$fileName is not found in ${pullRequest.sourceBranchName} branch, ${pullRequest.sourceRepoFullName} repo")

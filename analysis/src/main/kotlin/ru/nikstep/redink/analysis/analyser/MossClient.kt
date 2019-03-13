@@ -21,9 +21,10 @@ internal class MossClient(analysisData: PreparedAnalysisData, private val mossId
             SocketClient().use { client ->
                 client.userID = mossId
                 client.language = language
+                client.optD
                 client.run()
                 bases.forEach { client.uploadFile(it, true) }
-                solutions.forEach { client.uploadFile(it) }
+                solutions.forEach { client.uploadFile(it.file) }
                 client.sendQuery()
                 client.resultURL.toString()
             }

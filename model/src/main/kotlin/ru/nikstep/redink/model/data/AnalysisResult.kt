@@ -29,7 +29,6 @@ data class AnalysisResult(
 
 data class AnalysisMatch(
     val students: Pair<String, String>,
-    val sha: Pair<String, String>,
     val lines: Int,
     val percentage: Int,
     val matchedLines: List<MatchedLines> = emptyList()

@@ -3,6 +3,7 @@ package ru.nikstep.redink.analysis.solutions
 import mu.KotlinLogging
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.PreparedAnalysisData
+import ru.nikstep.redink.model.data.Solution
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.SourceCode
 import ru.nikstep.redink.model.repo.SourceCodeRepository
@@ -42,11 +43,11 @@ class FileSystemSolutionStorage(
             .filter { path -> Files.isRegularFile(path) }
             .map(Path::toFile).collect(toList())
 
-    private fun loadSolutions(analysisSettings: AnalysisSettings): List<File> =
+    private fun loadSolutions(analysisSettings: AnalysisSettings): List<Solution> =
         loadSourceCodeForAnalysis(analysisSettings).map {
             val file = pathToSolution(analysisSettings, it).asFile()
             if (file.exists())
-                file
+                Solution(it.user, it.fileName, file, it.sha)
             else
                 throw SolutionNotFoundException(
                     "Loader: solution ${it.repo}/${it.sourceBranch}/${it.fileName} not found"

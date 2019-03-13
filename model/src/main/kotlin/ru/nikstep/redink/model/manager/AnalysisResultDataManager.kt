@@ -42,8 +42,6 @@ open class AnalysisResultDataManager(
                     lines = it.lines,
                     repo = analysisResults.repo,
                     percentage = it.percentage,
-                    student1Sha = it.sha.first,
-                    student2Sha = it.sha.second,
                     gitService = analysisResults.gitService,
                     analysis = analysis
                 )
@@ -56,6 +54,8 @@ open class AnalysisResultDataManager(
                     to2 = it.match2.second,
                     fileName1 = it.files.first,
                     fileName2 = it.files.second,
+                    sha1 = it.sha.first,
+                    sha2 = it.sha.second,
                     analysisPair = analysisPair
                 )
             })
