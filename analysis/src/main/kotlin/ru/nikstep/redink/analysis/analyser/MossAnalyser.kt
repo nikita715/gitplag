@@ -39,13 +39,23 @@ class MossAnalyser(
                 val first = tds[0].selectFirst("a")
                 val second = tds[1].selectFirst("a")
 
-                val firstPath = first.text().split(" ").first().split("/")
-                val secondPath = second.text().split(" ").first().split("/")
+                val first1 = first.text().split(" ").first()
+                val firstPath = first1.split("/")
+                val first2 = second.text().split(" ").first()
+                val secondPath = first2.split("/")
 
                 val students =
                     firstPath.zip(secondPath)
                         .dropWhile { it.first == it.second }
                         .first()
+
+                val firstFileName = first1.substringAfter(students.first).replaceFirst("/", "")
+                val secondFileName = first2.substringAfter(students.second).replaceFirst("/", "")
+
+                val firstFile = Jsoup.connect(first.attr("href").replace(".html", "-0.html")).get()
+                    .getElementsByTag("pre")[0].text().substringBefore("\n").substringAfter(": ")
+                val secondFile = Jsoup.connect(first.attr("href").replace(".html", "-1.html")).get()
+                    .getElementsByTag("pre")[0].text().substringBefore("\n").substringAfter(": ")
 
                 val lines = tds[2].text().toInt()
 
@@ -64,7 +74,7 @@ class MossAnalyser(
                     matchedLines += MatchedLines(
                         match1 = firstMatch[0].toInt() to firstMatch[1].toInt(),
                         match2 = secondMatch[0].toInt() to secondMatch[1].toInt(),
-                        files = "" to ""
+                        files = firstFileName + firstFile to secondFileName + secondFile
                     )
                 }
                 AnalysisMatch(
