@@ -63,7 +63,7 @@ class Repository(
     val gitService: GitProperty,
 
     @Column(nullable = false)
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "analysed_branch", joinColumns = [JoinColumn(name = "repository")])
     val branches: List<String> = emptyList(),
 

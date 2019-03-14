@@ -20,12 +20,14 @@ interface RepositoryRepository : JpaRepository<Repository, Long> {
      * Find repositories with [AnalysisMode.PERIODIC] that must be analysed now
      */
     @Query(
-        nativeQuery = true, value = """select * from repository
-where repository.analysis_mode = 'PERIODIC' and extract(epoch from now() - (select execution_date
-                                  from analysis
-                                  where analysis.repository_id = 5
-                                  order by id desc
-                                  limit 1) at time zone 'MSK') / 60 > repository.analysis_delay;"""
+        nativeQuery = true, value = """
+            select * from repository
+            where repository.analysis_mode = 'PERIODIC'
+            and extract(epoch from now() - (select execution_date
+            from analysis
+            where analysis.repository_id = repository.id
+            order by id desc
+            limit 1) at time zone 'MSK') / 60 > repository.analysis_delay"""
     )
     fun findRequiredToAnalyse(): List<Repository>
 
