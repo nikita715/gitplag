@@ -17,6 +17,7 @@ fun AnalysisSettings.analyser(analyser: AnalyserProperty): AnalysisSettings =
         gitService = gitService,
         branch = branch,
         branchMode = branchMode,
+        withLines = withLines,
         language = language
     )
 
@@ -44,6 +45,7 @@ fun AnalysisSettings.language(language: Language): AnalysisSettings =
         gitService = gitService,
         branch = branch,
         branchMode = branchMode,
+        withLines = withLines,
         language = language
     )
 
@@ -73,6 +75,7 @@ fun AnalysisSettings.branch(branch: String?): AnalysisSettings {
                 gitService = gitService,
                 branch = branch,
                 branchMode = branchMode,
+                withLines = withLines,
                 language = language
             )
         } catch (e: IllegalArgumentException) {
@@ -106,5 +109,20 @@ fun AnalysisSettings.branchMode(branchMode: AnalysisBranchMode): AnalysisSetting
         gitService = gitService,
         branch = branch,
         branchMode = branchMode,
+        withLines = withLines,
+        language = language
+    )
+
+/**
+ * Set the [withLines] to the [AnalysisSettings]
+ */
+fun AnalysisSettings.withLines(withLines: Boolean): AnalysisSettings =
+    AnalysisSettings(
+        repository = repository,
+        analyser = analyser,
+        gitService = gitService,
+        branch = branch,
+        branchMode = branchMode,
+        withLines = withLines,
         language = language
     )
