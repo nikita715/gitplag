@@ -1,6 +1,5 @@
 package ru.nikstep.redink.model.data
 
-import ru.nikstep.redink.util.AnalyserProperty
 import ru.nikstep.redink.util.Language
 import java.io.File
 
@@ -19,8 +18,6 @@ class PreparedAnalysisData(
      * Language of the file
      */
     val language: Language,
-
-    val analyser: AnalyserProperty,
 
     /**
      * Base files and solution files that were created by students
