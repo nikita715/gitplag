@@ -32,7 +32,6 @@ class FileSystemSolutionStorage(
         PreparedAnalysisData(
             repoName = analysisSettings.repository.name,
             language = analysisSettings.language,
-            analyser = analysisSettings.analyser,
             bases = loadBases(analysisSettings),
             solutions = loadSeparateSolutions(analysisSettings)
         )
@@ -42,7 +41,6 @@ class FileSystemSolutionStorage(
         PreparedAnalysisData(
             repoName = analysisSettings.repository.name,
             language = analysisSettings.language,
-            analyser = analysisSettings.analyser,
             bases = loadBases(analysisSettings),
             solutions = loadComposedSolutions(analysisSettings)
         )
