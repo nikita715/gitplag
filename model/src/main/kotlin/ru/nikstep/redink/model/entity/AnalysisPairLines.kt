@@ -37,12 +37,6 @@ data class AnalysisPairLines(
     @Column(nullable = false)
     val fileName2: String,
 
-    @Column(nullable = false)
-    val sha1: String,
-
-    @Column(nullable = false)
-    val sha2: String,
-
     @ManyToOne
     @field:JsonBackReference
     @get:JsonBackReference

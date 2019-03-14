@@ -48,6 +48,12 @@ data class AnalysisPair(
     val analysisPairLines: List<AnalysisPairLines> = mutableListOf(),
 
     @Column(nullable = false)
+    val sha1: String,
+
+    @Column(nullable = false)
+    val sha2: String,
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     val gitService: GitProperty,
 
