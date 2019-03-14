@@ -9,7 +9,6 @@ import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.MatchedLines
 import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.model.data.Solution
-import ru.nikstep.redink.model.data.findSha
 import ru.nikstep.redink.model.entity.JPlagReport
 import ru.nikstep.redink.model.repo.JPlagReportRepository
 import ru.nikstep.redink.util.RandomGenerator
@@ -39,7 +38,7 @@ class JPlagAnalyser(
 
     override fun analyse(analysisSettings: AnalysisSettings): AnalysisResult {
         val (hash, resultDir) = generateResultDir()
-        val analysisFiles = solutionStorage.loadAllBasesAndSolutions(analysisSettings)
+        val analysisFiles = solutionStorage.loadBasesAndSeparateSolutions(analysisSettings)
         val solutionsPath = solutionsDir.asPathInRoot() + "/" + analysisSettings.gitService.toString()
         JPlagClient(analysisFiles, solutionsPath, analysisSettings.branch, resultDir).run()
         val matchLines = analysisFiles.toSolutionPairIndexes().mapNotNull { index ->
@@ -85,7 +84,8 @@ class JPlagAnalyser(
                 match1 = from1.toInt() to to1.toInt(),
                 match2 = from2.toInt() to to2.toInt(),
                 files = fileName1 to fileName2,
-                sha = findSha(solutions, name1, fileName1) to findSha(solutions, name2, fileName2)
+                sha = requireNotNull(solutions.find { it.student == name1 && it.fileName == fileName1 }?.sha)
+                        to requireNotNull(solutions.find { it.student == name2 && it.fileName == fileName2 }?.sha)
             )
         }
         return AnalysisMatch(

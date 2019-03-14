@@ -23,19 +23,21 @@ class SourceCode(
     val repo: String,
     val fileName: String,
     val sha: String,
+//    val countOfLines: Int,
     val sourceBranch: String,
     val targetBranch: String,
 
     @Enumerated(EnumType.STRING)
     val gitService: GitProperty
 ) {
-    constructor(pullRequest: PullRequest, fileName: String) : this(
+    constructor(pullRequest: PullRequest, fileName: String, countOfLines: Int) : this(
         user = pullRequest.creatorName,
         repo = pullRequest.mainRepoFullName,
         sourceBranch = pullRequest.sourceBranchName,
         targetBranch = pullRequest.mainBranchName,
         fileName = fileName,
         sha = pullRequest.headSha,
+//        countOfLines = countOfLines,
         gitService = pullRequest.gitService
     )
 }
