@@ -65,26 +65,25 @@ class FileSystemSolutionStorage(
         return loadSourceCodeForAnalysis(analysisSettings).groupBy { it.user }
             .map {
                 val path1 = Paths.get("temp_solutions", it.key)
-                val fileName = it.key + ".java"
+                val fileName = it.key + ".txt"
                 val path2 = Paths.get("temp_solutions", it.key, fileName)
                 val path3 = pathToSolutions(analysisSettings, it.key).asPath()
                 Files.deleteIfExists(path2)
                 Files.createDirectories(path1)
-                val solFile = Files.createFile(path2).toFile()
+                val file = Files.createFile(path2).toFile()
                 var allLength = 0
-                val files = mutableListOf<String>()
+                val fileNames = mutableListOf<String>()
                 val fileLengths = mutableListOf<Int>()
                 Files.walk(pathToSolutions(analysisSettings, it.key).asPath())
                     .filter { path -> Files.isRegularFile(path) && !Files.isHidden(path) }
-                    .map(Path::toFile).collect(toList()).forEach { file ->
-                        //                        solFile.appendText("//" +  + System.lineSeparator())
-                        solFile.appendText(file.readText())
-                        val length = Files.lines(file.toPath()).count().toInt()
-                        files += path3.relativize(file.toPath()).toString()
+                    .map(Path::toFile).collect(toList()).forEach { foundedFile ->
+                        file.appendText(foundedFile.readText())
+                        val length = Files.lines(foundedFile.toPath()).count().toInt()
+                        fileNames += path3.relativize(foundedFile.toPath()).toString()
                         fileLengths += length + allLength
                         allLength += length
                     }
-                Solution(it.key, fileName, solFile, files, fileLengths, it.value[0].sha)
+                Solution(it.key, fileName, file, fileNames, fileLengths, it.value[0].sha)
             }
     }
 
