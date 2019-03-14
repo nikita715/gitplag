@@ -7,7 +7,6 @@ import ru.nikstep.redink.model.data.Solution
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.SourceCode
 import ru.nikstep.redink.model.repo.SourceCodeRepository
-import ru.nikstep.redink.util.AnalysisBranchMode.*
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.asPath
 import java.io.File
@@ -91,14 +90,8 @@ class FileSystemSolutionStorage(
     }
 
     private fun loadSourceCodeForAnalysis(analysisSettings: AnalysisSettings) =
-        when (analysisSettings.branchMode) {
-            BY_TARGET -> sourceCodeRepository
-                .findAllByRepoAndTargetBranch(analysisSettings.repository.name, analysisSettings.branch)
-            BY_SOURCE -> sourceCodeRepository
-                .findAllByRepoAndSourceBranch(analysisSettings.repository.name, analysisSettings.branch)
-            ANY -> sourceCodeRepository
-                .findAllByRepo(analysisSettings.repository.name)
-        }
+        sourceCodeRepository
+            .findAllByRepoAndSourceBranch(analysisSettings.repository.name, analysisSettings.branch)
 
     @Synchronized
     override fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): File {
