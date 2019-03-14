@@ -8,7 +8,7 @@ import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.MatchedLines
 import ru.nikstep.redink.model.data.Solution
-import ru.nikstep.redink.model.data.findSha
+import ru.nikstep.redink.model.data.findByStudent
 import java.time.LocalDateTime
 
 /**
@@ -21,7 +21,7 @@ class MossAnalyser(
     private val logger = KotlinLogging.logger {}
 
     override fun analyse(analysisSettings: AnalysisSettings): AnalysisResult {
-        val analysisFiles = solutionStorage.loadAllBasesAndSolutions(analysisSettings)
+        val analysisFiles = solutionStorage.loadBasesAndComposedSolutions(analysisSettings)
         val resultLink = MossClient(analysisFiles, mossId).run()
         val matchData = parseResult(analysisFiles.solutions, resultLink)
         val executionDate = LocalDateTime.now()
@@ -31,8 +31,8 @@ class MossAnalyser(
     private fun parseResult(
         solutions: List<Solution>,
         resultLink: String
-    ): List<AnalysisMatch> =
-        Jsoup.connect(resultLink).get()
+    ): List<AnalysisMatch> {
+        return Jsoup.connect(resultLink).get()
             .body()
             .getElementsByTag("table")
             .select("tr")
@@ -52,14 +52,6 @@ class MossAnalyser(
                         .dropWhile { it.first == it.second }
                         .first()
 
-                val firstFileName = first1.substringAfter(students.first).replaceFirst("/", "")
-                val secondFileName = first2.substringAfter(students.second).replaceFirst("/", "")
-
-                val firstFile = Jsoup.connect(first.attr("href").replace(".html", "-0.html")).get()
-                    .getElementsByTag("pre")[0].text().substringBefore("\n").substringAfter(": ")
-                val secondFile = Jsoup.connect(first.attr("href").replace(".html", "-1.html")).get()
-                    .getElementsByTag("pre")[0].text().substringBefore("\n").substringAfter(": ")
-
                 val lines = tds[2].text().toInt()
 
                 val percentage = first.text().split(" ")
@@ -69,27 +61,55 @@ class MossAnalyser(
 
                 val rows = Jsoup.connect(first.attr("href").replace(".html", "-top.html"))
                     .get().getElementsByTag("tr")
-                val matchedLines = mutableListOf<MatchedLines>()
+                val matchedLines1 = mutableListOf<Pair<Int, Int>>()
+                val matchedLines2 = mutableListOf<Pair<Int, Int>>()
                 for (row in rows.subList(1, rows.size)) {
                     val cells = row.getElementsByTag("td")
                     val firstMatch = cells[0].selectFirst("a").text().split("-")
                     val secondMatch = cells[2].selectFirst("a").text().split("-")
-                    val fullFileName1 = firstFileName + firstFile
-                    val fullFileName2 = secondFileName + secondFile
-                    matchedLines += MatchedLines(
-                        match1 = firstMatch[0].toInt() to firstMatch[1].toInt(),
-                        match2 = secondMatch[0].toInt() to secondMatch[1].toInt(),
-                        files = fullFileName1 to fullFileName2,
-                        sha = findSha(solutions, students.first, fullFileName1)
-                                to findSha(solutions, students.second, fullFileName2)
-                    )
+                    matchedLines1 += firstMatch[0].toInt() to firstMatch[1].toInt()
+                    matchedLines2 += secondMatch[0].toInt() to secondMatch[1].toInt()
                 }
+
+                val solution1 = findByStudent(solutions, students.first)
+                val solution2 = findByStudent(solutions, students.second)
+
+                val fileNames1 = matchedLines1.map {
+                    var index = 0
+                    for (i in solution1.lengths) {
+                        if (it.first >= i) {
+                            index++
+                        }
+                    }
+                    if (index > 0)
+                        solution1.files[index] to (it.first - solution1.lengths[index - 1] to it.second - solution1.lengths[index - 1]) else
+                        solution1.files[index] to it
+                }
+                val fileNames2 = matchedLines2.map {
+                    var index = 0
+                    for (i in solution2.lengths) {
+                        if (it.first >= i) {
+                            index++
+                        }
+                    }
+                    if (index > 0)
+                        solution2.files[index] to (it.first - solution2.lengths[index - 1] to it.second - solution2.lengths[index - 1]) else
+                        solution2.files[index] to it
+                }
+
                 AnalysisMatch(
                     students = students.first to students.second,
                     lines = lines,
                     percentage = percentage,
-                    matchedLines = matchedLines
+                    matchedLines = (0 until fileNames1.size).map { i ->
+                        MatchedLines(
+                            match1 = fileNames1[i].second.first to fileNames1[i].second.second,
+                            match2 = fileNames2[i].second.first to fileNames2[i].second.second,
+                            files = fileNames1[i].first to fileNames2[i].first,
+                            sha = "" to ""
+                        )
+                    }
                 )
             }
-
+    }
 }

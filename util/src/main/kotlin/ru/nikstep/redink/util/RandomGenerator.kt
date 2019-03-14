@@ -4,6 +4,6 @@ import org.apache.commons.lang3.RandomStringUtils
 
 class RandomGenerator {
 
-    fun randomAlphanumeric(size: Int) = RandomStringUtils.randomAlphanumeric(size)
+    fun randomAlphanumeric(size: Int): String = RandomStringUtils.randomAlphanumeric(size)
 
 }

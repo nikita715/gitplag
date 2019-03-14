@@ -29,13 +29,23 @@ class FileSystemSolutionStorage(
         pathToBase(gitProperty, repoName, branchName, fileName).asFile()
 
     @Synchronized
-    override fun loadAllBasesAndSolutions(analysisSettings: AnalysisSettings) =
+    override fun loadBasesAndSeparateSolutions(analysisSettings: AnalysisSettings) =
         PreparedAnalysisData(
             repoName = analysisSettings.repository.name,
             language = analysisSettings.language,
             analyser = analysisSettings.analyser,
             bases = loadBases(analysisSettings),
-            solutions = loadSolutions(analysisSettings)
+            solutions = loadSeparateSolutions(analysisSettings)
+        )
+
+    @Synchronized
+    override fun loadBasesAndComposedSolutions(analysisSettings: AnalysisSettings) =
+        PreparedAnalysisData(
+            repoName = analysisSettings.repository.name,
+            language = analysisSettings.language,
+            analyser = analysisSettings.analyser,
+            bases = loadBases(analysisSettings),
+            solutions = loadComposedSolutions(analysisSettings)
         )
 
     override fun loadBases(analysisSettings: AnalysisSettings): List<File> =
@@ -43,16 +53,42 @@ class FileSystemSolutionStorage(
             .filter { path -> Files.isRegularFile(path) }
             .map(Path::toFile).collect(toList())
 
-    private fun loadSolutions(analysisSettings: AnalysisSettings): List<Solution> =
+    private fun loadSeparateSolutions(analysisSettings: AnalysisSettings): List<Solution> =
         loadSourceCodeForAnalysis(analysisSettings).map {
             val file = pathToSolution(analysisSettings, it).asFile()
             if (file.exists())
-                Solution(it.user, it.fileName, file, it.sha)
+                Solution(it.user, it.fileName, file, listOf(), listOf(), it.sha)
             else
                 throw SolutionNotFoundException(
                     "Loader: solution ${it.repo}/${it.sourceBranch}/${it.fileName} not found"
                 )
         }
+
+    private fun loadComposedSolutions(analysisSettings: AnalysisSettings): List<Solution> {
+        return loadSourceCodeForAnalysis(analysisSettings).groupBy { it.user }
+            .map {
+                val path1 = Paths.get("temp_solutions", it.key)
+                val path2 = Paths.get("temp_solutions", it.key, it.key + ".java")
+                val path3 = pathToSolutions(analysisSettings, it.key).asPath()
+                Files.deleteIfExists(path2)
+                Files.createDirectories(path1)
+                val solFile = Files.createFile(path2).toFile()
+                var allLength = 0
+                val files = mutableListOf<String>()
+                val fileLengths = mutableListOf<Int>()
+                Files.walk(pathToSolutions(analysisSettings, it.key).asPath())
+                    .filter { path -> Files.isRegularFile(path) && !Files.isHidden(path) }
+                    .map(Path::toFile).collect(toList()).forEach { file ->
+                        //                        solFile.appendText("//" +  + System.lineSeparator())
+                        solFile.appendText(file.readText())
+                        val length = Files.lines(file.toPath()).count().toInt()
+                        files += path3.relativize(file.toPath()).toString()
+                        fileLengths += length + allLength
+                        allLength += length
+                    }
+                Solution(it.key, "", solFile, files, fileLengths, "")
+            }
+    }
 
     private fun loadSourceCodeForAnalysis(analysisSettings: AnalysisSettings) =
         when (analysisSettings.branchMode) {
@@ -73,7 +109,7 @@ class FileSystemSolutionStorage(
             fileName,
             pullRequest.sourceBranchName
         )
-        sourceCodeRepository.save(SourceCode(pullRequest, fileName))
+        sourceCodeRepository.save(SourceCode(pullRequest, fileName, countOfLines(fileText)))
         return saveLocally(pathToSolution, fileText)
     }
 
@@ -102,11 +138,17 @@ class FileSystemSolutionStorage(
     private fun pathToSolutions(git: GitProperty, repo: String, branch: String): String =
         asPath(solutionsDir, git, repo, branch)
 
+    private fun pathToSolutions(git: GitProperty, repo: String, branch: String, user: String): String =
+        asPath(solutionsDir, git, repo, branch, user)
+
     private fun pathToSolution(git: GitProperty, repo: String, branch: String, creator: String, file: String): String =
         asPath(solutionsDir, git, repo, branch, creator, file)
 
     private fun pathToBases(analysisSettings: AnalysisSettings): String =
         pathToBases(analysisSettings.gitService, analysisSettings.repository.name, analysisSettings.branch)
+
+    private fun pathToSolutions(analysisSettings: AnalysisSettings, user: String): String =
+        pathToSolutions(analysisSettings.gitService, analysisSettings.repository.name, analysisSettings.branch, user)
 
     private fun pathToSolutions(analysisSettings: AnalysisSettings): String =
         pathToSolutions(analysisSettings.gitService, analysisSettings.repository.name, analysisSettings.branch)
@@ -131,4 +173,7 @@ class FileSystemSolutionStorage(
     private fun String.asFile() = File(this.asPath().toUri())
 
     private fun File.subfiles() = this.list().toList()
+
+    private fun countOfLines(text: String) = "\r\n|\r|\n".toRegex().findAll(text).count()
+
 }

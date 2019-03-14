@@ -2,6 +2,7 @@ package ru.nikstep.redink.analysis.analyser
 
 import it.zielke.moji.SocketClient
 import mu.KotlinLogging
+import org.apache.commons.lang3.reflect.FieldUtils
 import ru.nikstep.redink.model.data.PreparedAnalysisData
 
 /**
@@ -21,7 +22,7 @@ internal class MossClient(analysisData: PreparedAnalysisData, private val mossId
             SocketClient().use { client ->
                 client.userID = mossId
                 client.language = language
-                client.optD
+                client.optD(0)
                 client.run()
                 bases.forEach { client.uploadFile(it, true) }
                 solutions.forEach { client.uploadFile(it.file) }
@@ -29,6 +30,11 @@ internal class MossClient(analysisData: PreparedAnalysisData, private val mossId
                 client.resultURL.toString()
             }
         }
+
+    fun SocketClient.optD(value: Int) {
+        this::class.java.getDeclaredField("optD").isAccessible = true
+        FieldUtils.writeField(this, "optD", value, true)
+    }
 
     private inline fun <R> logged(action: () -> R): R {
         logger.info { "Analysis: starting new moss analysis" }
