@@ -12,6 +12,7 @@ import ru.nikstep.redink.util.Language
 class AnalysisSettings(
     val repository: Repository,
     val branch: String,
+    val withLines: Boolean = repository.analyseWithLines,
     val branchMode: AnalysisBranchMode = repository.analysisBranchMode,
     val analyser: AnalyserProperty = repository.analyser,
     val gitService: GitProperty = repository.gitService,

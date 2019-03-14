@@ -11,6 +11,7 @@ import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.analyser
 import ru.nikstep.redink.model.data.branchMode
 import ru.nikstep.redink.model.data.language
+import ru.nikstep.redink.model.data.withLines
 import ru.nikstep.redink.model.repo.AnalysisRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
@@ -37,12 +38,13 @@ class AnalysisController(
         @RequestParam("analyser", required = false) analyser: String?,
         @RequestParam("language", required = false) language: String?,
         @RequestParam("branch", required = false) branch: String?,
+        @RequestParam("withLines", required = false) withLines: Boolean = false,
         @RequestParam("branchMode", required = false) branchMode: String?
     ): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
         val analysisSettings =
             AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
-                .branchMode(branchMode)
+                .branchMode(branchMode).withLines(withLines)
         return try {
             val analysis = analysisRunner.run(analysisSettings)
             ResponseEntity.ok(logger.loggedAnalysis(analysisSettings) {
@@ -75,12 +77,13 @@ class AnalysisController(
         @RequestParam("language", required = false) language: String?,
         @RequestParam("branch", required = false) branch: String?,
         @RequestParam("branchMode", required = false) branchMode: String?,
+        @RequestParam("withLines", required = false) withLines: Boolean = false,
         @RequestParam("responseUrl", required = false) responseUrl: String?
     ): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
         val analysisSettings =
             AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
-                .branchMode(branchMode)
+                .branchMode(branchMode).withLines(withLines)
         analysisAsyncRunner.runAndRespond(analysisSettings, responseUrl)
         return ResponseEntity.ok("Accepted")
     }

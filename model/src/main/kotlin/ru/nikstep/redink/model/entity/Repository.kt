@@ -4,8 +4,25 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
-import ru.nikstep.redink.util.*
-import javax.persistence.*
+import ru.nikstep.redink.util.AnalyserProperty
+import ru.nikstep.redink.util.AnalysisBranchMode
+import ru.nikstep.redink.util.AnalysisMode
+import ru.nikstep.redink.util.GitProperty
+import ru.nikstep.redink.util.Language
+import javax.persistence.CollectionTable
+import javax.persistence.Column
+import javax.persistence.ElementCollection
+import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.FetchType
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
+import javax.persistence.Table
 
 /**
  * Git repository
@@ -39,6 +56,9 @@ class Repository(
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     val analysisBranchMode: AnalysisBranchMode,
+
+    @Column(nullable = false)
+    val analyseWithLines: Boolean = false,
 
     @Column(nullable = false)
     val analysisDelay: Int = 1,
