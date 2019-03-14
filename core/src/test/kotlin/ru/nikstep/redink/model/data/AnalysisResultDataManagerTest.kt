@@ -12,7 +12,10 @@ import ru.nikstep.redink.model.entity.User
 import ru.nikstep.redink.model.manager.AnalysisResultDataManager
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.UserRepository
-import ru.nikstep.redink.util.*
+import ru.nikstep.redink.util.AnalyserProperty
+import ru.nikstep.redink.util.AnalysisMode
+import ru.nikstep.redink.util.GitProperty
+import ru.nikstep.redink.util.Language
 
 @Ignore
 @RunWith(SpringJUnit4ClassRunner::class)
@@ -44,8 +47,7 @@ class AnalysisResultDataManagerTest {
             analysisMode = AnalysisMode.PERIODIC,
             gitService = GitProperty.GITHUB,
             language = Language.JAVA,
-            branches = listOf("master"),
-            analysisBranchMode = AnalysisBranchMode.ANY
+            branches = listOf("master")
         )
     )
 

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference
 import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
 import ru.nikstep.redink.util.AnalyserProperty
-import ru.nikstep.redink.util.AnalysisBranchMode
 import ru.nikstep.redink.util.AnalysisMode
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language
@@ -52,10 +51,6 @@ class Repository(
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     val analysisMode: AnalysisMode,
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    val analysisBranchMode: AnalysisBranchMode,
 
     @Column(nullable = false)
     val analyseWithLines: Boolean = false,

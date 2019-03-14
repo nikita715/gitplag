@@ -7,8 +7,11 @@ import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.User
 import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.UserRepository
-import ru.nikstep.redink.util.*
+import ru.nikstep.redink.util.AnalyserProperty
+import ru.nikstep.redink.util.AnalysisMode
+import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language.TEXT
+import ru.nikstep.redink.util.parseAsObject
 
 /**
  * Service for user/repository integration with github
@@ -62,8 +65,7 @@ class GithubIntegrationService(
                 analysisMode = AnalysisMode.STATIC,
                 gitService = GitProperty.GITHUB,
                 analyser = AnalyserProperty.MOSS,
-                branches = listOf("master"),
-                analysisBranchMode = AnalysisBranchMode.BY_TARGET
+                branches = listOf("master")
             )
         }.let { repositoryDataManager.saveAll(requireNotNull(it)) }
 
