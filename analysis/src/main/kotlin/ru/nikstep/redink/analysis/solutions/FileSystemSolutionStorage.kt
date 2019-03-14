@@ -65,7 +65,8 @@ class FileSystemSolutionStorage(
         return loadSourceCodeForAnalysis(analysisSettings).groupBy { it.user }
             .map {
                 val path1 = Paths.get("temp_solutions", it.key)
-                val path2 = Paths.get("temp_solutions", it.key, it.key + ".java")
+                val fileName = it.key + ".java"
+                val path2 = Paths.get("temp_solutions", it.key, fileName)
                 val path3 = pathToSolutions(analysisSettings, it.key).asPath()
                 Files.deleteIfExists(path2)
                 Files.createDirectories(path1)
@@ -83,7 +84,7 @@ class FileSystemSolutionStorage(
                         fileLengths += length + allLength
                         allLength += length
                     }
-                Solution(it.key, "", solFile, files, fileLengths, "")
+                Solution(it.key, fileName, solFile, files, fileLengths, it.value[0].sha)
             }
     }
 

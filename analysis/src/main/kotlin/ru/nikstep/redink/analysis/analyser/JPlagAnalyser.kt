@@ -9,6 +9,7 @@ import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.MatchedLines
 import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.model.data.Solution
+import ru.nikstep.redink.model.data.findByStudent
 import ru.nikstep.redink.model.entity.JPlagReport
 import ru.nikstep.redink.model.repo.JPlagReportRepository
 import ru.nikstep.redink.util.RandomGenerator
@@ -83,16 +84,16 @@ class JPlagAnalyser(
             matchedLines += MatchedLines(
                 match1 = from1.toInt() to to1.toInt(),
                 match2 = from2.toInt() to to2.toInt(),
-                files = fileName1 to fileName2,
-                sha = requireNotNull(solutions.find { it.student == name1 && it.fileName == fileName1 }?.sha)
-                        to requireNotNull(solutions.find { it.student == name2 && it.fileName == fileName2 }?.sha)
+                files = fileName1 to fileName2
             )
         }
         return AnalysisMatch(
             students = name1 to name2,
             lines = -1,
             percentage = percentage,
-            matchedLines = matchedLines
+            matchedLines = matchedLines,
+            sha = findByStudent(solutions, name1).sha
+                    to findByStudent(solutions, name2).sha
         )
     }
 

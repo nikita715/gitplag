@@ -6,6 +6,5 @@ package ru.nikstep.redink.model.data
 data class MatchedLines(
     val match1: Pair<Int, Int>,
     val match2: Pair<Int, Int>,
-    val files: Pair<String, String>,
-    val sha: Pair<String, String>
+    val files: Pair<String, String>
 )

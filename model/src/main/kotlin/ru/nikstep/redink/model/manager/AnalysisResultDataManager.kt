@@ -43,7 +43,9 @@ open class AnalysisResultDataManager(
                     repo = analysisResults.repo,
                     percentage = it.percentage,
                     gitService = analysisResults.gitService,
-                    analysis = analysis
+                    analysis = analysis,
+                    sha1 = it.sha.first,
+                    sha2 = it.sha.second
                 )
             )
             val analysisPairLines = analysisPairLinesRepository.saveAll(it.matchedLines.map {
@@ -54,8 +56,6 @@ open class AnalysisResultDataManager(
                     to2 = it.match2.second,
                     fileName1 = it.files.first,
                     fileName2 = it.files.second,
-                    sha1 = it.sha.first,
-                    sha2 = it.sha.second,
                     analysisPair = analysisPair
                 )
             })

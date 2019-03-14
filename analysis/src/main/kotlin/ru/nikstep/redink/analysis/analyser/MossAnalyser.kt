@@ -68,7 +68,9 @@ class MossAnalyser(
                     students = students.first to students.second,
                     lines = lines,
                     percentage = percentage,
-                    matchedLines = matchedLines
+                    matchedLines = matchedLines,
+                    sha = findByStudent(solutions, students.first).sha
+                            to findByStudent(solutions, students.second).sha
                 )
             }
     }
@@ -100,8 +102,7 @@ class MossAnalyser(
             MatchedLines(
                 match1 = leftFilesToMatchedLines[i].second.first to leftFilesToMatchedLines[i].second.second,
                 match2 = rightFilesToMatchedLines[i].second.first to rightFilesToMatchedLines[i].second.second,
-                files = leftFilesToMatchedLines[i].first to rightFilesToMatchedLines[i].first,
-                sha = "" to ""
+                files = leftFilesToMatchedLines[i].first to rightFilesToMatchedLines[i].first
             )
         }
     }

@@ -34,17 +34,10 @@ class Solution(
     val student: String,
     val fileName: String,
     val file: File,
-    val files: List<String>,
-    val lengths: List<Int>,
+    val files: List<String> = emptyList(),
+    val lengths: List<Int> = emptyList(),
     val sha: String
 )
-
-fun findSha(solutions: List<Solution>, student: String, fileName: String) =
-    requireNotNull(
-        solutions
-            .find { it.student == student && it.fileName == fileName }?.sha
-    )
-
 
 fun findByStudent(solutions: List<Solution>, student: String) =
     requireNotNull(solutions.find { it.student == student })
