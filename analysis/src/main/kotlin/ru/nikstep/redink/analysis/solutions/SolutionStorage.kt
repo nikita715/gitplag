@@ -43,5 +43,12 @@ interface SolutionStorage {
      * @return all required files for each fileName
      * and information about them. See [PreparedAnalysisData]
      */
-    fun loadBasesAndSeparateSolutions(analysisSettings: AnalysisSettings): PreparedAnalysisData
+    fun loadBasesAndSeparatedSolutions(analysisSettings: AnalysisSettings): PreparedAnalysisData
+
+    /**
+     * Load all base solution files and corresponding solution files of the [pullRequest]
+     * @return all required files for each fileName
+     * and information about them. See [PreparedAnalysisData]
+     */
+    fun loadBasesAndSeparatedCopiedSolutions(analysisSettings: AnalysisSettings, tempDir: String): PreparedAnalysisData
 }

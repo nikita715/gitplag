@@ -67,7 +67,7 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
     )
 
     private val solutionStorageService = mock<SolutionStorage> {
-        on { loadBasesAndSeparateSolutions(any()) } doReturn testPreparedAnalysisFiles
+        on { loadBasesAndSeparatedSolutions(any()) } doReturn testPreparedAnalysisFiles
     }
 
     private val jPlagReportRepository = mock<JPlagReportRepository>()

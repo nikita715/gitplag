@@ -38,13 +38,23 @@ class FileSystemSolutionStorage(
         )
 
     @Synchronized
-    override fun loadBasesAndSeparateSolutions(analysisSettings: AnalysisSettings) =
+    override fun loadBasesAndSeparatedSolutions(analysisSettings: AnalysisSettings) =
         PreparedAnalysisData(
             gitService = analysisSettings.gitService,
             repoName = analysisSettings.repository.name,
             language = analysisSettings.language,
             bases = loadBases(analysisSettings),
             solutions = loadSeparateSolutions(analysisSettings)
+        )
+
+    @Synchronized
+    override fun loadBasesAndSeparatedCopiedSolutions(analysisSettings: AnalysisSettings, tempDir: String) =
+        PreparedAnalysisData(
+            gitService = analysisSettings.gitService,
+            repoName = analysisSettings.repository.name,
+            language = analysisSettings.language,
+            bases = loadBases(analysisSettings),
+            solutions = loadSeparateCopiedSolutions(analysisSettings, tempDir)
         )
 
     override fun loadBases(analysisSettings: AnalysisSettings): List<File> =
@@ -62,6 +72,29 @@ class FileSystemSolutionStorage(
                     "Loader: solution ${it.repo}/${it.sourceBranch}/${it.fileName} not found"
                 )
         }
+
+    private fun loadSeparateCopiedSolutions(analysisSettings: AnalysisSettings, tempDir: String): List<Solution> {
+        return loadSourceCodeForAnalysis(analysisSettings).groupBy { it.user }
+            .flatMap {
+                val indexToFileName = mutableListOf<Pair<String, String>>()
+                val studentDir = File("$tempDir/${it.key}")
+                Files.createDirectory(studentDir.toPath())
+                var fileIterator = 0
+                it.value.map { solutionOfStudent ->
+                    val generatedFileName = "${fileIterator++}.txt"
+                    val generatedFile = File(studentDir.absolutePath + "/" + generatedFileName)
+                    indexToFileName += generatedFileName to solutionOfStudent.fileName
+                    Files.copy(
+                        pathToSolution(analysisSettings, solutionOfStudent).asPath(),
+                        generatedFile.toPath()
+                    )
+                    Solution(
+                        it.key, generatedFileName, generatedFile, sha = solutionOfStudent.sha,
+                        realFileName = solutionOfStudent.fileName
+                    )
+                }
+            }
+    }
 
     private fun loadComposedSolutions(analysisSettings: AnalysisSettings, tempDir: String): List<Solution> {
         return loadSourceCodeForAnalysis(analysisSettings).groupBy { it.user }
