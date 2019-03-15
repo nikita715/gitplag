@@ -1,6 +1,5 @@
 package ru.nikstep.redink.model.entity
 
-import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
@@ -21,8 +20,6 @@ data class Analysis(
 
     @ManyToOne
     @JoinColumn
-    @field:JsonBackReference
-    @get:JsonBackReference
     val repository: Repository,
 
     @Column(nullable = false)

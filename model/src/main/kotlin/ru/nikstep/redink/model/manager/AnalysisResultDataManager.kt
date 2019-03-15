@@ -42,7 +42,6 @@ open class AnalysisResultDataManager(
                     lines = it.lines,
                     repo = analysisResults.repo,
                     percentage = it.percentage,
-                    gitService = analysisResults.gitService,
                     analysis = analysis,
                     sha1 = it.sha.first,
                     sha2 = it.sha.second
