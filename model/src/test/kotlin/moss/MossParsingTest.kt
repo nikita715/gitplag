@@ -1,11 +1,11 @@
 package moss
 
 import org.junit.Test
-import java.io.File
+import java.nio.file.Files
 
 class MossParsingTest {
-    val text =
-        File("/Users/nikstepmac/IdeaProjects/redink/model/src/test/resources/sources/cl.java").readText()
+//    val text =
+//        File("/Users/nikstepmac/IdeaProjects/redink/model/src/test/resources/sources/cl.java").readText()
 
     val mossPairs1 = listOf(32 to 54, 19 to 25, 67 to 69)
     val mossPairs2 = listOf(1 to 23, 88 to 94, 47 to 49)
@@ -38,6 +38,11 @@ class MossParsingTest {
             if (list[i - 1] == int) return i
         }
         return -1
+    }
+
+    @Test
+    fun test22() {
+        println(Files.createTempDirectory("nikita715").toFile().absolutePath)
     }
 
 }

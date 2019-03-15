@@ -5,6 +5,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.util.inTempDirectory
 import java.time.LocalDateTime
 
 /**
@@ -16,13 +17,16 @@ class MossAnalyser(
 ) : Analyser {
     private val logger = KotlinLogging.logger {}
 
-    override fun analyse(analysisSettings: AnalysisSettings): AnalysisResult {
-        val analysisFiles = solutionStorage.loadBasesAndSolutions(analysisSettings)
-        val resultLink = MossClient(analysisFiles, mossId).run()
-        val matchData = parseResult(analysisSettings, analysisFiles.solutions, resultLink)
-        val executionDate = LocalDateTime.now()
-        return AnalysisResult(analysisSettings, resultLink, executionDate, matchData)
-    }
+    private val extensionRegex = "\\.[a-zA-Z]+$".toRegex()
+
+    override fun analyse(analysisSettings: AnalysisSettings): AnalysisResult =
+        inTempDirectory { tempDir ->
+            val analysisFiles = solutionStorage.loadBasesAndComposedSolutions(analysisSettings, tempDir)
+            val resultLink = MossClient(analysisFiles, mossId).run()
+            val matchData = parseResult(analysisSettings, analysisFiles.solutions, resultLink)
+            val executionDate = LocalDateTime.now()
+            AnalysisResult(analysisSettings, resultLink, executionDate, matchData)
+        }
 
     private fun parseResult(
         analysisSettings: AnalysisSettings,
@@ -45,7 +49,9 @@ class MossAnalyser(
                 val students =
                     firstPath.zip(secondPath)
                         .dropWhile { it.first == it.second }
-                        .first()
+                        .first().let {
+                            it.first.replace(extensionRegex, "") to it.second.replace(extensionRegex, "")
+                        }
 
                 val lines = tds[2].text().toInt()
 
@@ -105,15 +111,15 @@ class MossAnalyser(
     private fun filesToMatchedLines(matchedLines: List<Pair<Int, Int>>, solution: Solution) =
         matchedLines.map {
             var index = 0
-            for (i in solution.lengths) {
+            for (i in solution.filePositions) {
                 if (it.first >= i) {
                     index++
                 }
             }
             if (index > 0)
                 solution.files[index] to
-                        (it.first - solution.lengths[index - 1]
-                                to it.second - solution.lengths[index - 1]) else
+                        (it.first - solution.filePositions[index - 1]
+                                to it.second - solution.filePositions[index - 1]) else
                 solution.files[index] to it
         }
 
