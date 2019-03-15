@@ -8,7 +8,6 @@ import ru.nikstep.redink.model.entity.User
 import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.UserRepository
 import ru.nikstep.redink.util.AnalyserProperty
-import ru.nikstep.redink.util.AnalysisMode
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language.TEXT
 import ru.nikstep.redink.util.parseAsObject
@@ -62,7 +61,7 @@ class GithubIntegrationService(
                 language = TEXT,
                 owner = user,
                 name = requireNotNull(repo.string("full_name")),
-                analysisMode = AnalysisMode.STATIC,
+                periodicAnalysis = false,
                 gitService = GitProperty.GITHUB,
                 analyser = AnalyserProperty.MOSS,
                 branches = listOf("master")

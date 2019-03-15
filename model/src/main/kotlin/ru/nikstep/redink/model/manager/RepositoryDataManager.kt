@@ -5,7 +5,6 @@ import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.UserRepository
 import ru.nikstep.redink.util.AnalyserProperty
-import ru.nikstep.redink.util.AnalysisMode
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language
 
@@ -29,7 +28,7 @@ open class RepositoryDataManager(
                     language = Language.JAVA,
                     owner = owner,
                     name = repoName,
-                    analysisMode = AnalysisMode.STATIC,
+                    periodicAnalysis = false,
                     gitService = gitProperty,
                     analyser = AnalyserProperty.MOSS,
                     branches = listOf("master")
