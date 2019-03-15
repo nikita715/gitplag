@@ -7,6 +7,7 @@ import ru.nikstep.redink.model.data.Solution
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.SourceCode
 import ru.nikstep.redink.model.repo.SourceCodeRepository
+import ru.nikstep.redink.util.AnalyserProperty
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.asPath
 import java.io.File
@@ -28,21 +29,15 @@ class FileSystemSolutionStorage(
         pathToBase(gitProperty, repoName, branchName, fileName).asFile()
 
     @Synchronized
-    override fun loadBasesAndSeparateSolutions(analysisSettings: AnalysisSettings) =
+    override fun loadBasesAndSolutions(analysisSettings: AnalysisSettings) =
         PreparedAnalysisData(
             repoName = analysisSettings.repository.name,
             language = analysisSettings.language,
             bases = loadBases(analysisSettings),
-            solutions = loadSeparateSolutions(analysisSettings)
-        )
-
-    @Synchronized
-    override fun loadBasesAndComposedSolutions(analysisSettings: AnalysisSettings) =
-        PreparedAnalysisData(
-            repoName = analysisSettings.repository.name,
-            language = analysisSettings.language,
-            bases = loadBases(analysisSettings),
-            solutions = loadComposedSolutions(analysisSettings)
+            solutions = when (analysisSettings.analyser) {
+                AnalyserProperty.MOSS -> loadComposedSolutions(analysisSettings)
+                AnalyserProperty.JPLAG -> loadSeparateSolutions(analysisSettings)
+            }
         )
 
     override fun loadBases(analysisSettings: AnalysisSettings): List<File> =
@@ -67,23 +62,21 @@ class FileSystemSolutionStorage(
                 val path1 = Paths.get("temp_solutions", it.key)
                 val fileName = it.key + ".txt"
                 val path2 = Paths.get("temp_solutions", it.key, fileName)
-                val path3 = pathToSolutions(analysisSettings, it.key).asPath()
                 Files.deleteIfExists(path2)
                 Files.createDirectories(path1)
-                val file = Files.createFile(path2).toFile()
+                val composedFile = Files.createFile(path2).toFile()
                 var allLength = 0
                 val fileNames = mutableListOf<String>()
                 val fileLengths = mutableListOf<Int>()
-                Files.walk(pathToSolutions(analysisSettings, it.key).asPath())
-                    .filter { path -> Files.isRegularFile(path) && !Files.isHidden(path) }
-                    .map(Path::toFile).collect(toList()).forEach { foundedFile ->
-                        file.appendText(foundedFile.readText())
-                        val length = Files.lines(foundedFile.toPath()).count().toInt()
-                        fileNames += path3.relativize(foundedFile.toPath()).toString()
-                        fileLengths += length + allLength
-                        allLength += length
-                    }
-                Solution(it.key, fileName, file, fileNames, fileLengths, it.value[0].sha)
+                it.value.forEach { solutionOfStudent ->
+                    val solFile = pathToSolution(analysisSettings, solutionOfStudent).asFile()
+                    val length = Files.lines(solFile.toPath()).count().toInt()
+                    composedFile.appendText(solFile.readText())
+                    fileLengths += length + allLength
+                    allLength += length
+                    fileNames += solutionOfStudent.fileName
+                }
+                Solution(it.key, fileName, composedFile, fileNames, fileLengths, it.value[0].sha)
             }
     }
 
