@@ -1,5 +1,6 @@
 package ru.nikstep.redink.model.data
 
+import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language
 import java.io.File
 
@@ -8,6 +9,11 @@ import java.io.File
  * that must be analysed for plagiarism
  */
 class PreparedAnalysisData(
+
+    /**
+     * Name of git service with the repo
+     */
+    val gitService: GitProperty,
 
     /**
      * Name of the repo with the file

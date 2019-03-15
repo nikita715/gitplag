@@ -30,6 +30,7 @@ class FileSystemSolutionStorage(
     @Synchronized
     override fun loadBasesAndComposedSolutions(analysisSettings: AnalysisSettings, tempDir: String) =
         PreparedAnalysisData(
+            gitService = analysisSettings.gitService,
             repoName = analysisSettings.repository.name,
             language = analysisSettings.language,
             bases = loadBases(analysisSettings),
@@ -39,6 +40,7 @@ class FileSystemSolutionStorage(
     @Synchronized
     override fun loadBasesAndSeparateSolutions(analysisSettings: AnalysisSettings) =
         PreparedAnalysisData(
+            gitService = analysisSettings.gitService,
             repoName = analysisSettings.repository.name,
             language = analysisSettings.language,
             bases = loadBases(analysisSettings),
