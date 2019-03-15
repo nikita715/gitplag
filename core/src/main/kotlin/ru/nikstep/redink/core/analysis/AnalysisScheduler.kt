@@ -7,12 +7,11 @@ import org.springframework.stereotype.Component
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.manager.JPlagReportDataManager
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.util.AnalysisMode
 import java.io.File
 import java.time.LocalDateTime
 
 /**
- * Scheduler of [AnalysisMode.PERIODIC] analysis tasks
+ * Scheduler of periodic analysis tasks
  */
 @Component
 class AnalysisScheduler(

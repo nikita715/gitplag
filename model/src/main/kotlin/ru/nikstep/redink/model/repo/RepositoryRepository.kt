@@ -3,7 +3,6 @@ package ru.nikstep.redink.model.repo
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.util.AnalysisMode
 import ru.nikstep.redink.util.GitProperty
 
 /**
@@ -17,17 +16,17 @@ interface RepositoryRepository : JpaRepository<Repository, Long> {
     fun findByGitServiceAndName(gitService: GitProperty, name: String): Repository
 
     /**
-     * Find repositories with [AnalysisMode.PERIODIC] that must be analysed now
+     * Find repositories with periodic_analysis = true that must be analysed now
      */
     @Query(
         nativeQuery = true, value = """
             select * from repository
-            where repository.analysis_mode = 'PERIODIC'
+            where repository.periodic_analysis = true
             and extract(epoch from now() - (select execution_date
             from analysis
             where analysis.repository_id = repository.id
             order by id desc
-            limit 1) at time zone 'MSK') / 60 > repository.analysis_delay"""
+            limit 1) at time zone 'MSK') / 60 > repository.periodic_analysis_delay"""
     )
     fun findRequiredToAnalyse(): List<Repository>
 

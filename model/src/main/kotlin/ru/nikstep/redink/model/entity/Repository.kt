@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
 import ru.nikstep.redink.util.AnalyserProperty
-import ru.nikstep.redink.util.AnalysisMode
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language
 import javax.persistence.*
@@ -35,14 +34,13 @@ class Repository(
     val analyser: AnalyserProperty,
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    val analysisMode: AnalysisMode,
+    val periodicAnalysis: Boolean,
 
     @Column(nullable = false)
     val analyseWithLines: Boolean = false,
 
     @Column(nullable = false)
-    val analysisDelay: Int = 1,
+    val periodicAnalysisDelay: Int = 1,
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
