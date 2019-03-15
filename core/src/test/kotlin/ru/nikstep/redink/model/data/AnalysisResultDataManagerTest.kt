@@ -13,9 +13,9 @@ import ru.nikstep.redink.model.manager.AnalysisResultDataManager
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.UserRepository
 import ru.nikstep.redink.util.AnalyserProperty
-import ru.nikstep.redink.util.AnalysisMode
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language
+import java.time.LocalDateTime
 
 @Ignore
 @RunWith(SpringJUnit4ClassRunner::class)
@@ -44,7 +44,7 @@ class AnalysisResultDataManagerTest {
             owner = user,
             name = "repoName",
             analyser = AnalyserProperty.MOSS,
-            analysisMode = AnalysisMode.PERIODIC,
+            periodicAnalysis = false,
             gitService = GitProperty.GITHUB,
             language = Language.JAVA,
             branches = listOf("master")
@@ -54,9 +54,9 @@ class AnalysisResultDataManagerTest {
     private val analysisSettings = AnalysisSettings(repo, "qwe")
 
     private val analysisResult = AnalysisResult(
-        repo.name,
-        repo.gitService,
-        "",
+        analysisSettings,
+        "link",
+        LocalDateTime.now(),
         listOf(
             AnalysisMatch(
                 students = "st1" to "st2",
