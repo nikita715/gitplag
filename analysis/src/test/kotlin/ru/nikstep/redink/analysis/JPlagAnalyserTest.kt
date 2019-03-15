@@ -10,8 +10,6 @@ import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.*
 import ru.nikstep.redink.model.entity.JPlagReport
-import ru.nikstep.redink.model.entity.PullRequest
-import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.JPlagReportRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language
@@ -23,9 +21,6 @@ import java.nio.file.Paths
 import java.time.LocalDateTime
 
 class JPlagAnalyserTest : AbstractAnalyserTest() {
-
-    private val testRepoName = "nikita715/plagiarism_test"
-    private val testFileName = "dir/FileTest.java"
 
     private val gitService = GitProperty.GITHUB
 
@@ -42,25 +37,6 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
     protected val solution7 = File("$relSolutionsDir/$student3/$file7Name")
     protected val solution8 = File("$relSolutionsDir/$student3/$file8Name")
     protected val solution9 = File("$relSolutionsDir/$student3/$file9Name")
-
-    private val pullRequest = mock<PullRequest> {
-        on { mainRepoFullName } doReturn testRepoName
-        on { creatorName } doReturn student1
-        on { gitService } doReturn gitService
-    }
-
-    private val repository = mock<Repository> {
-        on { gitService } doReturn GitProperty.GITHUB
-        on { name } doReturn testRepoName
-    }
-
-    private val analysisSettings = mock<AnalysisSettings> {
-        on { gitService } doReturn GitProperty.GITHUB
-        on { repository } doReturn repository
-        on { language } doReturn Language.JAVA
-        on { branch } doReturn "master"
-        on { withLines } doReturn true
-    }
 
     private val resultDir = Files.createTempDirectory("dir").toFile().absolutePath + "/"
     private val serverUrl = "url"

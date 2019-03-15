@@ -1,0 +1,75 @@
+
+
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Scanner;
+
+
+public class URLExpSimple {
+
+
+    public static void main(String[] args) {
+        try {
+            URL mySite = new URL("http://www.cs.utexas.edu/~scottm");
+            URLConnection yc = mySite.openConnection();
+            Scanner in = new Scanner(new InputStreamReader(yc.getInputStream()));
+            int count = 0;
+            while (in.hasNext()) {
+                System.out.println(in.next());
+                count++;
+            }
+            System.out.println("Number of tokens: " + count);
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+package files;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;//comment
+import java.nio.file.Path;//comment2
+import java.nio.file.Paths;
+
+public class FileTest {
+
+    public static void main(String[] args) {
+
+        String content = "select * from student;";
+        final Path tempDirectory = Files.createDirectories(Paths.get("nikita715/plagiarism_test/testns"));
+        final Path tempFile = Files.createFile(Paths.get(tempDirectory.toString(), "script.sql"));
+        try (final FileOutputStream fileOutputStream = new FileOutputStream(tempFile.toFile())) {
+            fileOutputStream.write(content.getBytes());
+        }
+        Files.deleteIfExists(tempDirectory);
+
+        final int NUM_FACTS = 100;
+		for(int i = 0; i < NUM_FACTS; i++)
+			System.out.println( i + "! is " + factorial(i));
+    }
+
+}
+package files;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class FileTest {
+
+    public static void main(String[] args) throws IOException {
+        String content = "select * from student;";
+        final Path tempDirectory = Files.createDirectories(Paths.get("nikita715/plagiarism_test/testns"));
+        final Path tempFile = Files.createFile(Paths.get(tempDirectory.toString(), "script.sql"));
+        try (final FileOutputStream fileOutputStream = new FileOutputStream(tempFile.toFile())) {
+            fileOutputStream.write(content.getBytes());
+        }
+        Files.deleteIfExists(tempDirectory);
+    }
+
+}
