@@ -12,7 +12,7 @@ class BitbucketLoaderTest : AbstractGitLoaderTest() {
         creatorName = "nikita715",
         sourceRepoId = 1,
         mainRepoFullName = repoName,
-        headSha = "",
+        headSha = "738c283091cbca80bd3701cc206480f5567d74a7",
         sourceBranchName = branchName,
         gitService = GitProperty.BITBUCKET,
         date = LocalDateTime.now(),

@@ -11,7 +11,7 @@ class GitlabLoaderTest : AbstractGitLoaderTest() {
         creatorName = "testns3",
         sourceRepoId = 11158542,
         mainRepoFullName = repoName,
-        headSha = "",
+        headSha = "6e12a8d031574dc6a07eaa9125d8ce4fdc2c9776",
         sourceBranchName = branchName,
         gitService = GitProperty.GITLAB,
         date = LocalDateTime.now(),
