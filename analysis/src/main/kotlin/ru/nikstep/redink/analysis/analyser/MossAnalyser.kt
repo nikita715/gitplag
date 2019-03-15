@@ -19,14 +19,21 @@ class MossAnalyser(
 
     private val extensionRegex = "\\.[a-zA-Z]+$".toRegex()
 
-    override fun analyse(analysisSettings: AnalysisSettings): AnalysisResult =
+    override fun analyse(settings: AnalysisSettings): AnalysisResult =
         inTempDirectory { tempDir ->
-            val analysisFiles = solutionStorage.loadBasesAndComposedSolutions(analysisSettings, tempDir)
+            logger.info { "Analysis:Moss:1.Gathering files for analysis. ${repoInfo(settings)}" }
+            val analysisFiles = solutionStorage.loadBasesAndComposedSolutions(settings, tempDir)
+            logger.info { "Analysis:Moss:2.Start analysis. ${repoInfo(settings)}" }
             val resultLink = MossClient(analysisFiles, mossId).run()
-            val matchData = parseResult(analysisSettings, analysisFiles.solutions, resultLink)
+            logger.info { "Analysis:Moss:3.Start parsing of results. ${repoInfo(settings)}" }
+            val matchData = parseResult(settings, analysisFiles.solutions, resultLink)
+            logger.info { "Analysis:Moss:4.End of analysis. ${repoInfo(settings)}" }
             val executionDate = LocalDateTime.now()
-            AnalysisResult(analysisSettings, resultLink, executionDate, matchData)
+            AnalysisResult(settings, resultLink, executionDate, matchData)
         }
+
+    private fun repoInfo(analysisSettings: AnalysisSettings): String =
+        analysisSettings.run { "repo ${repository.name}, branch $branch" }
 
     private fun parseResult(
         analysisSettings: AnalysisSettings,

@@ -18,29 +18,21 @@ internal class MossClient(analysisData: PreparedAnalysisData, private val mossId
 
     @Synchronized
     fun run(): String =
-        logged {
-            SocketClient().use { client ->
-                client.userID = mossId
-                client.language = language
-                client.optD(0)
-                client.run()
-                bases.forEach { client.uploadFile(it, true) }
-                solutions.forEach { client.uploadFile(it.file) }
-                client.sendQuery()
-                client.resultURL.toString()
-            }
+        SocketClient().use { client ->
+            client.userID = mossId
+            client.language = language
+            client.optD(0)
+            client.run()
+            bases.forEach { client.uploadFile(it, true) }
+            solutions.forEach { client.uploadFile(it.file) }
+            client.sendQuery()
+            client.resultURL.toString()
         }
+
 
     fun SocketClient.optD(value: Int) {
         this::class.java.getDeclaredField("optD").isAccessible = true
         FieldUtils.writeField(this, "optD", value, true)
-    }
-
-    private inline fun <R> logged(action: () -> R): R {
-        logger.info { "Analysis: starting new moss analysis" }
-        val result = action()
-        logger.info { "Analysis: performed new moss analysis at $result" }
-        return result
     }
 
     private inline fun <R> SocketClient.use(action: (SocketClient) -> R): R =
