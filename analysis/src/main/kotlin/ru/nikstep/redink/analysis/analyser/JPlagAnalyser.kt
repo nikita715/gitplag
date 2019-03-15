@@ -3,13 +3,7 @@ package ru.nikstep.redink.analysis.analyser
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
-import ru.nikstep.redink.model.data.AnalysisMatch
-import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.data.AnalysisSettings
-import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.data.PreparedAnalysisData
-import ru.nikstep.redink.model.data.Solution
-import ru.nikstep.redink.model.data.findByStudent
+import ru.nikstep.redink.model.data.*
 import ru.nikstep.redink.model.entity.JPlagReport
 import ru.nikstep.redink.model.repo.JPlagReportRepository
 import ru.nikstep.redink.util.RandomGenerator
@@ -39,7 +33,7 @@ class JPlagAnalyser(
 
     override fun analyse(analysisSettings: AnalysisSettings): AnalysisResult {
         val (hash, resultDir) = generateResultDir()
-        val analysisFiles = solutionStorage.loadBasesAndSeparateSolutions(analysisSettings)
+        val analysisFiles = solutionStorage.loadBasesAndSolutions(analysisSettings)
         val solutionsPath = solutionsDir.asPathInRoot() + "/" + analysisSettings.gitService.toString()
         JPlagClient(analysisFiles, solutionsPath, analysisSettings.branch, resultDir).run()
         val matchLines = analysisFiles.toSolutionPairIndexes().mapNotNull { index ->

@@ -4,12 +4,7 @@ import mu.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
-import ru.nikstep.redink.model.data.AnalysisMatch
-import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.data.AnalysisSettings
-import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.data.Solution
-import ru.nikstep.redink.model.data.findByStudent
+import ru.nikstep.redink.model.data.*
 import java.time.LocalDateTime
 
 /**
@@ -22,7 +17,7 @@ class MossAnalyser(
     private val logger = KotlinLogging.logger {}
 
     override fun analyse(analysisSettings: AnalysisSettings): AnalysisResult {
-        val analysisFiles = solutionStorage.loadBasesAndComposedSolutions(analysisSettings)
+        val analysisFiles = solutionStorage.loadBasesAndSolutions(analysisSettings)
         val resultLink = MossClient(analysisFiles, mossId).run()
         val matchData = parseResult(analysisSettings, analysisFiles.solutions, resultLink)
         val executionDate = LocalDateTime.now()
