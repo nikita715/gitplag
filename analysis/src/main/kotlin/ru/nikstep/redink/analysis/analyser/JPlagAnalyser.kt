@@ -31,18 +31,25 @@ class JPlagAnalyser(
     private val regexUserNames = "^Matches for (.+) & (.+)$".toRegex()
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
-    override fun analyse(analysisSettings: AnalysisSettings): AnalysisResult {
+    override fun analyse(settings: AnalysisSettings): AnalysisResult {
         val (hash, resultDir) = generateResultDir()
-        val analysisFiles = solutionStorage.loadBasesAndSeparatedSolutions(analysisSettings)
-        JPlagClient(analysisFiles, solutionsDir.asPathInRoot(), analysisSettings.branch, resultDir).run()
+        logger.info { "Analysis:JPlag:1.Gathering files for analysis. ${repoInfo(settings)}" }
+        val analysisFiles = solutionStorage.loadBasesAndSeparatedSolutions(settings)
+        logger.info { "Analysis:JPlag:2.Start analysis. ${repoInfo(settings)}" }
+        JPlagClient(analysisFiles, solutionsDir.asPathInRoot(), settings.branch, resultDir).run()
+        logger.info { "Analysis:JPlag:3.Start parsing of results. ${repoInfo(settings)}" }
         val matchLines = analysisFiles.toSolutionPairIndexes().mapNotNull { index ->
-            parseResults(index, analysisSettings, analysisFiles.solutions, resultDir)
+            parseResults(index, settings, analysisFiles.solutions, resultDir)
         }
         val resultLink = "$serverUrl/jplagresult/$hash/index.html"
         val executionDate = LocalDateTime.now()
         jPlagReportRepository.save(JPlagReport(createdAt = executionDate, hash = hash))
-        return AnalysisResult(analysisSettings, resultLink, executionDate, matchLines)
+        logger.info { "Analysis:JPlag:4.End of analysis. ${repoInfo(settings)}" }
+        return AnalysisResult(settings, resultLink, executionDate, matchLines)
     }
+
+    private fun repoInfo(analysisSettings: AnalysisSettings): String =
+        analysisSettings.run { "Repo ${repository.name}, Branch $branch." }
 
     private fun generateResultDir(): Pair<String, String> {
         val hash = randomGenerator.randomAlphanumeric(10)

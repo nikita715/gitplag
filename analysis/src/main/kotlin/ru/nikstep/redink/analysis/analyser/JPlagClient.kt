@@ -28,17 +28,7 @@ internal class JPlagClient(
         buildString {
             append("java -jar $jplagPath  -l $language -bc .base -r $resultPath -s ")
             append(asPath(solutionsPath, gitService, repoName, branchName))
-        }.also { task ->
-            logged(task) {
-                execute(task)
-            }
-        }
-
-    private inline fun logged(task: String, action: () -> Unit) {
-        logger.info { "Analysis: start execution of $task" }
-        action()
-        logger.info { "Analysis: JPlag executed successfully" }
-    }
+        }.also(::execute)
 
     private fun execute(task: String) {
         Runtime.getRuntime().exec(task).waitFor(1, TimeUnit.MINUTES)
