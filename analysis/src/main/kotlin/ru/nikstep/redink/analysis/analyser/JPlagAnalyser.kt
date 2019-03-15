@@ -37,7 +37,7 @@ class JPlagAnalyser(
         val solutionsPath = solutionsDir.asPathInRoot() + "/" + analysisSettings.gitService.toString()
         JPlagClient(analysisFiles, solutionsPath, analysisSettings.branch, resultDir).run()
         val matchLines = analysisFiles.toSolutionPairIndexes().mapNotNull { index ->
-            parseResults(index, analysisFiles.solutions, resultDir)
+            parseResults(index, analysisSettings, analysisFiles.solutions, resultDir)
         }
         val resultLink = "$serverUrl/jplagresult/$hash/index.html"
         val executionDate = LocalDateTime.now()
@@ -55,6 +55,7 @@ class JPlagAnalyser(
 
     private fun parseResults(
         index: Int,
+        analysisSettings: AnalysisSettings,
         solutions: List<Solution>,
         resultDir: String
     ): AnalysisMatch? {
@@ -65,10 +66,28 @@ class JPlagAnalyser(
         val (name1, name2) = requireNotNull(regexUserNames.find(body.getElementsByTag("H3")[0].text()))
             .groupValues.subList(1, 3)
         val percentage = body.getElementsByTag("H1")[0].text().replace("%", "").toDouble().roundToInt()
+        val matchedLines = mutableListOf<MatchedLines>()
+        if (analysisSettings.withLines) {
+            matchedLines += parseMatchedLines(index, resultDir)
+        }
+        return AnalysisMatch(
+            students = name1 to name2,
+            lines = -1,
+            percentage = percentage,
+            matchedLines = matchedLines,
+            sha = findByStudent(solutions, name1).sha
+                    to findByStudent(solutions, name2).sha
+        )
+    }
+
+    private fun parseMatchedLines(
+        index: Int,
+        resultDir: String
+    ): MutableList<MatchedLines> {
+        val matchedLines = mutableListOf<MatchedLines>()
         val body2 = Jsoup.parse(File(asPath(resultDir, "match$index-top.html")).readText())
             .body()
         val rows = body2.getElementsByTag("tr")
-        val matchedLines = mutableListOf<MatchedLines>()
         for (rowNumber in 1 until rows.size - 1) {
             val columns = rows[rowNumber].getElementsByTag("td")
             val (fileName1, from1, to1) = requireNotNull(regexMatchedRows.find(columns[1].text()))
@@ -81,14 +100,7 @@ class JPlagAnalyser(
                 files = fileName1 to fileName2
             )
         }
-        return AnalysisMatch(
-            students = name1 to name2,
-            lines = -1,
-            percentage = percentage,
-            matchedLines = matchedLines,
-            sha = findByStudent(solutions, name1).sha
-                    to findByStudent(solutions, name2).sha
-        )
+        return matchedLines
     }
 
     private fun PreparedAnalysisData.toSolutionPairIndexes(): IntRange {

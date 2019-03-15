@@ -111,16 +111,16 @@ class MossAnalyser(
     private fun filesToMatchedLines(matchedLines: List<Pair<Int, Int>>, solution: Solution) =
         matchedLines.map {
             var index = 0
-            for (i in solution.filePositions) {
+            for (i in solution.includedFilePositions) {
                 if (it.first >= i) {
                     index++
                 }
             }
             if (index > 0)
-                solution.files[index] to
-                        (it.first - solution.filePositions[index - 1]
-                                to it.second - solution.filePositions[index - 1]) else
-                solution.files[index] to it
+                solution.includedFileNames[index] to
+                        (it.first - solution.includedFilePositions[index - 1]
+                                to it.second - solution.includedFilePositions[index - 1]) else
+                solution.includedFileNames[index] to it
         }
 
 }
