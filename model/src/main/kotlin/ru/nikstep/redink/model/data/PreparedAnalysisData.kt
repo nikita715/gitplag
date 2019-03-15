@@ -42,7 +42,8 @@ class Solution(
     val file: File,
     val includedFileNames: List<String> = emptyList(),
     val includedFilePositions: List<Int> = emptyList(),
-    val sha: String
+    val sha: String,
+    val realFileName: String = ""
 )
 
 fun findByStudent(solutions: List<Solution>, student: String) =
