@@ -34,8 +34,8 @@ class Solution(
     val student: String,
     val fileName: String,
     val file: File,
-    val files: List<String> = emptyList(),
-    val filePositions: List<Int> = emptyList(),
+    val includedFileNames: List<String> = emptyList(),
+    val includedFilePositions: List<Int> = emptyList(),
     val sha: String
 )
 

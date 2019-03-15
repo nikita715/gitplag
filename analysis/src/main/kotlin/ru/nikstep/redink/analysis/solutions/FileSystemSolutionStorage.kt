@@ -45,7 +45,6 @@ class FileSystemSolutionStorage(
             solutions = loadSeparateSolutions(analysisSettings)
         )
 
-
     override fun loadBases(analysisSettings: AnalysisSettings): List<File> =
         Files.walk(pathToBases(analysisSettings).asPath())
             .filter { path -> Files.isRegularFile(path) }
@@ -72,10 +71,9 @@ class FileSystemSolutionStorage(
                 val filePositions = mutableListOf<Int>()
                 it.value.forEach { solutionOfStudent ->
                     val solFile = pathToSolution(analysisSettings, solutionOfStudent).asFile()
-                    val length = Files.lines(solFile.toPath()).count().toInt()
                     composedFile.appendText(solFile.readText())
-                    filePositions += length + composedFileLength
-                    composedFileLength += length
+                    filePositions += solutionOfStudent.countOfLines + composedFileLength
+                    composedFileLength += solutionOfStudent.countOfLines
                     fileNames += solutionOfStudent.fileName
                 }
                 Solution(it.key, fileName, composedFile, fileNames, filePositions, it.value[0].sha)
@@ -95,8 +93,10 @@ class FileSystemSolutionStorage(
             fileName,
             pullRequest.sourceBranchName
         )
-        sourceCodeRepository.save(SourceCode(pullRequest, fileName, countOfLines(fileText)))
-        return saveLocally(pathToSolution, fileText)
+        val savedFile = saveLocally(pathToSolution, fileText)
+        val fileLength = Files.lines(savedFile.toPath()).count().toInt()
+        sourceCodeRepository.save(SourceCode(pullRequest, fileName, fileLength))
+        return savedFile
     }
 
     @Synchronized

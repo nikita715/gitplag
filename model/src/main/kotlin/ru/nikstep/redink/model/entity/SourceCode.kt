@@ -1,13 +1,7 @@
 package ru.nikstep.redink.model.entity
 
 import ru.nikstep.redink.util.GitProperty
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import javax.persistence.*
 
 /**
  * Info class about stored solutions
@@ -23,7 +17,7 @@ class SourceCode(
     val repo: String,
     val fileName: String,
     val sha: String,
-//    val countOfLines: Int,
+    val countOfLines: Int,
     val sourceBranch: String,
     val targetBranch: String,
 
@@ -37,7 +31,7 @@ class SourceCode(
         targetBranch = pullRequest.mainBranchName,
         fileName = fileName,
         sha = pullRequest.headSha,
-//        countOfLines = countOfLines,
+        countOfLines = countOfLines,
         gitService = pullRequest.gitService
     )
 }
