@@ -30,15 +30,15 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
 
     private val solutionsDir = Paths.get(relSolutionsDir).toFile().absolutePath
 
-    protected val solution1 = File("$relSolutionsDir/$student1/$file1Name")
-    protected val solution2 = File("$relSolutionsDir/$student1/$file2Name")
-    protected val solution3 = File("$relSolutionsDir/$student1/$file3Name")
-    protected val solution4 = File("$relSolutionsDir/$student2/$file4Name")
-    protected val solution5 = File("$relSolutionsDir/$student2/$file5Name")
-    protected val solution6 = File("$relSolutionsDir/$student2/$file6Name")
-    protected val solution7 = File("$relSolutionsDir/$student3/$file7Name")
-    protected val solution8 = File("$relSolutionsDir/$student3/$file8Name")
-    protected val solution9 = File("$relSolutionsDir/$student3/$file9Name")
+    private val solution1 = File("$relSolutionsDir/$student1/$file1Name")
+    private val solution2 = File("$relSolutionsDir/$student1/$file2Name")
+    private val solution3 = File("$relSolutionsDir/$student1/$file3Name")
+    private val solution4 = File("$relSolutionsDir/$student2/$file4Name")
+    private val solution5 = File("$relSolutionsDir/$student2/$file5Name")
+    private val solution6 = File("$relSolutionsDir/$student2/$file6Name")
+    private val solution7 = File("$relSolutionsDir/$student3/$file7Name")
+    private val solution8 = File("$relSolutionsDir/$student3/$file8Name")
+    private val solution9 = File("$relSolutionsDir/$student3/$file9Name")
 
     private val resultDir = Files.createTempDirectory("dir").toFile().absolutePath + "/"
     private val serverUrl = "url"

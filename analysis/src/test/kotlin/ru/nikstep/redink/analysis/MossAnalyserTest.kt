@@ -20,9 +20,9 @@ class MossAnalyserTest : AbstractAnalyserTest() {
 
     private val solutionStorage = Mockito.mock(SolutionStorage::class.java)
 
-    val file1 = File("$separateSolutionsDir/$student1.txt")
-    val file2 = File("$separateSolutionsDir/$student2.txt")
-    val file3 = File("$separateSolutionsDir/$student3.txt")
+    private val file1 = File("$separateSolutionsDir/$student1.txt")
+    private val file2 = File("$separateSolutionsDir/$student2.txt")
+    private val file3 = File("$separateSolutionsDir/$student3.txt")
 
     private val testPreparedAnalysisFiles = PreparedAnalysisData(
         GitProperty.GITHUB,

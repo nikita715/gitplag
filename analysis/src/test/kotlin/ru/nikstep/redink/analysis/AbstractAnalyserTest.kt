@@ -37,7 +37,7 @@ abstract class AbstractAnalyserTest {
     protected val sha2 = "sha2"
     protected val sha3 = "sha3"
 
-    protected val repository = mock<Repository> {
+    private val repository = mock<Repository> {
         on { gitService } doReturn GitProperty.GITHUB
         on { name } doReturn testRepoName
     }
