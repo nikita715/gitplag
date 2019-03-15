@@ -1,67 +1,31 @@
 package ru.nikstep.redink.analysis
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import ru.nikstep.redink.analysis.analyser.Analyser
-import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.data.AnalysisSettings
-import ru.nikstep.redink.model.entity.PullRequest
-import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.Language
 import ru.nikstep.redink.util.asPath
-import java.nio.file.Paths
+import java.io.File
 
 abstract class AbstractAnalyserTest {
 
-    protected val testRepoName = "nikita715/plagiarism_test"
-    protected val testFileName = "dir/FileTest.java"
-
-    protected val gitService = GitProperty.GITHUB
-
-    private val relSolutionsDir = asPath("src", "test", "resources", "test_solutions")
-
-    internal val solutionsDir = Paths.get(relSolutionsDir).toFile().absolutePath
+    private val separateSolutionsDir = asPath("src", "test", "resources", "separateSolutions")
 
     protected val student1 = "student1"
     protected val student2 = "student2"
     protected val student3 = "student3"
+    protected val file1Name = "file1.java"
+    protected val file2Name = "file2.java"
+    protected val file3Name = "file3.java"
+    protected val file4Name = "file4.java"
+    protected val file5Name = "file5.java"
+    protected val file6Name = "file6.java"
+    protected val file7Name = "file7.java"
+    protected val file8Name = "file8.java"
+    protected val file9Name = "file9.java"
 
-    private val masterBranch = "master"
-
-    protected val base =
-        Paths.get(relSolutionsDir, gitService.toString(), testRepoName, masterBranch, ".base", testFileName).toFile()
-    protected val solution1 =
-        Paths.get(relSolutionsDir, gitService.toString(), testRepoName, masterBranch, student1, testFileName).toFile()
-    protected val solution2 =
-        Paths.get(relSolutionsDir, gitService.toString(), testRepoName, masterBranch, student2, testFileName).toFile()
-    protected val solution3 =
-        Paths.get(relSolutionsDir, gitService.toString(), testRepoName, masterBranch, student3, testFileName).toFile()
+    protected val base1 =
+        File("$separateSolutionsDir/.base/base1.java")
+    protected val base2 =
+        File("$separateSolutionsDir/.base/base2.java")
 
     protected val sha1 = "sha1"
     protected val sha2 = "sha2"
     protected val sha3 = "sha3"
-
-    private val pullRequest = mock<PullRequest> {
-        on { mainRepoFullName } doReturn testRepoName
-        on { creatorName } doReturn student1
-        on { gitService } doReturn gitService
-    }
-
-    protected abstract val analysisService: Analyser
-
-    protected abstract val expectedResult: AnalysisResult
-
-    private val repository = mock<Repository> {
-        on { gitService } doReturn GitProperty.GITHUB
-        on { name } doReturn testRepoName
-    }
-
-    protected val analysisSettings = mock<AnalysisSettings> {
-        on { gitService } doReturn GitProperty.GITHUB
-        on { repository } doReturn repository
-        on { language } doReturn Language.JAVA
-        on { branch } doReturn "master"
-        on { withLines } doReturn true
-    }
 }

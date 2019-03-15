@@ -21,12 +21,13 @@ internal class JPlagClient(
     private val jplagPath = asPath("libs".asPathInRoot(), "jplag.jar")
 
     private val language = analysisData.language.ofJPlag()
+    private val gitService = analysisData.gitService
     private val repoName = analysisData.repoName
 
     fun run() =
         buildString {
             append("java -jar $jplagPath  -l $language -bc .base -r $resultPath -s ")
-            append(asPath(solutionsPath, repoName, branchName))
+            append(asPath(solutionsPath, gitService, repoName, branchName))
         }.also { task ->
             logged(task) {
                 execute(task)

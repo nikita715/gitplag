@@ -10,13 +10,57 @@ import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.*
 import ru.nikstep.redink.model.entity.JPlagReport
+import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.JPlagReportRepository
+import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language
 import ru.nikstep.redink.util.RandomGenerator
+import ru.nikstep.redink.util.asPath
+import java.io.File
 import java.nio.file.Files
+import java.nio.file.Paths
 import java.time.LocalDateTime
 
 class JPlagAnalyserTest : AbstractAnalyserTest() {
+
+    private val testRepoName = "nikita715/plagiarism_test"
+    private val testFileName = "dir/FileTest.java"
+
+    private val gitService = GitProperty.GITHUB
+
+    private val relSolutionsDir = asPath("src", "test", "resources", "separateSolutions")
+
+    private val solutionsDir = Paths.get(relSolutionsDir).toFile().absolutePath
+
+    protected val solution1 = File("$relSolutionsDir/$student1/$file1Name")
+    protected val solution2 = File("$relSolutionsDir/$student1/$file2Name")
+    protected val solution3 = File("$relSolutionsDir/$student1/$file3Name")
+    protected val solution4 = File("$relSolutionsDir/$student2/$file4Name")
+    protected val solution5 = File("$relSolutionsDir/$student2/$file5Name")
+    protected val solution6 = File("$relSolutionsDir/$student2/$file6Name")
+    protected val solution7 = File("$relSolutionsDir/$student3/$file7Name")
+    protected val solution8 = File("$relSolutionsDir/$student3/$file8Name")
+    protected val solution9 = File("$relSolutionsDir/$student3/$file9Name")
+
+    private val pullRequest = mock<PullRequest> {
+        on { mainRepoFullName } doReturn testRepoName
+        on { creatorName } doReturn student1
+        on { gitService } doReturn gitService
+    }
+
+    private val repository = mock<Repository> {
+        on { gitService } doReturn GitProperty.GITHUB
+        on { name } doReturn testRepoName
+    }
+
+    private val analysisSettings = mock<AnalysisSettings> {
+        on { gitService } doReturn GitProperty.GITHUB
+        on { repository } doReturn repository
+        on { language } doReturn Language.JAVA
+        on { branch } doReturn "master"
+        on { withLines } doReturn true
+    }
 
     private val resultDir = Files.createTempDirectory("dir").toFile().absolutePath + "/"
     private val serverUrl = "url"
@@ -27,13 +71,20 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
     }
 
     private val testPreparedAnalysisFiles = PreparedAnalysisData(
+        GitProperty.GITHUB,
         testRepoName,
         Language.JAVA,
-        listOf(base),
+        listOf(base1, base2),
         listOf(
-            Solution(student1, testFileName, solution1, sha = sha1),
-            Solution(student2, testFileName, solution2, sha = sha2),
-            Solution(student3, testFileName, solution3, sha = sha3)
+            Solution(student1, file1Name, solution1, sha = sha1),
+            Solution(student1, file2Name, solution2, sha = sha1),
+            Solution(student1, file3Name, solution3, sha = sha1),
+            Solution(student2, file4Name, solution4, sha = sha2),
+            Solution(student2, file5Name, solution5, sha = sha2),
+            Solution(student2, file6Name, solution6, sha = sha2),
+            Solution(student3, file7Name, solution7, sha = sha3),
+            Solution(student3, file8Name, solution8, sha = sha3),
+            Solution(student3, file9Name, solution9, sha = sha3)
         )
     )
 
@@ -43,7 +94,7 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
 
     private val jPlagReportRepository = mock<JPlagReportRepository>()
 
-    override val analysisService =
+    private val analysisService =
         JPlagAnalyser(
             solutionStorageService,
             randomGenerator,
@@ -53,7 +104,7 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
             serverUrl
         )
 
-    override val expectedResult =
+    private val expectedResult =
         AnalysisResult(
             gitService = gitService,
             repo = testRepoName,
@@ -64,36 +115,61 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
                     students = "student2" to "student1",
                     sha = sha2 to sha1,
                     lines = -1,
-                    percentage = 100,
+                    percentage = 66,
                     matchedLines = listOf(
                         MatchedLines(
-                            match1 = 13 to 22,
-                            match2 = 12 to 21,
-                            files = testFileName to testFileName
+                            match1 = 1 to 22,
+                            match2 = 1 to 21,
+                            files = file6Name to file3Name
+                        ),
+                        MatchedLines(
+                            match1 = 1 to 24,
+                            match2 = 3 to 26,
+                            files = file4Name to file1Name
                         )
                     )
                 ), AnalysisMatch(
                     students = "student3" to "student2",
                     sha = sha3 to sha2,
                     lines = -1,
-                    percentage = 55,
+                    percentage = 54,
                     matchedLines = listOf(
+                        MatchedLines(
+                            match1 = 7 to 20,
+                            match2 = 18 to 31,
+                            files = file8Name to file5Name
+                        ),
+                        MatchedLines(
+                            match1 = 3 to 10,
+                            match2 = 6 to 14,
+                            files = file9Name to file6Name
+                        ),
                         MatchedLines(
                             match1 = 10 to 18,
                             match2 = 15 to 22,
-                            files = testFileName to testFileName
+                            files = file9Name to file6Name
                         )
                     )
                 ), AnalysisMatch(
                     sha = sha3 to sha1,
                     students = "student3" to "student1",
                     lines = -1,
-                    percentage = 55,
+                    percentage = 44,
                     matchedLines = listOf(
+                        MatchedLines(
+                            match1 = 6 to 11,
+                            match2 = 21 to 26,
+                            files = file7Name to file2Name
+                        ),
+                        MatchedLines(
+                            match1 = 3 to 10,
+                            match2 = 6 to 13,
+                            files = file9Name to file3Name
+                        ),
                         MatchedLines(
                             match1 = 10 to 18,
                             match2 = 14 to 21,
-                            files = testFileName to testFileName
+                            files = file9Name to file3Name
                         )
                     )
                 )
