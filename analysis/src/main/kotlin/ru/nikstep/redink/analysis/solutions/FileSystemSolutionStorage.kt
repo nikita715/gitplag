@@ -7,7 +7,6 @@ import ru.nikstep.redink.model.data.Solution
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.SourceCode
 import ru.nikstep.redink.model.repo.SourceCodeRepository
-import ru.nikstep.redink.util.AnalyserProperty
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.asPath
 import java.io.File
@@ -29,16 +28,23 @@ class FileSystemSolutionStorage(
         pathToBase(gitProperty, repoName, branchName, fileName).asFile()
 
     @Synchronized
-    override fun loadBasesAndSolutions(analysisSettings: AnalysisSettings) =
+    override fun loadBasesAndComposedSolutions(analysisSettings: AnalysisSettings, tempDir: String) =
         PreparedAnalysisData(
             repoName = analysisSettings.repository.name,
             language = analysisSettings.language,
             bases = loadBases(analysisSettings),
-            solutions = when (analysisSettings.analyser) {
-                AnalyserProperty.MOSS -> loadComposedSolutions(analysisSettings)
-                AnalyserProperty.JPLAG -> loadSeparateSolutions(analysisSettings)
-            }
+            solutions = loadComposedSolutions(analysisSettings, tempDir)
         )
+
+    @Synchronized
+    override fun loadBasesAndSeparateSolutions(analysisSettings: AnalysisSettings) =
+        PreparedAnalysisData(
+            repoName = analysisSettings.repository.name,
+            language = analysisSettings.language,
+            bases = loadBases(analysisSettings),
+            solutions = loadSeparateSolutions(analysisSettings)
+        )
+
 
     override fun loadBases(analysisSettings: AnalysisSettings): List<File> =
         Files.walk(pathToBases(analysisSettings).asPath())
@@ -56,27 +62,23 @@ class FileSystemSolutionStorage(
                 )
         }
 
-    private fun loadComposedSolutions(analysisSettings: AnalysisSettings): List<Solution> {
+    private fun loadComposedSolutions(analysisSettings: AnalysisSettings, tempDir: String): List<Solution> {
         return loadSourceCodeForAnalysis(analysisSettings).groupBy { it.user }
             .map {
-                val path1 = Paths.get("temp_solutions", it.key)
                 val fileName = it.key + ".txt"
-                val path2 = Paths.get("temp_solutions", it.key, fileName)
-                Files.deleteIfExists(path2)
-                Files.createDirectories(path1)
-                val composedFile = Files.createFile(path2).toFile()
-                var allLength = 0
+                val composedFile = File("$tempDir/$fileName")
+                var composedFileLength = 0
                 val fileNames = mutableListOf<String>()
-                val fileLengths = mutableListOf<Int>()
+                val filePositions = mutableListOf<Int>()
                 it.value.forEach { solutionOfStudent ->
                     val solFile = pathToSolution(analysisSettings, solutionOfStudent).asFile()
                     val length = Files.lines(solFile.toPath()).count().toInt()
                     composedFile.appendText(solFile.readText())
-                    fileLengths += length + allLength
-                    allLength += length
+                    filePositions += length + composedFileLength
+                    composedFileLength += length
                     fileNames += solutionOfStudent.fileName
                 }
-                Solution(it.key, fileName, composedFile, fileNames, fileLengths, it.value[0].sha)
+                Solution(it.key, fileName, composedFile, fileNames, filePositions, it.value[0].sha)
             }
     }
 

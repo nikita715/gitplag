@@ -35,7 +35,7 @@ class Solution(
     val fileName: String,
     val file: File,
     val files: List<String> = emptyList(),
-    val lengths: List<Int> = emptyList(),
+    val filePositions: List<Int> = emptyList(),
     val sha: String
 )
 

@@ -33,7 +33,7 @@ class JPlagAnalyser(
 
     override fun analyse(analysisSettings: AnalysisSettings): AnalysisResult {
         val (hash, resultDir) = generateResultDir()
-        val analysisFiles = solutionStorage.loadBasesAndSolutions(analysisSettings)
+        val analysisFiles = solutionStorage.loadBasesAndSeparateSolutions(analysisSettings)
         val solutionsPath = solutionsDir.asPathInRoot() + "/" + analysisSettings.gitService.toString()
         JPlagClient(analysisFiles, solutionsPath, analysisSettings.branch, resultDir).run()
         val matchLines = analysisFiles.toSolutionPairIndexes().mapNotNull { index ->
