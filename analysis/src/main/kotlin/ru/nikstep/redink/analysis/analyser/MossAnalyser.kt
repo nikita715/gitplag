@@ -96,8 +96,8 @@ class MossAnalyser(
         val solution1 = findByStudent(solutions, students.first)
         val solution2 = findByStudent(solutions, students.second)
 
-        val leftFilesToMatchedLines = filesToMatchedLines(leftMatchedLines, solution1)
-        val rightFilesToMatchedLines = filesToMatchedLines(rightMatchedLines, solution2)
+        val leftFilesToMatchedLines = filesWithMatchedLines(leftMatchedLines, solution1)
+        val rightFilesToMatchedLines = filesWithMatchedLines(rightMatchedLines, solution2)
 
         return (0 until leftFilesToMatchedLines.size).map { i ->
             MatchedLines(
@@ -108,7 +108,7 @@ class MossAnalyser(
         }
     }
 
-    private fun filesToMatchedLines(matchedLines: List<Pair<Int, Int>>, solution: Solution) =
+    private fun filesWithMatchedLines(matchedLines: List<Pair<Int, Int>>, solution: Solution) =
         matchedLines.map {
             var index = 0
             for (i in solution.includedFilePositions) {
