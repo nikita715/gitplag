@@ -44,10 +44,10 @@ class AnalysisController(
             AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
                 .withLines(withLines)
         return try {
-            val analysis = analysisRunner.run(analysisSettings)
-            ResponseEntity.ok(logger.loggedAnalysis(analysisSettings) {
-                analysisRepository.findById(analysis.id).get()
-            })
+            val analysis = logger.loggedAnalysis(analysisSettings) {
+                analysisRunner.run(analysisSettings)
+            }
+            ResponseEntity.ok(analysis)
         } catch (e: Exception) {
             logger.exceptionAtAnalysisOf(e, analysisSettings)
             ResponseEntity<Any>(HttpStatus.INTERNAL_SERVER_ERROR)
