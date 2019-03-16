@@ -1,16 +1,15 @@
 dependencies {
-    compile project(':checks')
-    compile project(':git')
-    compile project(':model')
-    compile project(':util')
+    implementation project(':checks')
+    implementation project(':git')
+    implementation project(':model')
+    implementation project(':util')
 
-    compile "org.springframework.boot:spring-boot-starter-web"
-    compile "org.springframework.boot:spring-boot-configuration-processor"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-configuration-processor"
 
-    compile 'commons-io:commons-io:2.6'
+    implementation 'commons-io:commons-io:2.6'
 
-    compile 'it.zielke:moji:1.0.1'
+    implementation 'it.zielke:moji:1.0.1'
 
-    compile 'org.jsoup:jsoup:1.11.3'
-
+    implementation 'org.jsoup:jsoup:1.11.3'
 }

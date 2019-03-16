@@ -1,7 +1,6 @@
 dependencies {
-    compile 'com.github.kittinunf.fuel:fuel:1.15.0'
-    compile 'org.springframework.boot:spring-boot-starter-web'
-    compile "org.springframework.boot:spring-boot-configuration-processor"
+    api 'com.github.kittinunf.fuel:fuel:1.15.0'
+    api 'org.apache.commons:commons-lang3:3.8.1'
 
-    compile 'org.apache.commons:commons-lang3:3.8.1'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 }
