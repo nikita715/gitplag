@@ -1,4 +1,4 @@
-package ru.nikstep.redink.analysis.loader
+package ru.nikstep.redink.git.loader
 
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.GitProperty

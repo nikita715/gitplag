@@ -1,4 +1,4 @@
-package ru.nikstep.redink.model.data
+package ru.nikstep.redink.core.testconfig
 
 import com.opentable.db.postgres.embedded.EmbeddedPostgres
 import org.springframework.context.annotation.Bean
