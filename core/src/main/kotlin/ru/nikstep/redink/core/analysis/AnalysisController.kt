@@ -10,7 +10,7 @@ import ru.nikstep.redink.analysis.AnalysisRunner
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.analyser
 import ru.nikstep.redink.model.data.language
-import ru.nikstep.redink.model.data.withLines
+import ru.nikstep.redink.model.data.mode
 import ru.nikstep.redink.model.repo.AnalysisRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
@@ -37,12 +37,12 @@ class AnalysisController(
         @RequestParam("analyser", required = false) analyser: String?,
         @RequestParam("language", required = false) language: String?,
         @RequestParam("branch", required = false) branch: String?,
-        @RequestParam("withLines", required = false) withLines: Boolean = false
+        @RequestParam("mode", required = false) analysisMode: String?
     ): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
         val analysisSettings =
             AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
-                .withLines(withLines)
+                .mode(analysisMode)
         return try {
             val analysis = logger.loggedAnalysis(analysisSettings) {
                 analysisRunner.run(analysisSettings)
@@ -74,13 +74,13 @@ class AnalysisController(
         @RequestParam("analyser", required = false) analyser: String?,
         @RequestParam("language", required = false) language: String?,
         @RequestParam("branch", required = false) branch: String?,
-        @RequestParam("withLines", required = false) withLines: Boolean = false,
-        @RequestParam("responseUrl", required = false) responseUrl: String?
+        @RequestParam("responseUrl", required = false) responseUrl: String?,
+        @RequestParam("mode", required = false) analysisMode: String?
     ): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
         val analysisSettings =
             AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
-                .withLines(withLines)
+                .mode(analysisMode)
         analysisAsyncRunner.runAndRespond(analysisSettings, responseUrl)
         return ResponseEntity.ok("Accepted")
     }

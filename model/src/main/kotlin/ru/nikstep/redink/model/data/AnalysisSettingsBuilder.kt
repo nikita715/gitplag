@@ -2,6 +2,7 @@ package ru.nikstep.redink.model.data
 
 import mu.KotlinLogging
 import ru.nikstep.redink.util.AnalyserProperty
+import ru.nikstep.redink.util.AnalysisMode
 import ru.nikstep.redink.util.Language
 
 private val logger = KotlinLogging.logger {}
@@ -15,8 +16,8 @@ fun AnalysisSettings.analyser(analyser: AnalyserProperty): AnalysisSettings =
         analyser = analyser,
         gitService = gitService,
         branch = branch,
-        withLines = withLines,
-        language = language
+        language = language,
+        mode = mode
     )
 
 /**
@@ -42,8 +43,8 @@ fun AnalysisSettings.language(language: Language): AnalysisSettings =
         analyser = analyser,
         gitService = gitService,
         branch = branch,
-        withLines = withLines,
-        language = language
+        language = language,
+        mode = mode
     )
 
 /**
@@ -71,8 +72,8 @@ fun AnalysisSettings.branch(branch: String?): AnalysisSettings {
                 analyser = analyser,
                 gitService = gitService,
                 branch = branch,
-                withLines = withLines,
-                language = language
+                language = language,
+                mode = mode
             )
         } catch (e: IllegalArgumentException) {
             logger.error { "Analysis: wrong branches \"$language\"" }
@@ -82,14 +83,28 @@ fun AnalysisSettings.branch(branch: String?): AnalysisSettings {
 }
 
 /**
- * Set the [withLines] to the [AnalysisSettings]
+ * Set the [language] to the [AnalysisSettings]
  */
-fun AnalysisSettings.withLines(withLines: Boolean): AnalysisSettings =
+fun AnalysisSettings.mode(mode: AnalysisMode): AnalysisSettings =
     AnalysisSettings(
         repository = repository,
         analyser = analyser,
         gitService = gitService,
         branch = branch,
-        withLines = withLines,
-        language = language
+        language = language,
+        mode = mode
     )
+
+/**
+ * Set the [language] to the [AnalysisSettings]
+ */
+fun AnalysisSettings.mode(mode: String?): AnalysisSettings {
+    if (mode != null) {
+        try {
+            return this.mode(enumValueOf<AnalysisMode>(mode.toUpperCase()))
+        } catch (e: IllegalArgumentException) {
+            logger.error { "Analysis: wrong language name \"$language\"" }
+        }
+    }
+    return this
+}
