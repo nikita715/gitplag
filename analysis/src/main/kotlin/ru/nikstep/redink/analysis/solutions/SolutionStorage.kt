@@ -32,23 +32,22 @@ interface SolutionStorage {
     fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): File
 
     /**
-     * Load all base solution files and corresponding solution files of the [pullRequest]
-     * @return all required files for each fileName
-     * and information about them. See [PreparedAnalysisData]
+     * Load all base solution files and corresponding solution files of the [pullRequest].
+     * Merges all files of each students to single file.
      */
     fun loadBasesAndComposedSolutions(analysisSettings: AnalysisSettings, tempDir: String): PreparedAnalysisData
 
     /**
      * Load all base solution files and corresponding solution files of the [pullRequest]
-     * @return all required files for each fileName
-     * and information about them. See [PreparedAnalysisData]
+     * and information about them. See [PreparedAnalysisData].
      */
     fun loadBasesAndSeparatedSolutions(analysisSettings: AnalysisSettings): PreparedAnalysisData
 
     /**
-     * Load all base solution files and corresponding solution files of the [pullRequest]
-     * @return all required files for each fileName
-     * and information about them. See [PreparedAnalysisData]
+     * Load all base solution files and corresponding solution files of the [pullRequest].
+     * Creates directories in [tempDir] for each student and copies each file of a student
+     * to the student's directory, names them by digits (0.ext, 1.ext, etc.) and stores the corresponding names
+     * in solution objects.
      */
     fun loadBasesAndSeparatedCopiedSolutions(analysisSettings: AnalysisSettings, tempDir: String): PreparedAnalysisData
 }

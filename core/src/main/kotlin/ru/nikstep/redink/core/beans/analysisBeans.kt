@@ -4,12 +4,12 @@ import org.springframework.context.support.beans
 import ru.nikstep.redink.analysis.AnalysisRunner
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.analysis.analyser.MossAnalyser
-import ru.nikstep.redink.analysis.loader.BitbucketLoader
-import ru.nikstep.redink.analysis.loader.GitLoader
-import ru.nikstep.redink.analysis.loader.GithubLoader
-import ru.nikstep.redink.analysis.loader.GitlabLoader
 import ru.nikstep.redink.analysis.solutions.FileSystemSolutionStorage
 import ru.nikstep.redink.core.analysis.PullRequestListener
+import ru.nikstep.redink.git.loader.BitbucketLoader
+import ru.nikstep.redink.git.loader.GitLoader
+import ru.nikstep.redink.git.loader.GithubLoader
+import ru.nikstep.redink.git.loader.GitlabLoader
 import ru.nikstep.redink.util.AnalyserProperty
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.safeEnvVar

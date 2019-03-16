@@ -1,4 +1,4 @@
-package ru.nikstep.redink.analysis.loader
+package ru.nikstep.redink.git.loader
 
 import com.beust.klaxon.JsonObject
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
