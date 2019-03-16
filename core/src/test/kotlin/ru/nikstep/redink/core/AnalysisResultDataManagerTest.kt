@@ -1,4 +1,4 @@
-package ru.nikstep.redink.model.data
+package ru.nikstep.redink.core
 
 import org.junit.Ignore
 import org.junit.Test
@@ -6,7 +6,10 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import ru.nikstep.redink.core.RedinkApplication
+import ru.nikstep.redink.model.data.AnalysisMatch
+import ru.nikstep.redink.model.data.AnalysisResult
+import ru.nikstep.redink.model.data.AnalysisSettings
+import ru.nikstep.redink.model.data.MatchedLines
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.User
 import ru.nikstep.redink.model.manager.AnalysisResultDataManager
@@ -19,7 +22,7 @@ import java.time.LocalDateTime
 
 @Ignore
 @RunWith(SpringJUnit4ClassRunner::class)
-@SpringBootTest(classes = [RedinkApplication::class])
+@SpringBootTest(classes = [RedinkApplication::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AnalysisResultDataManagerTest {
 
     @Autowired

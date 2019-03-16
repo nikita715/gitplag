@@ -1,4 +1,4 @@
-package ru.nikstep.redink.analysis.loader
+package ru.nikstep.redink.git.loader
 
 import org.junit.Ignore
 import ru.nikstep.redink.model.entity.PullRequest
@@ -24,5 +24,6 @@ class GithubLoaderTest : AbstractGitLoaderTest() {
         mainBranchName = "master"
     )
 
-    override val loader = GithubLoader(solutionStorage, repositoryRepository, authorizationService)
+    override val loader =
+        GithubLoader(solutionStorage, repositoryRepository, authorizationService)
 }

@@ -1,8 +1,7 @@
-package ru.nikstep.redink.git
+package ru.nikstep.redink.git.webhook
 
 import io.kotlintest.mock.mock
 import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
-import ru.nikstep.redink.git.webhook.GithubWebhookService
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.GitProperty
 import java.time.LocalDateTime

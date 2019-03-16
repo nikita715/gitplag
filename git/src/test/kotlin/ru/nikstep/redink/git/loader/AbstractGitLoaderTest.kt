@@ -1,4 +1,4 @@
-package ru.nikstep.redink.analysis.loader
+package ru.nikstep.redink.git.loader
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn

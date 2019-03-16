@@ -1,6 +1,5 @@
-package ru.nikstep.redink.git
+package ru.nikstep.redink.git.webhook
 
-import ru.nikstep.redink.git.webhook.BitbucketWebhookService
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.GitProperty
 import java.time.LocalDateTime
