@@ -1,4 +1,5 @@
 dependencies {
+    implementation project(':analysis')
     implementation project(':checks')
     implementation project(':model')
     implementation project(':util')

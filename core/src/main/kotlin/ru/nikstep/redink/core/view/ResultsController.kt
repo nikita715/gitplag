@@ -5,7 +5,7 @@ import kotlinx.html.stream.createHTML
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
-import ru.nikstep.redink.analysis.loader.GitLoader
+import ru.nikstep.redink.git.loader.GitLoader
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
 import ru.nikstep.redink.util.GitProperty
 

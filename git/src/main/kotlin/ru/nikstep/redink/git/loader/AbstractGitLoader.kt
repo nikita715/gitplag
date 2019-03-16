@@ -1,4 +1,4 @@
-package ru.nikstep.redink.analysis.loader
+package ru.nikstep.redink.git.loader
 
 import mu.KotlinLogging
 import ru.nikstep.redink.analysis.AnalysisException
