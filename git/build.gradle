@@ -1,7 +1,7 @@
 dependencies {
-    compile project(':checks')
-    compile project(':model')
-    compile project(':util')
+    implementation project(':checks')
+    implementation project(':model')
+    implementation project(':util')
 
-    compile "org.springframework.boot:spring-boot-configuration-processor"
+    implementation "org.springframework.boot:spring-boot-configuration-processor"
 }

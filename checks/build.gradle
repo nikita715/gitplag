@@ -1,6 +1,6 @@
 dependencies {
-    compile project(':model')
-    compile project(':util')
+    implementation project(':model')
+    implementation project(':util')
 
-    compile 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.5'
 }

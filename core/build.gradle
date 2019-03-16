@@ -4,28 +4,34 @@ plugins {
 }
 
 dependencies {
-    compile project(':analysis')
-    compile project(':checks')
-    compile project(':git')
-    compile project(':model')
-    compile project(':util')
+    implementation project(':analysis')
+    implementation project(':checks')
+    implementation project(':git')
+    implementation project(':model')
+    implementation project(':util')
     
-    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
-    compile 'org.springframework.boot:spring-boot-starter-security'
-    compile 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.1.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.1.RELEASE'
 
-    compile 'org.postgresql:postgresql:42.2.2'
+    implementation 'org.postgresql:postgresql:42.2.2'
 
-    compile 'com.graphql-java:graphiql-spring-boot-starter:5.0.2'
-    compile 'com.graphql-java:graphql-spring-boot-starter:5.0.2'
-    compile 'com.graphql-java:graphql-java-tools:5.2.4'
+    implementation 'com.graphql-java:graphiql-spring-boot-starter:5.0.2'
+    implementation 'com.graphql-java:graphql-spring-boot-starter:5.0.2'
+    implementation 'com.graphql-java:graphql-java-tools:5.2.4'
 
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.4'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.4'
 
-    compile 'org.jetbrains.kotlinx:kotlinx-html-jvm:0.6.10'
+    implementation 'org.jetbrains.kotlinx:kotlinx-html-jvm:0.6.10'
 
-    compile 'io.springfox:springfox-swagger2:2.9.2'
-    compile 'io.springfox:springfox-swagger-ui:2.9.2'
+    implementation 'io.springfox:springfox-swagger2:2.9.2'
+    implementation 'io.springfox:springfox-swagger-ui:2.9.2'
 
     testImplementation 'com.opentable.components:otj-pg-embedded:0.12.4'
+}
+
+bootJar.enabled = true
+
+bootJar {
+    mainClassName = "ru.nikstep.redink.core.RedinkApplicationKt"
 }
