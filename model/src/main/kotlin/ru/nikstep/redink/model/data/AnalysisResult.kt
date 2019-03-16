@@ -25,6 +25,18 @@ data class AnalysisResult(
         executionDate,
         matchData
     )
+
+    constructor(
+        analysisSettings: AnalysisSettings,
+        resultLink: String,
+        executionDate: LocalDateTime
+    ) : this(
+        analysisSettings.repository.name,
+        analysisSettings.gitService,
+        resultLink,
+        executionDate,
+        emptyList()
+    )
 }
 
 data class AnalysisMatch(

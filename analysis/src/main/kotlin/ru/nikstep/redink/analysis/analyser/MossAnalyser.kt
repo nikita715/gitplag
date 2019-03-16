@@ -4,7 +4,13 @@ import mu.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
-import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.model.data.AnalysisMatch
+import ru.nikstep.redink.model.data.AnalysisResult
+import ru.nikstep.redink.model.data.AnalysisSettings
+import ru.nikstep.redink.model.data.MatchedLines
+import ru.nikstep.redink.model.data.Solution
+import ru.nikstep.redink.model.data.findByStudent
+import ru.nikstep.redink.util.AnalysisMode
 import ru.nikstep.redink.util.inTempDirectory
 import java.time.LocalDateTime
 
@@ -23,10 +29,19 @@ class MossAnalyser(
         inTempDirectory { tempDir ->
             logger.info { "Analysis:Moss:1.Gathering files for analysis. ${repoInfo(settings)}" }
             val analysisFiles = solutionStorage.loadBasesAndComposedSolutions(settings, tempDir)
+
             logger.info { "Analysis:Moss:2.Start analysis. ${repoInfo(settings)}" }
             val resultLink = MossClient(analysisFiles, mossId).run()
-            logger.info { "Analysis:Moss:3.Start parsing of results. ${repoInfo(settings)}" }
-            val matchData = parseResult(settings, analysisFiles.solutions, resultLink)
+
+            val matchData =
+                if (settings.mode.order > AnalysisMode.LINK.order) {
+                    logger.info { "Analysis:Moss:3.Start parsing of results. ${repoInfo(settings)}" }
+                    parseResult(settings, analysisFiles.solutions, resultLink)
+                } else {
+                    logger.info { "Analysis:JPlag:3.Skipped parsing. ${repoInfo(settings)}" }
+                    emptyList()
+                }
+
             logger.info { "Analysis:Moss:4.End of analysis. ${repoInfo(settings)}" }
             val executionDate = LocalDateTime.now()
             AnalysisResult(settings, resultLink, executionDate, matchData)
@@ -68,7 +83,7 @@ class MossAnalyser(
                     .toInt()
 
                 val matchedLines =
-                    if (analysisSettings.withLines)
+                    if (analysisSettings.mode == AnalysisMode.FULL)
                         findMatchedLines(firstATag, solutions, students)
                     else listOf()
 
