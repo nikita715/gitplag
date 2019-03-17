@@ -2,8 +2,8 @@ package ru.nikstep.redink.core.analysis
 
 import mu.KotlinLogging
 import org.springframework.context.ApplicationListener
-import ru.nikstep.redink.git.PullRequestEvent
 import ru.nikstep.redink.git.loader.GitLoader
+import ru.nikstep.redink.model.PullRequestEvent
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.util.GitProperty
 
