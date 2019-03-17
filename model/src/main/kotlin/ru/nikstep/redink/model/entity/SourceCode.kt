@@ -1,7 +1,14 @@
 package ru.nikstep.redink.model.entity
 
+import ru.nikstep.redink.model.data.SourceFileInfo
 import ru.nikstep.redink.util.GitProperty
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
 
 /**
  * Info class about stored solutions
@@ -33,5 +40,16 @@ class SourceCode(
         sha = pullRequest.headSha,
         countOfLines = countOfLines,
         gitService = pullRequest.gitService
+    )
+
+    constructor(sourceFileInfo: SourceFileInfo, countOfLines: Int) : this(
+        user = sourceFileInfo.creator,
+        repo = sourceFileInfo.mainRepoFullName,
+        sourceBranch = sourceFileInfo.sourceBranchName,
+        targetBranch = sourceFileInfo.mainBranchName,
+        fileName = sourceFileInfo.fileName,
+        sha = sourceFileInfo.headSha,
+        countOfLines = countOfLines,
+        gitService = sourceFileInfo.gitService
     )
 }

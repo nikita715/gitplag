@@ -20,6 +20,6 @@ class PullRequestListener(
 
     private fun loadChangedFiles(pullRequest: PullRequest) {
         val gitServiceLoader = gitLoaders.getValue(pullRequest.gitService)
-        gitServiceLoader.loadFilesFromGit(pullRequest)
+        gitServiceLoader.loadFilesOfPullRequest(pullRequest)
     }
 }

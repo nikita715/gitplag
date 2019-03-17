@@ -3,6 +3,8 @@ package ru.nikstep.redink.git.loader
 import com.beust.klaxon.JsonObject
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.model.entity.Repository
+import ru.nikstep.redink.model.entity.SourceCode
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.sendRestRequest
 
@@ -25,4 +27,8 @@ class GitlabLoader(
 
     override fun loadFileText(repoFullName: String, branchName: String, fileName: String, secretKey: String): String =
         sendRestRequest("https://gitlab.com/$repoFullName/raw/$branchName/$fileName")
+
+    override fun loadFilesOfRepository(repo: Repository): List<SourceCode> {
+        TODO("not implemented")
+    }
 }
