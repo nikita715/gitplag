@@ -33,6 +33,7 @@ data class Repository(
     val id: Long = -1,
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "owner")
     val owner: User? = null,
 

@@ -15,6 +15,9 @@ class BitbucketLoader(
     solutionStorage: SolutionStorage,
     repositoryRepository: RepositoryRepository
 ) : AbstractGitLoader(solutionStorage, repositoryRepository) {
+    override fun loadChangedFilesOfCommit(repoName: String, headSha: String): List<String> {
+        TODO("not implemented")
+    }
 
     override fun loadChangedFiles(pullRequest: PullRequest): List<String> =
         pullRequest.run {

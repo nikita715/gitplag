@@ -18,10 +18,10 @@ abstract class AbstractGitLoader(
     private val logger = KotlinLogging.logger {}
     private val masterBranch = "master"
 
-    override fun loadFilesOfPullRequest(pullRequest: PullRequest) {
+    override fun loadFilesOfCommit(pullRequest: PullRequest) {
 //        val filePatterns =
 //            repositoryRepository.findByGitServiceAndName(pullRequest.gitService, pullRequest.mainRepoFullName).filePatterns
-        val changedFiles = loadChangedFiles(pullRequest)
+        val changedFiles = loadChangedFilesOfCommit(pullRequest.sourceRepoFullName, pullRequest.headSha)
 
         changedFiles.forEach { fileName ->
             checkBaseExists(pullRequest, fileName)
@@ -49,6 +49,8 @@ abstract class AbstractGitLoader(
     }
 
     protected abstract fun loadChangedFiles(pullRequest: PullRequest): List<String>
+
+    protected abstract fun loadChangedFilesOfCommit(repoName: String, headSha: String): List<String>
 
     private fun checkBaseExists(data: PullRequest, fileName: String) {
         val base = solutionStorage.loadBase(data.gitService, data.mainRepoFullName, data.sourceBranchName, fileName)

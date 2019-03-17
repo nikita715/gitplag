@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationEventPublisher
 import ru.nikstep.redink.checks.github.AnalysisStatusCheckService
 import ru.nikstep.redink.git.GitException
 import ru.nikstep.redink.git.inProgressStatus
+import ru.nikstep.redink.git.loader.GithubLoader
 import ru.nikstep.redink.model.PullRequestEvent
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
@@ -21,8 +22,23 @@ import java.time.format.DateTimeFormatter
 class GithubWebhookService(
     private val analysisStatusCheckService: AnalysisStatusCheckService,
     private val pullRequestRepository: PullRequestRepository,
-    private val applicationEventPublisher: ApplicationEventPublisher
+    private val applicationEventPublisher: ApplicationEventPublisher,
+    private val githubLoader: GithubLoader
 ) : AbstractWebhookService(pullRequestRepository, applicationEventPublisher) {
+
+    override fun saveNewBaseFiles(payload: String) {
+        val jsonObject = payload.parseAsObject()
+        val branchName = requireNotNull(jsonObject.string("ref")?.substringAfterLast("/"))
+        val repoFullName = requireNotNull(jsonObject.obj("repository")?.string("full_name"))
+        val added = requireNotNull(jsonObject.obj("head_commit")?.array<String>("added"))
+        val modified = requireNotNull(jsonObject.obj("head_commit")?.array<String>("modified"))
+        added.forEach { fileName ->
+            githubLoader.loadBase(repoFullName, branchName, fileName)
+        }
+        modified.forEach { fileName ->
+            githubLoader.loadBase(repoFullName, branchName, fileName)
+        }
+    }
 
     private val logger = KotlinLogging.logger {}
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
