@@ -87,7 +87,7 @@ abstract class AbstractGitLoaderTest {
             )
         )
 
-        loader.loadFilesFromGit(pullRequest)
+        loader.loadFilesOfPullRequest(pullRequest)
 
         baseFileNamesToFileTexts.entries.forEach {
             verify(solutionStorage).saveBase(pullRequest, it.key, it.value)
@@ -122,7 +122,7 @@ abstract class AbstractGitLoaderTest {
             baseClass2
         )
 
-        loader.loadFilesFromGit(pullRequest)
+        loader.loadFilesOfPullRequest(pullRequest)
 
         verify(solutionStorage, never()).saveBase(eq(pullRequest), any(), any())
 

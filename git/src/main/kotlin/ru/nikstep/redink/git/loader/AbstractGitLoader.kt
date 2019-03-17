@@ -18,7 +18,7 @@ abstract class AbstractGitLoader(
     private val logger = KotlinLogging.logger {}
     private val masterBranch = "master"
 
-    override fun loadFilesFromGit(pullRequest: PullRequest) {
+    override fun loadFilesOfPullRequest(pullRequest: PullRequest) {
 //        val filePatterns =
 //            repositoryRepository.findByGitServiceAndName(pullRequest.gitService, pullRequest.mainRepoFullName).filePatterns
         val changedFiles = loadChangedFiles(pullRequest)

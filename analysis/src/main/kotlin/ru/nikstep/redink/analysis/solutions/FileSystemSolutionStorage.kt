@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.model.data.Solution
+import ru.nikstep.redink.model.data.SourceFileInfo
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.SourceCode
 import ru.nikstep.redink.model.repo.SourceCodeRepository
@@ -20,6 +21,21 @@ class FileSystemSolutionStorage(
     private val sourceCodeRepository: SourceCodeRepository,
     private val solutionsDir: String
 ) : SolutionStorage {
+
+    override fun saveBases(
+        tempDir: String,
+        gitService: GitProperty,
+        repoFullName: String,
+        branchName: String
+    ) {
+        val pathToBases = pathToBases(gitService, repoFullName, branchName)
+        Files.deleteIfExists(pathToBases.asPath())
+        tempDir.asFile().listFiles().forEach { file ->
+            file.copyRecursively(
+                File("$pathToBases/${file.name}")
+            )
+        }
+    }
 
     private val logger = KotlinLogging.logger {}
     private val baseDir = ".base"
@@ -120,7 +136,7 @@ class FileSystemSolutionStorage(
             .findAllByRepoAndSourceBranch(analysisSettings.repository.name, analysisSettings.branch)
 
     @Synchronized
-    override fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): File {
+    override fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): SourceCode {
         val pathToSolution = pathToSolution(pullRequest, fileName)
         sourceCodeRepository.deleteByRepoAndUserAndFileNameAndSourceBranch(
             pullRequest.mainRepoFullName,
@@ -130,14 +146,42 @@ class FileSystemSolutionStorage(
         )
         val savedFile = saveLocally(pathToSolution, fileText)
         val fileLength = Files.lines(savedFile.toPath()).count().toInt()
-        sourceCodeRepository.save(SourceCode(pullRequest, fileName, fileLength))
-        return savedFile
+        return sourceCodeRepository.save(SourceCode(pullRequest, fileName, fileLength))
+    }
+
+    override fun saveSolution(sourceFileInfo: SourceFileInfo): SourceCode {
+        val pathToSolution = pathToSolution(sourceFileInfo)
+        sourceCodeRepository.deleteByRepoAndUserAndFileNameAndSourceBranch(
+            sourceFileInfo.mainRepoFullName,
+            sourceFileInfo.creator,
+            sourceFileInfo.fileName,
+            sourceFileInfo.sourceBranchName
+        )
+        val savedFile = saveLocally(pathToSolution, sourceFileInfo.fileText)
+        val fileLength = Files.lines(savedFile.toPath()).count().toInt()
+        return sourceCodeRepository.save(SourceCode(sourceFileInfo, fileLength))
     }
 
     @Synchronized
     override fun saveBase(pullRequest: PullRequest, fileName: String, fileText: String): File {
+        return saveBase(
+            pullRequest.gitService,
+            pullRequest.mainRepoFullName,
+            pullRequest.sourceBranchName,
+            fileName,
+            fileText
+        )
+    }
+
+    override fun saveBase(
+        gitService: GitProperty,
+        mainRepoFullName: String,
+        sourceBranchName: String,
+        fileName: String,
+        fileText: String
+    ): File {
         val pathToBase =
-            pathToBase(pullRequest.gitService, pullRequest.mainRepoFullName, pullRequest.sourceBranchName, fileName)
+            pathToBase(gitService, mainRepoFullName, sourceBranchName, fileName)
         return saveLocally(pathToBase, fileText)
     }
 
@@ -187,6 +231,15 @@ class FileSystemSolutionStorage(
             pullRequest.sourceBranchName,
             pullRequest.creatorName,
             fileName
+        )
+
+    private fun pathToSolution(sourceFileInfo: SourceFileInfo): String =
+        pathToSolution(
+            sourceFileInfo.gitService,
+            sourceFileInfo.mainRepoFullName,
+            sourceFileInfo.sourceBranchName,
+            sourceFileInfo.creator,
+            sourceFileInfo.fileName
         )
 
     private fun String.asPath() = Paths.get(this)

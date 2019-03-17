@@ -2,7 +2,9 @@ package ru.nikstep.redink.analysis.solutions
 
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.PreparedAnalysisData
+import ru.nikstep.redink.model.data.SourceFileInfo
 import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.model.entity.SourceCode
 import ru.nikstep.redink.util.GitProperty
 import java.io.File
 
@@ -24,12 +26,32 @@ interface SolutionStorage {
     /**
      * Save base file to local storage
      */
+    fun saveBases(
+        tempDir: String, gitService: GitProperty, repoFullName: String, branchName: String
+    )
+
+    /**
+     * Save base file to local storage
+     */
+    fun saveBase(
+        gitService: GitProperty, mainRepoFullName: String, sourceBranchName: String,
+        fileName: String, fileText: String
+    ): File
+
+    /**
+     * Save base file to local storage
+     */
     fun saveBase(pullRequest: PullRequest, fileName: String, fileText: String): File
 
     /**
      * Save solution of [fileName] for [PullRequest.creatorName]
      */
-    fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): File
+    fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): SourceCode
+
+    /**
+     * Save solution of [fileName] for [PullRequest.creatorName]
+     */
+    fun saveSolution(sourceFileInfo: SourceFileInfo): SourceCode
 
     /**
      * Load all base solution files and corresponding solution files of the [pullRequest].
