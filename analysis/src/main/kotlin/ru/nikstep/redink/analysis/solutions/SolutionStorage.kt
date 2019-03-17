@@ -24,7 +24,7 @@ interface SolutionStorage {
     fun loadBase(gitProperty: GitProperty, repoName: String, branchName: String, fileName: String): File
 
     /**
-     * Save base file to local storage
+     * Save base files to local storage
      */
     fun saveBases(
         tempDir: String, gitService: GitProperty, repoFullName: String, branchName: String

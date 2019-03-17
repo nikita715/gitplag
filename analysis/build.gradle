@@ -3,11 +3,6 @@ dependencies {
     implementation project(':model')
     implementation project(':util')
 
-    implementation "org.springframework.boot:spring-boot-starter-web"
-    implementation "org.springframework.boot:spring-boot-configuration-processor"
-
-    implementation 'commons-io:commons-io:2.6'
-
     implementation 'it.zielke:moji:1.0.1'
 
     implementation 'org.jsoup:jsoup:1.11.3'

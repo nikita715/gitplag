@@ -33,32 +33,30 @@ class GithubLoader(
     override fun loadFilesOfRepository(repo: Repository): List<SourceCode> {
         val branches = mutableSetOf<String>()
         val toList = sendRestRequest<JsonArray<JsonObject>>("https://api.github.com/repos/${repo.name}/pulls")
-            .asSequence().flatMap {
+            .flatMap {
                 val prNumber = requireNotNull(it.int("number"))
-                val creator = requireNotNull(it.obj("head")?.obj("user")?.string("login"))
                 val sourceRepoName = requireNotNull(it.obj("head")?.obj("repo")?.string("full_name"))
-                val mainBranchName = requireNotNull(it.obj("base")?.string("ref"))
                 val sourceBranchName = requireNotNull(it.obj("head")?.string("ref"))
-                val headSha = requireNotNull(it.obj("head")?.string("sha"))
 
                 branches += sourceBranchName
 
                 loadChangedFiles(repo.name, prNumber).map { fileName ->
-                    SourceFileInfo(
-                        gitService = GitProperty.GITHUB,
-                        sourceBranchName = sourceBranchName,
-                        mainRepoFullName = repo.name,
-                        prNumber = prNumber,
-                        creator = creator,
-                        fileName = fileName,
-                        fileText = loadFileText(sourceRepoName, sourceBranchName, fileName, ""),
-                        mainBranchName = mainBranchName,
-                        headSha = headSha
+                    val fileText = loadFileText(sourceRepoName, sourceBranchName, fileName, "")
+                    solutionStorage.saveSolution(
+                        SourceFileInfo(
+                            gitService = GitProperty.GITHUB,
+                            sourceBranchName = sourceBranchName,
+                            mainRepoFullName = repo.name,
+                            prNumber = prNumber,
+                            fileName = fileName,
+                            fileText = fileText,
+                            creator = requireNotNull(it.obj("head")?.obj("user")?.string("login")),
+                            mainBranchName = requireNotNull(it.obj("base")?.string("ref")),
+                            headSha = requireNotNull(it.obj("head")?.string("sha"))
+                        )
                     )
-                }.asSequence()
-            }.map {
-                solutionStorage.saveSolution(it)
-            }.toList()
+                }
+            }
 
         loadBases(branches, repo)
         return toList
@@ -71,15 +69,15 @@ class GithubLoader(
         inTempDirectory { tempDir ->
             branches.forEach { branch ->
                 val zipFile = File("$tempDir/zip.zip")
-                URL("https://github.com/${repo.name}/archive/$branch.zip").openStream().use {
-                    BufferedInputStream(it).use {
-                        val bytes = it.readBytes()
+                BufferedInputStream(URL("https://github.com/${repo.name}/archive/$branch.zip").openStream())
+                    .use { inputStream ->
+                        val bytes = inputStream.readBytes()
                         FileOutputStream(zipFile).use {
                             it.write(bytes)
                             ZipFile(zipFile).extractAll(tempDir)
                         }
+
                     }
-                }
                 solutionStorage.saveBases(
                     "$tempDir/${repo.name.substringAfter("/")}-$branch",
                     repo.gitService, repo.name, branch

@@ -22,6 +22,9 @@ class FileSystemSolutionStorage(
     private val solutionsDir: String
 ) : SolutionStorage {
 
+    private val logger = KotlinLogging.logger {}
+    private val baseDir = ".base"
+
     override fun saveBases(
         tempDir: String,
         gitService: GitProperty,
@@ -36,9 +39,6 @@ class FileSystemSolutionStorage(
             )
         }
     }
-
-    private val logger = KotlinLogging.logger {}
-    private val baseDir = ".base"
 
     override fun loadBase(gitProperty: GitProperty, repoName: String, branchName: String, fileName: String): File =
         pathToBase(gitProperty, repoName, branchName, fileName).asFile()
@@ -200,23 +200,11 @@ class FileSystemSolutionStorage(
     private fun pathToBase(git: GitProperty, repo: String, branch: String, file: String): String =
         asPath(solutionsDir, git, repo, branch, baseDir, file)
 
-    private fun pathToSolutions(git: GitProperty, repo: String, branch: String): String =
-        asPath(solutionsDir, git, repo, branch)
-
-    private fun pathToSolutions(git: GitProperty, repo: String, branch: String, user: String): String =
-        asPath(solutionsDir, git, repo, branch, user)
-
     private fun pathToSolution(git: GitProperty, repo: String, branch: String, creator: String, file: String): String =
         asPath(solutionsDir, git, repo, branch, creator, file)
 
     private fun pathToBases(analysisSettings: AnalysisSettings): String =
         pathToBases(analysisSettings.gitService, analysisSettings.repository.name, analysisSettings.branch)
-
-    private fun pathToSolutions(analysisSettings: AnalysisSettings, user: String): String =
-        pathToSolutions(analysisSettings.gitService, analysisSettings.repository.name, analysisSettings.branch, user)
-
-    private fun pathToSolutions(analysisSettings: AnalysisSettings): String =
-        pathToSolutions(analysisSettings.gitService, analysisSettings.repository.name, analysisSettings.branch)
 
     private fun pathToSolution(analysisSettings: AnalysisSettings, sourceCode: SourceCode): String =
         pathToSolution(
@@ -245,9 +233,5 @@ class FileSystemSolutionStorage(
     private fun String.asPath() = Paths.get(this)
 
     private fun String.asFile() = File(this.asPath().toUri())
-
-    private fun File.subfiles() = this.list().toList()
-
-    private fun countOfLines(text: String) = "\r\n|\r|\n".toRegex().findAll(text).count()
 
 }

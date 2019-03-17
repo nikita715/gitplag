@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import ru.nikstep.redink.model.dto.RepositoryDto
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.AnalyserProperty
@@ -49,7 +50,7 @@ class RepositoryController(
 
         }
 
-    @PutMapping()
+    @PutMapping
     fun updateRepository(@RequestBody repositoryDto: RepositoryDto): Repository {
         val repository =
             repositoryRepository.findByGitServiceAndName(repositoryDto.gitService, repositoryDto.fullName)
@@ -65,14 +66,4 @@ class RepositoryController(
         return repositoryRepository.save(repositoryCopy)
     }
 
-}
-
-class RepositoryDto(val gitService: GitProperty, val fullName: String) {
-    val language: Language? = null
-    val filePatterns: Collection<String>? = null
-    val analyser: AnalyserProperty? = null
-    val periodicAnalysis: Boolean? = null
-    val periodicAnalysisDelay: Int? = null
-    val branches: List<String>? = null
-    val analysisMode: AnalysisMode? = null
 }

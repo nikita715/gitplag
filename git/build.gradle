@@ -4,8 +4,6 @@ dependencies {
     implementation project(':model')
     implementation project(':util')
 
-    implementation "org.springframework.boot:spring-boot-configuration-processor"
-
-    compile group: 'net.lingala.zip4j', name: 'zip4j', version: '1.3.2'
+    implementation 'net.lingala.zip4j:zip4j:1.3.2'
 
 }
