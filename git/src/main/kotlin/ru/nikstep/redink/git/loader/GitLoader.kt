@@ -13,7 +13,7 @@ interface GitLoader {
      * Upload files that have changed in the pull request
      * to the application repository
      */
-    fun loadFilesOfPullRequest(pullRequest: PullRequest)
+    fun loadFilesOfCommit(pullRequest: PullRequest)
 
     /**
      * Upload files that have changed in the pull request

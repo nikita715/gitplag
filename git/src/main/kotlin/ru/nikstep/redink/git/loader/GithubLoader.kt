@@ -30,6 +30,11 @@ class GithubLoader(
 
     private val logger = KotlinLogging.logger {}
 
+    fun loadBase(repoFullName: String, branchName: String, fileName: String) {
+        val fileText = loadFileText(repoFullName, branchName, fileName)
+        solutionStorage.saveBase(GitProperty.GITHUB, repoFullName, branchName, fileName, fileText)
+    }
+
     override fun loadFilesOfRepository(repo: Repository): List<SourceCode> {
         val branches = mutableSetOf<String>()
         val toList = sendRestRequest<JsonArray<JsonObject>>("https://api.github.com/repos/${repo.name}/pulls")
@@ -58,18 +63,15 @@ class GithubLoader(
                 }
             }
 
-        loadBases(branches, repo)
+        loadBases(branches, repo.name)
         return toList
     }
 
-    private fun loadBases(
-        branches: MutableSet<String>,
-        repo: Repository
-    ) {
+    fun loadBases(branches: Set<String>, repoName: String) {
         inTempDirectory { tempDir ->
             branches.forEach { branch ->
                 val zipFile = File("$tempDir/zip.zip")
-                BufferedInputStream(URL("https://github.com/${repo.name}/archive/$branch.zip").openStream())
+                BufferedInputStream(URL("https://github.com/$repoName/archive/$branch.zip").openStream())
                     .use { inputStream ->
                         val bytes = inputStream.readBytes()
                         FileOutputStream(zipFile).use {
@@ -79,8 +81,8 @@ class GithubLoader(
 
                     }
                 solutionStorage.saveBases(
-                    "$tempDir/${repo.name.substringAfter("/")}-$branch",
-                    repo.gitService, repo.name, branch
+                    "$tempDir/${repoName.substringAfter("/")}-$branch",
+                    GitProperty.GITHUB, repoName, branch
                 )
             }
         }
@@ -97,6 +99,14 @@ class GithubLoader(
             "https://api.github.com/repos/$mainRepoFullName/pulls/$prNumber/files"
         ).mapNotNull {
             val fileRecord = it as JsonObject
+            if (isChanged(fileRecord)) fileRecord.string("filename") else null
+        }
+
+    override fun loadChangedFilesOfCommit(repoName: String, headSha: String): List<String> =
+        sendRestRequest<JsonObject>(
+            "https://api.github.com/repos/$repoName/commits/$headSha"
+        ).array<JsonObject>("files")!!.mapNotNull {
+            val fileRecord = it
             if (isChanged(fileRecord)) fileRecord.string("filename") else null
         }
 

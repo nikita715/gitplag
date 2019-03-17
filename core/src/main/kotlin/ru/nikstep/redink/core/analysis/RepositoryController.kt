@@ -23,12 +23,9 @@ class RepositoryController(
 
     @GetMapping
     fun getRepository(
-        @RequestParam("git") git: String,
+        @RequestParam("git") git: GitProperty,
         @RequestParam("repo") repoName: String
-    ): Repository {
-        val gitProperty = GitProperty.valueOf(git.toUpperCase())
-        return repositoryRepository.findByGitServiceAndName(gitProperty, repoName)
-    }
+    ): Repository? = repositoryRepository.findByGitServiceAndName(git, repoName)
 
     @PostMapping
     fun createRepository(@RequestBody repositoryDto: RepositoryDto): Repository =
@@ -46,8 +43,6 @@ class RepositoryController(
                     analysisMode = analysisMode ?: AnalysisMode.PAIRS
                 )
             )
-
-
         }
 
     @PutMapping

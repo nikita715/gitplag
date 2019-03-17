@@ -55,8 +55,8 @@ class AnalysisController(
      * Receive analysis, find last executed analysis result
      */
     @GetMapping("/analysis")
-    fun analysis(@RequestParam("git") git: String, @RequestParam("repoName") repoName: String): ResponseEntity<*> {
-        val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
+    fun analysis(@RequestParam("git") git: GitProperty, @RequestParam("repoName") repoName: String): ResponseEntity<*> {
+        val repository = repositoryRepository.findByGitServiceAndName(git, repoName)
         val analysis = analysisRepository.findFirstByRepositoryOrderByExecutionDateDesc(repository)
         return if (analysis != null) ResponseEntity.ok(analysis) else ResponseEntity.ok("Not analyzed")
     }

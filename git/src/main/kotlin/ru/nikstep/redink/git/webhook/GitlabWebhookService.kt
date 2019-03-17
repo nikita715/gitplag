@@ -15,6 +15,9 @@ class GitlabWebhookService(
     pullRequestRepository: PullRequestRepository,
     applicationEventPublisher: ApplicationEventPublisher
 ) : AbstractWebhookService(pullRequestRepository, applicationEventPublisher) {
+    override fun saveNewBaseFiles(payload: String) {
+        TODO("not implemented")
+    }
 
 
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
