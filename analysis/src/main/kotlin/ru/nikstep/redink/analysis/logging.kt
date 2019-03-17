@@ -1,4 +1,4 @@
-package ru.nikstep.redink.core.analysis
+package ru.nikstep.redink.analysis
 
 import mu.KLogger
 import ru.nikstep.redink.model.data.AnalysisSettings

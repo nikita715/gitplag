@@ -28,17 +28,17 @@ class AnalysisRunner(
     /**
      * Run analysis with [analysisSettings]
      */
-    fun run(analysisSettings: AnalysisSettings): Analysis {
-        val analysisService = analysers.getValue(analysisSettings.analyser)
-        return analysisService.analyse(analysisSettings)
-            .let { analysisResultDataManager.saveAnalysis(analysisSettings, it) }
+    fun run(settings: AnalysisSettings): Analysis {
+        val analysisService = analysers.getValue(settings.analyser)
+        return logger.loggedAnalysis(settings) { analysisService.analyse(settings) }
+            .let { analysisResultDataManager.saveAnalysis(settings, it) }
     }
 
     /**
      * Run analysis with [analysisSettings]
      */
     fun run(analysisSettings: List<AnalysisSettings>): List<Analysis> =
-        analysisSettings.map { run(it) }
+        analysisSettings.map { logger.loggedAnalysis(it) { run(it) } }
 
     private fun sendSuccessStatusCheck(pullRequest: PullRequest) {
         if (pullRequest.gitService == GitProperty.GITHUB) {

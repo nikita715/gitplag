@@ -27,14 +27,14 @@ import javax.persistence.Table
  */
 @Entity
 @Table(name = "repository")
-class Repository(
+data class Repository(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long = -1,
 
     @ManyToOne
     @JoinColumn(name = "owner")
-    val owner: User,
+    val owner: User? = null,
 
     @Column(name = "pattern")
     @ElementCollection(fetch = FetchType.LAZY)
@@ -45,13 +45,10 @@ class Repository(
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    val analyser: AnalyserProperty,
+    val analyser: AnalyserProperty = AnalyserProperty.MOSS,
 
     @Column(nullable = false)
-    val periodicAnalysis: Boolean,
-
-    @Column(nullable = false)
-    val analyseWithLines: Boolean = false,
+    val periodicAnalysis: Boolean = false,
 
     @Column(nullable = false)
     val periodicAnalysisDelay: Int = 1,
