@@ -1,7 +1,6 @@
 package ru.nikstep.redink.core.analysis
 
 import mu.KotlinLogging
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -32,26 +31,24 @@ class AnalysisController(
      */
     @GetMapping("/analysis/run")
     fun analysisLazy(
-        @RequestParam("git") git: String,
+        @RequestParam("git") git: GitProperty,
         @RequestParam("repoName") repoName: String,
+        @RequestParam("branches") branches: String,
         @RequestParam("analyser", required = false) analyser: String?,
         @RequestParam("language", required = false) language: String?,
-        @RequestParam("branch", required = false) branch: String?,
         @RequestParam("mode", required = false) analysisMode: String?
     ): ResponseEntity<*> {
-        val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
+        val repository = repositoryRepository.findByGitServiceAndName(git, repoName)
         val analysisSettings =
-            AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
-                .mode(analysisMode)
-        return try {
-            val analysis = logger.loggedAnalysis(analysisSettings) {
-                analysisRunner.run(analysisSettings)
+            branches.split(",").map { branch ->
+                AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
+                    .mode(analysisMode)
             }
-            ResponseEntity.ok(analysis)
-        } catch (e: Exception) {
-            logger.exceptionAtAnalysisOf(e, analysisSettings)
-            ResponseEntity<Any>(HttpStatus.INTERNAL_SERVER_ERROR)
-        }
+        val results = analysisRunner.run(analysisSettings)
+        return if (results.size == 1)
+            ResponseEntity.ok(results[0])
+        else
+            ResponseEntity.ok(results)
     }
 
     /**
@@ -69,18 +66,20 @@ class AnalysisController(
      */
     @GetMapping("/analysis/trigger")
     fun analysisStatic(
-        @RequestParam("git") git: String,
+        @RequestParam("git") git: GitProperty,
         @RequestParam("repoName") repoName: String,
+        @RequestParam("branches") branches: String,
         @RequestParam("analyser", required = false) analyser: String?,
         @RequestParam("language", required = false) language: String?,
-        @RequestParam("branch", required = false) branch: String?,
         @RequestParam("responseUrl", required = false) responseUrl: String?,
         @RequestParam("mode", required = false) analysisMode: String?
     ): ResponseEntity<*> {
-        val repository = repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(git.toUpperCase()), repoName)
+        val repository = repositoryRepository.findByGitServiceAndName(git, repoName)
         val analysisSettings =
-            AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
-                .mode(analysisMode)
+            branches.split(",").map { branch ->
+                AnalysisSettings(repository, branch).language(language).analyser(analyser)
+                    .mode(analysisMode)
+            }
         analysisAsyncRunner.runAndRespond(analysisSettings, responseUrl)
         return ResponseEntity.ok("Accepted")
     }

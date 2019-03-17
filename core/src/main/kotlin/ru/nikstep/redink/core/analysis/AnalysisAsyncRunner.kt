@@ -19,26 +19,22 @@ class AnalysisAsyncRunner(private val analysisRunner: AnalysisRunner) {
      */
     @Async("analysisTaskExecutor")
     fun run(settings: AnalysisSettings) {
-        try {
-            logger.loggedAnalysis(settings) {
-                analysisRunner.run(settings)
-            }
-        } catch (e: Exception) {
-            logger.exceptionAtAnalysisOf(e, settings)
-        }
+        analysisRunner.run(settings)
     }
 
     /**
      * Async runner of analyzes
      */
     @Async("analysisTaskExecutor")
-    fun runAndRespond(analysisSettings: AnalysisSettings, responseUrl: String?) {
-        logger.loggedAnalysis(analysisSettings) {
-            val analysis = analysisRunner.run(analysisSettings)
-            if (responseUrl != null) sendAnalysisResult(
-                url = responseUrl,
-                body = objectMapper.writeValueAsString(analysis)
-            )
-        }
+    fun runAndRespond(analysisSettings: List<AnalysisSettings>, responseUrl: String?) {
+        val results = analysisRunner.run(analysisSettings)
+        val body = if (results.size == 1)
+            objectMapper.writeValueAsString(results[0])
+        else
+            objectMapper.writeValueAsString(results)
+        if (responseUrl != null) sendAnalysisResult(
+            url = responseUrl,
+            body = body
+        )
     }
 }
