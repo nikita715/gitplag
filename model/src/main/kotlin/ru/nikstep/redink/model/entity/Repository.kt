@@ -18,7 +18,6 @@ import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
@@ -31,11 +30,6 @@ data class Repository(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long = -1,
-
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "owner")
-    val owner: User? = null,
 
     @Column(name = "pattern")
     @ElementCollection(fetch = FetchType.LAZY)

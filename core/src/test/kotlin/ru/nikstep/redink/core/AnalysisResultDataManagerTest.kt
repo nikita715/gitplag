@@ -11,10 +11,8 @@ import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.MatchedLines
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.model.entity.User
 import ru.nikstep.redink.model.manager.AnalysisResultDataManager
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.model.repo.UserRepository
 import ru.nikstep.redink.util.AnalyserProperty
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language
@@ -29,22 +27,10 @@ class AnalysisResultDataManagerTest {
     private lateinit var analysisResultDataManager: AnalysisResultDataManager
 
     @Autowired
-    private lateinit var userRepository: UserRepository
-
-    @Autowired
     private lateinit var repositoryRepository: RepositoryRepository
-
-    private val user = userRepository.save(
-        User(
-            name = "nikita",
-            githubId = 1L,
-            installationId = 1L
-        )
-    )
 
     private val repo = repositoryRepository.save(
         Repository(
-            owner = user,
             name = "repoName",
             analyser = AnalyserProperty.MOSS,
             periodicAnalysis = false,

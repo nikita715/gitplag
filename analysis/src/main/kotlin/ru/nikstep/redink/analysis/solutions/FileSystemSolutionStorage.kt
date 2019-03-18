@@ -131,13 +131,13 @@ class FileSystemSolutionStorage(
 
     private fun loadSourceCodeForAnalysis(analysisSettings: AnalysisSettings) =
         solutionFileRecordRepository
-            .findAllByRepoAndSourceBranch(analysisSettings.repository.name, analysisSettings.branch)
+            .findAllByRepoAndSourceBranch(analysisSettings.repository, analysisSettings.branch)
 
     @Synchronized
     override fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): SolutionFileRecord {
         val pathToSolution = pathToSolution(pullRequest, fileName)
         solutionFileRecordRepository.deleteByRepoAndUserAndFileNameAndSourceBranch(
-            pullRequest.repo.name,
+            pullRequest.repo,
             pullRequest.creatorName,
             fileName,
             pullRequest.sourceBranchName
@@ -150,7 +150,7 @@ class FileSystemSolutionStorage(
     override fun saveSolution(sourceFileInfo: SourceFileInfo): SolutionFileRecord {
         val pathToSolution = pathToSolution(sourceFileInfo)
         solutionFileRecordRepository.deleteByRepoAndUserAndFileNameAndSourceBranch(
-            sourceFileInfo.repo.name,
+            sourceFileInfo.repo,
             sourceFileInfo.creator,
             sourceFileInfo.fileName,
             sourceFileInfo.sourceBranchName
@@ -205,7 +205,7 @@ class FileSystemSolutionStorage(
 
     private fun pathToSolution(pullRequest: PullRequest, fileName: String): String =
         pathToSolution(
-            pullRequest.gitService,
+            pullRequest.repo.gitService,
             pullRequest.repo.name,
             pullRequest.sourceBranchName,
             pullRequest.creatorName,

@@ -15,8 +15,7 @@ data class BaseFileRecord(
     val id: Long = -1,
 
     @ManyToOne
-    @JoinColumn
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     val repo: Repository,
 
     @Column(nullable = false)

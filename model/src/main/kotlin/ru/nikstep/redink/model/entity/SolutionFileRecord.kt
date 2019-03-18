@@ -6,6 +6,8 @@ import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 
 /**
  * Info class about stored solutions
@@ -18,7 +20,11 @@ class SolutionFileRecord(
 
     @Column(name = "p_user")
     val user: String,
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
     val repo: Repository,
+
     val fileName: String,
     val sha: String,
     val countOfLines: Int,

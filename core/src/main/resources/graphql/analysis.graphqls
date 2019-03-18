@@ -30,9 +30,6 @@ type AnalysisPair {
     # Percentage of similarity
     percentage: Int!
 
-    # Name of the source repository
-    repo: String!
-
     # Pairs of matched lines
     analysisPairLines: [AnalysisPairLines]!
 }
