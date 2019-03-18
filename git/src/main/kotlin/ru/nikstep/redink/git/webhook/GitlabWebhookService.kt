@@ -2,7 +2,6 @@ package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
 import ru.nikstep.redink.git.loader.GitlabLoader
-import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty.GITLAB
@@ -18,16 +17,12 @@ class GitlabWebhookService(
     private val gitlabLoader: GitlabLoader
 ) : AbstractWebhookService(pullRequestRepository, repositoryRepository, gitlabLoader) {
 
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    override val git = GITLAB
+
     override fun saveNewBaseFiles(payload: String) {
         TODO("not implemented")
     }
-
-    override fun saveNewPullRequest(payload: String): PullRequest =
-        super.saveNewPullRequest(payload).also(gitlabLoader::loadFilesOfCommit)
-
-    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-
-    override val git = GITLAB
 
     override val JsonObject.number: Int?
         get() = obj("object_attributes")?.int("iid")

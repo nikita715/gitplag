@@ -1,8 +1,6 @@
 package ru.nikstep.redink.git.webhook
 
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import io.kotlintest.matchers.shouldEqual
@@ -36,18 +34,17 @@ abstract class AbstractWebhookServiceTest {
         `when`(it.save<PullRequest>(any())).thenAnswer(PullRequestAnswer)
     }
 
-    protected val gitLoader = mock<GitLoader>()
+    abstract val gitLoader: GitLoader
 
-    protected val repositoryRepository = mock<RepositoryRepository> {
-        on { findByGitServiceAndName(pullRequest.repo.gitService, pullRequest.repo.name) } doReturn repo
-    }
+    protected val repositoryRepository = mock<RepositoryRepository>()
 
     @Test
     fun saveNewPullRequest() {
+        `when`(repositoryRepository.findByGitServiceAndName(any(), any())).thenReturn(repo)
         webhookService.saveNewPullRequest(payload)
         verify(pullRequestRepository).save(argument.capture())
         argument.value shouldEqual pullRequest
-        verify(gitLoader).loadFilesOfCommit(eq(pullRequest))
+        verify(gitLoader).loadFilesOfCommit(pullRequest)
     }
 
     companion object {

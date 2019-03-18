@@ -2,7 +2,6 @@ package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
 import ru.nikstep.redink.git.loader.BitbucketLoader
-import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty.BITBUCKET
@@ -19,16 +18,11 @@ class BitbucketWebhookService(
 ) : AbstractWebhookService(pullRequestRepository, repositoryRepository, bitbucketLoader) {
 
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-
-    override fun saveNewPullRequest(payload: String): PullRequest =
-        super.saveNewPullRequest(payload)
-            .also(bitbucketLoader::loadFilesOfCommit)
+    override val git = BITBUCKET
 
     override fun saveNewBaseFiles(payload: String) {
         TODO("not implemented")
     }
-
-    override val git = BITBUCKET
 
     override val JsonObject.number: Int?
         get() = obj("pullrequest")?.int("id")

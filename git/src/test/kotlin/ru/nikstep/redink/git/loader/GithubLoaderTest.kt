@@ -21,7 +21,7 @@ class GithubLoaderTest : AbstractGitLoaderTest() {
         creatorName = "testns",
         sourceRepoId = 1,
         repo = repo,
-        headSha = "",
+        headSha = "0ab6c9f464e8e8f13a80859178d0886ee438385d",
         sourceBranchName = branchName,
         date = LocalDateTime.now(),
         sourceRepoFullName = repo.name,
