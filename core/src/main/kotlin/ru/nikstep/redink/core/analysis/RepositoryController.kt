@@ -1,5 +1,6 @@
 package ru.nikstep.redink.core.analysis
 
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -46,9 +47,10 @@ class RepositoryController(
         }
 
     @PutMapping
-    fun updateRepository(@RequestBody repositoryDto: RepositoryDto): Repository {
+    fun updateRepository(@RequestBody repositoryDto: RepositoryDto): ResponseEntity<*> {
         val repository =
             repositoryRepository.findByGitServiceAndName(repositoryDto.gitService, repositoryDto.fullName)
+                ?: return ResponseEntity.notFound().build<Any?>()
         val repositoryCopy = repository.copy(
             language = repositoryDto.language ?: repository.language,
             filePatterns = repositoryDto.filePatterns ?: repository.filePatterns,
@@ -58,7 +60,7 @@ class RepositoryController(
             branches = repositoryDto.branches ?: repository.branches,
             analysisMode = repositoryDto.analysisMode ?: repository.analysisMode
         )
-        return repositoryRepository.save(repositoryCopy)
+        return ResponseEntity.ok(repositoryRepository.save(repositoryCopy))
     }
 
 }

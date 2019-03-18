@@ -107,18 +107,19 @@ class FileSystemSolutionStorage(
     ) {
         val pathToBases = pathToBases(repo.gitService, repo.name, branchName)
         val tempDirPath = File(tempDir).toPath()
-        Files.deleteIfExists(pathToBases.asPath())
-        tempDir.asFile().listFiles().forEach { file ->
-            file.copyRecursively(
-                File("$pathToBases/${file.name}")
-            )
+        pathToBases.asFile().deleteRecursively()
+        Files.walk(tempDir.asPath()).filter { Files.isRegularFile(it) && !Files.isHidden(it) }.forEach { file ->
+            val foundedFile = file.toFile()
+            val fileName = tempDirPath.relativize(foundedFile.toPath()).toString()
+            foundedFile.copyTo(File("$pathToBases/$fileName"))
             baseFileRecordRepository.save(
                 BaseFileRecord(
                     repo = repo,
-                    fileName = tempDirPath.relativize(file.toPath()).toString(),
+                    fileName = fileName,
                     branch = branchName
                 )
             )
+            logger.info { "Storage: Saved base file with name = $fileName of repo ${repo.name}" }
         }
     }
 

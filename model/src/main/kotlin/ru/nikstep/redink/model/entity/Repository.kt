@@ -59,7 +59,7 @@ data class Repository(
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    val language: Language,
+    val language: Language = Language.JAVA,
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

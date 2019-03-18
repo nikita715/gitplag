@@ -13,7 +13,7 @@ interface RepositoryRepository : JpaRepository<Repository, Long> {
     /**
      * Find a [Repository] by [gitService] and [name]
      */
-    fun findByGitServiceAndName(gitService: GitProperty, name: String): Repository
+    fun findByGitServiceAndName(gitService: GitProperty, name: String): Repository?
 
     /**
      * Find repositories with periodic_analysis = true that must be analysed now

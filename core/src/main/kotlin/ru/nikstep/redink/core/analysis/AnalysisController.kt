@@ -39,6 +39,7 @@ class AnalysisController(
         @RequestParam("mode", required = false) analysisMode: String?
     ): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(git, repoName)
+            ?: return ResponseEntity.notFound().build<Any?>()
         val analysisSettings =
             branches.split(",").map { branch ->
                 AnalysisSettings(repository, requireNotNull(branch)).language(language).analyser(analyser)
@@ -57,8 +58,9 @@ class AnalysisController(
     @GetMapping("/analysis")
     fun analysis(@RequestParam("git") git: GitProperty, @RequestParam("repoName") repoName: String): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(git, repoName)
+            ?: return ResponseEntity.notFound().build<Any?>()
         val analysis = analysisRepository.findFirstByRepositoryOrderByExecutionDateDesc(repository)
-        return if (analysis != null) ResponseEntity.ok(analysis) else ResponseEntity.ok("Not analyzed")
+        return if (analysis != null) ResponseEntity.ok(analysis) else ResponseEntity.notFound().build<Any?>()
     }
 
     /**
@@ -75,6 +77,7 @@ class AnalysisController(
         @RequestParam("mode", required = false) analysisMode: String?
     ): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(git, repoName)
+            ?: return ResponseEntity.notFound().build<Any?>()
         val analysisSettings =
             branches.split(",").map { branch ->
                 AnalysisSettings(repository, branch).language(language).analyser(analyser)
