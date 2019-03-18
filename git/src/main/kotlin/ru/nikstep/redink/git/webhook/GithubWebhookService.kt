@@ -2,8 +2,8 @@ package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
-import org.springframework.context.ApplicationEventPublisher
 import ru.nikstep.redink.git.loader.GithubLoader
+import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.GITHUB
@@ -15,10 +15,9 @@ import java.time.format.DateTimeFormatter
  * Implementation of the [AbstractWebhookService] for handling Github webhooks
  */
 class GithubWebhookService(
-    private val pullRequestRepository: PullRequestRepository,
-    private val applicationEventPublisher: ApplicationEventPublisher,
+    pullRequestRepository: PullRequestRepository,
     private val githubLoader: GithubLoader
-) : AbstractWebhookService(pullRequestRepository, applicationEventPublisher) {
+) : AbstractWebhookService(pullRequestRepository) {
 
     override fun saveNewBaseFiles(payload: String) {
         val jsonObject = payload.parseAsObject()
@@ -33,6 +32,10 @@ class GithubWebhookService(
             githubLoader.loadBase(repoFullName, branchName, fileName)
         }
     }
+
+    override fun saveNewPullRequest(payload: String): PullRequest =
+        super.saveNewPullRequest(payload).also(githubLoader::loadFilesOfCommit)
+
 
     private val logger = KotlinLogging.logger {}
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")

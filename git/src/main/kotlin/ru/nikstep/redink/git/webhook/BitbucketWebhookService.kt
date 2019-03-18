@@ -1,7 +1,8 @@
 package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
-import org.springframework.context.ApplicationEventPublisher
+import ru.nikstep.redink.git.loader.BitbucketLoader
+import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.BITBUCKET
@@ -13,8 +14,14 @@ import java.time.format.DateTimeFormatter
  */
 class BitbucketWebhookService(
     pullRequestRepository: PullRequestRepository,
-    applicationEventPublisher: ApplicationEventPublisher
-) : AbstractWebhookService(pullRequestRepository, applicationEventPublisher) {
+    private val bitbucketLoader: BitbucketLoader
+) : AbstractWebhookService(pullRequestRepository) {
+
+    override fun saveNewPullRequest(payload: String): PullRequest =
+        super.saveNewPullRequest(payload)
+            .also(bitbucketLoader::loadFilesOfCommit)
+
+
     override fun saveNewBaseFiles(payload: String) {
         TODO("not implemented")
     }

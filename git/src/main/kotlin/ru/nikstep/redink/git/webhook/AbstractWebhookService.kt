@@ -2,9 +2,7 @@ package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
-import org.springframework.context.ApplicationEventPublisher
 import ru.nikstep.redink.git.newPullRequest
-import ru.nikstep.redink.model.PullRequestEvent
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
@@ -15,18 +13,16 @@ import java.time.LocalDateTime
  * Common implementation of the [WebhookService]
  */
 abstract class AbstractWebhookService(
-    private val pullRequestRepository: PullRequestRepository,
-    private val applicationEventPublisher: ApplicationEventPublisher
+    private val pullRequestRepository: PullRequestRepository
 ) : WebhookService {
     private val logger = KotlinLogging.logger {}
 
-    override fun saveNewPullRequest(payload: String) {
+    override fun saveNewPullRequest(payload: String): PullRequest =
         payload.parseAsObject()
             .let(jsonToPullRequest)
             .let(pullRequestRepository::save)
             .apply(logger::newPullRequest)
-            .also { applicationEventPublisher.publishEvent(PullRequestEvent(this, it)) }
-    }
+
 
     open val jsonToPullRequest: (JsonObject) -> PullRequest = { jsonObject ->
         jsonObject.run {
