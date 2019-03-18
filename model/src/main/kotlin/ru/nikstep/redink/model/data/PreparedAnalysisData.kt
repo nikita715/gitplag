@@ -35,16 +35,3 @@ class PreparedAnalysisData(
      */
     val solutions: List<Solution>
 )
-
-class Solution(
-    val student: String,
-    val fileName: String,
-    val file: File,
-    val includedFileNames: List<String> = emptyList(),
-    val includedFilePositions: List<Int> = emptyList(),
-    val sha: String,
-    val realFileName: String = ""
-)
-
-fun findByStudent(solutions: List<Solution>, student: String) =
-    requireNotNull(solutions.find { it.student == student })

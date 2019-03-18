@@ -20,29 +20,9 @@ data class AnalysisResult(
         matchData: List<AnalysisMatch>
     ) : this(
         analysisSettings.repository.name,
-        analysisSettings.gitService,
+        analysisSettings.repository.gitService,
         resultLink,
         executionDate,
         matchData
     )
-
-    constructor(
-        analysisSettings: AnalysisSettings,
-        resultLink: String,
-        executionDate: LocalDateTime
-    ) : this(
-        analysisSettings.repository.name,
-        analysisSettings.gitService,
-        resultLink,
-        executionDate,
-        emptyList()
-    )
 }
-
-data class AnalysisMatch(
-    val students: Pair<String, String>,
-    val lines: Int,
-    val percentage: Int,
-    val matchedLines: List<MatchedLines> = emptyList(),
-    val sha: Pair<String, String>
-)

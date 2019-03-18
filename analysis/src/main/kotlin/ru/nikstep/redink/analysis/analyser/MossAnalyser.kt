@@ -9,7 +9,7 @@ import ru.nikstep.redink.model.data.AnalysisResult
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.MatchedLines
 import ru.nikstep.redink.model.data.Solution
-import ru.nikstep.redink.model.data.findByStudent
+import ru.nikstep.redink.model.data.findSolutionByStudent
 import ru.nikstep.redink.util.AnalysisMode
 import ru.nikstep.redink.util.inTempDirectory
 import java.time.LocalDateTime
@@ -92,8 +92,8 @@ class MossAnalyser(
                     lines = lines,
                     percentage = percentage,
                     matchedLines = matchedLines,
-                    sha = findByStudent(solutions, students.first).sha
-                            to findByStudent(solutions, students.second).sha
+                    sha = findSolutionByStudent(solutions, students.first).sha
+                            to findSolutionByStudent(solutions, students.second).sha
                 )
             }
     }
@@ -115,8 +115,8 @@ class MossAnalyser(
             rightMatchedLines += secondMatch[0].toInt() to secondMatch[1].toInt()
         }
 
-        val solution1 = findByStudent(solutions, students.first)
-        val solution2 = findByStudent(solutions, students.second)
+        val solution1 = findSolutionByStudent(solutions, students.first)
+        val solution2 = findSolutionByStudent(solutions, students.second)
 
         val leftFilesToMatchedLines = filesWithMatchedLines(leftMatchedLines, solution1)
         val rightFilesToMatchedLines = filesWithMatchedLines(rightMatchedLines, solution2)

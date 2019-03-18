@@ -5,14 +5,14 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import ru.nikstep.redink.git.loader.GitLoader
-import ru.nikstep.redink.model.entity.SourceCode
+import ru.nikstep.redink.model.entity.SolutionFileRecord
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.model.repo.SourceCodeRepository
+import ru.nikstep.redink.model.repo.SolutionFileRecordRepository
 import ru.nikstep.redink.util.GitProperty
 
 @RestController
 class SolutionsController(
-    private val sourceCodeRepository: SourceCodeRepository,
+    private val solutionFileRecordRepository: SolutionFileRecordRepository,
     private val repositoryRepository: RepositoryRepository,
     @Qualifier("gitLoaders") private val loaders: Map<GitProperty, GitLoader>
 ) {
@@ -25,7 +25,7 @@ class SolutionsController(
         @RequestParam("targetBranch", required = false) targetBranch: String?,
         @RequestParam("student", required = false) student: String?,
         @RequestParam("fileName", required = false) fileName: String?
-    ) = sourceCodeRepository.findAllByGitServiceAndRepo(GitProperty.valueOf(git.toUpperCase()), repo)
+    ) = solutionFileRecordRepository.findAllByGitServiceAndRepo(GitProperty.valueOf(git.toUpperCase()), repo)
         .filter { if (sourceBranch != null) it.sourceBranch == sourceBranch else true }
         .filter { if (targetBranch != null) it.targetBranch == targetBranch else true }
         .filter { if (student != null) it.user == student else true }
@@ -36,10 +36,10 @@ class SolutionsController(
     fun importSolutions(
         @RequestParam("git") git: String,
         @RequestParam("repo") repoName: String
-    ): List<SourceCode> {
+    ): List<SolutionFileRecord> {
         val gitProperty = GitProperty.valueOf(git.toUpperCase())
         val repository = repositoryRepository.findByGitServiceAndName(gitProperty, repoName)
-        return loaders.getValue(gitProperty).loadFilesOfRepository(repository)
+        return loaders.getValue(gitProperty).loadRepositoryAndPullRequestFiles(repository)
     }
 
 }

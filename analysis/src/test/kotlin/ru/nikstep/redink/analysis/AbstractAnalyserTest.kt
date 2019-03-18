@@ -44,7 +44,6 @@ abstract class AbstractAnalyserTest {
     }
 
     protected val analysisSettings = mock<AnalysisSettings> {
-        on { gitService } doReturn GitProperty.GITHUB
         on { repository } doReturn repository
         on { language } doReturn Language.JAVA
         on { branch } doReturn "master"

@@ -7,8 +7,7 @@ import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.SourceFileInfo
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.model.entity.SourceCode
-import ru.nikstep.redink.model.repo.RepositoryRepository
+import ru.nikstep.redink.model.entity.SolutionFileRecord
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.downloadAndUnpackZip
 import ru.nikstep.redink.util.sendRestRequest
@@ -17,18 +16,22 @@ import ru.nikstep.redink.util.sendRestRequest
  * Loader of files from Github
  */
 class GithubLoader(
-    private val solutionStorage: SolutionStorage,
-    repositoryRepository: RepositoryRepository
-) : AbstractGitLoader(solutionStorage, repositoryRepository) {
+    private val solutionStorage: SolutionStorage
+) : AbstractGitLoader(solutionStorage) {
+
+    override fun loadFilesOfPullRequest(pullRequest: PullRequest) {
+        downloadAndUnpackZip("https://github.com/${pullRequest.sourceRepoFullName}/archive/${pullRequest.sourceBranchName}.zip") { unpackedDir ->
+        }
+    }
 
     private val logger = KotlinLogging.logger {}
 
-    fun loadBase(repoFullName: String, branchName: String, fileName: String) {
-        val fileText = loadFileText(repoFullName, branchName, fileName)
-        solutionStorage.saveBase(GitProperty.GITHUB, repoFullName, branchName, fileName, fileText)
+    fun downloadBase(repo: Repository, branchName: String, fileName: String) {
+        val fileText = loadFileText(repo.name, branchName, fileName)
+        solutionStorage.saveBaseByText(repo, branchName, fileName, fileText)
     }
 
-    override fun loadFilesOfRepository(repo: Repository): List<SourceCode> {
+    override fun loadRepositoryAndPullRequestFiles(repo: Repository): List<SolutionFileRecord> {
         val branches = mutableSetOf<String>()
         val toList = sendRestRequest<JsonArray<JsonObject>>("https://api.github.com/repos/${repo.name}/pulls")
             .flatMap {
@@ -56,16 +59,16 @@ class GithubLoader(
                 }
             }
 
-        loadBases(branches, repo.name)
+        loadBases(branches, repo)
         return toList
     }
 
-    fun loadBases(branches: Set<String>, repoName: String) {
+    fun loadBases(branches: Set<String>, repo: Repository) {
         branches.forEach { branch ->
-            downloadAndUnpackZip("https://github.com/$repoName/archive/$branch.zip") { unpackedDir ->
-                solutionStorage.saveBases(
-                    "$unpackedDir/${repoName.substringAfter("/")}-$branch",
-                    GitProperty.GITHUB, repoName, branch
+            downloadAndUnpackZip("https://github.com/${repo.name}/archive/$branch.zip") { unpackedDir ->
+                solutionStorage.saveBasesFromDir(
+                    "$unpackedDir/${repo.name.substringAfter("/")}-$branch",
+                    repo, branch
                 )
             }
         }
