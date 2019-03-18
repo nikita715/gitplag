@@ -12,7 +12,7 @@ import java.time.Month
 class GithubWebhookServiceTest : AbstractWebhookServiceTest() {
     override val payload by lazy { readPayloadOf("github") }
 
-    private val githubLoader = mock<GithubLoader>()
+    override val gitLoader = mock<GithubLoader>()
 
     override val repo = Repository(
         name = "nikita715/plagiarism_test",
@@ -20,7 +20,7 @@ class GithubWebhookServiceTest : AbstractWebhookServiceTest() {
         language = Language.JAVA
     )
 
-    override val webhookService = GithubWebhookService(pullRequestRepository, repositoryRepository, githubLoader)
+    override val webhookService = GithubWebhookService(pullRequestRepository, repositoryRepository, gitLoader)
 
     override val pullRequest = PullRequest(
         number = 8,

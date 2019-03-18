@@ -3,7 +3,6 @@ package ru.nikstep.redink.git.webhook
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
 import ru.nikstep.redink.git.loader.GithubLoader
-import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
@@ -24,6 +23,7 @@ class GithubWebhookService(
 
     private val logger = KotlinLogging.logger {}
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+    override val git = GITHUB
 
     override fun saveNewBaseFiles(payload: String) {
         val jsonObject = payload.parseAsObject()
@@ -51,11 +51,6 @@ class GithubWebhookService(
             githubLoader.loadRepositoryAndPullRequestFiles(repository)
         }
     }
-
-    override fun saveNewPullRequest(payload: String): PullRequest =
-        super.saveNewPullRequest(payload).also(githubLoader::loadFilesOfCommit)
-
-    override val git = GITHUB
 
     override val JsonObject.number: Int?
         get() = int("number")

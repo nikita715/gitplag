@@ -12,7 +12,7 @@ import java.time.Month
 class BitbucketWebhookServiceTest : AbstractWebhookServiceTest() {
     override val payload by lazy { readPayloadOf("bitbucket") }
 
-    private val bitbucketLoader = mock<BitbucketLoader>()
+    override val gitLoader = mock<BitbucketLoader>()
 
     override val repo = Repository(
         name = "nikita715/plagiarism_test2",
@@ -20,7 +20,7 @@ class BitbucketWebhookServiceTest : AbstractWebhookServiceTest() {
         language = Language.JAVA
     )
 
-    override val webhookService = BitbucketWebhookService(pullRequestRepository, repositoryRepository, bitbucketLoader)
+    override val webhookService = BitbucketWebhookService(pullRequestRepository, repositoryRepository, gitLoader)
 
     override val pullRequest = PullRequest(
         number = 3,

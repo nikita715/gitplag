@@ -1,11 +1,13 @@
 package ru.nikstep.redink.git.loader
 
+import org.junit.Ignore
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.Language
 import java.time.LocalDateTime
 
+@Ignore
 class GitlabLoaderTest : AbstractGitLoaderTest() {
 
     override val repo = Repository(
