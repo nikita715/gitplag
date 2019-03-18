@@ -2,6 +2,7 @@ package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
+import ru.nikstep.redink.git.loader.GitLoader
 import ru.nikstep.redink.git.newPullRequest
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
@@ -15,7 +16,8 @@ import java.time.LocalDateTime
  */
 abstract class AbstractWebhookService(
     private val pullRequestRepository: PullRequestRepository,
-    private val repositoryRepository: RepositoryRepository
+    private val repositoryRepository: RepositoryRepository,
+    private val gitLoader: GitLoader
 ) : WebhookService {
     private val logger = KotlinLogging.logger {}
 
@@ -24,15 +26,14 @@ abstract class AbstractWebhookService(
             .let(jsonToPullRequest)
             .let(pullRequestRepository::save)
             .apply(logger::newPullRequest)
+            .also(gitLoader::loadFilesOfCommit)
 
     open val jsonToPullRequest: (JsonObject) -> PullRequest = { jsonObject ->
         val repo = repositoryRepository.findByGitServiceAndName(
-            jsonObject.gitService,
-            requireNotNull(jsonObject.mainRepoFullName)
+            git, requireNotNull(jsonObject.mainRepoFullName)
         )
         jsonObject.run {
             PullRequest(
-                gitService = gitService,
                 number = requireNotNull(number),
                 creatorName = requireNotNull(creatorName),
                 sourceRepoId = requireNotNull(sourceRepoId),
@@ -47,7 +48,7 @@ abstract class AbstractWebhookService(
         }
     }
 
-    protected abstract val JsonObject.gitService: GitProperty
+    protected abstract val git: GitProperty
 
     protected abstract val JsonObject.sourceRepoId: Long?
 

@@ -47,7 +47,7 @@ val analysisBeans = beans {
         )
     }
 
-    bean { AnalysisRunner(ref(), ref("analysers")) }
+    bean { AnalysisRunner(ref("analysers"), ref()) }
     bean { FileSystemSolutionStorage(ref(), ref(), env.safeEnvVar("redink.solutionsDir")) }
 
 }

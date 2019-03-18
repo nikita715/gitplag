@@ -9,7 +9,11 @@ import org.junit.Ignore
 import org.junit.Test
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
-import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.model.data.AnalysisMatch
+import ru.nikstep.redink.model.data.AnalysisResult
+import ru.nikstep.redink.model.data.MatchedLines
+import ru.nikstep.redink.model.data.PreparedAnalysisData
+import ru.nikstep.redink.model.data.Solution
 import ru.nikstep.redink.model.entity.JPlagReport
 import ru.nikstep.redink.model.repo.JPlagReportRepository
 import ru.nikstep.redink.util.GitProperty
@@ -21,7 +25,6 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
 
-@Ignore
 class JPlagAnalyserTest : AbstractAnalyserTest() {
 
     private val gitService = GitProperty.GITHUB
@@ -156,6 +159,7 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
         )
 
     @Test
+    @Ignore
     fun analyse() {
         val analysisResult = analysisService.analyse(analysisSettings)
         analysisResult shouldEqual expectedResult.copy(executionDate = analysisResult.executionDate)

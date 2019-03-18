@@ -19,17 +19,20 @@ class SolutionsController(
 
     @GetMapping("/solutions")
     fun solutions(
-        @RequestParam("git") git: String,
-        @RequestParam("repo") repo: String,
+        @RequestParam("git") git: GitProperty,
+        @RequestParam("repo") repoName: String,
         @RequestParam("sourceBranch", required = false) sourceBranch: String?,
         @RequestParam("targetBranch", required = false) targetBranch: String?,
         @RequestParam("student", required = false) student: String?,
         @RequestParam("fileName", required = false) fileName: String?
-    ) = solutionFileRecordRepository.findAllByGitServiceAndRepo(GitProperty.valueOf(git.toUpperCase()), repo)
-        .filter { if (sourceBranch != null) it.sourceBranch == sourceBranch else true }
-        .filter { if (targetBranch != null) it.targetBranch == targetBranch else true }
-        .filter { if (student != null) it.user == student else true }
-        .filter { if (fileName != null) it.fileName == fileName else true }
+    ) {
+        val repo = repositoryRepository.findByGitServiceAndName(git, repoName)
+        solutionFileRecordRepository.findAllByRepo(repo)
+            .filter { if (sourceBranch != null) it.sourceBranch == sourceBranch else true }
+            .filter { if (targetBranch != null) it.targetBranch == targetBranch else true }
+            .filter { if (student != null) it.user == student else true }
+            .filter { if (fileName != null) it.fileName == fileName else true }
+    }
 
 
     @GetMapping("/solutions/import")

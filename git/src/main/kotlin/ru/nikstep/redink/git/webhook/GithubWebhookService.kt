@@ -6,7 +6,6 @@ import ru.nikstep.redink.git.loader.GithubLoader
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.GITHUB
 import ru.nikstep.redink.util.parseAsObject
 import java.time.LocalDateTime
@@ -19,7 +18,7 @@ class GithubWebhookService(
     pullRequestRepository: PullRequestRepository,
     private val repositoryRepository: RepositoryRepository,
     private val githubLoader: GithubLoader
-) : AbstractWebhookService(pullRequestRepository, repositoryRepository) {
+) : AbstractWebhookService(pullRequestRepository, repositoryRepository, githubLoader) {
 
     private val logger = KotlinLogging.logger {}
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
@@ -42,8 +41,7 @@ class GithubWebhookService(
     override fun saveNewPullRequest(payload: String): PullRequest =
         super.saveNewPullRequest(payload).also(githubLoader::loadFilesOfCommit)
 
-    override val JsonObject.gitService: GitProperty
-        get() = GITHUB
+    override val git = GITHUB
 
     override val JsonObject.number: Int?
         get() = int("number")

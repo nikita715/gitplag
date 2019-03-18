@@ -40,7 +40,6 @@ open class AnalysisResultDataManager(
                     student1 = it.students.first,
                     student2 = it.students.second,
                     lines = it.lines,
-                    repo = analysisResults.repo,
                     percentage = it.percentage,
                     analysis = analysis,
                     sha1 = it.sha.first,
