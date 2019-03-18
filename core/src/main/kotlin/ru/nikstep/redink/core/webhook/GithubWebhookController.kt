@@ -27,6 +27,7 @@ class GithubWebhookController(
         when (event) {
             "pull_request" -> githubWebhookService.saveNewPullRequest(payload)
             "push" -> githubWebhookService.saveNewBaseFiles(payload)
+            "ping" -> githubWebhookService.saveNewRepository(payload)
             else -> logger.info { "Webhook: $event is not supported" }
         }
     }

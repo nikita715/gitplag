@@ -9,6 +9,7 @@ import ru.nikstep.redink.model.entity.Analysis
 import ru.nikstep.redink.model.repo.AnalysisRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
+import ru.nikstep.redink.util.RepositoryNotFoundException
 
 /**
  * Graphql analysis requests resolver
@@ -22,11 +23,12 @@ class AnalysisQueries(
 
     fun analysis(gitService: String, repo: String): Analysis? =
         repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(gitService.toUpperCase()), repo)
-            .let(analysisRepository::findFirstByRepositoryOrderByExecutionDateDesc)
+            ?.let(analysisRepository::findFirstByRepositoryOrderByExecutionDateDesc)
 
     fun analyse(gitService: String, repo: String, branch: String, analyser: String?, language: String?): Analysis? {
         val repoValue =
             repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(gitService.toUpperCase()), repo)
+                ?: throw RepositoryNotFoundException()
         return analysisRunner.run(AnalysisSettings(repoValue, branch).language(language).analyser(analyser))
     }
 }

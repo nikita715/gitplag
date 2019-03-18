@@ -8,6 +8,7 @@ import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
+import ru.nikstep.redink.util.RepositoryNotFoundException
 import ru.nikstep.redink.util.parseAsObject
 import java.time.LocalDateTime
 
@@ -31,7 +32,7 @@ abstract class AbstractWebhookService(
     open val jsonToPullRequest: (JsonObject) -> PullRequest = { jsonObject ->
         val repo = repositoryRepository.findByGitServiceAndName(
             git, requireNotNull(jsonObject.mainRepoFullName)
-        )
+        ) ?: throw RepositoryNotFoundException()
         jsonObject.run {
             PullRequest(
                 number = requireNotNull(number),

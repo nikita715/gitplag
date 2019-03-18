@@ -1,11 +1,11 @@
 package ru.nikstep.redink.core.analysis
 
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import ru.nikstep.redink.git.loader.GitLoader
-import ru.nikstep.redink.model.entity.SolutionFileRecord
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SolutionFileRecordRepository
 import ru.nikstep.redink.util.GitProperty
@@ -25,13 +25,15 @@ class SolutionsController(
         @RequestParam("targetBranch", required = false) targetBranch: String?,
         @RequestParam("student", required = false) student: String?,
         @RequestParam("fileName", required = false) fileName: String?
-    ) {
+    ): ResponseEntity<*> {
         val repo = repositoryRepository.findByGitServiceAndName(git, repoName)
-        solutionFileRecordRepository.findAllByRepo(repo)
+            ?: return ResponseEntity.notFound().build<Any?>()
+        return ResponseEntity.ok(solutionFileRecordRepository.findAllByRepo(repo)
             .filter { if (sourceBranch != null) it.sourceBranch == sourceBranch else true }
             .filter { if (targetBranch != null) it.targetBranch == targetBranch else true }
             .filter { if (student != null) it.user == student else true }
             .filter { if (fileName != null) it.fileName == fileName else true }
+        )
     }
 
 
@@ -39,10 +41,11 @@ class SolutionsController(
     fun importSolutions(
         @RequestParam("git") git: String,
         @RequestParam("repo") repoName: String
-    ): List<SolutionFileRecord> {
+    ): ResponseEntity<*> {
         val gitProperty = GitProperty.valueOf(git.toUpperCase())
         val repository = repositoryRepository.findByGitServiceAndName(gitProperty, repoName)
-        return loaders.getValue(gitProperty).loadRepositoryAndPullRequestFiles(repository)
+            ?: return ResponseEntity.notFound().build<Any?>()
+        return ResponseEntity.ok(loaders.getValue(gitProperty).loadRepositoryAndPullRequestFiles(repository))
     }
 
 }

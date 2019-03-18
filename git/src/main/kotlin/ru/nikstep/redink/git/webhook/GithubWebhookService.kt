@@ -4,9 +4,11 @@ import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
 import ru.nikstep.redink.git.loader.GithubLoader
 import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty.GITHUB
+import ru.nikstep.redink.util.RepositoryNotFoundException
 import ru.nikstep.redink.util.parseAsObject
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -28,6 +30,7 @@ class GithubWebhookService(
         val branchName = requireNotNull(jsonObject.string("ref")?.substringAfterLast("/"))
         val repoFullName = requireNotNull(jsonObject.obj("repository")?.string("full_name"))
         val repo = repositoryRepository.findByGitServiceAndName(GITHUB, repoFullName)
+            ?: throw RepositoryNotFoundException()
         val added = requireNotNull(jsonObject.obj("head_commit")?.array<String>("added"))
         val modified = requireNotNull(jsonObject.obj("head_commit")?.array<String>("modified"))
         added.forEach { fileName ->
@@ -35,6 +38,17 @@ class GithubWebhookService(
         }
         modified.forEach { fileName ->
             githubLoader.downloadBase(repo, branchName, fileName)
+        }
+    }
+
+    fun saveNewRepository(payload: String) {
+        val jsonObject = payload.parseAsObject()
+        val repoName = requireNotNull(jsonObject.obj("repository")?.string("full_name"))
+        val repo = repositoryRepository.findByGitServiceAndName(GITHUB, repoName)
+        if (repo == null) {
+            val repository = repositoryRepository.save(Repository(gitService = GITHUB, name = repoName))
+            logger.info { "Webhook: Saved new repository with id = ${repository.id}, name = ${repository.name}" }
+            githubLoader.loadRepositoryAndPullRequestFiles(repository)
         }
     }
 
