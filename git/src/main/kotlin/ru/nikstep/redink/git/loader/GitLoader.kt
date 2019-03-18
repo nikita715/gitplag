@@ -2,7 +2,7 @@ package ru.nikstep.redink.git.loader
 
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.model.entity.SourceCode
+import ru.nikstep.redink.model.entity.SolutionFileRecord
 
 /**
  * Loader of files from git services
@@ -19,7 +19,13 @@ interface GitLoader {
      * Upload files that have changed in the pull request
      * to the application repository
      */
-    fun loadFilesOfRepository(repo: Repository): List<SourceCode>
+    fun loadFilesOfPullRequest(pullRequest: PullRequest)
+
+    /**
+     * Upload files that have changed in the pull request
+     * to the application repository
+     */
+    fun loadRepositoryAndPullRequestFiles(repo: Repository): List<SolutionFileRecord>
 
     /**
      * Load text of file from git

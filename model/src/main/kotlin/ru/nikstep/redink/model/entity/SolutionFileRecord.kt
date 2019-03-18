@@ -14,7 +14,7 @@ import javax.persistence.Id
  * Info class about stored solutions
  */
 @Entity
-class SourceCode(
+class SolutionFileRecord(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = -1,

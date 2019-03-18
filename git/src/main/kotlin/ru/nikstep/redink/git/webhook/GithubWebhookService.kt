@@ -5,6 +5,7 @@ import mu.KotlinLogging
 import ru.nikstep.redink.git.loader.GithubLoader
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
+import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.GITHUB
 import ru.nikstep.redink.util.parseAsObject
@@ -16,29 +17,30 @@ import java.time.format.DateTimeFormatter
  */
 class GithubWebhookService(
     pullRequestRepository: PullRequestRepository,
+    private val repositoryRepository: RepositoryRepository,
     private val githubLoader: GithubLoader
 ) : AbstractWebhookService(pullRequestRepository) {
+
+    private val logger = KotlinLogging.logger {}
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
     override fun saveNewBaseFiles(payload: String) {
         val jsonObject = payload.parseAsObject()
         val branchName = requireNotNull(jsonObject.string("ref")?.substringAfterLast("/"))
         val repoFullName = requireNotNull(jsonObject.obj("repository")?.string("full_name"))
+        val repo = repositoryRepository.findByGitServiceAndName(GITHUB, repoFullName)
         val added = requireNotNull(jsonObject.obj("head_commit")?.array<String>("added"))
         val modified = requireNotNull(jsonObject.obj("head_commit")?.array<String>("modified"))
         added.forEach { fileName ->
-            githubLoader.loadBase(repoFullName, branchName, fileName)
+            githubLoader.downloadBase(repo, branchName, fileName)
         }
         modified.forEach { fileName ->
-            githubLoader.loadBase(repoFullName, branchName, fileName)
+            githubLoader.downloadBase(repo, branchName, fileName)
         }
     }
 
     override fun saveNewPullRequest(payload: String): PullRequest =
         super.saveNewPullRequest(payload).also(githubLoader::loadFilesOfCommit)
-
-
-    private val logger = KotlinLogging.logger {}
-    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
     override val JsonObject.gitService: GitProperty
         get() = GITHUB

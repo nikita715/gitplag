@@ -4,17 +4,19 @@ import com.beust.klaxon.JsonObject
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.model.entity.SourceCode
-import ru.nikstep.redink.model.repo.RepositoryRepository
+import ru.nikstep.redink.model.entity.SolutionFileRecord
 import ru.nikstep.redink.util.sendRestRequest
 
 /**
  * Loader of files from Gitlab
  */
 class GitlabLoader(
-    solutionStorage: SolutionStorage,
-    repositoryRepository: RepositoryRepository
-) : AbstractGitLoader(solutionStorage, repositoryRepository) {
+    solutionStorage: SolutionStorage
+) : AbstractGitLoader(solutionStorage) {
+    override fun loadFilesOfPullRequest(pullRequest: PullRequest) {
+        TODO("not implemented")
+    }
+
     override fun loadChangedFilesOfCommit(repoName: String, headSha: String): List<String> {
         TODO("not implemented")
     }
@@ -31,7 +33,7 @@ class GitlabLoader(
     override fun loadFileText(repoFullName: String, branchName: String, fileName: String): String =
         sendRestRequest("https://gitlab.com/$repoFullName/raw/$branchName/$fileName")
 
-    override fun loadFilesOfRepository(repo: Repository): List<SourceCode> {
+    override fun loadRepositoryAndPullRequestFiles(repo: Repository): List<SolutionFileRecord> {
         TODO("not implemented")
     }
 }

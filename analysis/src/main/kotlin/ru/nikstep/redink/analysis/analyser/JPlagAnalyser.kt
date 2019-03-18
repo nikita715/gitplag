@@ -9,7 +9,7 @@ import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.MatchedLines
 import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.model.data.Solution
-import ru.nikstep.redink.model.data.findByStudent
+import ru.nikstep.redink.model.data.findSolutionByStudent
 import ru.nikstep.redink.model.entity.JPlagReport
 import ru.nikstep.redink.model.repo.JPlagReportRepository
 import ru.nikstep.redink.util.AnalysisMode
@@ -101,8 +101,8 @@ class JPlagAnalyser(
             lines = -1,
             percentage = percentage,
             matchedLines = matchedLines,
-            sha = findByStudent(solutions, name1).sha
-                    to findByStudent(solutions, name2).sha
+            sha = findSolutionByStudent(solutions, name1).sha
+                    to findSolutionByStudent(solutions, name2).sha
         )
     }
 

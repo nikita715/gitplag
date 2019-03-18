@@ -14,7 +14,6 @@ fun AnalysisSettings.analyser(analyser: AnalyserProperty): AnalysisSettings =
     AnalysisSettings(
         repository = repository,
         analyser = analyser,
-        gitService = gitService,
         branch = branch,
         language = language,
         mode = mode
@@ -41,7 +40,6 @@ fun AnalysisSettings.language(language: Language): AnalysisSettings =
     AnalysisSettings(
         repository = repository,
         analyser = analyser,
-        gitService = gitService,
         branch = branch,
         language = language,
         mode = mode
@@ -70,7 +68,6 @@ fun AnalysisSettings.branch(branch: String?): AnalysisSettings {
             AnalysisSettings(
                 repository = repository,
                 analyser = analyser,
-                gitService = gitService,
                 branch = branch,
                 language = language,
                 mode = mode
@@ -89,7 +86,6 @@ fun AnalysisSettings.mode(mode: AnalysisMode): AnalysisSettings =
     AnalysisSettings(
         repository = repository,
         analyser = analyser,
-        gitService = gitService,
         branch = branch,
         language = language,
         mode = mode
