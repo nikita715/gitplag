@@ -2,7 +2,13 @@ package ru.nikstep.redink.model.entity
 
 import ru.nikstep.redink.util.GitProperty
 import java.time.LocalDateTime
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
 
 /**
  * Received pull request record
@@ -45,8 +51,5 @@ data class PullRequest(
     val gitService: GitProperty,
 
     @Column(nullable = false)
-    val date: LocalDateTime,
-
-    @Column(nullable = false)
-    val secretKey: String = ""
+    val date: LocalDateTime
 )

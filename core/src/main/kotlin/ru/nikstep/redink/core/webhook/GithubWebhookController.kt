@@ -28,7 +28,6 @@ class GithubWebhookController(
         logger.info { "Webhook: got new $event" }
         when (event) {
             "pull_request" -> githubWebhookService.saveNewPullRequest(payload)
-            "check_run" -> githubWebhookService.relaunch(payload)
             "push" -> githubWebhookService.saveNewBaseFiles(payload)
             "integration_installation" -> integrationService.createNewUser(payload)
             "integration_installation_repositories" -> integrationService.manageRepositories(payload)

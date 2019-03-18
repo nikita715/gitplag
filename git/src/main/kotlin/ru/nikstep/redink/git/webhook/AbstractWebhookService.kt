@@ -41,7 +41,6 @@ abstract class AbstractWebhookService(
                 headSha = requireNotNull(sourceHeadSha),
                 sourceBranchName = requireNotNull(sourceBranchName),
                 mainBranchName = requireNotNull(mainBranchName),
-                secretKey = requireNotNull(secretKey),
                 date = requireNotNull(date)
             )
         }
@@ -62,9 +61,6 @@ abstract class AbstractWebhookService(
     protected abstract val JsonObject.sourceBranchName: String?
 
     protected abstract val JsonObject.date: LocalDateTime?
-
-    protected open val JsonObject.secretKey: String?
-        get() = ""
 
     protected abstract val JsonObject.sourceRepoFullName: String?
 

@@ -40,14 +40,6 @@ abstract class AbstractGitLoader(
         }
     }
 
-    override fun loadFileText(
-        repoFullName: String,
-        branchName: String,
-        fileName: String
-    ): String {
-        return loadFileText(repoFullName, branchName, fileName, "")
-    }
-
     protected abstract fun loadChangedFiles(pullRequest: PullRequest): List<String>
 
     protected abstract fun loadChangedFilesOfCommit(repoName: String, headSha: String): List<String>
@@ -60,7 +52,7 @@ abstract class AbstractGitLoader(
     private fun saveBase(pullRequest: PullRequest, fileName: String) {
         try {
             val fileText =
-                loadFileText(pullRequest.mainRepoFullName, pullRequest.mainBranchName, fileName, pullRequest.secretKey)
+                loadFileText(pullRequest.mainRepoFullName, pullRequest.mainBranchName, fileName)
 
             if (fileText.isBlank())
                 throw AnalysisException("$fileName is not found in ${pullRequest.sourceBranchName} branch, ${pullRequest.mainRepoFullName} repo")
