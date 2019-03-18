@@ -8,7 +8,6 @@ import ru.nikstep.redink.model.data.SourceFileInfo
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.SolutionFileRecord
-import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.downloadAndUnpackZip
 import ru.nikstep.redink.util.sendRestRequest
 
@@ -45,9 +44,8 @@ class GithubLoader(
                     val fileText = loadFileText(sourceRepoName, sourceBranchName, fileName)
                     solutionStorage.saveSolution(
                         SourceFileInfo(
-                            gitService = GitProperty.GITHUB,
+                            repo = repo,
                             sourceBranchName = sourceBranchName,
-                            mainRepoFullName = repo.name,
                             prNumber = prNumber,
                             fileName = fileName,
                             fileText = fileText,
@@ -78,7 +76,7 @@ class GithubLoader(
         sendRestRequest("https://raw.githubusercontent.com/$repoFullName/$branchName/$fileName")
 
     override fun loadChangedFiles(pullRequest: PullRequest): List<String> =
-        loadChangedFiles(pullRequest.mainRepoFullName, pullRequest.number)
+        loadChangedFiles(pullRequest.repo.name, pullRequest.number)
 
     private fun loadChangedFiles(mainRepoFullName: String, prNumber: Int): List<String> =
         sendRestRequest<JsonArray<*>>(

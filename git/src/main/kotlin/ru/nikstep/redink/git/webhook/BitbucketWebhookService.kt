@@ -4,6 +4,7 @@ import com.beust.klaxon.JsonObject
 import ru.nikstep.redink.git.loader.BitbucketLoader
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
+import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.BITBUCKET
 import java.time.LocalDateTime
@@ -14,19 +15,19 @@ import java.time.format.DateTimeFormatter
  */
 class BitbucketWebhookService(
     pullRequestRepository: PullRequestRepository,
+    repositoryRepository: RepositoryRepository,
     private val bitbucketLoader: BitbucketLoader
-) : AbstractWebhookService(pullRequestRepository) {
+) : AbstractWebhookService(pullRequestRepository, repositoryRepository) {
+
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
     override fun saveNewPullRequest(payload: String): PullRequest =
         super.saveNewPullRequest(payload)
             .also(bitbucketLoader::loadFilesOfCommit)
 
-
     override fun saveNewBaseFiles(payload: String) {
         TODO("not implemented")
     }
-
-    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
     override val JsonObject.gitService: GitProperty
         get() = BITBUCKET

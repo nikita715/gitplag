@@ -137,7 +137,7 @@ class FileSystemSolutionStorage(
     override fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): SolutionFileRecord {
         val pathToSolution = pathToSolution(pullRequest, fileName)
         solutionFileRecordRepository.deleteByRepoAndUserAndFileNameAndSourceBranch(
-            pullRequest.mainRepoFullName,
+            pullRequest.repo.name,
             pullRequest.creatorName,
             fileName,
             pullRequest.sourceBranchName
@@ -150,7 +150,7 @@ class FileSystemSolutionStorage(
     override fun saveSolution(sourceFileInfo: SourceFileInfo): SolutionFileRecord {
         val pathToSolution = pathToSolution(sourceFileInfo)
         solutionFileRecordRepository.deleteByRepoAndUserAndFileNameAndSourceBranch(
-            sourceFileInfo.mainRepoFullName,
+            sourceFileInfo.repo.name,
             sourceFileInfo.creator,
             sourceFileInfo.fileName,
             sourceFileInfo.sourceBranchName
@@ -206,7 +206,7 @@ class FileSystemSolutionStorage(
     private fun pathToSolution(pullRequest: PullRequest, fileName: String): String =
         pathToSolution(
             pullRequest.gitService,
-            pullRequest.mainRepoFullName,
+            pullRequest.repo.name,
             pullRequest.sourceBranchName,
             pullRequest.creatorName,
             fileName
@@ -214,8 +214,8 @@ class FileSystemSolutionStorage(
 
     private fun pathToSolution(sourceFileInfo: SourceFileInfo): String =
         pathToSolution(
-            sourceFileInfo.gitService,
-            sourceFileInfo.mainRepoFullName,
+            sourceFileInfo.repo.gitService,
+            sourceFileInfo.repo.name,
             sourceFileInfo.sourceBranchName,
             sourceFileInfo.creator,
             sourceFileInfo.fileName

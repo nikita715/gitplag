@@ -26,7 +26,7 @@ abstract class AbstractGitLoader(
             solutionStorage.saveSolution(pullRequest, fileName, fileText)
 
             logger.info {
-                "Analysis: loaded file ${pullRequest.mainRepoFullName}/$fileName" +
+                "Analysis: loaded file ${pullRequest.repo.name}/$fileName" +
                         " of user ${pullRequest.creatorName}, pr number ${pullRequest.number}"
             }
         }
