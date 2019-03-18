@@ -19,7 +19,7 @@ class GithubWebhookService(
     pullRequestRepository: PullRequestRepository,
     private val repositoryRepository: RepositoryRepository,
     private val githubLoader: GithubLoader
-) : AbstractWebhookService(pullRequestRepository) {
+) : AbstractWebhookService(pullRequestRepository, repositoryRepository) {
 
     private val logger = KotlinLogging.logger {}
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")

@@ -1,10 +1,9 @@
 package ru.nikstep.redink.model.data
 
-import ru.nikstep.redink.util.GitProperty
+import ru.nikstep.redink.model.entity.Repository
 
 class SourceFileInfo(
-    val gitService: GitProperty,
-    val mainRepoFullName: String,
+    val repo: Repository,
     val sourceBranchName: String,
     val prNumber: Int,
     val fileName: String,

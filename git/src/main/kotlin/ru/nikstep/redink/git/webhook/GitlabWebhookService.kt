@@ -4,6 +4,7 @@ import com.beust.klaxon.JsonObject
 import ru.nikstep.redink.git.loader.GitlabLoader
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
+import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.GITLAB
 import java.time.LocalDateTime
@@ -14,8 +15,9 @@ import java.time.format.DateTimeFormatter
  */
 class GitlabWebhookService(
     pullRequestRepository: PullRequestRepository,
+    repositoryRepository: RepositoryRepository,
     private val gitlabLoader: GitlabLoader
-) : AbstractWebhookService(pullRequestRepository) {
+) : AbstractWebhookService(pullRequestRepository, repositoryRepository) {
 
     override fun saveNewBaseFiles(payload: String) {
         TODO("not implemented")

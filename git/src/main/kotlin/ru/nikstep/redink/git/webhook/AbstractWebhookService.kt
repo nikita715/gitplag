@@ -5,6 +5,7 @@ import mu.KotlinLogging
 import ru.nikstep.redink.git.newPullRequest
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
+import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.parseAsObject
 import java.time.LocalDateTime
@@ -13,7 +14,8 @@ import java.time.LocalDateTime
  * Common implementation of the [WebhookService]
  */
 abstract class AbstractWebhookService(
-    private val pullRequestRepository: PullRequestRepository
+    private val pullRequestRepository: PullRequestRepository,
+    private val repositoryRepository: RepositoryRepository
 ) : WebhookService {
     private val logger = KotlinLogging.logger {}
 
@@ -23,8 +25,11 @@ abstract class AbstractWebhookService(
             .let(pullRequestRepository::save)
             .apply(logger::newPullRequest)
 
-
     open val jsonToPullRequest: (JsonObject) -> PullRequest = { jsonObject ->
+        val repo = repositoryRepository.findByGitServiceAndName(
+            jsonObject.gitService,
+            requireNotNull(jsonObject.mainRepoFullName)
+        )
         jsonObject.run {
             PullRequest(
                 gitService = gitService,
@@ -33,7 +38,7 @@ abstract class AbstractWebhookService(
                 sourceRepoId = requireNotNull(sourceRepoId),
                 mainRepoId = requireNotNull(mainRepoId),
                 sourceRepoFullName = requireNotNull(sourceRepoFullName),
-                mainRepoFullName = requireNotNull(mainRepoFullName),
+                repo = repo,
                 headSha = requireNotNull(sourceHeadSha),
                 sourceBranchName = requireNotNull(sourceBranchName),
                 mainBranchName = requireNotNull(mainBranchName),
@@ -62,5 +67,5 @@ abstract class AbstractWebhookService(
 
     protected abstract val JsonObject.mainBranchName: String?
 
-    abstract val JsonObject.mainRepoId: Long?
+    protected abstract val JsonObject.mainRepoId: Long?
 }

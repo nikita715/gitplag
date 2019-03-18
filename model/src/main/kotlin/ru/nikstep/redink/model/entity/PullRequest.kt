@@ -20,6 +20,9 @@ data class PullRequest(
     val id: Long = -1,
 
     @Column(nullable = false)
+    val repo: Repository,
+
+    @Column(nullable = false)
     val number: Int,
 
     @Column(nullable = false)
@@ -33,9 +36,6 @@ data class PullRequest(
 
     @Column(nullable = false)
     val sourceRepoFullName: String,
-
-    @Column(nullable = false)
-    val mainRepoFullName: String,
 
     @Column(nullable = false)
     val headSha: String,
