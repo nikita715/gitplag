@@ -1,7 +1,8 @@
 package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
-import org.springframework.context.ApplicationEventPublisher
+import ru.nikstep.redink.git.loader.GitlabLoader
+import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.GitProperty.GITLAB
@@ -13,12 +14,15 @@ import java.time.format.DateTimeFormatter
  */
 class GitlabWebhookService(
     pullRequestRepository: PullRequestRepository,
-    applicationEventPublisher: ApplicationEventPublisher
-) : AbstractWebhookService(pullRequestRepository, applicationEventPublisher) {
+    private val gitlabLoader: GitlabLoader
+) : AbstractWebhookService(pullRequestRepository) {
+
     override fun saveNewBaseFiles(payload: String) {
         TODO("not implemented")
     }
 
+    override fun saveNewPullRequest(payload: String): PullRequest =
+        super.saveNewPullRequest(payload).also(gitlabLoader::loadFilesOfCommit)
 
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 

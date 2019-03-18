@@ -5,7 +5,6 @@ import ru.nikstep.redink.analysis.AnalysisRunner
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.analysis.analyser.MossAnalyser
 import ru.nikstep.redink.analysis.solutions.FileSystemSolutionStorage
-import ru.nikstep.redink.core.analysis.PullRequestListener
 import ru.nikstep.redink.core.util.safeEnvVar
 import ru.nikstep.redink.git.loader.BitbucketLoader
 import ru.nikstep.redink.git.loader.GitLoader
@@ -49,7 +48,6 @@ val analysisBeans = beans {
     }
 
     bean { AnalysisRunner(ref(), ref("analysers")) }
-    bean { PullRequestListener(ref("gitLoaders")) }
     bean { FileSystemSolutionStorage(ref(), env.safeEnvVar("redink.solutionsDir")) }
 
 }

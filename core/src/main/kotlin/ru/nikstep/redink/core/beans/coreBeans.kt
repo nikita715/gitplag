@@ -1,7 +1,5 @@
 package ru.nikstep.redink.core.beans
 
-import org.springframework.context.event.ApplicationEventMulticaster
-import org.springframework.context.event.SimpleApplicationEventMulticaster
 import org.springframework.context.support.beans
 import org.springframework.core.task.TaskExecutor
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
@@ -32,13 +30,6 @@ val coreBeans = beans {
         executor.maxPoolSize = 4
         executor.initialize()
         executor
-    }
-
-    // Async events
-    bean<ApplicationEventMulticaster>("applicationEventMulticaster") {
-        val eventMulticaster = SimpleApplicationEventMulticaster()
-        eventMulticaster.setTaskExecutor(ref("analysisTaskExecutor"))
-        eventMulticaster
     }
 
     bean<RandomGenerator>()
