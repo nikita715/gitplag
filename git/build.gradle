@@ -1,9 +1,5 @@
 dependencies {
     implementation project(':analysis')
-    implementation project(':checks')
     implementation project(':model')
     implementation project(':util')
-
-    implementation 'net.lingala.zip4j:zip4j:1.3.2'
-
 }

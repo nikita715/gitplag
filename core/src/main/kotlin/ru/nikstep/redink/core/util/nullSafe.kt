@@ -1,4 +1,4 @@
-package ru.nikstep.redink.util
+package ru.nikstep.redink.core.util
 
 import org.springframework.core.env.Environment
 

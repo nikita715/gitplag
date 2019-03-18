@@ -3,7 +3,6 @@ package ru.nikstep.redink.git.loader
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
-import net.lingala.zip4j.core.ZipFile
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.data.SourceFileInfo
 import ru.nikstep.redink.model.entity.PullRequest
@@ -11,21 +10,15 @@ import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.SourceCode
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.auth.AuthorizationService
-import ru.nikstep.redink.util.inTempDirectory
+import ru.nikstep.redink.util.downloadAndUnpackZip
 import ru.nikstep.redink.util.sendRestRequest
-import java.io.BufferedInputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.net.URL
 
 /**
  * Loader of files from Github
  */
 class GithubLoader(
     private val solutionStorage: SolutionStorage,
-    repositoryRepository: RepositoryRepository,
-    private val authorizationService: AuthorizationService
+    repositoryRepository: RepositoryRepository
 ) : AbstractGitLoader(solutionStorage, repositoryRepository) {
 
     private val logger = KotlinLogging.logger {}
@@ -46,7 +39,7 @@ class GithubLoader(
                 branches += sourceBranchName
 
                 loadChangedFiles(repo.name, prNumber).map { fileName ->
-                    val fileText = loadFileText(sourceRepoName, sourceBranchName, fileName, "")
+                    val fileText = loadFileText(sourceRepoName, sourceBranchName, fileName)
                     solutionStorage.saveSolution(
                         SourceFileInfo(
                             gitService = GitProperty.GITHUB,
@@ -68,27 +61,17 @@ class GithubLoader(
     }
 
     fun loadBases(branches: Set<String>, repoName: String) {
-        inTempDirectory { tempDir ->
-            branches.forEach { branch ->
-                val zipFile = File("$tempDir/zip.zip")
-                BufferedInputStream(URL("https://github.com/$repoName/archive/$branch.zip").openStream())
-                    .use { inputStream ->
-                        val bytes = inputStream.readBytes()
-                        FileOutputStream(zipFile).use {
-                            it.write(bytes)
-                            ZipFile(zipFile).extractAll(tempDir)
-                        }
-
-                    }
+        branches.forEach { branch ->
+            downloadAndUnpackZip("https://github.com/$repoName/archive/$branch.zip") { unpackedDir ->
                 solutionStorage.saveBases(
-                    "$tempDir/${repoName.substringAfter("/")}-$branch",
+                    "$unpackedDir/${repoName.substringAfter("/")}-$branch",
                     GitProperty.GITHUB, repoName, branch
                 )
             }
         }
     }
 
-    override fun loadFileText(repoFullName: String, branchName: String, fileName: String, secretKey: String): String =
+    override fun loadFileText(repoFullName: String, branchName: String, fileName: String): String =
         sendRestRequest("https://raw.githubusercontent.com/$repoFullName/$branchName/$fileName")
 
     override fun loadChangedFiles(pullRequest: PullRequest): List<String> =

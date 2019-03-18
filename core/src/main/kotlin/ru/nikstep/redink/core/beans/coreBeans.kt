@@ -5,7 +5,6 @@ import org.springframework.context.event.SimpleApplicationEventMulticaster
 import org.springframework.context.support.beans
 import org.springframework.core.task.TaskExecutor
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
-import ru.nikstep.redink.checks.github.GithubAnalysisStatusCheckService
 import ru.nikstep.redink.core.graphql.AnalysisQueries
 import ru.nikstep.redink.core.graphql.LocalDateTimeScalarType
 import ru.nikstep.redink.core.util.TokenCacheManager
@@ -13,7 +12,6 @@ import ru.nikstep.redink.model.manager.AnalysisResultDataManager
 import ru.nikstep.redink.model.manager.JPlagReportDataManager
 import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.util.RandomGenerator
-import ru.nikstep.redink.util.auth.GithubAuthorizationService
 
 val coreBeans = beans {
     // Data managers
@@ -26,10 +24,6 @@ val coreBeans = beans {
     // Graphql
     bean<AnalysisQueries>()
     bean<LocalDateTimeScalarType>()
-
-    // Github services
-    bean<GithubAuthorizationService>()
-    bean<GithubAnalysisStatusCheckService>()
 
     // Main analysis TaskExecutor
     bean<TaskExecutor>("analysisTaskExecutor") {
