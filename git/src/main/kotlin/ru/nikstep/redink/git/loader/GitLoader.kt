@@ -18,13 +18,13 @@ interface GitLoader {
      * Upload files that have changed in the pull request
      * to the application repository
      */
-    fun loadFilesOfPullRequest(pullRequest: PullRequest)
+    fun clonePullRequest(pullRequest: PullRequest)
 
     /**
      * Upload files that have changed in the pull request
      * to the application repository
      */
-    fun loadRepositoryAndPullRequestFiles(repo: Repository)
+    fun cloneRepositoryAndPullRequests(repo: Repository)
 
     /**
      * Load text of file from git

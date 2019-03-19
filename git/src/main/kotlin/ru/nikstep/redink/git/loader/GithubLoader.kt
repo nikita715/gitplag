@@ -16,10 +16,8 @@ class GithubLoader(
     private val solutionStorage: SolutionStorage
 ) : AbstractGitLoader(solutionStorage) {
 
-    override fun loadFilesOfPullRequest(pullRequest: PullRequest) {
-        downloadAndUnpackZip("https://github.com/${pullRequest.sourceRepoFullName}/archive/${pullRequest.sourceBranchName}.zip") { unpackedDir ->
-        }
-    }
+    override fun linkToRepoArchive(pullRequest: PullRequest): String =
+        "https://github.com/${pullRequest.sourceRepoFullName}/archive/${pullRequest.sourceBranchName}.zip"
 
     private val logger = KotlinLogging.logger {}
 
@@ -28,18 +26,19 @@ class GithubLoader(
         solutionStorage.saveBaseByText(repo, branchName, fileName, fileText)
     }
 
-    override fun loadRepositoryAndPullRequestFiles(repo: Repository) {
+    override fun cloneRepositoryAndPullRequests(repo: Repository) {
         val branches = mutableSetOf<String>()
         val toList = sendRestRequest<JsonArray<JsonObject>>("https://api.github.com/repos/${repo.name}/pulls")
             .forEach {
                 val sourceBranchName = requireNotNull(it.obj("head")?.string("ref"))
+                val sourceRepoName = requireNotNull(it.obj("head")?.obj("repo")?.string("full_name"))
                 val headSha = requireNotNull(it.obj("head")?.string("sha"))
                 val creator = requireNotNull(it.obj("head")?.obj("user")?.string("login"))
 
                 branches += sourceBranchName
 
-                logger.info { "Git: download zip archive of repo = ${repo.name}, branch = $sourceBranchName" }
-                downloadAndUnpackZip("https://github.com/${repo.name}/archive/$sourceBranchName.zip") { unpackedDir ->
+                logger.info { "Git: download zip archive of repo = $sourceRepoName, branch = $sourceBranchName" }
+                downloadAndUnpackZip("https://github.com/$sourceRepoName/archive/$sourceBranchName.zip") { unpackedDir ->
                     solutionStorage.saveSolutionsFromDir(
                         "$unpackedDir/${repo.name.substringAfter("/")}-$sourceBranchName",
                         repo, sourceBranchName, creator, headSha
