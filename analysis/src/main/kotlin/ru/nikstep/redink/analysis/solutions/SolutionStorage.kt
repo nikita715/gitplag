@@ -45,6 +45,14 @@ interface SolutionStorage {
     fun saveSolution(sourceFileInfo: SourceFileInfo): SolutionFileRecord
 
     /**
+     * Save [sourceFileInfo] solution
+     */
+    fun saveSolutionsFromDir(
+        tempDir: String, repo: Repository, branchName: String,
+        creator: String, headSha: String
+    )
+
+    /**
      * Load all base solution files and corresponding solution files of the [pullRequest].
      * Merges all files of each students to single file.
      */
