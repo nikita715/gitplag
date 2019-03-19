@@ -48,7 +48,7 @@ class GithubWebhookService(
         if (repo == null) {
             val repository = repositoryRepository.save(Repository(gitService = GITHUB, name = repoName))
             logger.info { "Webhook: Saved new repository with id = ${repository.id}, name = ${repository.name}" }
-            githubLoader.loadRepositoryAndPullRequestFiles(repository)
+            githubLoader.cloneRepositoryAndPullRequests(repository)
         }
     }
 

@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import ru.nikstep.redink.analysis.AnalysisException
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.entity.PullRequest
+import ru.nikstep.redink.util.downloadAndUnpackZip
 
 /**
  * Common implementation of the [GitLoader]
@@ -31,6 +32,18 @@ abstract class AbstractGitLoader(
             }
         }
     }
+
+    override fun clonePullRequest(pullRequest: PullRequest) {
+        val resourceUrl = linkToRepoArchive(pullRequest)
+        downloadAndUnpackZip(resourceUrl) { unpackedDir ->
+            solutionStorage.saveSolutionsFromDir(
+                unpackedDir, pullRequest.repo, pullRequest.sourceBranchName,
+                pullRequest.creatorName, pullRequest.headSha
+            )
+        }
+    }
+
+    protected abstract fun linkToRepoArchive(pullRequest: PullRequest): String
 
     protected abstract fun loadChangedFiles(pullRequest: PullRequest): List<String>
 

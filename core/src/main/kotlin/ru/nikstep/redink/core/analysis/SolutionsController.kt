@@ -43,7 +43,7 @@ class SolutionsController(
         val gitProperty = GitProperty.valueOf(git.toUpperCase())
         val repository = repositoryRepository.findByGitServiceAndName(gitProperty, repoName)
             ?: return ResponseEntity.notFound().build<Any?>()
-        return ResponseEntity.ok(loaders.getValue(gitProperty).loadRepositoryAndPullRequestFiles(repository))
+        return ResponseEntity.ok(loaders.getValue(gitProperty).cloneRepositoryAndPullRequests(repository))
     }
 
 }

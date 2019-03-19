@@ -12,9 +12,9 @@ import ru.nikstep.redink.util.sendRestRequest
 class GitlabLoader(
     solutionStorage: SolutionStorage
 ) : AbstractGitLoader(solutionStorage) {
-    override fun loadFilesOfPullRequest(pullRequest: PullRequest) {
-        TODO("not implemented")
-    }
+
+    override fun linkToRepoArchive(pullRequest: PullRequest): String =
+        "https://gitlab.com/${pullRequest.sourceRepoFullName}/-/archive/${pullRequest.sourceBranchName}/.zip"
 
     override fun loadChangedFilesOfCommit(repoName: String, headSha: String): List<String> {
         TODO("not implemented")
@@ -32,7 +32,7 @@ class GitlabLoader(
     override fun loadFileText(repoFullName: String, branchName: String, fileName: String): String =
         sendRestRequest("https://gitlab.com/$repoFullName/raw/$branchName/$fileName")
 
-    override fun loadRepositoryAndPullRequestFiles(repo: Repository) {
+    override fun cloneRepositoryAndPullRequests(repo: Repository) {
         TODO("not implemented")
     }
 }
