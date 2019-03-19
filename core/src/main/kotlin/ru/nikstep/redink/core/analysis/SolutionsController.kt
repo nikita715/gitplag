@@ -21,16 +21,14 @@ class SolutionsController(
     fun solutions(
         @RequestParam("git") git: GitProperty,
         @RequestParam("repo") repoName: String,
-        @RequestParam("sourceBranch", required = false) sourceBranch: String?,
-        @RequestParam("targetBranch", required = false) targetBranch: String?,
+        @RequestParam("branch", required = false) branch: String?,
         @RequestParam("student", required = false) student: String?,
         @RequestParam("fileName", required = false) fileName: String?
     ): ResponseEntity<*> {
         val repo = repositoryRepository.findByGitServiceAndName(git, repoName)
             ?: return ResponseEntity.notFound().build<Any?>()
         return ResponseEntity.ok(solutionFileRecordRepository.findAllByRepo(repo)
-            .filter { if (sourceBranch != null) it.sourceBranch == sourceBranch else true }
-            .filter { if (targetBranch != null) it.targetBranch == targetBranch else true }
+            .filter { if (branch != null) it.branch == branch else true }
             .filter { if (student != null) it.user == student else true }
             .filter { if (fileName != null) it.fileName == fileName else true }
         )

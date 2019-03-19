@@ -18,16 +18,16 @@ interface SolutionFileRecordRepository : JpaRepository<SolutionFileRecord, Long>
     /**
      * Find all solutions for [repo]
      */
-    fun findAllByRepoAndSourceBranch(repo: Repository, sourceBranch: String): List<SolutionFileRecord>
+    fun findAllByRepoAndBranch(repo: Repository, branch: String): List<SolutionFileRecord>
 
     /**
      * Delete [SolutionFileRecord] record by its parameters
      */
     @Transactional
-    fun deleteByRepoAndUserAndFileNameAndSourceBranch(
+    fun deleteByRepoAndUserAndFileNameAndBranch(
         repo: Repository,
         user: String,
         fileName: String,
-        sourceBranch: String
+        branch: String
     )
 }

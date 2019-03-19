@@ -4,7 +4,6 @@ import com.beust.klaxon.JsonObject
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.model.entity.SolutionFileRecord
 import ru.nikstep.redink.util.sendRestRequest
 
 /**
@@ -33,7 +32,7 @@ class GitlabLoader(
     override fun loadFileText(repoFullName: String, branchName: String, fileName: String): String =
         sendRestRequest("https://gitlab.com/$repoFullName/raw/$branchName/$fileName")
 
-    override fun loadRepositoryAndPullRequestFiles(repo: Repository): List<SolutionFileRecord> {
+    override fun loadRepositoryAndPullRequestFiles(repo: Repository) {
         TODO("not implemented")
     }
 }

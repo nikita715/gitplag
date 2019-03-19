@@ -28,14 +28,12 @@ class SolutionFileRecord(
     val fileName: String,
     val sha: String,
     val countOfLines: Int,
-    val sourceBranch: String,
-    val targetBranch: String
+    val branch: String
 ) {
     constructor(pullRequest: PullRequest, fileName: String, countOfLines: Int) : this(
         user = pullRequest.creatorName,
         repo = pullRequest.repo,
-        sourceBranch = pullRequest.sourceBranchName,
-        targetBranch = pullRequest.mainBranchName,
+        branch = pullRequest.sourceBranchName,
         fileName = fileName,
         sha = pullRequest.headSha,
         countOfLines = countOfLines
@@ -44,8 +42,7 @@ class SolutionFileRecord(
     constructor(sourceFileInfo: SourceFileInfo, countOfLines: Int) : this(
         user = sourceFileInfo.creator,
         repo = sourceFileInfo.repo,
-        sourceBranch = sourceFileInfo.sourceBranchName,
-        targetBranch = sourceFileInfo.mainBranchName,
+        branch = sourceFileInfo.sourceBranchName,
         fileName = sourceFileInfo.fileName,
         sha = sourceFileInfo.headSha,
         countOfLines = countOfLines

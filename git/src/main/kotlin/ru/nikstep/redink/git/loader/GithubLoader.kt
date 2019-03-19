@@ -4,10 +4,8 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
-import ru.nikstep.redink.model.data.SourceFileInfo
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.model.entity.SolutionFileRecord
 import ru.nikstep.redink.util.downloadAndUnpackZip
 import ru.nikstep.redink.util.sendRestRequest
 
@@ -30,29 +28,21 @@ class GithubLoader(
         solutionStorage.saveBaseByText(repo, branchName, fileName, fileText)
     }
 
-    override fun loadRepositoryAndPullRequestFiles(repo: Repository): List<SolutionFileRecord> {
+    override fun loadRepositoryAndPullRequestFiles(repo: Repository) {
         val branches = mutableSetOf<String>()
         val toList = sendRestRequest<JsonArray<JsonObject>>("https://api.github.com/repos/${repo.name}/pulls")
-            .flatMap {
-                val prNumber = requireNotNull(it.int("number"))
-                val sourceRepoName = requireNotNull(it.obj("head")?.obj("repo")?.string("full_name"))
+            .forEach {
                 val sourceBranchName = requireNotNull(it.obj("head")?.string("ref"))
+                val headSha = requireNotNull(it.obj("head")?.string("sha"))
+                val creator = requireNotNull(it.obj("head")?.obj("user")?.string("login"))
 
                 branches += sourceBranchName
 
-                loadChangedFiles(repo.name, prNumber).map { fileName ->
-                    val fileText = loadFileText(sourceRepoName, sourceBranchName, fileName)
-                    solutionStorage.saveSolution(
-                        SourceFileInfo(
-                            repo = repo,
-                            sourceBranchName = sourceBranchName,
-                            prNumber = prNumber,
-                            fileName = fileName,
-                            fileText = fileText,
-                            creator = requireNotNull(it.obj("head")?.obj("user")?.string("login")),
-                            mainBranchName = requireNotNull(it.obj("base")?.string("ref")),
-                            headSha = requireNotNull(it.obj("head")?.string("sha"))
-                        )
+                logger.info { "Git: download zip archive of repo = ${repo.name}, branch = $sourceBranchName" }
+                downloadAndUnpackZip("https://github.com/${repo.name}/archive/$sourceBranchName.zip") { unpackedDir ->
+                    solutionStorage.saveSolutionsFromDir(
+                        "$unpackedDir/${repo.name.substringAfter("/")}-$sourceBranchName",
+                        repo, sourceBranchName, creator, headSha
                     )
                 }
             }
@@ -63,6 +53,7 @@ class GithubLoader(
 
     fun loadBases(branches: Set<String>, repo: Repository) {
         branches.forEach { branch ->
+            logger.info { "Git: download zip archive of repo = ${repo.name}, branch = $branch" }
             downloadAndUnpackZip("https://github.com/${repo.name}/archive/$branch.zip") { unpackedDir ->
                 solutionStorage.saveBasesFromDir(
                     "$unpackedDir/${repo.name.substringAfter("/")}-$branch",
