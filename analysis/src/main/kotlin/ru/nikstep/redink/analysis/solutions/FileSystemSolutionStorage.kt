@@ -4,7 +4,6 @@ import mu.KotlinLogging
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.model.data.Solution
-import ru.nikstep.redink.model.data.SourceFileInfo
 import ru.nikstep.redink.model.entity.BaseFileRecord
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
@@ -146,19 +145,6 @@ class FileSystemSolutionStorage(
         return solutionFileRecordRepository.save(SolutionFileRecord(pullRequest, fileName, fileLength))
     }
 
-    override fun saveSolution(sourceFileInfo: SourceFileInfo): SolutionFileRecord {
-        val pathToSolution = pathToSolution(sourceFileInfo)
-        solutionFileRecordRepository.deleteByRepoAndUserAndFileNameAndBranch(
-            sourceFileInfo.repo,
-            sourceFileInfo.creator,
-            sourceFileInfo.fileName,
-            sourceFileInfo.sourceBranchName
-        )
-        val savedFile = saveLocally(pathToSolution, sourceFileInfo.fileText)
-        val fileLength = Files.lines(savedFile.toPath()).count().toInt()
-        return solutionFileRecordRepository.save(SolutionFileRecord(sourceFileInfo, fileLength))
-    }
-
     override fun saveSolutionsFromDir(
         tempDir: String,
         repo: Repository,
@@ -245,15 +231,6 @@ class FileSystemSolutionStorage(
             pullRequest.sourceBranchName,
             pullRequest.creatorName,
             fileName
-        )
-
-    private fun pathToSolution(sourceFileInfo: SourceFileInfo): String =
-        pathToSolution(
-            sourceFileInfo.repo.gitService,
-            sourceFileInfo.repo.name,
-            sourceFileInfo.sourceBranchName,
-            sourceFileInfo.creator,
-            sourceFileInfo.fileName
         )
 
     private fun String.asPath() = Paths.get(this)
