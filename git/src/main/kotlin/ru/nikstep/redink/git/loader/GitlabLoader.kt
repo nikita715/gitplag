@@ -1,20 +1,27 @@
 package ru.nikstep.redink.git.loader
 
+import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
+import mu.KotlinLogging
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
+import ru.nikstep.redink.util.downloadAndUnpackZip
 import ru.nikstep.redink.util.sendRestRequest
 
 /**
  * Loader of files from Gitlab
  */
 class GitlabLoader(
-    solutionStorage: SolutionStorage
+    private val solutionStorage: SolutionStorage
 ) : AbstractGitLoader(solutionStorage) {
 
-    override fun linkToRepoArchive(pullRequest: PullRequest): String =
-        "https://gitlab.com/${pullRequest.sourceRepoFullName}/-/archive/${pullRequest.sourceBranchName}/.zip"
+    private val logger = KotlinLogging.logger {}
+
+    override fun linkToRepoArchive(repoName: String, branchName: String): String {
+        val onlyRepoName = repoName.substringAfter("/")
+        return "https://gitlab.com/$repoName/-/archive/$branchName/$onlyRepoName-$branchName.zip"
+    }
 
     override fun loadChangedFilesOfCommit(repoName: String, headSha: String): List<String> {
         TODO("not implemented")
@@ -33,6 +40,51 @@ class GitlabLoader(
         sendRestRequest("https://gitlab.com/$repoFullName/raw/$branchName/$fileName")
 
     override fun cloneRepositoryAndPullRequests(repo: Repository) {
-        TODO("not implemented")
+        val branches = mutableSetOf<String>()
+        val toList =
+            sendRestRequest<JsonArray<JsonObject>>("https://gitlab.com/api/v4/projects/${repo.gitId}/merge_requests")
+                .forEach {
+                    val sourceBranchName = requireNotNull(it.string("source_branch"))
+                    val sourceRepoName = getRepoName(requireNotNull(it.long("source_project_id")))
+                    val headSha = requireNotNull(it.string("sha"))
+                    val creator = requireNotNull(it.obj("author")?.string("username"))
+
+                    branches += sourceBranchName
+
+                    logger.info { "Git: download zip archive of repo = $sourceRepoName, branch = $sourceBranchName" }
+                    downloadAndUnpackZip(linkToRepoArchive(sourceRepoName, sourceBranchName)) { unpackedDir ->
+                        solutionStorage.saveSolutionsFromDir(
+                            "$unpackedDir/${sourceRepoName.substringAfter("/")}-$sourceBranchName",
+                            repo, sourceBranchName, creator, headSha
+                        )
+                    }
+                }
+
+        loadBases(branches, repo)
+        return toList
     }
+
+    fun loadBases(branches: Set<String>, repo: Repository) {
+        branches.forEach { branch ->
+            logger.info { "Git: download zip archive of repo = ${repo.name}, branch = $branch" }
+            try {
+                downloadAndUnpackZip(linkToRepoArchive(repo.name, branch)) { unpackedDir ->
+                    solutionStorage.saveBasesFromDir(
+                        "$unpackedDir/${repo.name.substringAfter("/")}-$branch",
+                        repo, branch
+                    )
+                }
+            } catch (e: Exception) {
+                logger.info { "No base $branch" }
+            }
+        }
+    }
+
+    private fun getRepoName(repoId: Long): String =
+        requireNotNull(
+            sendRestRequest<JsonObject>(
+                "https://gitlab.com/api/v4/projects/$repoId"
+            ).string("path_with_namespace")
+        )
+
 }

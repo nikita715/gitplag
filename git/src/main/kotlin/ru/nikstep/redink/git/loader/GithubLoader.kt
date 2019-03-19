@@ -16,8 +16,8 @@ class GithubLoader(
     private val solutionStorage: SolutionStorage
 ) : AbstractGitLoader(solutionStorage) {
 
-    override fun linkToRepoArchive(pullRequest: PullRequest): String =
-        "https://github.com/${pullRequest.sourceRepoFullName}/archive/${pullRequest.sourceBranchName}.zip"
+    override fun linkToRepoArchive(repoName: String, branchName: String): String =
+        "https://github.com/$repoName/archive/$branchName.zip"
 
     private val logger = KotlinLogging.logger {}
 

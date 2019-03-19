@@ -17,6 +17,6 @@ server:
 
 redink:
   mossId: ${MOSS_ID}
-  solutionsDir: solutions
-  jplagResultDir: /Users/nikstepmac/jplagresults/
+  solutionsDir: /Users/nikstepmac/solutions
+  jplagResultDir: /Users/nikstepmac/jplagresults
   serverUrl: http://localhost

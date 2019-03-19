@@ -34,7 +34,7 @@ abstract class AbstractGitLoader(
     }
 
     override fun clonePullRequest(pullRequest: PullRequest) {
-        val resourceUrl = linkToRepoArchive(pullRequest)
+        val resourceUrl = linkToRepoArchive(pullRequest.sourceRepoFullName, pullRequest.sourceBranchName)
         downloadAndUnpackZip(resourceUrl) { unpackedDir ->
             solutionStorage.saveSolutionsFromDir(
                 unpackedDir, pullRequest.repo, pullRequest.sourceBranchName,
@@ -43,7 +43,7 @@ abstract class AbstractGitLoader(
         }
     }
 
-    protected abstract fun linkToRepoArchive(pullRequest: PullRequest): String
+    protected abstract fun linkToRepoArchive(repoName: String, branchName: String): String
 
     protected abstract fun loadChangedFiles(pullRequest: PullRequest): List<String>
 

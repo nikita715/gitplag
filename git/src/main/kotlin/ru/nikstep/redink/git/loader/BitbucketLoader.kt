@@ -13,8 +13,8 @@ class BitbucketLoader(
     solutionStorage: SolutionStorage
 ) : AbstractGitLoader(solutionStorage) {
 
-    override fun linkToRepoArchive(pullRequest: PullRequest): String =
-        "https://bitbucket.org/${pullRequest.sourceRepoFullName}/get/${pullRequest.sourceBranchName}.zip"
+    override fun linkToRepoArchive(repoName: String, branchName: String): String =
+        "https://bitbucket.org/$repoName/get/$branchName.zip"
 
     override fun loadChangedFilesOfCommit(repoName: String, headSha: String): List<String> {
         TODO("not implemented")

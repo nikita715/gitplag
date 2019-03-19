@@ -12,9 +12,9 @@ import java.util.concurrent.TimeUnit
  */
 internal class JPlagClient(
     analysisData: PreparedAnalysisData,
-    private val solutionsPath: String,
+    private val solutionsDir: String,
     private val branchName: String,
-    private val resultPath: String
+    private val resultDir: String
 ) {
 
     private val logger = KotlinLogging.logger {}
@@ -26,8 +26,8 @@ internal class JPlagClient(
 
     fun run() =
         buildString {
-            append("java -jar $jplagPath  -l $language -bc .base -r $resultPath -s ")
-            append(asPath(solutionsPath, gitService, repoName, branchName))
+            append("java -jar $jplagPath  -l $language -bc .base -r $resultDir -s ")
+            append(asPath(solutionsDir, gitService, repoName, branchName))
         }.also(::execute)
 
     private fun execute(task: String) {
