@@ -11,23 +11,6 @@ spring:
           lob:
             non_contextual_creation: true
     generate-ddl: true
-  devtools:
-    restart:
-      enabled: true
-    livereload:
-      enabled: false
-
-security:
-  oauth2:
-    client:
-      clientId: ${REDINK_CLIENT_ID}
-      clientSecret: ${REDINK_CLIENT_SECRET}
-      accessTokenUri: https://github.com/login/oauth/access_token
-      userAuthorizationUri: https://github.com/login/oauth/authorize
-    resource:
-      userInfoUri: https://api.github.com/user
-    sso:
-      loginPath: /authorization-code/callback
 
 server:
   port: 80
