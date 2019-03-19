@@ -1,13 +1,6 @@
 package ru.nikstep.redink.model.entity
 
-import ru.nikstep.redink.model.data.SourceFileInfo
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
+import javax.persistence.*
 
 /**
  * Info class about stored solutions
@@ -36,15 +29,6 @@ class SolutionFileRecord(
         branch = pullRequest.sourceBranchName,
         fileName = fileName,
         sha = pullRequest.headSha,
-        countOfLines = countOfLines
-    )
-
-    constructor(sourceFileInfo: SourceFileInfo, countOfLines: Int) : this(
-        user = sourceFileInfo.creator,
-        repo = sourceFileInfo.repo,
-        branch = sourceFileInfo.sourceBranchName,
-        fileName = sourceFileInfo.fileName,
-        sha = sourceFileInfo.headSha,
         countOfLines = countOfLines
     )
 }

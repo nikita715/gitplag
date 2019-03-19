@@ -2,7 +2,6 @@ package ru.nikstep.redink.analysis.solutions
 
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.PreparedAnalysisData
-import ru.nikstep.redink.model.data.SourceFileInfo
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.SolutionFileRecord
@@ -38,11 +37,6 @@ interface SolutionStorage {
      * Save solution of [fileName] for [PullRequest.creatorName]
      */
     fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): SolutionFileRecord
-
-    /**
-     * Save [sourceFileInfo] solution
-     */
-    fun saveSolution(sourceFileInfo: SourceFileInfo): SolutionFileRecord
 
     /**
      * Save [sourceFileInfo] solution
