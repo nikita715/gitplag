@@ -15,7 +15,6 @@ import ru.nikstep.redink.model.repo.JPlagReportRepository
 import ru.nikstep.redink.util.AnalysisMode
 import ru.nikstep.redink.util.RandomGenerator
 import ru.nikstep.redink.util.asPath
-import ru.nikstep.redink.util.asPathInRoot
 import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime
@@ -45,7 +44,7 @@ class JPlagAnalyser(
         val analysisFiles = solutionStorage.loadBasesAndSeparatedSolutions(settings)
 
         logger.info { "Analysis:JPlag:2.Start analysis. ${repoInfo(settings)}" }
-        JPlagClient(analysisFiles, solutionsDir.asPathInRoot(), settings.branch, resultDir).run()
+        JPlagClient(analysisFiles, solutionsDir, settings.branch, resultDir).run()
 
         val matchLines =
             if (settings.mode.order > AnalysisMode.LINK.order) {

@@ -68,5 +68,7 @@ data class Repository(
     @JsonIgnore
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany(mappedBy = "repository", orphanRemoval = true)
-    val analyzes: List<Analysis> = mutableListOf()
+    val analyzes: List<Analysis> = mutableListOf(),
+
+    val gitId: Long = -1
 )

@@ -15,7 +15,6 @@ import ru.nikstep.redink.util.asPath
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
-import java.nio.file.Paths
 
 class FileSystemSolutionStorage(
     private val baseFileRecordRepository: BaseFileRecordRepository,
@@ -233,8 +232,8 @@ class FileSystemSolutionStorage(
             fileName
         )
 
-    private fun String.asPath() = Paths.get(this)
+    private fun String.asPath() = this.asFile().toPath()
 
-    private fun String.asFile() = File(this.asPath().toUri())
+    private fun String.asFile() = File(this)
 
 }
