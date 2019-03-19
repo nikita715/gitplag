@@ -31,14 +31,7 @@ class GithubWebhookService(
         val repoFullName = requireNotNull(jsonObject.obj("repository")?.string("full_name"))
         val repo = repositoryRepository.findByGitServiceAndName(GITHUB, repoFullName)
             ?: throw RepositoryNotFoundException()
-        val added = requireNotNull(jsonObject.obj("head_commit")?.array<String>("added"))
-        val modified = requireNotNull(jsonObject.obj("head_commit")?.array<String>("modified"))
-        added.forEach { fileName ->
-            githubLoader.downloadBase(repo, branchName, fileName)
-        }
-        modified.forEach { fileName ->
-            githubLoader.downloadBase(repo, branchName, fileName)
-        }
+        githubLoader.loadBaseBranch(repo, branchName)
     }
 
     fun saveNewRepository(payload: String) {
