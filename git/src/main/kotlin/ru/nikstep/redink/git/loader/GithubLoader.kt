@@ -21,44 +21,35 @@ class GithubLoader(
 
     private val logger = KotlinLogging.logger {}
 
-    fun downloadBase(repo: Repository, branchName: String, fileName: String) {
-        val fileText = loadFileText(repo.name, branchName, fileName)
-        solutionStorage.saveBaseByText(repo, branchName, fileName, fileText)
-    }
-
     override fun cloneRepositoryAndPullRequests(repo: Repository) {
-        val branches = mutableSetOf<String>()
-        val toList = sendRestRequest<JsonArray<JsonObject>>("https://api.github.com/repos/${repo.name}/pulls")
-            .forEach {
-                val sourceBranchName = requireNotNull(it.obj("head")?.string("ref"))
-                val sourceRepoName = requireNotNull(it.obj("head")?.obj("repo")?.string("full_name"))
-                val headSha = requireNotNull(it.obj("head")?.string("sha"))
-                val creator = requireNotNull(it.obj("head")?.obj("user")?.string("login"))
-
-                branches += sourceBranchName
-
-                logger.info { "Git: download zip archive of repo = $sourceRepoName, branch = $sourceBranchName" }
-                downloadAndUnpackZip("https://github.com/$sourceRepoName/archive/$sourceBranchName.zip") { unpackedDir ->
-                    solutionStorage.saveSolutionsFromDir(
-                        "$unpackedDir/${repo.name.substringAfter("/")}-$sourceBranchName",
-                        repo, sourceBranchName, creator, headSha
-                    )
-                }
-            }
-
-        loadBases(branches, repo)
-        return toList
+        sendRestRequest<JsonArray<JsonObject>>("https://api.github.com/repos/${repo.name}/branches")
+            .forEach { loadBaseBranch(repo, requireNotNull(it.string("name"))) }
+        sendRestRequest<JsonArray<JsonObject>>("https://api.github.com/repos/${repo.name}/pulls")
+            .forEach { loadPullRequest(repo, it) }
     }
 
-    fun loadBases(branches: Set<String>, repo: Repository) {
-        branches.forEach { branch ->
-            logger.info { "Git: download zip archive of repo = ${repo.name}, branch = $branch" }
-            downloadAndUnpackZip("https://github.com/${repo.name}/archive/$branch.zip") { unpackedDir ->
-                solutionStorage.saveBasesFromDir(
-                    "$unpackedDir/${repo.name.substringAfter("/")}-$branch",
-                    repo, branch
-                )
-            }
+    private fun loadPullRequest(repo: Repository, jsonPayload: JsonObject) {
+        val sourceBranchName = requireNotNull(jsonPayload.obj("head")?.string("ref"))
+        val sourceRepoName = requireNotNull(jsonPayload.obj("head")?.obj("repo")?.string("full_name"))
+        val headSha = requireNotNull(jsonPayload.obj("head")?.string("sha"))
+        val creator = requireNotNull(jsonPayload.obj("head")?.obj("user")?.string("login"))
+
+        logger.info { "Git: download zip archive of repo = $sourceRepoName, branch = $sourceBranchName" }
+        downloadAndUnpackZip("https://github.com/$sourceRepoName/archive/$sourceBranchName.zip") { unpackedDir ->
+            solutionStorage.saveSolutionsFromDir(
+                "$unpackedDir/${repo.name.substringAfter("/")}-$sourceBranchName",
+                repo, sourceBranchName, creator, headSha
+            )
+        }
+    }
+
+    fun loadBaseBranch(repo: Repository, branch: String) {
+        logger.info { "Git: download zip archive of repo = ${repo.name}, branch = $branch" }
+        downloadAndUnpackZip("https://github.com/${repo.name}/archive/$branch.zip") { unpackedDir ->
+            solutionStorage.saveBasesFromDir(
+                "$unpackedDir/${repo.name.substringAfter("/")}-$branch",
+                repo, branch
+            )
         }
     }
 

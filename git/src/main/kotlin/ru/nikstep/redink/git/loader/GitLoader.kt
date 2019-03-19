@@ -12,6 +12,7 @@ interface GitLoader {
      * Upload files that have changed in the pull request
      * to the application repository
      */
+    @Deprecated("Migrated to repo cloning")
     fun loadFilesOfCommit(pullRequest: PullRequest)
 
     /**
@@ -29,6 +30,7 @@ interface GitLoader {
     /**
      * Load text of file from git
      */
+    @Deprecated("Migrated to repo cloning")
     fun loadFileText(repoFullName: String, branchName: String, fileName: String): String
 
 }

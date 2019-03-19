@@ -45,8 +45,10 @@ abstract class AbstractGitLoader(
 
     protected abstract fun linkToRepoArchive(repoName: String, branchName: String): String
 
+    @Deprecated("Migrated to repo cloning")
     protected abstract fun loadChangedFiles(pullRequest: PullRequest): List<String>
 
+    @Deprecated("Migrated to repo cloning")
     protected abstract fun loadChangedFilesOfCommit(repoName: String, headSha: String): List<String>
 
 }
