@@ -10,7 +10,8 @@ import ru.nikstep.redink.util.Language
 /**
  * Data manager of [Repository]
  */
-open class RepositoryDataManager(
+@Transactional
+class RepositoryDataManager(
     private val repositoryRepository: RepositoryRepository
 ) {
 
@@ -18,7 +19,7 @@ open class RepositoryDataManager(
      * Create repositories by [repoNames]
      */
     @Transactional
-    open fun create(ownerName: String, gitProperty: GitProperty, repoNames: List<String>) {
+    fun create(ownerName: String, gitProperty: GitProperty, repoNames: List<String>) {
         repoNames.forEach { repoName ->
             repositoryRepository.save(
                 Repository(
@@ -33,8 +34,8 @@ open class RepositoryDataManager(
         }
     }
 
-    @Transactional
-    open fun nameMatchesRegexp(fileName: String, repo: Repository): Boolean {
+    @Transactional(readOnly = true)
+    fun nameMatchesRegexp(fileName: String, repo: Repository): Boolean {
         repo.filePatterns.forEach {
             if (it.toRegex().matches(fileName)) return true
         }
@@ -45,7 +46,7 @@ open class RepositoryDataManager(
      * Delete repositories by [repoNames]
      */
     @Transactional
-    open fun delete(repoNames: List<String>) {
+    fun delete(repoNames: List<String>) {
         repoNames.forEach { repoName ->
             repositoryRepository.deleteByGitServiceAndName(
                 GitProperty.GITHUB,
@@ -58,7 +59,7 @@ open class RepositoryDataManager(
      * Save all [repositories]
      */
     @Transactional
-    open fun saveAll(repositories: List<Repository>) {
+    fun saveAll(repositories: List<Repository>) {
         repositoryRepository.saveAll(repositories)
     }
 

@@ -1,6 +1,8 @@
 plugins {
     id 'kotlin-noarg'
     id 'kotlin-jpa'
+    id 'kotlin-allopen'
+    id 'kotlin-spring'
 }
 
 dependencies {
