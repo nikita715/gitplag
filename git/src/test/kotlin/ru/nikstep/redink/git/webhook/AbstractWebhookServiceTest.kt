@@ -41,7 +41,7 @@ abstract class AbstractWebhookServiceTest {
     @Test
     fun saveNewPullRequest() {
         `when`(repositoryRepository.findByGitServiceAndName(any(), any())).thenReturn(repo)
-        webhookService.saveNewPullRequest(payload)
+        webhookService.updateSolutionsOfPullRequest(payload)
         verify(pullRequestRepository).save(argument.capture())
         argument.value shouldEqual pullRequest
         verify(gitLoader).loadFilesOfCommit(pullRequest)

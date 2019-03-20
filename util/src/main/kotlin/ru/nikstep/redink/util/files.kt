@@ -36,3 +36,11 @@ fun <T> downloadAndUnpackZip(resourceUrl: String, action: (unpackedDir: String) 
         zipFile.delete()
         action(tempDir)
     }
+
+
+fun forEachFileInDirectory(path: String, action: (File) -> Unit) {
+    Files.walk(File(path).toPath()).filter { Files.isRegularFile(it) && !Files.isHidden(it) }.forEach { file ->
+        val foundedFile = file.toFile()
+        action(foundedFile)
+    }
+}

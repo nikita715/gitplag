@@ -21,60 +21,110 @@ abstract class AbstractWebhookService(
 ) : WebhookService {
     private val logger = KotlinLogging.logger {}
 
-    override fun saveNewPullRequest(payload: String) {
+    override fun updateSolutionsOfPullRequest(payload: String) {
         val jsonObject = payload.parseAsObject()
 
+        val mainRepoFullName = jsonObject.pullRequest.mainRepoFullName
         val repo = repositoryRepository.findByGitServiceAndName(
-            git, requireNotNull(jsonObject.mainRepoFullName)
+            git, requireNotNull(mainRepoFullName)
         )
 
-        if (repo == null) {
-            val newRepo = repositoryRepository.save(
-                Repository(
-                    name = requireNotNull(jsonObject.mainRepoFullName),
-                    gitService = git,
-                    gitId = requireNotNull(jsonObject.mainRepoId)
-                )
-            )
-            gitLoader.cloneRepositoryAndPullRequests(newRepo)
+        if (repo != null) {
+            logger.info { "Webhook: received new pull request from repo ${repo.name}" }
+            cloneReceivedPullRequest(jsonObject, repo)
         } else {
-            val pullRequest = jsonObject.run {
-                PullRequest(
-                    number = requireNotNull(number),
-                    creatorName = requireNotNull(creatorName),
-                    sourceRepoId = requireNotNull(sourceRepoId),
-                    mainRepoId = requireNotNull(mainRepoId),
-                    sourceRepoFullName = requireNotNull(sourceRepoFullName),
-                    repo = repo,
-                    headSha = requireNotNull(sourceHeadSha),
-                    sourceBranchName = requireNotNull(sourceBranchName),
-                    mainBranchName = requireNotNull(mainBranchName),
-                    date = requireNotNull(date)
-                )
-            }
-            gitLoader.clonePullRequest(pullRequest)
+            logger.info { "Webhook: received new repo $mainRepoFullName" }
+            cloneRepoAndAllPullRequests(mainRepoFullName, jsonObject.pullRequest.mainRepoId)
         }
     }
 
+    override fun updateBasesOfRepository(payload: String) {
+        val jsonObject = payload.parseAsObject()
+        val branchName = requireNotNull(jsonObject.pushBranchName)
+        val repoFullName = requireNotNull(jsonObject.pushRepoName)
+        val repo = repositoryRepository.findByGitServiceAndName(GitProperty.GITHUB, repoFullName)
+
+        if (repo != null) {
+            logger.info { "Webhook: received new push from repo ${repo.name}" }
+            gitLoader.cloneRepository(repo, branchName)
+        } else {
+            logger.info { "Webhook: received new repo ${jsonObject.pushRepoName}" }
+            cloneRepoAndAllPullRequests(jsonObject.pushRepoName, jsonObject.pushRepoId)
+        }
+    }
+
+    abstract val JsonObject.pushRepoName: String?
+    abstract val JsonObject.pushBranchName: String?
+    abstract val JsonObject.pushRepoId: Long?
+
+    private fun cloneReceivedPullRequest(
+        jsonObject: JsonObject,
+        repo: Repository
+    ) {
+        val pullRequest = jsonObject.pullRequest.run { parsePullRequest(repo) }
+        if (pullRequest.sourceRepoFullName != jsonObject.mainRepoFullName) {
+            gitLoader.clonePullRequest(pullRequest)
+        } else {
+            logger.info { "Webhook: Ignored pr to itself repo ${repo.name}" }
+        }
+    }
+
+    private fun cloneRepoAndAllPullRequests(repoName: String?, repoId: Long?) {
+        val repo = repositoryRepository.save(
+            Repository(
+                name = requireNotNull(repoName),
+                gitService = git,
+                gitId = requireNotNull(repoId)
+            )
+        )
+        gitLoader.cloneRepository(repo)
+        gitLoader.findPullRequests(repo).forEach {
+            it.run {
+                if (mainRepoFullName != sourceRepoFullName) {
+                    val pullRequest = pullRequestRepository.save(parsePullRequest(repo))
+                    gitLoader.clonePullRequest(pullRequest)
+                } else {
+                    logger.info { "Webhook: Ignored pr to itself repo ${repo.name}" }
+                }
+            }
+        }
+    }
+
+    private fun JsonObject.parsePullRequest(repo: Repository): PullRequest =
+        PullRequest(
+            number = requireNotNull(number),
+            creatorName = requireNotNull(creatorName),
+            sourceRepoId = requireNotNull(sourceRepoId),
+            mainRepoId = requireNotNull(mainRepoId),
+            sourceRepoFullName = requireNotNull(sourceRepoFullName),
+            repo = repo,
+            headSha = requireNotNull(sourceHeadSha),
+            sourceBranchName = requireNotNull(sourceBranchName),
+            mainBranchName = requireNotNull(mainBranchName),
+            date = requireNotNull(date)
+        )
+
     protected abstract val git: GitProperty
 
-    protected abstract val JsonObject.sourceRepoId: Long?
+    protected abstract val JsonObject.pullRequest: JsonObject
 
-    protected abstract val JsonObject.number: Int?
+    protected abstract val JsonObject?.sourceRepoId: Long?
 
-    protected abstract val JsonObject.mainRepoFullName: String?
+    protected abstract val JsonObject?.number: Int?
 
-    protected abstract val JsonObject.creatorName: String?
+    protected abstract val JsonObject?.mainRepoFullName: String?
 
-    protected abstract val JsonObject.sourceHeadSha: String?
+    protected abstract val JsonObject?.creatorName: String?
 
-    protected abstract val JsonObject.sourceBranchName: String?
+    protected abstract val JsonObject?.sourceHeadSha: String?
 
-    protected abstract val JsonObject.date: LocalDateTime?
+    protected abstract val JsonObject?.sourceBranchName: String?
 
-    protected abstract val JsonObject.sourceRepoFullName: String?
+    protected abstract val JsonObject?.date: LocalDateTime?
 
-    protected abstract val JsonObject.mainBranchName: String?
+    protected abstract val JsonObject?.sourceRepoFullName: String?
 
-    protected abstract val JsonObject.mainRepoId: Long?
+    protected abstract val JsonObject?.mainBranchName: String?
+
+    protected abstract val JsonObject?.mainRepoId: Long?
 }

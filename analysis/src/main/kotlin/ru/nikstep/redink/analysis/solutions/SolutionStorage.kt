@@ -5,7 +5,6 @@ import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.SolutionFileRecord
-import ru.nikstep.redink.util.GitProperty
 import java.io.File
 
 /**
@@ -19,11 +18,6 @@ interface SolutionStorage {
     fun loadBases(settings: AnalysisSettings): List<File>
 
     /**
-     * Load base file from local storage
-     */
-    fun loadBase(gitProperty: GitProperty, repoName: String, branchName: String, fileName: String): File
-
-    /**
      * Save base files to local storage
      */
     fun saveBasesFromDir(tempDir: String, repo: Repository, branchName: String)
@@ -31,11 +25,13 @@ interface SolutionStorage {
     /**
      * Save base file to local storage
      */
+    @Deprecated("Migrated to repo cloning")
     fun saveBaseByText(repo: Repository, branch: String, fileName: String, fileText: String)
 
     /**
      * Save solution of [fileName] for [PullRequest.creatorName]
      */
+    @Deprecated("Migrated to repo cloning")
     fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): SolutionFileRecord
 
     /**

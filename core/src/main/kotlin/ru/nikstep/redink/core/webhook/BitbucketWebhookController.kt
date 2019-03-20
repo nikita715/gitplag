@@ -23,7 +23,8 @@ class BitbucketWebhookController(private val bitbucketWebhookService: BitbucketW
         val event = httpServletRequest.getHeader("X-Event-Key")
         logger.info { "Webhook: got new $event" }
         when (event.substringBefore(":")) {
-            "pullrequest" -> bitbucketWebhookService.saveNewPullRequest(payload)
+            "pullrequest" -> bitbucketWebhookService.updateSolutionsOfPullRequest(payload)
+            "repo" -> bitbucketWebhookService.updateBasesOfRepository(payload)
             else -> logger.info { "Webhook: $event is not supported" }
         }
     }

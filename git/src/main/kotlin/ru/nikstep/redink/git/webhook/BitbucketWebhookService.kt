@@ -20,40 +20,48 @@ class BitbucketWebhookService(
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
     override val git = BITBUCKET
 
-    override fun saveNewBaseFiles(payload: String) {
-        TODO("not implemented")
-    }
+    override val JsonObject.pullRequest: JsonObject
+        get() = requireNotNull(obj("pullrequest"))
 
-    override val JsonObject.number: Int?
-        get() = obj("pullrequest")?.int("id")
+    override val JsonObject?.number: Int?
+        get() = this?.int("id")
 
-    override val JsonObject.creatorName: String?
-        get() = obj("pullrequest")?.obj("author")?.string("username")
+    override val JsonObject?.creatorName: String?
+        get() = this?.obj("author")?.string("username")
 
-    override val JsonObject.sourceRepoId: Long?
+    override val JsonObject?.sourceRepoId: Long?
         get() = -1
 
-    override val JsonObject.mainRepoId: Long?
+    override val JsonObject?.mainRepoId: Long?
         get() = -1
 
-    override val JsonObject.sourceRepoFullName: String?
-        get() = obj("pullrequest")?.obj("source")?.obj("repository")?.string("full_name")
+    override val JsonObject?.sourceRepoFullName: String?
+        get() = this?.obj("source")?.obj("repository")?.string("full_name")
 
-    override val JsonObject.mainRepoFullName: String?
-        get() = obj("pullrequest")?.obj("destination")?.obj("repository")?.string("full_name")
+    override val JsonObject?.mainRepoFullName: String?
+        get() = this?.obj("destination")?.obj("repository")?.string("full_name")
 
-    override val JsonObject.sourceHeadSha: String?
-        get() = obj("pullrequest")?.obj("source")?.obj("commit")?.string("hash")
+    override val JsonObject?.sourceHeadSha: String?
+        get() = this?.obj("source")?.obj("commit")?.string("hash")
 
-    override val JsonObject.sourceBranchName: String?
-        get() = obj("pullrequest")?.obj("source")?.obj("branch")?.string("name")
+    override val JsonObject?.sourceBranchName: String?
+        get() = this?.obj("source")?.obj("branch")?.string("name")
 
-    override val JsonObject.mainBranchName: String?
-        get() = obj("pullrequest")?.obj("destination")?.obj("branch")?.string("name")
+    override val JsonObject?.mainBranchName: String?
+        get() = this?.obj("destination")?.obj("branch")?.string("name")
 
-    override val JsonObject.date: LocalDateTime?
+    override val JsonObject?.date: LocalDateTime?
         get() = LocalDateTime.parse(
-            obj("pullrequest")?.string("updated_on")?.substring(0, 19),
+            this?.string("updated_on")?.substring(0, 19),
             dateFormatter
         )
+
+    override val JsonObject.pushRepoId: Long?
+        get() = -1
+
+    override val JsonObject.pushRepoName: String?
+        get() = obj("repository")?.string("full_name")
+
+    override val JsonObject.pushBranchName: String?
+        get() = obj("push")?.array<JsonObject>("changes")?.get(0)?.obj("new")?.string("name")
 }

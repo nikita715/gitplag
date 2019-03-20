@@ -9,12 +9,12 @@ interface WebhookService {
      * Transform payload from a git service
      * and save it as a pull request
      */
-    fun saveNewPullRequest(payload: String)
+    fun updateSolutionsOfPullRequest(payload: String)
 
     /**
      * Transform payload from a git service
      * and save it as a pull request
      */
-    fun saveNewBaseFiles(payload: String)
+    fun updateBasesOfRepository(payload: String)
 
 }

@@ -8,16 +8,19 @@ import ru.nikstep.redink.model.entity.BaseFileRecord
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.SolutionFileRecord
+import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.BaseFileRecordRepository
 import ru.nikstep.redink.model.repo.SolutionFileRecordRepository
 import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.asPath
+import ru.nikstep.redink.util.forEachFileInDirectory
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
 
 class FileSystemSolutionStorage(
     private val baseFileRecordRepository: BaseFileRecordRepository,
+    private val repositoryDataManager: RepositoryDataManager,
     private val solutionFileRecordRepository: SolutionFileRecordRepository,
     private val solutionsDir: String
 ) : SolutionStorage {
@@ -25,15 +28,12 @@ class FileSystemSolutionStorage(
     private val logger = KotlinLogging.logger {}
     private val baseDir = ".base"
 
-    @Synchronized
     override fun loadBasesAndComposedSolutions(settings: AnalysisSettings, tempDir: String) =
         loadBasesAndSolutions(settings, loadComposedSolutions(settings, tempDir))
 
-    @Synchronized
     override fun loadBasesAndSeparatedSolutions(settings: AnalysisSettings) =
         loadBasesAndSolutions(settings, loadSeparateSolutions(settings))
 
-    @Synchronized
     override fun loadBasesAndSeparatedCopiedSolutions(settings: AnalysisSettings, tempDir: String) =
         loadBasesAndSolutions(settings, loadSeparateCopiedSolutions(settings, tempDir))
 
@@ -105,43 +105,23 @@ class FileSystemSolutionStorage(
     ) {
         val pathToBases = pathToBases(repo.gitService, repo.name, branchName)
         pathToBases.asFile().deleteRecursively()
+        baseFileRecordRepository.deleteAllByRepoAndBranch(repo, branchName)
         forEachFileInDirectory(tempDir) { foundedFile ->
             val fileName = File(tempDir).toPath().relativize(foundedFile.toPath()).toString()
-            foundedFile.copyTo(File("$pathToBases/$fileName"))
-            baseFileRecordRepository.save(
-                BaseFileRecord(
-                    repo = repo,
-                    fileName = fileName,
-                    branch = branchName
+            if (repositoryDataManager.nameMatchesRegexp(fileName, repo)) {
+                foundedFile.copyTo(File("$pathToBases/$fileName"))
+                baseFileRecordRepository.save(
+                    BaseFileRecord(
+                        repo = repo,
+                        fileName = fileName,
+                        branch = branchName
+                    )
                 )
-            )
-            logger.info { "Storage: Saved base file with name = $fileName of repo ${repo.name}" }
+                logger.info { "Storage: Saved base file with name = $fileName of repo ${repo.name}" }
+            } else {
+                logger.info { "Storage: Ignored base file with name = $fileName of repo ${repo.name}" }
+            }
         }
-    }
-
-    override fun loadBase(gitProperty: GitProperty, repoName: String, branchName: String, fileName: String): File =
-        pathToBase(gitProperty, repoName, branchName, fileName).asFile()
-
-    override fun loadBases(settings: AnalysisSettings): List<File> =
-        baseFileRecordRepository.findAllByRepoAndBranch(settings.repository, settings.branch)
-            .map { pathToBase(settings, it.fileName).asFile() }
-
-    private fun loadSourceCodeForAnalysis(analysisSettings: AnalysisSettings) =
-        solutionFileRecordRepository
-            .findAllByRepoAndBranch(analysisSettings.repository, analysisSettings.branch)
-
-    @Synchronized
-    override fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): SolutionFileRecord {
-        val pathToSolution = pathToSolution(pullRequest, fileName)
-        solutionFileRecordRepository.deleteByRepoAndUserAndFileNameAndBranch(
-            pullRequest.repo,
-            pullRequest.creatorName,
-            fileName,
-            pullRequest.sourceBranchName
-        )
-        val savedFile = saveLocally(pathToSolution, fileText)
-        val fileLength = Files.lines(savedFile.toPath()).count().toInt()
-        return solutionFileRecordRepository.save(SolutionFileRecord(pullRequest, fileName, fileLength))
     }
 
     override fun saveSolutionsFromDir(
@@ -153,28 +133,46 @@ class FileSystemSolutionStorage(
     ) {
         val pathToSolutions = pathToSolutions(repo.gitService, repo.name, branchName, creator)
         pathToSolutions.asFile().deleteRecursively()
+        solutionFileRecordRepository.deleteAllByRepoAndBranchAndUser(repo, branchName, creator)
         forEachFileInDirectory(tempDir) { foundedFile ->
             val fileName = File(tempDir).toPath().relativize(foundedFile.toPath()).toString()
-            foundedFile.copyTo(File("$pathToSolutions/$fileName"))
-            solutionFileRecordRepository.save(
-                SolutionFileRecord(
-                    user = creator,
-                    repo = repo,
-                    fileName = fileName,
-                    branch = branchName,
-                    countOfLines = Files.lines(foundedFile.toPath()).count().toInt(),
-                    sha = headSha
+            if (repositoryDataManager.nameMatchesRegexp(fileName, repo)) {
+                foundedFile.copyTo(File("$pathToSolutions/$fileName"))
+                solutionFileRecordRepository.save(
+                    SolutionFileRecord(
+                        user = creator,
+                        repo = repo,
+                        fileName = fileName,
+                        branch = branchName,
+                        countOfLines = Files.lines(foundedFile.toPath()).count().toInt(),
+                        sha = headSha
+                    )
                 )
-            )
-            logger.info { "Storage: Saved solution file with name = $fileName of repo ${repo.name}, user $creator" }
+                logger.info { "Storage: Saved solution file with name = $fileName of repo ${repo.name}, user $creator" }
+            } else {
+                logger.info { "Storage: Ignored solution file with name = $fileName of repo ${repo.name}, user $creator" }
+            }
         }
     }
 
-    private fun forEachFileInDirectory(path: String, action: (File) -> Unit) {
-        Files.walk(path.asPath()).filter { Files.isRegularFile(it) && !Files.isHidden(it) }.forEach { file ->
-            val foundedFile = file.toFile()
-            action(foundedFile)
-        }
+    override fun loadBases(settings: AnalysisSettings): List<File> =
+        baseFileRecordRepository.findAllByRepoAndBranch(settings.repository, settings.branch)
+            .map { pathToBase(settings, it.fileName).asFile() }
+
+    private fun loadSourceCodeForAnalysis(analysisSettings: AnalysisSettings) =
+        solutionFileRecordRepository.findAllByRepoAndBranch(analysisSettings.repository, analysisSettings.branch)
+
+    override fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): SolutionFileRecord {
+        val pathToSolution = pathToSolution(pullRequest, fileName)
+        solutionFileRecordRepository.deleteByRepoAndUserAndFileNameAndBranch(
+            pullRequest.repo,
+            pullRequest.creatorName,
+            fileName,
+            pullRequest.sourceBranchName
+        )
+        val savedFile = saveLocally(pathToSolution, fileText)
+        val fileLength = Files.lines(savedFile.toPath()).count().toInt()
+        return solutionFileRecordRepository.save(SolutionFileRecord(pullRequest, fileName, fileLength))
     }
 
     override fun saveBaseByText(repo: Repository, branch: String, fileName: String, fileText: String) {
