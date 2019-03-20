@@ -65,6 +65,9 @@ data class Repository(
     @Enumerated(EnumType.STRING)
     val analysisMode: AnalysisMode = AnalysisMode.PAIRS,
 
+    @Column(nullable = false)
+    val autoCloningEnabled: Boolean = true,
+
     @JsonIgnore
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany(mappedBy = "repository", orphanRemoval = true)

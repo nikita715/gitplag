@@ -48,6 +48,12 @@ abstract class AbstractPayloadProcessor(
             if (!repo.branches.contains(branchName)) {
                 logger.info { "Webhook: ignored new push from repo ${repo.name} to branch $branchName" }
                 return
+            } else if (repo.autoCloningEnabled) {
+                logger.info {
+                    "Webhook: cloning disabled, " +
+                            "ignored new push from repo ${repo.name} to branch $branchName"
+                }
+                return
             }
             logger.info { "Webhook: received new push from repo ${repo.name}" }
             gitLoader.cloneRepository(repo, branchName)
@@ -73,6 +79,10 @@ abstract class AbstractPayloadProcessor(
         }
         val storedPullRequest = pullRequestRepository.findByRepoAndNumber(repo, prNumber)
         if (storedPullRequest != null) {
+            if (repo.autoCloningEnabled) {
+                logger.info { "Webhook: cloning disabled, ignored new push from repo ${repo.name} to branch ${jsonObject.sourceBranchName}" }
+                return
+            }
             val pullRequest = storedPullRequest.updateFrom(jsonObject)
             logger.info { "Webhook: received updated pr from repo ${jsonObject.pushRepoName}, pr number ${pullRequest.number}" }
             gitLoader.clonePullRequest(pullRequest)
