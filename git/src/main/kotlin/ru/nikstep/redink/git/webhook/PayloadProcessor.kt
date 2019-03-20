@@ -1,20 +1,23 @@
 package ru.nikstep.redink.git.webhook
 
+import ru.nikstep.redink.model.entity.Repository
+
 /**
  * Service that receives webhook requests about pull requests from git services
  */
-interface WebhookService {
+interface PayloadProcessor {
 
     /**
      * Transform payload from a git service
      * and save it as a pull request
      */
-    fun updateSolutionsOfPullRequest(payload: String)
+    fun downloadSolutionsOfPullRequest(payload: String)
 
     /**
      * Transform payload from a git service
      * and save it as a pull request
      */
-    fun updateBasesOfRepository(payload: String)
+    fun downloadBasesOfRepository(payload: String)
 
+    fun downloadAllPullRequestsOfRepository(repo: Repository)
 }

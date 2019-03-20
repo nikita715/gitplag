@@ -5,14 +5,14 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import ru.nikstep.redink.git.webhook.GitlabWebhookService
+import ru.nikstep.redink.git.webhook.GitlabPayloadProcessor
 import javax.servlet.http.HttpServletRequest
 
 /**
  * Receiver of gitlab webhook messages
  */
 @RestController
-class GitlabWebhookController(private val gitlabWebhookService: GitlabWebhookService) {
+class GitlabWebhookController(private val gitlabWebhookService: GitlabPayloadProcessor) {
     private val logger = KotlinLogging.logger {}
 
     /**
@@ -23,8 +23,8 @@ class GitlabWebhookController(private val gitlabWebhookService: GitlabWebhookSer
         val event = httpServletRequest.getHeader("X-Gitlab-Event")
         logger.info { "Webhook: got new $event" }
         when (event) {
-            "Merge Request Hook" -> gitlabWebhookService.updateSolutionsOfPullRequest(payload)
-            "Push Hook" -> gitlabWebhookService.updateBasesOfRepository(payload)
+            "Merge Request Hook" -> gitlabWebhookService.downloadSolutionsOfPullRequest(payload)
+            "Push Hook" -> gitlabWebhookService.downloadBasesOfRepository(payload)
             else -> logger.info { "Webhook: $event is not supported" }
         }
     }

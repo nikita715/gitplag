@@ -55,7 +55,7 @@ data class Repository(
     @Column(nullable = false)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "analysed_branch", joinColumns = [JoinColumn(name = "repository")])
-    val branches: List<String> = emptyList(),
+    val branches: List<String> = listOf("master"),
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

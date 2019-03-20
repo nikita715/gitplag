@@ -29,7 +29,7 @@ abstract class AbstractGitLoader(
 
     override fun cloneRepository(repo: Repository, branch: String?) {
         if (branch == null) {
-            findBranchesOfRepo(repo).forEach { cloneBranchOfRepository(repo, it) }
+            findBranchesOfRepo(repo).intersect(repo.branches).forEach { cloneBranchOfRepository(repo, it) }
         } else {
             cloneBranchOfRepository(repo, branch)
         }

@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import ru.nikstep.redink.git.loader.GitLoader
+import ru.nikstep.redink.git.webhook.PayloadProcessor
+import ru.nikstep.redink.model.repo.BaseFileRecordRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SolutionFileRecordRepository
 import ru.nikstep.redink.util.GitProperty
@@ -13,8 +15,10 @@ import ru.nikstep.redink.util.GitProperty
 @RestController
 class SolutionsController(
     private val solutionFileRecordRepository: SolutionFileRecordRepository,
+    private val baseFileRecordRepository: BaseFileRecordRepository,
     private val repositoryRepository: RepositoryRepository,
-    @Qualifier("gitLoaders") private val loaders: Map<GitProperty, GitLoader>
+    @Qualifier("gitLoaders") private val loaders: Map<GitProperty, GitLoader>,
+    @Qualifier("payloadProcessors") private val payloadProcessors: Map<GitProperty, PayloadProcessor>
 ) {
 
     @GetMapping("/solutions")
@@ -43,9 +47,15 @@ class SolutionsController(
         val gitProperty = GitProperty.valueOf(git.toUpperCase())
         val repository = repositoryRepository.findByGitServiceAndName(gitProperty, repoName)
             ?: return ResponseEntity.notFound().build<Any?>()
-        val value = loaders.getValue(gitProperty)
-        value.cloneRepository(repository)
-        return ResponseEntity.ok(value.cloneRepository(repository))
+        val gitLoader = loaders.getValue(gitProperty)
+        val payloadProcessor = payloadProcessors.getValue(gitProperty)
+        gitLoader.cloneRepository(repository)
+        payloadProcessor.downloadAllPullRequestsOfRepository(repository)
+        return ResponseEntity.ok(
+            mapOf(
+                "bases" to baseFileRecordRepository.findAllByRepo(repository),
+                "solutions" to solutionFileRecordRepository.findAllByRepo(repository)
+            )
+        )
     }
-
 }

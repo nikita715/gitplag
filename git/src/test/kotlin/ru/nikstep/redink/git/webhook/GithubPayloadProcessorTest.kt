@@ -9,7 +9,7 @@ import ru.nikstep.redink.util.Language
 import java.time.LocalDateTime
 import java.time.Month
 
-class GithubWebhookServiceTest : AbstractWebhookServiceTest() {
+class GithubPayloadProcessorTest : AbstractPayloadProcessorTest() {
     override val payload by lazy { readPayloadOf("github") }
 
     override val gitLoader = mock<GithubLoader>()
@@ -20,7 +20,7 @@ class GithubWebhookServiceTest : AbstractWebhookServiceTest() {
         language = Language.JAVA
     )
 
-    override val webhookService = GithubWebhookService(pullRequestRepository, repositoryRepository, gitLoader)
+    override val payloadProcessor = GithubPayloadProcessor(pullRequestRepository, repositoryRepository, gitLoader)
 
     override val pullRequest = PullRequest(
         number = 8,
