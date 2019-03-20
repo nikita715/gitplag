@@ -9,7 +9,7 @@ import ru.nikstep.redink.util.Language
 import java.time.LocalDateTime
 import java.time.Month
 
-class BitbucketWebhookServiceTest : AbstractWebhookServiceTest() {
+class BitbucketPayloadProcessorTest : AbstractPayloadProcessorTest() {
     override val payload by lazy { readPayloadOf("bitbucket") }
 
     override val gitLoader = mock<BitbucketLoader>()
@@ -20,7 +20,7 @@ class BitbucketWebhookServiceTest : AbstractWebhookServiceTest() {
         language = Language.JAVA
     )
 
-    override val webhookService = BitbucketWebhookService(pullRequestRepository, repositoryRepository, gitLoader)
+    override val payloadProcessor = BitbucketPayloadProcessor(pullRequestRepository, repositoryRepository, gitLoader)
 
     override val pullRequest = PullRequest(
         number = 3,

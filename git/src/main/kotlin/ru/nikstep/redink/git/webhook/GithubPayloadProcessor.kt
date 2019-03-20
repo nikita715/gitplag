@@ -10,13 +10,13 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 /**
- * Implementation of the [AbstractWebhookService] for handling Github webhooks
+ * Implementation of the [AbstractPayloadProcessor] for handling Github webhooks
  */
-class GithubWebhookService(
-    private val pullRequestRepository: PullRequestRepository,
-    private val repositoryRepository: RepositoryRepository,
-    private val githubLoader: GithubLoader
-) : AbstractWebhookService(pullRequestRepository, repositoryRepository, githubLoader) {
+class GithubPayloadProcessor(
+    pullRequestRepository: PullRequestRepository,
+    repositoryRepository: RepositoryRepository,
+    githubLoader: GithubLoader
+) : AbstractPayloadProcessor(pullRequestRepository, repositoryRepository, githubLoader) {
 
     private val logger = KotlinLogging.logger {}
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")

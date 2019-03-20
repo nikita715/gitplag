@@ -9,6 +9,8 @@ interface BaseFileRecordRepository : JpaRepository<BaseFileRecord, Long> {
 
     fun findAllByRepoAndBranch(repo: Repository, branch: String): List<BaseFileRecord>
 
+    fun findAllByRepo(repo: Repository): List<BaseFileRecord>
+
     @Transactional
     fun deleteAllByRepoAndBranch(repo: Repository, branch: String)
 

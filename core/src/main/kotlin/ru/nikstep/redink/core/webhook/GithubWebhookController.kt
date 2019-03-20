@@ -5,16 +5,14 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import ru.nikstep.redink.git.webhook.GithubWebhookService
+import ru.nikstep.redink.git.webhook.GithubPayloadProcessor
 import javax.servlet.http.HttpServletRequest
 
 /**
  * Receiver of github webhook messages
  */
 @RestController
-class GithubWebhookController(
-    private val githubWebhookService: GithubWebhookService
-) {
+class GithubWebhookController(private val githubWebhookService: GithubPayloadProcessor) {
     private val logger = KotlinLogging.logger {}
 
     /**
@@ -25,8 +23,8 @@ class GithubWebhookController(
         val event = httpServletRequest.getHeader("X-GitHub-Event")
         logger.info { "Webhook: got new $event" }
         when (event) {
-            "pull_request", "ping" -> githubWebhookService.updateSolutionsOfPullRequest(payload)
-            "push" -> githubWebhookService.updateBasesOfRepository(payload)
+            "pull_request" -> githubWebhookService.downloadSolutionsOfPullRequest(payload)
+            "push", "ping" -> githubWebhookService.downloadBasesOfRepository(payload)
             else -> logger.info { "Webhook: $event is not supported" }
         }
     }

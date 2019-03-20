@@ -17,10 +17,10 @@ import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.asPath
 import java.nio.file.Paths
 
-abstract class AbstractWebhookServiceTest {
+abstract class AbstractPayloadProcessorTest {
 
     abstract val payload: String
-    abstract val webhookService: WebhookService
+    abstract val payloadProcessor: PayloadProcessor
     abstract val pullRequest: PullRequest
     abstract val repo: Repository
 
@@ -41,10 +41,10 @@ abstract class AbstractWebhookServiceTest {
     @Test
     fun saveNewPullRequest() {
         `when`(repositoryRepository.findByGitServiceAndName(any(), any())).thenReturn(repo)
-        webhookService.updateSolutionsOfPullRequest(payload)
+        payloadProcessor.downloadSolutionsOfPullRequest(payload)
         verify(pullRequestRepository).save(argument.capture())
         argument.value shouldEqual pullRequest
-        verify(gitLoader).loadFilesOfCommit(pullRequest)
+        verify(gitLoader).clonePullRequest(pullRequest)
     }
 
     companion object {
