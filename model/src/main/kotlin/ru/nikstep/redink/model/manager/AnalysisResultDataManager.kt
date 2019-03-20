@@ -13,7 +13,8 @@ import ru.nikstep.redink.model.repo.AnalysisRepository
 /**
  * Data manager of [AnalysisResult]
  */
-open class AnalysisResultDataManager(
+@Transactional
+class AnalysisResultDataManager(
     private val analysisRepository: AnalysisRepository,
     private val analysisPairRepository: AnalysisPairRepository,
     private val analysisPairLinesRepository: AnalysisPairLinesRepository
@@ -23,7 +24,7 @@ open class AnalysisResultDataManager(
      * Save all analysis results
      */
     @Transactional
-    open fun saveAnalysis(analysisSettings: AnalysisSettings, analysisResults: AnalysisResult): Analysis {
+    fun saveAnalysis(analysisSettings: AnalysisSettings, analysisResults: AnalysisResult): Analysis {
         val analysis = analysisRepository.save(
             Analysis(
                 repository = analysisSettings.repository,
