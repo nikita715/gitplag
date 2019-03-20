@@ -25,9 +25,8 @@ class GithubWebhookController(
         val event = httpServletRequest.getHeader("X-GitHub-Event")
         logger.info { "Webhook: got new $event" }
         when (event) {
-            "pull_request" -> githubWebhookService.saveNewPullRequest(payload)
-            "push" -> githubWebhookService.saveNewBaseFiles(payload)
-            "ping" -> githubWebhookService.saveNewRepository(payload)
+            "pull_request", "ping" -> githubWebhookService.updateSolutionsOfPullRequest(payload)
+            "push" -> githubWebhookService.updateBasesOfRepository(payload)
             else -> logger.info { "Webhook: $event is not supported" }
         }
     }

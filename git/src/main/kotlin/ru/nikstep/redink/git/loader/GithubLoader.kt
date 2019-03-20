@@ -4,78 +4,26 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
-import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.util.downloadAndUnpackZip
 import ru.nikstep.redink.util.sendRestRequest
 
 /**
  * Loader of files from Github
  */
 class GithubLoader(
-    private val solutionStorage: SolutionStorage
+    solutionStorage: SolutionStorage
 ) : AbstractGitLoader(solutionStorage) {
+
+    private val logger = KotlinLogging.logger {}
+
+    override fun findPullRequests(repo: Repository) =
+        sendRestRequest<JsonArray<JsonObject>>("https://api.github.com/repos/${repo.name}/pulls")
 
     override fun linkToRepoArchive(repoName: String, branchName: String): String =
         "https://github.com/$repoName/archive/$branchName.zip"
 
-    private val logger = KotlinLogging.logger {}
-
-    override fun cloneRepositoryAndPullRequests(repo: Repository) {
+    override fun findBranchesOfRepo(repo: Repository): List<String> =
         sendRestRequest<JsonArray<JsonObject>>("https://api.github.com/repos/${repo.name}/branches")
-            .forEach { loadBaseBranch(repo, requireNotNull(it.string("name"))) }
-        sendRestRequest<JsonArray<JsonObject>>("https://api.github.com/repos/${repo.name}/pulls")
-            .forEach { loadPullRequest(repo, it) }
-    }
+            .map { requireNotNull(it.string("name")) }
 
-    private fun loadPullRequest(repo: Repository, jsonPayload: JsonObject) {
-        val sourceBranchName = requireNotNull(jsonPayload.obj("head")?.string("ref"))
-        val sourceRepoName = requireNotNull(jsonPayload.obj("head")?.obj("repo")?.string("full_name"))
-        val headSha = requireNotNull(jsonPayload.obj("head")?.string("sha"))
-        val creator = requireNotNull(jsonPayload.obj("head")?.obj("user")?.string("login"))
-
-        logger.info { "Git: download zip archive of repo = $sourceRepoName, branch = $sourceBranchName" }
-        downloadAndUnpackZip("https://github.com/$sourceRepoName/archive/$sourceBranchName.zip") { unpackedDir ->
-            solutionStorage.saveSolutionsFromDir(
-                "$unpackedDir/${repo.name.substringAfter("/")}-$sourceBranchName",
-                repo, sourceBranchName, creator, headSha
-            )
-        }
-    }
-
-    fun loadBaseBranch(repo: Repository, branch: String) {
-        logger.info { "Git: download zip archive of repo = ${repo.name}, branch = $branch" }
-        downloadAndUnpackZip("https://github.com/${repo.name}/archive/$branch.zip") { unpackedDir ->
-            solutionStorage.saveBasesFromDir(
-                "$unpackedDir/${repo.name.substringAfter("/")}-$branch",
-                repo, branch
-            )
-        }
-    }
-
-    override fun loadFileText(repoFullName: String, branchName: String, fileName: String): String =
-        sendRestRequest("https://raw.githubusercontent.com/$repoFullName/$branchName/$fileName")
-
-    override fun loadChangedFiles(pullRequest: PullRequest): List<String> =
-        loadChangedFiles(pullRequest.repo.name, pullRequest.number)
-
-    private fun loadChangedFiles(mainRepoFullName: String, prNumber: Int): List<String> =
-        sendRestRequest<JsonArray<*>>(
-            "https://api.github.com/repos/$mainRepoFullName/pulls/$prNumber/files"
-        ).mapNotNull {
-            val fileRecord = it as JsonObject
-            if (isChanged(fileRecord)) fileRecord.string("filename") else null
-        }
-
-    override fun loadChangedFilesOfCommit(repoName: String, headSha: String): List<String> =
-        sendRestRequest<JsonObject>(
-            "https://api.github.com/repos/$repoName/commits/$headSha"
-        ).array<JsonObject>("files")!!.mapNotNull {
-            val fileRecord = it
-            if (isChanged(fileRecord)) fileRecord.string("filename") else null
-        }
-
-    fun isChanged(changedFileRecord: JsonObject) =
-        changedFileRecord.string("status") == "added" ||
-                changedFileRecord.string("status") == "modified"
 }

@@ -33,6 +33,14 @@ open class RepositoryDataManager(
         }
     }
 
+    @Transactional
+    open fun nameMatchesRegexp(fileName: String, repo: Repository): Boolean {
+        repo.filePatterns.forEach {
+            if (it.toRegex().matches(fileName)) return true
+        }
+        return false
+    }
+
     /**
      * Delete repositories by [repoNames]
      */

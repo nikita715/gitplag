@@ -23,7 +23,8 @@ class GitlabWebhookController(private val gitlabWebhookService: GitlabWebhookSer
         val event = httpServletRequest.getHeader("X-Gitlab-Event")
         logger.info { "Webhook: got new $event" }
         when (event) {
-            "Merge Request Hook" -> gitlabWebhookService.saveNewPullRequest(payload)
+            "Merge Request Hook" -> gitlabWebhookService.updateSolutionsOfPullRequest(payload)
+            "Push Hook" -> gitlabWebhookService.updateBasesOfRepository(payload)
             else -> logger.info { "Webhook: $event is not supported" }
         }
     }
