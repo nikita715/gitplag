@@ -2,9 +2,7 @@ package ru.nikstep.redink.analysis.solutions
 
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.PreparedAnalysisData
-import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.model.entity.SolutionFileRecord
 import java.io.File
 
 /**
@@ -21,18 +19,6 @@ interface SolutionStorage {
      * Save base files to local storage
      */
     fun saveBasesFromDir(tempDir: String, repo: Repository, branchName: String)
-
-    /**
-     * Save base file to local storage
-     */
-    @Deprecated("Migrated to repo cloning")
-    fun saveBaseByText(repo: Repository, branch: String, fileName: String, fileText: String)
-
-    /**
-     * Save solution of [fileName] for [PullRequest.creatorName]
-     */
-    @Deprecated("Migrated to repo cloning")
-    fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): SolutionFileRecord
 
     /**
      * Save [sourceFileInfo] solution
