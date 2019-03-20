@@ -5,7 +5,6 @@ import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.model.data.Solution
 import ru.nikstep.redink.model.entity.BaseFileRecord
-import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.SolutionFileRecord
 import ru.nikstep.redink.model.manager.RepositoryDataManager
@@ -15,7 +14,6 @@ import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.forEachFileInDirectory
 import java.io.File
-import java.io.FileOutputStream
 import java.nio.file.Files
 
 class FileSystemSolutionStorage(
@@ -48,7 +46,7 @@ class FileSystemSolutionStorage(
 
     private fun loadSeparateSolutions(analysisSettings: AnalysisSettings): List<Solution> =
         loadSourceCodeForAnalysis(analysisSettings).map {
-            val file = pathToSolution(analysisSettings, it).asFile()
+            val file = File(pathToSolution(analysisSettings, it))
             if (file.exists())
                 Solution(it.user, it.fileName, file, listOf(), listOf(), it.sha)
             else
@@ -69,7 +67,7 @@ class FileSystemSolutionStorage(
                     val generatedFile = File(studentDir.absolutePath + "/" + generatedFileName)
                     indexToFileName += generatedFileName to solutionOfStudent.fileName
                     Files.copy(
-                        pathToSolution(analysisSettings, solutionOfStudent).asPath(),
+                        File(pathToSolution(analysisSettings, solutionOfStudent)).toPath(),
                         generatedFile.toPath()
                     )
                     Solution(
@@ -88,7 +86,7 @@ class FileSystemSolutionStorage(
                 val fileNames = mutableListOf<String>()
                 val filePositions = mutableListOf<Int>()
                 it.value.forEach { solutionOfStudent ->
-                    val solFile = pathToSolution(analysisSettings, solutionOfStudent).asFile()
+                    val solFile = File(pathToSolution(analysisSettings, solutionOfStudent))
                     composedFile.appendText(solFile.readText())
                     filePositions += solutionOfStudent.countOfLines + composedFileLength
                     composedFileLength += solutionOfStudent.countOfLines
@@ -104,7 +102,7 @@ class FileSystemSolutionStorage(
         branchName: String
     ) {
         val pathToBases = pathToBases(repo.gitService, repo.name, branchName)
-        pathToBases.asFile().deleteRecursively()
+        File(pathToBases).deleteRecursively()
         baseFileRecordRepository.deleteAllByRepoAndBranch(repo, branchName)
         forEachFileInDirectory(tempDir) { foundedFile ->
             val fileName = File(tempDir).toPath().relativize(foundedFile.toPath()).toString()
@@ -132,7 +130,7 @@ class FileSystemSolutionStorage(
         headSha: String
     ) {
         val pathToSolutions = pathToSolutions(repo.gitService, repo.name, branchName, creator)
-        pathToSolutions.asFile().deleteRecursively()
+        File(pathToSolutions).deleteRecursively()
         solutionFileRecordRepository.deleteAllByRepoAndBranchAndUser(repo, branchName, creator)
         forEachFileInDirectory(tempDir) { foundedFile ->
             val fileName = File(tempDir).toPath().relativize(foundedFile.toPath()).toString()
@@ -157,45 +155,10 @@ class FileSystemSolutionStorage(
 
     override fun loadBases(settings: AnalysisSettings): List<File> =
         baseFileRecordRepository.findAllByRepoAndBranch(settings.repository, settings.branch)
-            .map { pathToBase(settings, it.fileName).asFile() }
+            .map { File(pathToBase(settings, it.fileName)) }
 
     private fun loadSourceCodeForAnalysis(analysisSettings: AnalysisSettings) =
         solutionFileRecordRepository.findAllByRepoAndBranch(analysisSettings.repository, analysisSettings.branch)
-
-    override fun saveSolution(pullRequest: PullRequest, fileName: String, fileText: String): SolutionFileRecord {
-        val pathToSolution = pathToSolution(pullRequest, fileName)
-        solutionFileRecordRepository.deleteByRepoAndUserAndFileNameAndBranch(
-            pullRequest.repo,
-            pullRequest.creatorName,
-            fileName,
-            pullRequest.sourceBranchName
-        )
-        val savedFile = saveLocally(pathToSolution, fileText)
-        val fileLength = Files.lines(savedFile.toPath()).count().toInt()
-        return solutionFileRecordRepository.save(SolutionFileRecord(pullRequest, fileName, fileLength))
-    }
-
-    override fun saveBaseByText(repo: Repository, branch: String, fileName: String, fileText: String) {
-        val pathToBase =
-            pathToBase(repo.gitService, repo.name, branch, fileName)
-        saveLocally(pathToBase, fileText)
-        baseFileRecordRepository.save(
-            BaseFileRecord(
-                repo = repo,
-                fileName = fileName,
-                branch = branch
-            )
-        )
-    }
-
-    private fun saveLocally(pathToFile: String, fileText: String): File {
-        Files.createDirectories(pathToFile.substringBeforeLast("/").asPath())
-        Files.deleteIfExists(pathToFile.asPath())
-        val file = Files.createFile(pathToFile.asPath()).toFile()
-        FileOutputStream(file).use { fileOutputStream -> fileOutputStream.write(fileText.toByteArray()) }
-        logger.info { "File storage: saved file $pathToFile" }
-        return file
-    }
 
     private fun pathToBases(git: GitProperty, repo: String, branch: String): String =
         asPath(solutionsDir, git, repo, branch, baseDir)
@@ -220,18 +183,5 @@ class FileSystemSolutionStorage(
             analysisSettings.repository.gitService, analysisSettings.repository.name,
             solutionFileRecord.branch, solutionFileRecord.user, solutionFileRecord.fileName
         )
-
-    private fun pathToSolution(pullRequest: PullRequest, fileName: String): String =
-        pathToSolution(
-            pullRequest.repo.gitService,
-            pullRequest.repo.name,
-            pullRequest.sourceBranchName,
-            pullRequest.creatorName,
-            fileName
-        )
-
-    private fun String.asPath() = this.asFile().toPath()
-
-    private fun String.asFile() = File(this)
 
 }
