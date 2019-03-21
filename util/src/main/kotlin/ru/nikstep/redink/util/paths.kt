@@ -1,9 +1,9 @@
 package ru.nikstep.redink.util
 
-import java.io.File
 import java.nio.file.Paths
 
 private val separator = System.getProperty("file.separator")
+private val rootDirRegex = "/\\w+/\\w+$".toRegex()
 
 /**
  * Combine [parts] to file system path with [separator]
@@ -17,11 +17,11 @@ fun asPath(vararg parts: Any): String {
  */
 fun String.asPathInRoot(): String =
     let {
-        Paths.get(it)
+        Paths.get(it).toAbsolutePath()
     }.run {
         if (toFile().exists()) {
             toString()
         } else {
-            File(toString().substringBeforeLast("/")).absolutePath
+            toString().replace(rootDirRegex, "/libs")
         }
     }

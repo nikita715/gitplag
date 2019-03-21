@@ -28,6 +28,8 @@ internal class JPlagClient(
         buildString {
             append("java -jar $jplagPath  -l $language -bc .base -r $resultDir -s ")
             append(asPath(solutionsDir, gitService, repoName, branchName))
+        }.also {
+            logger.info { it }
         }.also(::execute)
 
     private fun execute(task: String) {

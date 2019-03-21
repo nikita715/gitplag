@@ -116,6 +116,8 @@ class MossAnalyser(
         val leftFilesToMatchedLines = filesWithMatchedLines(leftMatchedLines, solution1)
         val rightFilesToMatchedLines = filesWithMatchedLines(rightMatchedLines, solution2)
 
+        if (leftFilesToMatchedLines.size != rightFilesToMatchedLines.size) return emptyList()
+
         return (0 until leftFilesToMatchedLines.size).map { i ->
             MatchedLines(
                 match1 = leftFilesToMatchedLines[i].second.first to leftFilesToMatchedLines[i].second.second,
@@ -125,19 +127,35 @@ class MossAnalyser(
         }
     }
 
-    private fun filesWithMatchedLines(matchedLines: List<Pair<Int, Int>>, solution: Solution) =
-        matchedLines.map {
+    private fun filesWithMatchedLines(
+        matchedLines: List<Pair<Int, Int>>,
+        solution: Solution
+    ): List<Pair<String, Pair<Int, Int>>> =
+        matchedLines.flatMap {
             var index = 0
+            var pairs = listOf(it)
             for (i in solution.includedFilePositions) {
                 if (it.first >= i) {
                     index++
-                }
+                } else break
             }
-            if (index > 0)
-                solution.includedFileNames[index] to
-                        (it.first - solution.includedFilePositions[index - 1]
-                                to it.second - solution.includedFilePositions[index - 1]) else
-                solution.includedFileNames[index] to it
+            for (i in index until solution.includedFilePositions.size) {
+                if (pairs.last().second > solution.includedFilePositions[i]) {
+                    pairs = splitPairs(pairs, solution.includedFilePositions[i])
+                } else break
+            }
+            if (index > 0) pairs.mapIndexed { order, pair ->
+                solution.includedFileNames[index + order] to
+                        (pair.first - solution.includedFilePositions[index + order - 1]
+                                to pair.second - solution.includedFilePositions[index + order - 1])
+            } else pairs.mapIndexed { order, pair ->
+                solution.includedFileNames[index + order] to pair
+            }
         }
+
+    private fun splitPairs(pairs: List<Pair<Int, Int>>, index: Int): List<Pair<Int, Int>> {
+        val lastPair = pairs.last()
+        return pairs.dropLast(1).plus(listOf(lastPair.first to index, index + 1 to lastPair.second))
+    }
 
 }
