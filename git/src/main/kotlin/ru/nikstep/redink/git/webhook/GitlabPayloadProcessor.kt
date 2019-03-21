@@ -27,7 +27,7 @@ class GitlabPayloadProcessor(
         get() = this?.int("iid")
 
     override val JsonObject?.creatorName: String?
-        get() = this?.obj("author")?.string("username")
+        get() = this?.obj("source")?.string("namespace")
 
     override val JsonObject?.sourceRepoId: Long?
         get() = this?.long("source_project_id")
