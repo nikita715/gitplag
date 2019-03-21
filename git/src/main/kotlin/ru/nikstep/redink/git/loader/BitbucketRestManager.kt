@@ -16,7 +16,7 @@ class BitbucketRestManager(
         requireNotNull(sendRestRequest<JsonObject>("https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2/refs/branches")
             .array<JsonObject>("values")?.map { requireNotNull(it.string("name")) })
 
-    override fun findPullRequests(repo: Repository) =
+    override fun findPullRequests(repo: Repository, page: Int) =
         requireNotNull(
             sendRestRequest<JsonObject>("https://api.bitbucket.org/2.0/repositories/${repo.name}/pullrequests")
                 .array<JsonObject>("values")

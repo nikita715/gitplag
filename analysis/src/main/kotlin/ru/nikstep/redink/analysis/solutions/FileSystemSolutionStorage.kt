@@ -161,16 +161,16 @@ class FileSystemSolutionStorage(
         solutionFileRecordRepository.findAllByRepoAndBranch(analysisSettings.repository, analysisSettings.branch)
 
     private fun pathToBases(git: GitProperty, repo: String, branch: String): String =
-        asPath(solutionsDir, git, repo, branch, baseDir)
+        asPath(solutionsDir, git, repo, branch.toLowerCase(), baseDir)
 
     private fun pathToBase(git: GitProperty, repo: String, branch: String, file: String): String =
-        asPath(solutionsDir, git, repo, branch, baseDir, file)
+        asPath(solutionsDir, git, repo, branch.toLowerCase(), baseDir, file)
 
     private fun pathToSolution(git: GitProperty, repo: String, branch: String, creator: String, file: String): String =
-        asPath(solutionsDir, git, repo, branch, creator, file)
+        asPath(solutionsDir, git, repo, branch.toLowerCase(), creator, file)
 
     private fun pathToSolutions(git: GitProperty, repo: String, branch: String, creator: String): String =
-        asPath(solutionsDir, git, repo, branch, creator)
+        asPath(solutionsDir, git, repo, branch.toLowerCase(), creator)
 
     private fun pathToBase(analysisSettings: AnalysisSettings, fileName: String): String =
         pathToBase(

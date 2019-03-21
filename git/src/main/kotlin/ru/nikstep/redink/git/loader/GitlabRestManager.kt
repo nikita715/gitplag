@@ -21,7 +21,7 @@ class GitlabRestManager(
             .map { requireNotNull(it.string("name")) }
 
 
-    override fun findPullRequests(repo: Repository): JsonArray<JsonObject> =
+    override fun findPullRequests(repo: Repository, page: Int): JsonArray<JsonObject> =
         sendRestRequest("https://gitlab.com/api/v4/projects/${repo.gitId}/merge_requests")
 
     override fun linkToRepoArchive(repoName: String, branchName: String): String {
