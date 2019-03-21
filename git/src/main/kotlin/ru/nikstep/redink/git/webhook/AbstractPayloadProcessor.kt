@@ -70,7 +70,7 @@ abstract class AbstractPayloadProcessor(
         val prJsonObject = jsonObject.pullRequest
         val prNumber = requireNotNull(prJsonObject.number)
         val sourceBranch = requireNotNull(prJsonObject.sourceBranchName)
-        if (!repo.branches.isEmpty() && !repo.branches.contains(sourceBranch)) {
+        if (!repo.branches.isEmpty() && !repo.branches.contains(sourceBranch.toLowerCase())) {
             logger.info { "Webhook: Ignored pr from branch $sourceBranch to repo ${repo.name}, pr number $prNumber" }
             return
         }
@@ -86,7 +86,7 @@ abstract class AbstractPayloadProcessor(
             pullRequestRepository.save(pullRequest)
         } else {
             val pullRequest = prJsonObject.run { parsePullRequest(repo) }
-            if (pullRequest.sourceRepoFullName != prJsonObject.mainRepoFullName) {
+            if (pullRequest != null && pullRequest.sourceRepoFullName != prJsonObject.mainRepoFullName) {
                 logger.info { "Webhook: received new pr from repo ${prJsonObject.pushRepoName}, pr number ${pullRequest.number}" }
                 gitRestManager.clonePullRequest(pullRequest)
                 pullRequestRepository.save(pullRequest)
@@ -109,18 +109,32 @@ abstract class AbstractPayloadProcessor(
     }
 
     override fun downloadAllPullRequestsOfRepository(repo: Repository) {
-        gitRestManager.findPullRequests(repo).forEach {
+        var page = 1
+        while (true) {
+            val pullRequests = gitRestManager.findPullRequests(repo, page++)
+            if (pullRequests.isNotEmpty()) {
+                downloadPullRequests(repo, pullRequests)
+            } else break
+        }
+    }
+
+    private fun downloadPullRequests(repo: Repository, pullRequestsJsons: Collection<JsonObject>) {
+        pullRequestsJsons.forEach {
             it.run {
                 if (mainRepoFullName == sourceRepoFullName) {
                     logger.info { "Webhook: Ignored pr to itself repo ${repo.name}" }
-                } else if (!repo.branches.contains(sourceBranchName)) {
+                } else if (!repo.branches.contains(sourceBranchName?.toLowerCase())) {
                     logger.info { "Webhook: Ignored pr from branch $sourceBranchName to repo ${repo.name}, pr number $number" }
                 } else {
-                    val pullRequest = pullRequestRepository.save(parsePullRequest(repo))
-                    gitRestManager.clonePullRequest(pullRequest)
-                    logger.info { "Webhook: cloned new pr from repo ${repo.name}, pr number ${pullRequest.number}" }
+                    val pullRequest = parsePullRequest(repo)
+                    if (pullRequest != null) {
+                        val savedPullRequest = pullRequestRepository.save(pullRequest)
+                        gitRestManager.clonePullRequest(savedPullRequest)
+                        logger.info { "Webhook: cloned new pr from repo ${repo.name}, pr number ${savedPullRequest.number}" }
+                    }
                 }
             }
+
         }
     }
 
@@ -133,19 +147,24 @@ abstract class AbstractPayloadProcessor(
         }
     }
 
-    private fun JsonObject.parsePullRequest(repo: Repository): PullRequest =
-        PullRequest(
-            number = requireNotNull(number),
-            creatorName = requireNotNull(creatorName),
-            sourceRepoId = requireNotNull(sourceRepoId),
-            mainRepoId = requireNotNull(mainRepoId),
-            sourceRepoFullName = requireNotNull(sourceRepoFullName),
-            repo = repo,
-            headSha = requireNotNull(sourceHeadSha),
-            sourceBranchName = requireNotNull(sourceBranchName),
-            mainBranchName = requireNotNull(mainBranchName),
-            date = requireNotNull(date)
-        )
+    private fun JsonObject.parsePullRequest(repo: Repository): PullRequest? =
+        try {
+            PullRequest(
+                number = requireNotNull(number),
+                creatorName = requireNotNull(creatorName),
+                sourceRepoId = requireNotNull(sourceRepoId),
+                mainRepoId = requireNotNull(mainRepoId),
+                sourceRepoFullName = requireNotNull(sourceRepoFullName),
+                repo = repo,
+                headSha = requireNotNull(sourceHeadSha),
+                sourceBranchName = requireNotNull(sourceBranchName),
+                mainBranchName = requireNotNull(mainBranchName),
+                date = requireNotNull(date)
+            )
+        } catch (e: Exception) {
+            logger.error { "Webhook: unable to load pr number $number to repo ${repo.name}, git ${repo.gitService}" }
+            null
+        }
 
     protected abstract val git: GitProperty
 

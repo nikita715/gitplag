@@ -16,8 +16,8 @@ class GithubRestManager(
 
     private val logger = KotlinLogging.logger {}
 
-    override fun findPullRequests(repo: Repository) =
-        sendRestRequest<JsonArray<JsonObject>>("https://api.github.com/repos/${repo.name}/pulls")
+    override fun findPullRequests(repo: Repository, page: Int) =
+        sendRestRequest<JsonArray<JsonObject>>("https://api.github.com/repos/${repo.name}/pulls?page=$page&state=all")
 
     override fun linkToRepoArchive(repoName: String, branchName: String): String =
         "https://github.com/$repoName/archive/$branchName.zip"

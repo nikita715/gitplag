@@ -21,6 +21,6 @@ interface GitRestManager {
      */
     fun cloneRepository(repo: Repository, branch: String? = null)
 
-    fun findPullRequests(repo: Repository): Collection<JsonObject>
+    fun findPullRequests(repo: Repository, page: Int): Collection<JsonObject>
 
 }
