@@ -5,7 +5,6 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import io.kotlintest.matchers.shouldEqual
-import org.junit.Ignore
 import org.junit.Test
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
@@ -22,8 +21,6 @@ import java.nio.file.Paths
 import java.time.LocalDateTime
 
 class JPlagAnalyserTest : AbstractAnalyserTest() {
-
-    private val gitService = GitProperty.GITHUB
 
     private val relSolutionsDir = asPath("src", "test", "resources", "separateSolutions")
 
@@ -83,7 +80,6 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
 
     private val expectedResult =
         AnalysisResult(
-            gitService = gitService,
             repo = testRepoName,
             resultLink = "$serverUrl/jplagresult/$prefix/index.html",
             executionDate = LocalDateTime.now(),
@@ -155,7 +151,6 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
         )
 
     @Test
-    @Ignore
     fun analyse() {
         val analysisResult = analysisService.analyse(analysisSettings)
         analysisResult shouldEqual expectedResult.copy(executionDate = analysisResult.executionDate)
