@@ -7,7 +7,7 @@ import ru.nikstep.redink.model.entity.Repository
 /**
  * Loader of files from git services
  */
-interface GitLoader {
+interface GitRestManager {
 
     /**
      * Upload files that have changed in the pull request

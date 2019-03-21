@@ -5,7 +5,7 @@ import ru.nikstep.redink.git.webhook.BitbucketPayloadProcessor
 import ru.nikstep.redink.git.webhook.GithubPayloadProcessor
 import ru.nikstep.redink.git.webhook.GitlabPayloadProcessor
 import ru.nikstep.redink.git.webhook.PayloadProcessor
-import ru.nikstep.redink.util.GitProperty
+import ru.nikstep.redink.model.enums.GitProperty
 
 val gitBeans = beans {
     bean<GitlabPayloadProcessor>()

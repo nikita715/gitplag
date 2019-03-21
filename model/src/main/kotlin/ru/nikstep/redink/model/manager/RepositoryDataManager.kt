@@ -2,10 +2,10 @@ package ru.nikstep.redink.model.manager
 
 import org.springframework.transaction.annotation.Transactional
 import ru.nikstep.redink.model.entity.Repository
+import ru.nikstep.redink.model.enums.AnalyserProperty
+import ru.nikstep.redink.model.enums.GitProperty
+import ru.nikstep.redink.model.enums.Language
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.util.AnalyserProperty
-import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.Language
 
 /**
  * Data manager of [Repository]

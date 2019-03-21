@@ -6,17 +6,19 @@
 //import org.springframework.web.bind.annotation.GetMapping
 //import org.springframework.web.bind.annotation.PathVariable
 //import org.springframework.web.bind.annotation.RestController
-//import ru.nikstep.redink.git.loader.GitLoader
+//import ru.nikstep.redink.analysis.solutions.SolutionStorage
+//import ru.nikstep.redink.git.loader.GitRestManager
 //import ru.nikstep.redink.model.repo.AnalysisPairRepository
-//import ru.nikstep.redink.util.GitProperty
+//import ru.nikstep.redink.model.repo.AnalysisRepository
+//import ru.nikstep.redink.model.enums.GitProperty
 //
 ///**
 // * Analysis results views controller
 // */
 //@RestController
 //class ResultsController(
-//    private val analysisPairRepository: AnalysisPairRepository,
-//    @Qualifier("gitLoaders") private val loaders: Map<GitProperty, GitLoader>
+//    private val analysisRepository: AnalysisRepository,
+//    private val solutionStorage: SolutionStorage
 //) {
 //
 //    private val resultsStyle: HEAD.() -> Unit = {
@@ -29,8 +31,8 @@
 //     */
 //    @GetMapping("result/{id}")
 //    fun getResult(@PathVariable id: Int): String {
-//        val analysisPair = analysisPairRepository.findById(id.toLong()).get()
-//        val file1 = ""
+//        val analysisPair = analysisRepository.findById(id.toLong()).get()
+//        val file1 = solutionStorage.
 ////            loaders.getValue(analysisPair.gitService)
 ////            .loadFileText(analysisPair.repo, analysisPair.student1Sha, analysisPair.analysisPairLines[0].fileName1)
 //        val file2 = ""
@@ -75,7 +77,7 @@
 //                apply(resultsStyle)
 //            }
 //            body {
-//                analysisPairRepository.findAllByRepoOrderByIdDesc(repoFullName).forEach { analysisPair ->
+//                analysisRepository.findAllByRepoOrderByIdDesc(repoFullName).forEach { analysisPair ->
 //                    a("/result/${analysisPair.id}") { +analysisPair.id.toString() }
 //                    br { }
 //                }

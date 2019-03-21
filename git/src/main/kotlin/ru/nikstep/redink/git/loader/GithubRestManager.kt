@@ -10,9 +10,9 @@ import ru.nikstep.redink.util.sendRestRequest
 /**
  * Loader of files from Github
  */
-class GithubLoader(
+class GithubRestManager(
     solutionStorage: SolutionStorage
-) : AbstractGitLoader(solutionStorage) {
+) : AbstractGitRestManager(solutionStorage) {
 
     private val logger = KotlinLogging.logger {}
 

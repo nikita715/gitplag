@@ -8,9 +8,9 @@ import ru.nikstep.redink.util.sendRestRequest
 /**
  * Loader of files from Bitbucket
  */
-class BitbucketLoader(
+class BitbucketRestManager(
     solutionStorage: SolutionStorage
-) : AbstractGitLoader(solutionStorage) {
+) : AbstractGitRestManager(solutionStorage) {
 
     override fun findBranchesOfRepo(repo: Repository) =
         requireNotNull(sendRestRequest<JsonObject>("https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2/refs/branches")

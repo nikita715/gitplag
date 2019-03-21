@@ -1,18 +1,18 @@
 package ru.nikstep.redink.git.webhook
 
 import com.nhaarman.mockitokotlin2.mock
-import ru.nikstep.redink.git.loader.BitbucketLoader
+import ru.nikstep.redink.git.loader.BitbucketRestManager
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.Language
+import ru.nikstep.redink.model.enums.GitProperty
+import ru.nikstep.redink.model.enums.Language
 import java.time.LocalDateTime
 import java.time.Month
 
 class BitbucketPayloadProcessorTest : AbstractPayloadProcessorTest() {
     override val payload by lazy { readPayloadOf("bitbucket") }
 
-    override val gitLoader = mock<BitbucketLoader>()
+    override val gitRestManager = mock<BitbucketRestManager>()
 
     override val repo = Repository(
         name = "nikita715/plagiarism_test2",
@@ -20,7 +20,8 @@ class BitbucketPayloadProcessorTest : AbstractPayloadProcessorTest() {
         language = Language.JAVA
     )
 
-    override val payloadProcessor = BitbucketPayloadProcessor(pullRequestRepository, repositoryRepository, gitLoader)
+    override val payloadProcessor =
+        BitbucketPayloadProcessor(pullRequestRepository, repositoryRepository, gitRestManager)
 
     override val pullRequest = PullRequest(
         number = 3,

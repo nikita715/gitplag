@@ -1,9 +1,9 @@
 package ru.nikstep.redink.model.data
 
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.util.AnalyserProperty
-import ru.nikstep.redink.util.AnalysisMode
-import ru.nikstep.redink.util.Language
+import ru.nikstep.redink.model.enums.AnalyserProperty
+import ru.nikstep.redink.model.enums.AnalysisMode
+import ru.nikstep.redink.model.enums.Language
 
 /**
  * Input analysis properties

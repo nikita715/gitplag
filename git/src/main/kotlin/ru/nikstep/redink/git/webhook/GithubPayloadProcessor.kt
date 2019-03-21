@@ -2,10 +2,10 @@ package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
-import ru.nikstep.redink.git.loader.GithubLoader
+import ru.nikstep.redink.git.loader.GithubRestManager
+import ru.nikstep.redink.model.enums.GitProperty.GITHUB
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.util.GitProperty.GITHUB
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter
 class GithubPayloadProcessor(
     pullRequestRepository: PullRequestRepository,
     repositoryRepository: RepositoryRepository,
-    githubLoader: GithubLoader
+    githubLoader: GithubRestManager
 ) : AbstractPayloadProcessor(pullRequestRepository, repositoryRepository, githubLoader) {
 
     private val logger = KotlinLogging.logger {}

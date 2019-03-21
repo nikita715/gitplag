@@ -4,8 +4,8 @@ import mu.KotlinLogging
 import ru.nikstep.redink.analysis.analyser.Analyser
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.entity.Analysis
+import ru.nikstep.redink.model.enums.AnalyserProperty
 import ru.nikstep.redink.model.manager.AnalysisResultDataManager
-import ru.nikstep.redink.util.AnalyserProperty
 
 /**
  * Main analysis class

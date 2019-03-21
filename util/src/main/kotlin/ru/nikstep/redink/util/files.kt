@@ -20,7 +20,7 @@ fun <T> inTempDirectory(action: (dirPath: String) -> T): T {
 }
 
 /**
- * Perform the [action] in a temp directory
+ * Download an archive from the [resourceUrl], unpack it and perform the action in it
  */
 fun <T> downloadAndUnpackZip(resourceUrl: String, action: (unpackedDir: String) -> T): T =
     inTempDirectory { tempDir ->
@@ -38,6 +38,9 @@ fun <T> downloadAndUnpackZip(resourceUrl: String, action: (unpackedDir: String) 
     }
 
 
+/**
+ * Foreach for regular public files in the [path]
+ */
 fun forEachFileInDirectory(path: String, action: (File) -> Unit) {
     Files.walk(File(path).toPath()).filter { Files.isRegularFile(it) && !Files.isHidden(it) }.forEach { file ->
         val foundedFile = file.toFile()

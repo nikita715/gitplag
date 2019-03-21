@@ -8,13 +8,9 @@ import org.junit.Test
 import org.mockito.Mockito
 import ru.nikstep.redink.analysis.analyser.MossAnalyser
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
-import ru.nikstep.redink.model.data.AnalysisMatch
-import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.data.PreparedAnalysisData
-import ru.nikstep.redink.model.data.Solution
-import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.Language
+import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.model.enums.GitProperty
+import ru.nikstep.redink.model.enums.Language
 import ru.nikstep.redink.util.asPath
 import java.io.File
 import java.time.LocalDateTime

@@ -1,18 +1,18 @@
 package ru.nikstep.redink.git.webhook
 
 import io.kotlintest.mock.mock
-import ru.nikstep.redink.git.loader.GithubLoader
+import ru.nikstep.redink.git.loader.GithubRestManager
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.Language
+import ru.nikstep.redink.model.enums.GitProperty
+import ru.nikstep.redink.model.enums.Language
 import java.time.LocalDateTime
 import java.time.Month
 
 class GithubPayloadProcessorTest : AbstractPayloadProcessorTest() {
     override val payload by lazy { readPayloadOf("github") }
 
-    override val gitLoader = mock<GithubLoader>()
+    override val gitRestManager = mock<GithubRestManager>()
 
     override val repo = Repository(
         name = "nikita715/plagiarism_test",
@@ -20,7 +20,7 @@ class GithubPayloadProcessorTest : AbstractPayloadProcessorTest() {
         language = Language.JAVA
     )
 
-    override val payloadProcessor = GithubPayloadProcessor(pullRequestRepository, repositoryRepository, gitLoader)
+    override val payloadProcessor = GithubPayloadProcessor(pullRequestRepository, repositoryRepository, gitRestManager)
 
     override val pullRequest = PullRequest(
         number = 8,

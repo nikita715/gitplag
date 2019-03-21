@@ -9,7 +9,7 @@ import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
-import ru.nikstep.redink.git.loader.GitLoader
+import ru.nikstep.redink.git.loader.GitRestManager
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.PullRequestRepository
@@ -34,7 +34,7 @@ abstract class AbstractPayloadProcessorTest {
         `when`(it.save<PullRequest>(any())).thenAnswer(PullRequestAnswer)
     }
 
-    abstract val gitLoader: GitLoader
+    abstract val gitRestManager: GitRestManager
 
     protected val repositoryRepository = mock<RepositoryRepository>()
 
@@ -44,7 +44,7 @@ abstract class AbstractPayloadProcessorTest {
         payloadProcessor.downloadSolutionsOfPullRequest(payload)
         verify(pullRequestRepository).save(argument.capture())
         argument.value shouldEqual pullRequest
-        verify(gitLoader).clonePullRequest(pullRequest)
+        verify(gitRestManager).clonePullRequest(pullRequest)
     }
 
     companion object {

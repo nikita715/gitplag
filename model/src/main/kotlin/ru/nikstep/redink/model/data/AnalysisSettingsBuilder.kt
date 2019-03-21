@@ -1,9 +1,9 @@
 package ru.nikstep.redink.model.data
 
 import mu.KotlinLogging
-import ru.nikstep.redink.util.AnalyserProperty
-import ru.nikstep.redink.util.AnalysisMode
-import ru.nikstep.redink.util.Language
+import ru.nikstep.redink.model.enums.AnalyserProperty
+import ru.nikstep.redink.model.enums.AnalysisMode
+import ru.nikstep.redink.model.enums.Language
 
 private val logger = KotlinLogging.logger {}
 
@@ -60,7 +60,7 @@ fun AnalysisSettings.language(language: String?): AnalysisSettings {
 }
 
 /**
- * Set the [branches] to the [AnalysisSettings]
+ * Set the [branch] to the [AnalysisSettings]
  */
 fun AnalysisSettings.branch(branch: String?): AnalysisSettings {
     if (branch != null) {
@@ -80,7 +80,7 @@ fun AnalysisSettings.branch(branch: String?): AnalysisSettings {
 }
 
 /**
- * Set the [language] to the [AnalysisSettings]
+ * Set the [mode] to the [AnalysisSettings]
  */
 fun AnalysisSettings.mode(mode: AnalysisMode): AnalysisSettings =
     AnalysisSettings(
@@ -92,7 +92,7 @@ fun AnalysisSettings.mode(mode: AnalysisMode): AnalysisSettings =
     )
 
 /**
- * Set the [language] to the [AnalysisSettings]
+ * Set the [mode] to the [AnalysisSettings]
  */
 fun AnalysisSettings.mode(mode: String?): AnalysisSettings {
     if (mode != null) {

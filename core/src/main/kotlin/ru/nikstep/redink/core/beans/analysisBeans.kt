@@ -6,24 +6,24 @@ import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.analysis.analyser.MossAnalyser
 import ru.nikstep.redink.analysis.solutions.FileSystemSolutionStorage
 import ru.nikstep.redink.core.util.safeEnvVar
-import ru.nikstep.redink.git.loader.BitbucketLoader
-import ru.nikstep.redink.git.loader.GitLoader
-import ru.nikstep.redink.git.loader.GithubLoader
-import ru.nikstep.redink.git.loader.GitlabLoader
-import ru.nikstep.redink.util.AnalyserProperty
-import ru.nikstep.redink.util.GitProperty
+import ru.nikstep.redink.git.loader.BitbucketRestManager
+import ru.nikstep.redink.git.loader.GitRestManager
+import ru.nikstep.redink.git.loader.GithubRestManager
+import ru.nikstep.redink.git.loader.GitlabRestManager
+import ru.nikstep.redink.model.enums.AnalyserProperty
+import ru.nikstep.redink.model.enums.GitProperty
 
 val analysisBeans = beans {
 
     // Loaders
-    bean<GithubLoader>()
-    bean<BitbucketLoader>()
-    bean<GitlabLoader>()
-    bean<Map<GitProperty, GitLoader>>("gitLoaders") {
+    bean<GithubRestManager>()
+    bean<BitbucketRestManager>()
+    bean<GitlabRestManager>()
+    bean<Map<GitProperty, GitRestManager>>("gitRestManagers") {
         mapOf(
-            GitProperty.GITHUB to ref<GithubLoader>(),
-            GitProperty.BITBUCKET to ref<BitbucketLoader>(),
-            GitProperty.GITLAB to ref<GitlabLoader>()
+            GitProperty.GITHUB to ref<GithubRestManager>(),
+            GitProperty.BITBUCKET to ref<BitbucketRestManager>(),
+            GitProperty.GITLAB to ref<GitlabRestManager>()
         )
     }
 
