@@ -67,26 +67,27 @@ abstract class AbstractPayloadProcessor(
         jsonObject: JsonObject,
         repo: Repository
     ) {
-        val prNumber = requireNotNull(jsonObject.number)
-        val sourceBranch = requireNotNull(jsonObject.sourceBranchName)
-        if (!repo.branches.contains(sourceBranch)) {
+        val prJsonObject = jsonObject.pullRequest
+        val prNumber = requireNotNull(prJsonObject.number)
+        val sourceBranch = requireNotNull(prJsonObject.sourceBranchName)
+        if (!repo.branches.isEmpty() && !repo.branches.contains(sourceBranch)) {
             logger.info { "Webhook: Ignored pr from branch $sourceBranch to repo ${repo.name}, pr number $prNumber" }
             return
         }
         val storedPullRequest = pullRequestRepository.findByRepoAndNumber(repo, prNumber)
         if (storedPullRequest != null) {
-            if (repo.autoCloningEnabled) {
-                logger.info { "Webhook: cloning disabled, ignored new push from repo ${repo.name} to branch ${jsonObject.sourceBranchName}" }
+            if (!repo.autoCloningEnabled) {
+                logger.info { "Webhook: cloning disabled, ignored new push from repo ${repo.name} to branch ${prJsonObject.sourceBranchName}" }
                 return
             }
-            val pullRequest = storedPullRequest.updateFrom(jsonObject)
-            logger.info { "Webhook: received updated pr from repo ${jsonObject.pushRepoName}, pr number ${pullRequest.number}" }
+            val pullRequest = storedPullRequest.updateFrom(prJsonObject)
+            logger.info { "Webhook: received updated pr from repo ${prJsonObject.pushRepoName}, pr number ${pullRequest.number}" }
             gitRestManager.clonePullRequest(pullRequest)
             pullRequestRepository.save(pullRequest)
         } else {
-            val pullRequest = jsonObject.pullRequest.run { parsePullRequest(repo) }
-            if (pullRequest.sourceRepoFullName != jsonObject.mainRepoFullName) {
-                logger.info { "Webhook: received new pr from repo ${jsonObject.pushRepoName}, pr number ${pullRequest.number}" }
+            val pullRequest = prJsonObject.run { parsePullRequest(repo) }
+            if (pullRequest.sourceRepoFullName != prJsonObject.mainRepoFullName) {
+                logger.info { "Webhook: received new pr from repo ${prJsonObject.pushRepoName}, pr number ${pullRequest.number}" }
                 gitRestManager.clonePullRequest(pullRequest)
                 pullRequestRepository.save(pullRequest)
             } else {
