@@ -1,20 +1,14 @@
-package ru.nikstep.redink.core.analysis
+package ru.nikstep.redink.core.rest
 
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import ru.nikstep.redink.model.dto.RepositoryDto
 import ru.nikstep.redink.model.entity.Repository
+import ru.nikstep.redink.model.enums.AnalyserProperty
+import ru.nikstep.redink.model.enums.AnalysisMode
+import ru.nikstep.redink.model.enums.GitProperty
+import ru.nikstep.redink.model.enums.Language
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.util.AnalyserProperty
-import ru.nikstep.redink.util.AnalysisMode
-import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.Language
 
 @RestController
 @RequestMapping("/repository")

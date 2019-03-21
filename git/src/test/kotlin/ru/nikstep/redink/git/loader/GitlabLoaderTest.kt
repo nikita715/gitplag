@@ -3,12 +3,12 @@ package ru.nikstep.redink.git.loader
 import org.junit.Ignore
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.Language
+import ru.nikstep.redink.model.enums.GitProperty
+import ru.nikstep.redink.model.enums.Language
 import java.time.LocalDateTime
 
 @Ignore
-class GitlabLoaderTest : AbstractGitLoaderTest() {
+class GitlabLoaderTest : AbstractGitRestManagerTest() {
 
     override val repo = Repository(
         name = "testns3/plagiarism_test",
@@ -28,5 +28,5 @@ class GitlabLoaderTest : AbstractGitLoaderTest() {
         mainRepoId = 11158542,
         mainBranchName = "master"
     )
-    override val loader = GitlabLoader(solutionStorage)
+    override val restManager = GitlabRestManager(solutionStorage)
 }

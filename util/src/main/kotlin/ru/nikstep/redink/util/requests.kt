@@ -10,37 +10,8 @@ import com.github.kittinunf.fuel.httpPost
 import mu.KotlinLogging
 
 const val authorization = "Authorization"
-private const val accept = "Accept"
-private const val githubGraphqlApi = "https://api.github.com/graphql"
-private const val githubAcceptMachineManPreview = "application/vnd.github.machine-man-preview+json"
-private const val githubAcceptAntiopePreview = "application/vnd.github.antiope-preview+json"
 
 private val logger = KotlinLogging.logger {}
-
-/**
- * Send a github access token request and get [JsonObject]
- */
-fun sendGithubAccessTokenRequest(installationId: String, token: String): JsonObject =
-    "https://api.github.com/app/installations/$installationId/access_tokens"
-        .httpPost()
-        .header(
-            authorization to token,
-            accept to githubAcceptMachineManPreview
-        )
-        .send(JsonObjectDeserializer)
-
-/**
- * Send a github status check request and get [JsonObject]
- */
-fun sendGithubStatusCheckRequest(repo: String, accessToken: String, body: String) =
-    "https://api.github.com/repos/$repo/check-runs"
-        .httpPost()
-        .header(
-            authorization to accessToken,
-            accept to githubAcceptAntiopePreview
-        )
-        .body(body)
-        .send(JsonObjectDeserializer)
 
 /**
  * Send a common request and get [T]

@@ -1,10 +1,10 @@
 package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
-import ru.nikstep.redink.git.loader.GitlabLoader
+import ru.nikstep.redink.git.loader.GitlabRestManager
+import ru.nikstep.redink.model.enums.GitProperty.GITLAB
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.util.GitProperty.GITLAB
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter
 class GitlabPayloadProcessor(
     pullRequestRepository: PullRequestRepository,
     repositoryRepository: RepositoryRepository,
-    gitlabLoader: GitlabLoader
+    gitlabLoader: GitlabRestManager
 ) : AbstractPayloadProcessor(pullRequestRepository, repositoryRepository, gitlabLoader) {
 
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")

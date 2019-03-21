@@ -1,9 +1,9 @@
 package ru.nikstep.redink.model.dto
 
-import ru.nikstep.redink.util.AnalyserProperty
-import ru.nikstep.redink.util.AnalysisMode
-import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.Language
+import ru.nikstep.redink.model.enums.AnalyserProperty
+import ru.nikstep.redink.model.enums.AnalysisMode
+import ru.nikstep.redink.model.enums.GitProperty
+import ru.nikstep.redink.model.enums.Language
 
 class RepositoryDto(val gitService: GitProperty, val fullName: String) {
     val language: Language? = null

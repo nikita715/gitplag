@@ -3,7 +3,7 @@ package ru.nikstep.redink.model.repo
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.util.GitProperty
+import ru.nikstep.redink.model.enums.GitProperty
 
 /**
  * Spring data repo of [Repository]

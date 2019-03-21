@@ -2,12 +2,12 @@ package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
-import ru.nikstep.redink.git.loader.GitLoader
+import ru.nikstep.redink.git.loader.GitRestManager
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
+import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.parseAsObject
 import java.time.LocalDateTime
 
@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 abstract class AbstractPayloadProcessor(
     private val pullRequestRepository: PullRequestRepository,
     private val repositoryRepository: RepositoryRepository,
-    private val gitLoader: GitLoader
+    private val gitRestManager: GitRestManager
 ) : PayloadProcessor {
     private val logger = KotlinLogging.logger {}
 
@@ -56,16 +56,12 @@ abstract class AbstractPayloadProcessor(
                 return
             }
             logger.info { "Webhook: received new push from repo ${repo.name}" }
-            gitLoader.cloneRepository(repo, branchName)
+            gitRestManager.cloneRepository(repo, branchName)
         } else {
             logger.info { "Webhook: received new repo ${jsonObject.pushRepoName}" }
             cloneRepoAndAllPullRequests(jsonObject.pushRepoName, jsonObject.pushRepoId)
         }
     }
-
-    abstract val JsonObject.pushRepoName: String?
-    abstract val JsonObject.pushBranchName: String?
-    abstract val JsonObject.pushRepoId: Long?
 
     private fun cloneReceivedPullRequest(
         jsonObject: JsonObject,
@@ -85,13 +81,13 @@ abstract class AbstractPayloadProcessor(
             }
             val pullRequest = storedPullRequest.updateFrom(jsonObject)
             logger.info { "Webhook: received updated pr from repo ${jsonObject.pushRepoName}, pr number ${pullRequest.number}" }
-            gitLoader.clonePullRequest(pullRequest)
+            gitRestManager.clonePullRequest(pullRequest)
             pullRequestRepository.save(pullRequest)
         } else {
             val pullRequest = jsonObject.pullRequest.run { parsePullRequest(repo) }
             if (pullRequest.sourceRepoFullName != jsonObject.mainRepoFullName) {
                 logger.info { "Webhook: received new pr from repo ${jsonObject.pushRepoName}, pr number ${pullRequest.number}" }
-                gitLoader.clonePullRequest(pullRequest)
+                gitRestManager.clonePullRequest(pullRequest)
                 pullRequestRepository.save(pullRequest)
             } else {
                 logger.info { "Webhook: Ignored pr to itself repo ${repo.name}, pr number $prNumber" }
@@ -107,12 +103,12 @@ abstract class AbstractPayloadProcessor(
                 gitId = requireNotNull(repoId)
             )
         )
-        gitLoader.cloneRepository(repo)
+        gitRestManager.cloneRepository(repo)
         downloadAllPullRequestsOfRepository(repo)
     }
 
     override fun downloadAllPullRequestsOfRepository(repo: Repository) {
-        gitLoader.findPullRequests(repo).forEach {
+        gitRestManager.findPullRequests(repo).forEach {
             it.run {
                 if (mainRepoFullName == sourceRepoFullName) {
                     logger.info { "Webhook: Ignored pr to itself repo ${repo.name}" }
@@ -120,7 +116,7 @@ abstract class AbstractPayloadProcessor(
                     logger.info { "Webhook: Ignored pr from branch $sourceBranchName to repo ${repo.name}, pr number $number" }
                 } else {
                     val pullRequest = pullRequestRepository.save(parsePullRequest(repo))
-                    gitLoader.clonePullRequest(pullRequest)
+                    gitRestManager.clonePullRequest(pullRequest)
                     logger.info { "Webhook: cloned new pr from repo ${repo.name}, pr number ${pullRequest.number}" }
                 }
             }
@@ -173,4 +169,10 @@ abstract class AbstractPayloadProcessor(
     protected abstract val JsonObject?.mainBranchName: String?
 
     protected abstract val JsonObject?.mainRepoId: Long?
+
+    protected abstract val JsonObject.pushRepoName: String?
+
+    protected abstract val JsonObject.pushBranchName: String?
+
+    protected abstract val JsonObject.pushRepoId: Long?
 }

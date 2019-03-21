@@ -8,11 +8,11 @@ import ru.nikstep.redink.util.downloadAndUnpackZip
 import java.io.File
 
 /**
- * Common implementation of the [GitLoader]
+ * Common implementation of the [GitRestManager]
  */
-abstract class AbstractGitLoader(
+abstract class AbstractGitRestManager(
     private val solutionStorage: SolutionStorage
-) : GitLoader {
+) : GitRestManager {
 
     private val logger = KotlinLogging.logger {}
 
@@ -37,7 +37,7 @@ abstract class AbstractGitLoader(
 
     protected abstract fun linkToRepoArchive(repoName: String, branchName: String): String
 
-    abstract fun findBranchesOfRepo(repo: Repository): List<String>
+    protected abstract fun findBranchesOfRepo(repo: Repository): List<String>
 
     private fun cloneBranchOfRepository(repo: Repository, branch: String) {
         logger.info { "Git: download zip archive of repo = ${repo.name}, branch = $branch" }

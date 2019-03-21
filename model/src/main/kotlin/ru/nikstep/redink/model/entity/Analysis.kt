@@ -3,8 +3,8 @@ package ru.nikstep.redink.model.entity
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
-import ru.nikstep.redink.util.AnalyserProperty
-import ru.nikstep.redink.util.Language
+import ru.nikstep.redink.model.enums.AnalyserProperty
+import ru.nikstep.redink.model.enums.Language
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*

@@ -1,4 +1,4 @@
-package ru.nikstep.redink.util
+package ru.nikstep.redink.model.enums
 
 /**
  * Name of a plagiarism analyser

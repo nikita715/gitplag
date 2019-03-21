@@ -4,13 +4,8 @@ import mu.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
-import ru.nikstep.redink.model.data.AnalysisMatch
-import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.data.AnalysisSettings
-import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.data.Solution
-import ru.nikstep.redink.model.data.findSolutionByStudent
-import ru.nikstep.redink.util.AnalysisMode
+import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.model.enums.AnalysisMode
 import ru.nikstep.redink.util.inTempDirectory
 import java.time.LocalDateTime
 

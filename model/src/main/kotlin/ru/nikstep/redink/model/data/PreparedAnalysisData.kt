@@ -1,7 +1,7 @@
 package ru.nikstep.redink.model.data
 
-import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.Language
+import ru.nikstep.redink.model.enums.GitProperty
+import ru.nikstep.redink.model.enums.Language
 import java.io.File
 
 /**

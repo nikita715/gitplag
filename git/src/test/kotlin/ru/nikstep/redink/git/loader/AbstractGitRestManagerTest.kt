@@ -12,7 +12,7 @@ import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.asPath
 import java.nio.file.Paths
 
-abstract class AbstractGitLoaderTest {
+abstract class AbstractGitRestManagerTest {
     abstract val repo: Repository
     val branchName = "test"
 
@@ -32,7 +32,7 @@ abstract class AbstractGitLoaderTest {
 
     val repositoryRepository = mock<RepositoryRepository>()
 
-    abstract val loader: GitLoader
+    abstract val restManager: GitRestManager
 
     @Before
     fun setUp() {
@@ -69,7 +69,7 @@ abstract class AbstractGitLoaderTest {
             baseClass2
         )
 
-        loader.loadFilesOfCommit(pullRequest)
+        restManager.loadFilesOfCommit(pullRequest)
 
         fileNamesToFileTexts.entries.forEach {
             verify(solutionStorage).saveSolution(pullRequest, it.key, it.value)

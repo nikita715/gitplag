@@ -4,9 +4,9 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.util.AnalysisMode
-import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.Language
+import ru.nikstep.redink.model.enums.AnalysisMode
+import ru.nikstep.redink.model.enums.GitProperty
+import ru.nikstep.redink.model.enums.Language
 import ru.nikstep.redink.util.asPath
 import java.io.File
 

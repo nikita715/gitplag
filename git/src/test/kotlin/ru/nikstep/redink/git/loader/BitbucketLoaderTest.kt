@@ -3,12 +3,12 @@ package ru.nikstep.redink.git.loader
 import org.junit.Ignore
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.util.GitProperty
-import ru.nikstep.redink.util.Language
+import ru.nikstep.redink.model.enums.GitProperty
+import ru.nikstep.redink.model.enums.Language
 import java.time.LocalDateTime
 
 @Ignore
-class BitbucketLoaderTest : AbstractGitLoaderTest() {
+class BitbucketLoaderTest : AbstractGitRestManagerTest() {
 
     override val repo = Repository(
         name = "nikita715/plagiarism_test2",
@@ -29,5 +29,5 @@ class BitbucketLoaderTest : AbstractGitLoaderTest() {
         mainBranchName = "master"
     )
 
-    override val loader = BitbucketLoader(solutionStorage)
+    override val restManager = BitbucketRestManager(solutionStorage)
 }

@@ -1,4 +1,4 @@
-package ru.nikstep.redink.util
+package ru.nikstep.redink.model.enums
 
 enum class AnalysisMode(val order: Int) {
     LINK(1),

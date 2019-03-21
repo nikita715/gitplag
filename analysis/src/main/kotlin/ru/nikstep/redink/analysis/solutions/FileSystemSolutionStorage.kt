@@ -7,10 +7,10 @@ import ru.nikstep.redink.model.data.Solution
 import ru.nikstep.redink.model.entity.BaseFileRecord
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.SolutionFileRecord
+import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.BaseFileRecordRepository
 import ru.nikstep.redink.model.repo.SolutionFileRecordRepository
-import ru.nikstep.redink.util.GitProperty
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.forEachFileInDirectory
 import java.io.File

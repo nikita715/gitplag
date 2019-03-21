@@ -1,4 +1,4 @@
-package ru.nikstep.redink.core.analysis
+package ru.nikstep.redink.core.rest
 
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
@@ -6,13 +6,14 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import ru.nikstep.redink.analysis.AnalysisRunner
+import ru.nikstep.redink.core.analysis.AnalysisAsyncRunner
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.analyser
 import ru.nikstep.redink.model.data.language
 import ru.nikstep.redink.model.data.mode
+import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.repo.AnalysisRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
-import ru.nikstep.redink.util.GitProperty
 
 /**
  * Analysis api controller
@@ -55,7 +56,7 @@ class AnalysisController(
     /**
      * Receive analysis, find last executed analysis result
      */
-    @GetMapping("/analysis")
+    @GetMapping("/analysis/result")
     fun analysis(@RequestParam("git") git: GitProperty, @RequestParam("repoName") repoName: String): ResponseEntity<*> {
         val repository = repositoryRepository.findByGitServiceAndName(git, repoName)
             ?: return ResponseEntity.notFound().build<Any?>()
@@ -66,7 +67,7 @@ class AnalysisController(
     /**
      * Receive analysis, run analysis silently, send results to [responseUrl]
      */
-    @GetMapping("/analysis/trigger")
+    @GetMapping("/analysis/run/detached")
     fun analysisStatic(
         @RequestParam("git") git: GitProperty,
         @RequestParam("repoName") repoName: String,
