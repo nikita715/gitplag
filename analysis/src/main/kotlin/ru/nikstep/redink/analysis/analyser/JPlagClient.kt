@@ -23,10 +23,12 @@ internal class JPlagClient(
     private val language = analysisData.language.ofJPlag()
     private val gitService = analysisData.gitService
     private val repoName = analysisData.repoName
+    private val baseCount = analysisData.bases.size
 
     fun run() =
         buildString {
-            append("java -jar $jplagPath  -l $language -bc .base -r $resultDir -s ")
+            append("java -jar $jplagPath  -l $language -r $resultDir -s ")
+            if (baseCount != 0) append("-bc .base ")
             append(asPath(solutionsDir, gitService, repoName, branchName))
         }.also {
             logger.info { it }
