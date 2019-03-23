@@ -5,6 +5,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import io.kotlintest.matchers.shouldEqual
 import io.kotlintest.mock.`when`
+import org.junit.Ignore
 import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.invocation.InvocationOnMock
@@ -39,6 +40,7 @@ abstract class AbstractPayloadProcessorTest {
     protected val repositoryRepository = mock<RepositoryRepository>()
 
     @Test
+    @Ignore
     fun saveNewPullRequest() {
         `when`(repositoryRepository.findByGitServiceAndName(any(), any())).thenReturn(repo)
         payloadProcessor.downloadSolutionsOfPullRequest(payload)

@@ -2,6 +2,7 @@ package ru.nikstep.redink.analysis.solutions
 
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.PreparedAnalysisData
+import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import java.io.File
 
@@ -23,10 +24,7 @@ interface SolutionStorage {
     /**
      * Save [sourceFileInfo] solution
      */
-    fun saveSolutionsFromDir(
-        tempDir: String, repo: Repository, branchName: String,
-        creator: String, headSha: String
-    )
+    fun saveSolutionsFromDir(tempDir: String, pullRequest: PullRequest)
 
     /**
      * Load all base solution files and corresponding solution files of the [pullRequest].

@@ -31,11 +31,7 @@ class SolutionsController(
     ): ResponseEntity<*> {
         val repo = repositoryRepository.findByGitServiceAndName(git, repoName)
             ?: return ResponseEntity.notFound().build<Any?>()
-        return ResponseEntity.ok(solutionFileRecordRepository.findAllByRepo(repo)
-            .filter { if (branch != null) it.branch == branch else true }
-            .filter { if (student != null) it.user == student else true }
-            .filter { if (fileName != null) it.fileName == fileName else true }
-        )
+        return ResponseEntity.ok(solutionFileRecordRepository.findAllByRepo(repo))
     }
 
 

@@ -9,10 +9,7 @@ import ru.nikstep.redink.model.entity.Repository
  */
 interface PullRequestRepository : JpaRepository<PullRequest, Long> {
 
-    /**
-     * Finds the last record about the [PullRequest] by its [number]
-     */
-    fun findFirstBySourceRepoFullNameAndNumberOrderByIdDesc(repoFullName: String, number: Int): PullRequest
+    fun findAllByRepoAndSourceBranchName(repo: Repository, sourceBranchName: String): List<PullRequest>
 
     fun findByRepoAndNumber(repo: Repository, number: Int): PullRequest?
 }
