@@ -21,8 +21,7 @@ abstract class AbstractGitRestManager(
         downloadAndUnpackZip(resourceUrl) { unpackedDir ->
             val sourceDir = File(unpackedDir).listFiles()[0].absolutePath
             solutionStorage.saveSolutionsFromDir(
-                sourceDir, pullRequest.repo, pullRequest.sourceBranchName,
-                pullRequest.creatorName, pullRequest.headSha
+                sourceDir, pullRequest
             )
         }
     }

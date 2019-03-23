@@ -35,7 +35,7 @@ internal class JPlagClient(
         }.also(::execute)
 
     private fun execute(task: String) {
-        Runtime.getRuntime().exec(task).waitFor(1, TimeUnit.MINUTES)
+        Runtime.getRuntime().exec(task).waitFor(10, TimeUnit.MINUTES)
     }
 
 }
