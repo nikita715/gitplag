@@ -5,6 +5,9 @@ import ru.nikstep.redink.model.entity.JPlagReport
 import ru.nikstep.redink.model.repo.JPlagReportRepository
 import java.time.LocalDateTime
 
+/**
+ * Data manager of [JPlagReport]
+ */
 @Transactional
 class JPlagReportDataManager(private val jPlagReportRepository: JPlagReportRepository) {
 

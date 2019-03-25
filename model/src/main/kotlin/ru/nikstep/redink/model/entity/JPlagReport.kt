@@ -3,6 +3,9 @@ package ru.nikstep.redink.model.entity
 import java.time.LocalDateTime
 import javax.persistence.*
 
+/**
+ * Report about the result of a jplag analysis that stored locally
+ */
 @Entity
 data class JPlagReport(
     @Id

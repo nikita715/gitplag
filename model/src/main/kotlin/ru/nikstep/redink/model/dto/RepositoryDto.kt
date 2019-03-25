@@ -1,10 +1,14 @@
 package ru.nikstep.redink.model.dto
 
+import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.enums.AnalyserProperty
 import ru.nikstep.redink.model.enums.AnalysisMode
 import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.enums.Language
 
+/**
+ * Dto for [Repository] class
+ */
 class RepositoryDto(val gitService: GitProperty, val fullName: String) {
     val language: Language? = null
     val filePatterns: Collection<String>? = null

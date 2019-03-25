@@ -19,5 +19,8 @@ interface PayloadProcessor {
      */
     fun downloadBasesOfRepository(payload: String)
 
+    /**
+     * Requests pull requests payload and stores all of them
+     */
     fun downloadAllPullRequestsOfRepository(repo: Repository)
 }

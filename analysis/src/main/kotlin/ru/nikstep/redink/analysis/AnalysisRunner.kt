@@ -17,7 +17,7 @@ class AnalysisRunner(
     private val logger = KotlinLogging.logger {}
 
     /**
-     * Run analysis with [analysisSettings]
+     * Run analysis with [settings]
      */
     fun run(settings: AnalysisSettings): Analysis {
         val analysisService = analysers.getValue(settings.analyser)
@@ -26,9 +26,9 @@ class AnalysisRunner(
     }
 
     /**
-     * Run analysis with [analysisSettings]
+     * Run all analyzes with [settingsList]
      */
-    fun run(analysisSettings: List<AnalysisSettings>): List<Analysis> =
-        analysisSettings.map { logger.loggedAnalysis(it) { run(it) } }
+    fun run(settingsList: List<AnalysisSettings>): List<Analysis> =
+        settingsList.map { logger.loggedAnalysis(it) { run(it) } }
 
 }
