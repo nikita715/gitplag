@@ -119,8 +119,8 @@ abstract class AbstractPayloadProcessor(
     }
 
     private fun downloadPullRequests(repo: Repository, pullRequestsJsons: Collection<JsonObject>) {
-        pullRequestsJsons.forEach {
-            it.run {
+        pullRequestsJsons.forEach { pullRequestJson ->
+            pullRequestJson.run {
                 if (mainRepoFullName == sourceRepoFullName) {
                     logger.info { "Webhook: Ignored pr to itself repo ${repo.name}" }
                 } else if (!repo.branches.contains(sourceBranchName?.toLowerCase())) {

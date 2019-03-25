@@ -1,8 +1,10 @@
 package ru.nikstep.redink.git.loader
 
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import ru.nikstep.redink.analysis.solutions.SolutionStorage
@@ -47,8 +49,8 @@ abstract class AbstractGitRestManagerTest {
     }
 
     @Test
-    @Ignore
     fun loadFileText() {
-
+        restManager.clonePullRequest(pullRequest)
+        verify(solutionStorage).saveSolutionsFromDir(any(), eq(pullRequest))
     }
 }
