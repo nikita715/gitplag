@@ -10,10 +10,19 @@ import ru.nikstep.redink.model.entity.Repository
  */
 interface BaseFileRecordRepository : JpaRepository<BaseFileRecord, Long> {
 
+    /**
+     * Find all [BaseFileRecord]s by the [repo] and by the [branch]
+     */
     fun findAllByRepoAndBranch(repo: Repository, branch: String): List<BaseFileRecord>
 
+    /**
+     * Find all [BaseFileRecord]s by the [repo]
+     */
     fun findAllByRepo(repo: Repository): List<BaseFileRecord>
 
+    /**
+     * Delete all [BaseFileRecord]s by the [repo] and by the [branch]
+     */
     @Transactional
     fun deleteAllByRepoAndBranch(repo: Repository, branch: String)
 

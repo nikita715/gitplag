@@ -10,6 +10,9 @@ import java.time.LocalDateTime
  */
 interface JPlagReportRepository : JpaRepository<JPlagReport, Long> {
 
+    /**
+     * Find all outdated [JPlagReport]s
+     */
     @Query("from JPlagReport r where r.createdAt < ?1")
     fun findAllCreatedBefore(date: LocalDateTime): List<JPlagReport>
 
