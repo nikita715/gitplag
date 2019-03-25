@@ -29,7 +29,7 @@ class BitbucketPayloadProcessorTest : AbstractPayloadProcessorTest() {
         creatorName = "testns2",
         sourceRepoId = -1,
         mainRepoId = -1,
-        sourceRepoFullName = "nikita715/plagiarism_test2",
+        sourceRepoFullName = "testns/plagiarism_test2",
         repo = repo,
         headSha = "1458a8caab0b",
         sourceBranchName = "testns2/javacljava-created-online-with-bitbucket-1551121394025",

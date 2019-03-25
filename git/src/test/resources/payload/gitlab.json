@@ -63,7 +63,7 @@
       "git_http_url": "https://gitlab.com/nikita715/plagiarism_test3.git",
       "namespace": "nikita715",
       "visibility_level": 20,
-      "path_with_namespace": "nikita715/plagiarism_test3",
+      "path_with_namespace": "testns/plagiarism_test3",
       "default_branch": "master",
       "ci_config_path": null,
       "homepage": "https://gitlab.com/nikita715/plagiarism_test3",
