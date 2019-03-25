@@ -28,7 +28,7 @@ class GithubPayloadProcessorTest : AbstractPayloadProcessorTest() {
         creatorName = "nikita715",
         sourceRepoId = 155913197,
         mainRepoId = 12345,
-        sourceRepoFullName = "nikita715/plagiarism_test",
+        sourceRepoFullName = "testns/plagiarism_test",
         repo = repo,
         headSha = "6ec548da744248919dc753deac536722a46c31f1",
         sourceBranchName = "testns2-patch-1",
