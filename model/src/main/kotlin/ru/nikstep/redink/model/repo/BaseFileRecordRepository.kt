@@ -5,6 +5,9 @@ import org.springframework.transaction.annotation.Transactional
 import ru.nikstep.redink.model.entity.BaseFileRecord
 import ru.nikstep.redink.model.entity.Repository
 
+/**
+ * Spring data repo of [BaseFileRecord]
+ */
 interface BaseFileRecordRepository : JpaRepository<BaseFileRecord, Long> {
 
     fun findAllByRepoAndBranch(repo: Repository, branch: String): List<BaseFileRecord>

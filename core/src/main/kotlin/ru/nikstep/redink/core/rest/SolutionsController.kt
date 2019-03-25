@@ -12,6 +12,9 @@ import ru.nikstep.redink.model.repo.BaseFileRecordRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.model.repo.SolutionFileRecordRepository
 
+/**
+ * Solutions api controller
+ */
 @RestController
 class SolutionsController(
     private val solutionFileRecordRepository: SolutionFileRecordRepository,

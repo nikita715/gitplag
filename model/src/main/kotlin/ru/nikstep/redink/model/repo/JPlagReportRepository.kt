@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.Query
 import ru.nikstep.redink.model.entity.JPlagReport
 import java.time.LocalDateTime
 
+/**
+ * Spring data repo of [JPlagReport]
+ */
 interface JPlagReportRepository : JpaRepository<JPlagReport, Long> {
 
     @Query("from JPlagReport r where r.createdAt < ?1")

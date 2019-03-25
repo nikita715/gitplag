@@ -12,34 +12,33 @@ import java.io.File
 interface SolutionStorage {
 
     /**
-     * Load all base files from local storage
+     * Load all base files from the storage
      */
     fun loadBases(settings: AnalysisSettings): List<File>
 
     /**
-     * Save base files to local storage
+     * Save all files from [tempDir] as base files that belong to the [repo]
      */
     fun saveBasesFromDir(tempDir: String, repo: Repository, branchName: String)
 
     /**
-     * Save [sourceFileInfo] solution
+     * Save all files from [tempDir] as solution files that belong to the [pullRequest]
      */
     fun saveSolutionsFromDir(tempDir: String, pullRequest: PullRequest)
 
     /**
-     * Load all base solution files and corresponding solution files of the [pullRequest].
+     * Load all base solution files and corresponding solution files according to the [settings].
      * Merges all files of each students to single file.
      */
     fun loadBasesAndComposedSolutions(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData
 
     /**
-     * Load all base solution files and corresponding solution files of the [pullRequest]
-     * and information about them. See [PreparedAnalysisData].
+     * Load all base solution files and corresponding solution files according to the [settings].
      */
     fun loadBasesAndSeparatedSolutions(settings: AnalysisSettings): PreparedAnalysisData
 
     /**
-     * Load all base solution files and corresponding solution files of the [pullRequest].
+     * Load all base solution files and corresponding solution files according to the [settings].
      * Creates directories in [tempDir] for each student and copies each file of a student
      * to the student's directory, names them by digits (0.ext, 1.ext, etc.) and stores the corresponding names
      * in solution objects.

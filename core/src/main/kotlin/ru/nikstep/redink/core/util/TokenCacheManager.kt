@@ -6,7 +6,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCache
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager
 import java.util.concurrent.TimeUnit
 
-class TokenCacheManager(name: String) : ConcurrentMapCacheManager(name) {
+internal class TokenCacheManager(name: String) : ConcurrentMapCacheManager(name) {
     override fun createConcurrentMapCache(name: String): Cache = ConcurrentMapCache(
         name,
         CacheBuilder.newBuilder()

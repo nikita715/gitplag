@@ -8,7 +8,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update \
-    && apt-get install -y git
+    && apt-get install -y --no-install-recommends git
 
 RUN cd /opt \
     && git clone https://github.com/nikita715/redink.git --branch dev \

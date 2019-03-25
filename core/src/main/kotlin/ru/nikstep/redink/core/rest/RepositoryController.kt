@@ -10,6 +10,9 @@ import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.enums.Language
 import ru.nikstep.redink.model.repo.RepositoryRepository
 
+/**
+ * Repository api controller
+ */
 @RestController
 @RequestMapping("/repository")
 class RepositoryController(

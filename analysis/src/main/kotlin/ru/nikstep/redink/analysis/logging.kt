@@ -13,7 +13,3 @@ internal inline fun <T> KLogger.loggedAnalysis(settings: AnalysisSettings, actio
     }
     return result
 }
-
-internal fun KLogger.exceptionAtAnalysisOf(throwable: Throwable, settings: AnalysisSettings) {
-    error(throwable) { "Analysis: exception at the analysis of repo ${settings.repository.name}\n" }
-}
