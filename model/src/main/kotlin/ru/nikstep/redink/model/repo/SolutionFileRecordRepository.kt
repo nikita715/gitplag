@@ -13,7 +13,7 @@ import ru.nikstep.redink.model.entity.SolutionFileRecord
 interface SolutionFileRecordRepository : JpaRepository<SolutionFileRecord, Long> {
 
     /**
-     * Find all solutions for [repo] and [gitService]
+     * Find all solutions by [repo]
      */
     @Query(
         "from SolutionFileRecord sf WHERE sf.pullRequest in " +
@@ -21,9 +21,15 @@ interface SolutionFileRecordRepository : JpaRepository<SolutionFileRecord, Long>
     )
     fun findAllByRepo(repo: Repository): List<SolutionFileRecord>
 
+    /**
+     * Delete all [SolutionFileRecord]s of the [pullRequest]
+     */
     @Transactional
     fun deleteAllByPullRequest(pullRequest: PullRequest)
 
+    /**
+     * Find all [SolutionFileRecord]s of the [pullRequest]
+     */
     fun findAllByPullRequest(pullRequest: PullRequest): List<SolutionFileRecord>
 
 }

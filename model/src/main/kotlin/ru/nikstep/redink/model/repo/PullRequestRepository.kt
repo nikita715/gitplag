@@ -9,7 +9,13 @@ import ru.nikstep.redink.model.entity.Repository
  */
 interface PullRequestRepository : JpaRepository<PullRequest, Long> {
 
+    /**
+     * Find all [PullRequest]s by the [repo] and by the [sourceBranchName]
+     */
     fun findAllByRepoAndSourceBranchName(repo: Repository, sourceBranchName: String): List<PullRequest>
 
+    /**
+     * Find all [PullRequest]s by the [repo] and by the [number]
+     */
     fun findByRepoAndNumber(repo: Repository, number: Int): PullRequest?
 }
