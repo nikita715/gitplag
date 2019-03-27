@@ -3,7 +3,7 @@
 [![codecov](https://codecov.io/gh/nikita715/redink/branch/dev/graph/badge.svg)](https://codecov.io/gh/nikita715/redink)
 # Redink
 
-System for analysing the similarity of the source code (plagiarism analysis) in git-repositories
+System for analysing the similarity of source code (plagiarism analysis) in git-repositories
 
 ### Wiki
 * 🇬🇧 [English wiki](https://github.com/nikita715/redink/wiki/Docs_en)
