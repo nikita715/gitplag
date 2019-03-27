@@ -1,4 +1,4 @@
-package ru.nikstep.redink.git.loader
+package ru.nikstep.redink.git.rest
 
 import com.beust.klaxon.JsonObject
 import ru.nikstep.redink.model.entity.PullRequest

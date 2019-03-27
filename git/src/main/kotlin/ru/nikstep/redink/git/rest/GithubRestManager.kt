@@ -1,4 +1,4 @@
-package ru.nikstep.redink.git.loader
+package ru.nikstep.redink.git.rest
 
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject

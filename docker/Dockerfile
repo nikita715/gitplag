@@ -12,8 +12,7 @@ RUN apt-get update \
 
 RUN rm -rf $REDINK_HOME \
     && git clone https://github.com/nikita715/redink.git $REDINK_HOME --branch dev \
-    && cd $REDINK_HOME \
-    && ./gradlew bootJar
+    && $REDINK_HOME/gradlew bootJar
 
 FROM ubuntu:18.04 as prod
 

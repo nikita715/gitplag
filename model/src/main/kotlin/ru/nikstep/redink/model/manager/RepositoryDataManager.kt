@@ -34,6 +34,9 @@ class RepositoryDataManager(
         }
     }
 
+    /**
+     * Check that the file name matches with any of the repo file name patterns
+     */
     @Transactional(readOnly = true)
     fun nameMatchesRegexp(fileName: String, repo: Repository): Boolean {
         repo.filePatterns.forEach {

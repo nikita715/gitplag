@@ -6,10 +6,10 @@ import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.analysis.analyser.MossAnalyser
 import ru.nikstep.redink.analysis.solutions.FileSystemSolutionStorage
 import ru.nikstep.redink.core.util.safeEnvVar
-import ru.nikstep.redink.git.loader.BitbucketRestManager
-import ru.nikstep.redink.git.loader.GitRestManager
-import ru.nikstep.redink.git.loader.GithubRestManager
-import ru.nikstep.redink.git.loader.GitlabRestManager
+import ru.nikstep.redink.git.rest.BitbucketRestManager
+import ru.nikstep.redink.git.rest.GitRestManager
+import ru.nikstep.redink.git.rest.GithubRestManager
+import ru.nikstep.redink.git.rest.GitlabRestManager
 import ru.nikstep.redink.model.enums.AnalyserProperty
 import ru.nikstep.redink.model.enums.GitProperty
 

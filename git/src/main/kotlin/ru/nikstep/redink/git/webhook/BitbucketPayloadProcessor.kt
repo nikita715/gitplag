@@ -1,7 +1,7 @@
 package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
-import ru.nikstep.redink.git.loader.BitbucketRestManager
+import ru.nikstep.redink.git.rest.BitbucketRestManager
 import ru.nikstep.redink.model.enums.GitProperty.BITBUCKET
 import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository

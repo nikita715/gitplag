@@ -1,4 +1,4 @@
-package ru.nikstep.redink.git.loader
+package ru.nikstep.redink.git.rest
 
 import mu.KotlinLogging
 import ru.nikstep.redink.analysis.solutions.SolutionStorage

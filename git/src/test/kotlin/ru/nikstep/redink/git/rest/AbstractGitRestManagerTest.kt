@@ -1,4 +1,4 @@
-package ru.nikstep.redink.git.loader
+package ru.nikstep.redink.git.rest
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq
