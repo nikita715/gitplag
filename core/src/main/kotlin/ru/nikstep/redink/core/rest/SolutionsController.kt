@@ -24,6 +24,9 @@ class SolutionsController(
     @Qualifier("payloadProcessors") private val payloadProcessors: Map<GitProperty, PayloadProcessor>
 ) {
 
+    /**
+     * Get the solution files records that related to the repo
+     */
     @GetMapping("/solutions")
     fun solutions(
         @RequestParam("git") git: GitProperty,
@@ -38,6 +41,9 @@ class SolutionsController(
     }
 
 
+    /**
+     * Initiate the import of base and solution files for the repo
+     */
     @GetMapping("/solutions/import")
     fun importSolutions(
         @RequestParam("git") git: String,

@@ -8,6 +8,9 @@ import ru.nikstep.redink.analysis.AnalysisRunner
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.util.sendAnalysisResult
 
+/**
+ * The class that asynchronously calls the [AnalysisRunner]
+ */
 @Component
 class AnalysisAsyncRunner(private val analysisRunner: AnalysisRunner) {
 

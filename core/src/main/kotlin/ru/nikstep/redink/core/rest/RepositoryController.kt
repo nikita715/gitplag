@@ -19,12 +19,18 @@ class RepositoryController(
     private val repositoryRepository: RepositoryRepository
 ) {
 
+    /**
+     * Get the info about the repo
+     */
     @GetMapping
     fun getRepository(
         @RequestParam("git") git: GitProperty,
         @RequestParam("repo") repoName: String
     ): Repository? = repositoryRepository.findByGitServiceAndName(git, repoName)
 
+    /**
+     * Create the repo
+     */
     @PostMapping
     fun createRepository(@RequestBody repositoryDto: RepositoryDto): Repository =
         repositoryDto.run {
@@ -43,6 +49,9 @@ class RepositoryController(
             )
         }
 
+    /**
+     * Update the repo
+     */
     @PutMapping
     fun updateRepository(@RequestBody repositoryDto: RepositoryDto): ResponseEntity<*> {
         val repository =

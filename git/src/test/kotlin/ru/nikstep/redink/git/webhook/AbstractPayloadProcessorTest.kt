@@ -17,6 +17,9 @@ import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.asPath
 import java.nio.file.Paths
 
+/**
+ * Abstract test for the payload processors
+ */
 abstract class AbstractPayloadProcessorTest {
 
     abstract val payload: String
@@ -38,6 +41,9 @@ abstract class AbstractPayloadProcessorTest {
 
     protected val repositoryRepository = mock<RepositoryRepository>()
 
+    /**
+     * Test saving and requesting of the download of a pull request
+     */
     @Test
     fun saveNewPullRequest() {
         `when`(repositoryRepository.findByGitServiceAndName(any(), any())).thenReturn(repo)

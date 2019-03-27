@@ -14,6 +14,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @Configuration
 @EnableSwagger2
 class SwaggerConfig {
+
+    /**
+     * Swagger [Docket] bean
+     */
     @Bean
     fun api(): Docket = Docket(DocumentationType.SWAGGER_2)
         .select()

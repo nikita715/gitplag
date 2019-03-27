@@ -3,7 +3,7 @@ package moss
 import org.junit.Test
 import java.nio.file.Files
 
-class MossParsingTest {
+private class MossParsingTest {
 //    val text =
 //        File("/Users/nikstepmac/IdeaProjects/redink/model/src/test/resources/sources/cl.java").readText()
 

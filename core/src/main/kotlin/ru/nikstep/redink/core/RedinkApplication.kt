@@ -12,6 +12,9 @@ import ru.nikstep.redink.core.beans.analysisBeans
 import ru.nikstep.redink.core.beans.coreBeans
 import ru.nikstep.redink.core.beans.gitBeans
 
+/**
+ * The main Spring Boot application class
+ */
 @SpringBootApplication(scanBasePackages = ["ru.nikstep.redink"])
 @EnableJpaRepositories("ru.nikstep.redink.model.repo")
 @EntityScan("ru.nikstep.redink.model.entity")

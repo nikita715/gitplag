@@ -10,6 +10,9 @@ import ru.nikstep.redink.model.enums.Language
 import ru.nikstep.redink.util.asPath
 import java.io.File
 
+/**
+ * Abstract test for the plagiarism analysers
+ */
 abstract class AbstractAnalyserTest {
 
     private val separateSolutionsDir = asPath("src", "test", "resources", "separateSolutions")

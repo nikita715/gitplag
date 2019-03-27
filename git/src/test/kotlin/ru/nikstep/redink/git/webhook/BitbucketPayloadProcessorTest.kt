@@ -9,6 +9,9 @@ import ru.nikstep.redink.model.enums.Language
 import java.time.LocalDateTime
 import java.time.Month
 
+/**
+ * Bitbucket payload processor test implementation
+ */
 class BitbucketPayloadProcessorTest : AbstractPayloadProcessorTest() {
     override val payload by lazy { readPayloadOf("bitbucket") }
 

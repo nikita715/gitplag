@@ -14,6 +14,9 @@ import ru.nikstep.redink.util.asPath
 import java.io.File
 import java.time.LocalDateTime
 
+/**
+ * Moss tests
+ */
 class MossAnalyserTest : AbstractAnalyserTest() {
 
     private val separateSolutionsDir = asPath("src", "test", "resources", "mossPreparedFiles")
@@ -131,6 +134,9 @@ class MossAnalyserTest : AbstractAnalyserTest() {
             )
         )
 
+    /**
+     * Run a sample analysis
+     */
     @Test
     fun analyse() {
         `when`(solutionStorage.loadBasesAndComposedSolutions(any(), any())).thenReturn(testPreparedAnalysisFiles)

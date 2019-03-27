@@ -19,6 +19,9 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
 
+/**
+ * JPlag tests
+ */
 class JPlagAnalyserTest : AbstractAnalyserTest() {
 
     private val relSolutionsDir = asPath("src", "test", "resources", "separateSolutions")
@@ -149,6 +152,9 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
             )
         )
 
+    /**
+     * Run a sample analysis
+     */
     @Test
     fun analyse() {
         val analysisResult = analysisService.analyse(analysisSettings)
