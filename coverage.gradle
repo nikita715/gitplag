@@ -12,23 +12,26 @@ dependencies {
     codacy 'com.github.codacy:codacy-coverage-reporter:-SNAPSHOT'
 }
 
-task jacocoRootReport(type: JacocoReport, dependsOn: subprojects.test) {
-    additionalSourceDirs.from = files(subprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories.from = files(subprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories.from = files(subprojects.sourceSets.main.output)
-    executionData.from = subprojects.stream().map {fileTree(it.buildDir).include("/jacoco/*.exec")}.collect()
+def jacocoRootReportPath = "${buildDir}/reports/jacoco/report.xml"
+
+task codeCoverageReport(type: JacocoReport, dependsOn: subprojects.test) {
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+    subprojects.each { sourceSets it.sourceSets.main }
     reports {
         xml.enabled = true
+        xml.destination = new File(jacocoRootReportPath)
+        html.enabled = false
+        csv.enabled = false
     }
 }
 
-task sendCoverageToCodacy(type: JavaExec, dependsOn: jacocoRootReport) {
+task sendCoverageToCodacy(type: JavaExec, dependsOn: codeCoverageReport) {
     main = "com.codacy.CodacyCoverageReporter"
     classpath = configurations.codacy
     args = ["report",
             "-l",
             "Kotlin",
             "-r",
-            "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+            jacocoRootReportPath
     ]
 }
