@@ -24,7 +24,8 @@ class BitbucketRestManagerTest : AbstractGitRestManagerTest() {
         repo = repo,
         headSha = "738c283091cbca80bd3701cc206480f5567d74a7",
         sourceBranchName = branchName,
-        date = LocalDateTime.now(),
+        createdAt = LocalDateTime.now(),
+        updatedAt = LocalDateTime.now(),
         sourceRepoFullName = repo.name,
         mainRepoId = 1,
         mainBranchName = "master"

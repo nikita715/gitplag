@@ -24,7 +24,8 @@ class GitlabRestManagerTest : AbstractGitRestManagerTest() {
         repo = repo,
         headSha = "6e12a8d031574dc6a07eaa9125d8ce4fdc2c9776",
         sourceBranchName = branchName,
-        date = LocalDateTime.now(),
+        createdAt = LocalDateTime.now(),
+        updatedAt = LocalDateTime.now(),
         sourceRepoFullName = repo.name,
         mainRepoId = 11158542,
         mainBranchName = "master"

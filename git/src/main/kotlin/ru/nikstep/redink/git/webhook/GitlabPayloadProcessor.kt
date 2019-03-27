@@ -17,7 +17,7 @@ class GitlabPayloadProcessor(
     gitlabLoader: GitlabRestManager
 ) : AbstractPayloadProcessor(pullRequestRepository, repositoryRepository, gitlabLoader) {
 
-    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     override val git = GITLAB
 
     override val JsonObject.pullRequest: JsonObject
@@ -50,11 +50,11 @@ class GitlabPayloadProcessor(
     override val JsonObject?.mainBranchName: String?
         get() = this?.string("target_branch")
 
-    override val JsonObject?.date: LocalDateTime?
-        get() = LocalDateTime.parse(
-            this?.string("last_edited_at")?.substring(0, 19),
-            dateFormatter
-        )
+    override val JsonObject?.createdAt: LocalDateTime?
+        get() = this?.string("created_at")?.parseDate()
+
+    override val JsonObject?.updatedAt: LocalDateTime?
+        get() = this?.string("last_edited_at")?.parseDate()
 
     override val JsonObject.pushRepoName: String?
         get() = obj("project")?.string("path_with_namespace")
