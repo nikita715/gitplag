@@ -30,7 +30,7 @@ abstract class AbstractPayloadProcessorTest {
     private val argument: ArgumentCaptor<PullRequest> = ArgumentCaptor.forClass(PullRequest::class.java)
 
     private object PullRequestAnswer : Answer<PullRequest> {
-        override fun answer(invocation: InvocationOnMock?): PullRequest = invocation!!.arguments[0] as PullRequest
+        override fun answer(invocation: InvocationOnMock?): PullRequest = invocation?.arguments?.get(0) as PullRequest
     }
 
     protected val pullRequestRepository = mock<PullRequestRepository> {
