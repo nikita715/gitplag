@@ -1,4 +1,4 @@
-FROM ubuntu:latest as init
+FROM ubuntu:18.04 as init
 
 ENV REDINK_HOME=/opt/redink
 
@@ -10,12 +10,12 @@ RUN apt-get update \
 RUN apt-get update \
     && apt-get install -y --no-install-recommends git
 
-RUN cd /opt \
-    && git clone https://github.com/nikita715/redink.git --branch dev \
+RUN rm -rf $REDINK_HOME \
+    && git clone https://github.com/nikita715/redink.git $REDINK_HOME --branch dev \
     && cd $REDINK_HOME \
     && ./gradlew bootJar
 
-FROM ubuntu:latest as prod
+FROM ubuntu:18.04 as prod
 
 ENV REDINK_HOME=/opt/redink
 

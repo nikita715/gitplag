@@ -25,7 +25,7 @@ import ru.nikstep.redink.core.beans.gitBeans
 class RedinkApplication
 
 fun main(args: Array<String>) {
-    runApplication<RedinkApplication>(*args) {
+    runApplication<RedinkApplication> {
         addInitializers(
             analysisBeans,
             gitBeans,
