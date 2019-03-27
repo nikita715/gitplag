@@ -7,9 +7,15 @@ import org.springframework.context.annotation.Primary
 
 import javax.sql.DataSource
 
+/**
+ * Embedded postgres database config
+ */
 @Configuration
 class EmbeddedPgConfig {
 
+    /**
+     * Embedded postgres datasource bean
+     */
     @Bean("embeddedPg")
     @Primary
     fun dataSource(): DataSource {

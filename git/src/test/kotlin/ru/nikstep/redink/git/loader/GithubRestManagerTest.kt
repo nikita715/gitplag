@@ -6,6 +6,9 @@ import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.enums.Language
 import java.time.LocalDateTime
 
+/**
+ * Github rest test implementation
+ */
 class GithubRestManagerTest : AbstractGitRestManagerTest() {
 
     override val repo = Repository(

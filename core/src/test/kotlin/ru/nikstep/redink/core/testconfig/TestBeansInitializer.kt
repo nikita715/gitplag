@@ -6,6 +6,9 @@ import ru.nikstep.redink.core.beans.analysisBeans
 import ru.nikstep.redink.core.beans.coreBeans
 import ru.nikstep.redink.core.beans.gitBeans
 
+/**
+ * Composed bean initializers for tests
+ */
 class TestBeansInitializer : ApplicationContextInitializer<GenericApplicationContext> {
     override fun initialize(context: GenericApplicationContext) {
         coreBeans.initialize(context)

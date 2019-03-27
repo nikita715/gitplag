@@ -22,10 +22,16 @@ class AnalysisQueries(
     private val analysisRunner: AnalysisRunner
 ) : GraphQLQueryResolver {
 
+    /**
+     * Get the last analysis result by the parameters
+     */
     fun analysis(gitService: String, repo: String): Analysis? =
         repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(gitService.toUpperCase()), repo)
             ?.let(analysisRepository::findFirstByRepositoryOrderByExecutionDateDesc)
 
+    /**
+     * Initiate the analysis
+     */
     fun analyse(
         gitService: String, repo: String, branch: String,
         analyser: String?, language: String?, mode: String?

@@ -9,6 +9,9 @@ import ru.nikstep.redink.model.enums.Language
 import java.time.LocalDateTime
 import java.time.Month
 
+/**
+ * Gitlab payload processor test implementation
+ */
 class GitlabPayloadProcessorTest : AbstractPayloadProcessorTest() {
     override val payload by lazy { readPayloadOf("gitlab") }
 
