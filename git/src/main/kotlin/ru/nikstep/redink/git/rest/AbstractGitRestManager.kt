@@ -1,7 +1,7 @@
 package ru.nikstep.redink.git.rest
 
 import mu.KotlinLogging
-import ru.nikstep.redink.analysis.solutions.SolutionStorage
+import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.util.downloadAndUnpackZip
@@ -11,7 +11,7 @@ import java.io.File
  * Common implementation of the [GitRestManager]
  */
 abstract class AbstractGitRestManager(
-    private val solutionStorage: SolutionStorage
+    private val sourceCodeStorage: SourceCodeStorage
 ) : GitRestManager {
 
     private val logger = KotlinLogging.logger {}
@@ -20,7 +20,7 @@ abstract class AbstractGitRestManager(
         val resourceUrl = linkToRepoArchive(pullRequest.sourceRepoFullName, pullRequest.sourceBranchName)
         downloadAndUnpackZip(resourceUrl) { unpackedDir ->
             val sourceDir = File(unpackedDir).listFiles()[0].absolutePath
-            solutionStorage.saveSolutionsFromDir(
+            sourceCodeStorage.saveSolutionsFromDir(
                 sourceDir, pullRequest
             )
         }
@@ -42,7 +42,7 @@ abstract class AbstractGitRestManager(
         logger.info { "Git: download zip archive of repo = ${repo.name}, branch = $branch" }
         downloadAndUnpackZip(linkToRepoArchive(repo.name, branch)) { unpackedDir ->
             val sourceDir = File(unpackedDir).listFiles()[0].absolutePath
-            solutionStorage.saveBasesFromDir(
+            sourceCodeStorage.saveBasesFromDir(
                 sourceDir,
                 repo, branch
             )

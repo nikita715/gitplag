@@ -2,8 +2,14 @@ package ru.nikstep.redink.analysis.analyser
 
 import mu.KotlinLogging
 import org.jsoup.Jsoup
-import ru.nikstep.redink.analysis.solutions.SolutionStorage
-import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
+import ru.nikstep.redink.model.data.AnalysisMatch
+import ru.nikstep.redink.model.data.AnalysisResult
+import ru.nikstep.redink.model.data.AnalysisSettings
+import ru.nikstep.redink.model.data.MatchedLines
+import ru.nikstep.redink.model.data.PreparedAnalysisData
+import ru.nikstep.redink.model.data.Solution
+import ru.nikstep.redink.model.data.findSolutionByStudent
 import ru.nikstep.redink.model.entity.JPlagReport
 import ru.nikstep.redink.model.enums.AnalysisMode
 import ru.nikstep.redink.model.repo.JPlagReportRepository
@@ -18,7 +24,7 @@ import kotlin.math.roundToInt
  * JPlag client wrapper
  */
 class JPlagAnalyser(
-    private val solutionStorage: SolutionStorage,
+    private val sourceCodeStorage: SourceCodeStorage,
     private val randomGenerator: RandomGenerator,
     private val jPlagReportRepository: JPlagReportRepository,
     private val solutionsDir: String,
@@ -35,7 +41,7 @@ class JPlagAnalyser(
         val (hash, resultDir) = generateResultDir()
 
         logger.info { "Analysis:JPlag:1.Gathering files for analysis. ${repoInfo(settings)}" }
-        val analysisFiles = solutionStorage.loadBasesAndSeparatedSolutions(settings)
+        val analysisFiles = sourceCodeStorage.loadBasesAndSeparatedSolutions(settings)
 
         logger.info { "Analysis:JPlag:2.Start analysis. ${repoInfo(settings)}" }
         JPlagClient(analysisFiles, solutionsDir, settings.branch, resultDir).run()

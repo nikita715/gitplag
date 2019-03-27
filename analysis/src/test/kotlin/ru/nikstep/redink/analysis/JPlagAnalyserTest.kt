@@ -6,8 +6,12 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import org.junit.Test
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
-import ru.nikstep.redink.analysis.solutions.SolutionStorage
-import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
+import ru.nikstep.redink.model.data.AnalysisMatch
+import ru.nikstep.redink.model.data.AnalysisResult
+import ru.nikstep.redink.model.data.MatchedLines
+import ru.nikstep.redink.model.data.PreparedAnalysisData
+import ru.nikstep.redink.model.data.Solution
 import ru.nikstep.redink.model.entity.JPlagReport
 import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.enums.Language
@@ -64,7 +68,7 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
         )
     )
 
-    private val solutionStorageService = mock<SolutionStorage> {
+    private val solutionStorageService = mock<SourceCodeStorage> {
         on { loadBasesAndSeparatedSolutions(any()) } doReturn testPreparedAnalysisFiles
     }
 

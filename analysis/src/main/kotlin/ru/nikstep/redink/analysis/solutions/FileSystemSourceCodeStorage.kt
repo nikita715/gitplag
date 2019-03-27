@@ -18,13 +18,16 @@ import ru.nikstep.redink.util.forEachFileInDirectory
 import java.io.File
 import java.nio.file.Files
 
-class FileSystemSolutionStorage(
+/**
+ * Storage of source files based on file system
+ */
+class FileSystemSourceCodeStorage(
     private val baseFileRecordRepository: BaseFileRecordRepository,
     private val repositoryDataManager: RepositoryDataManager,
     private val solutionFileRecordRepository: SolutionFileRecordRepository,
     private val pullRequestRepository: PullRequestRepository,
     private val solutionsDir: String
-) : SolutionStorage {
+) : SourceCodeStorage {
 
     private val logger = KotlinLogging.logger {}
     private val baseDir = ".base"
@@ -170,7 +173,7 @@ class FileSystemSolutionStorage(
         }
     }
 
-    override fun loadBases(settings: AnalysisSettings): List<File> =
+    private fun loadBases(settings: AnalysisSettings): List<File> =
         baseFileRecordRepository.findAllByRepoAndBranch(settings.repository, settings.branch)
             .map { File(pathToBase(settings, it.fileName)) }
 
