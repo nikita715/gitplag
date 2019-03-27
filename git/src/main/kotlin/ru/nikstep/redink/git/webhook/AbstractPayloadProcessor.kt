@@ -2,7 +2,7 @@ package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
 import mu.KotlinLogging
-import ru.nikstep.redink.git.loader.GitRestManager
+import ru.nikstep.redink.git.rest.GitRestManager
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.enums.GitProperty
@@ -161,7 +161,7 @@ abstract class AbstractPayloadProcessor(
                 mainBranchName = requireNotNull(mainBranchName),
                 date = requireNotNull(date)
             )
-        } catch (e: Exception) {
+        } catch (e: IllegalArgumentException) {
             logger.error { "Webhook: unable to load pr number $number to repo ${repo.name}, git ${repo.gitService}" }
             null
         }

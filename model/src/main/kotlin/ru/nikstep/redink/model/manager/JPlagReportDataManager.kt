@@ -11,9 +11,15 @@ import java.time.LocalDateTime
 @Transactional
 class JPlagReportDataManager(private val jPlagReportRepository: JPlagReportRepository) {
 
+    /**
+     * Find all outdated [JPlagReport]s
+     */
     @Transactional(readOnly = true)
     fun findAllCreatedBefore(date: LocalDateTime) = jPlagReportRepository.findAllCreatedBefore(date)
 
+    /**
+     * Delete all [jPlagReports]
+     */
     @Transactional
     fun deleteAll(jPlagReports: List<JPlagReport>) = jPlagReportRepository.deleteAll(jPlagReports)
 

@@ -7,7 +7,7 @@
 //import org.springframework.web.bind.annotation.PathVariable
 //import org.springframework.web.bind.annotation.RestController
 //import ru.nikstep.redink.analysis.solutions.SolutionStorage
-//import ru.nikstep.redink.git.loader.GitRestManager
+//import ru.nikstep.redink.git.rest.GitRestManager
 //import ru.nikstep.redink.model.repo.AnalysisPairRepository
 //import ru.nikstep.redink.model.repo.AnalysisRepository
 //import ru.nikstep.redink.model.enums.GitProperty

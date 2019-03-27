@@ -1,4 +1,4 @@
-package ru.nikstep.redink.git.loader
+package ru.nikstep.redink.git.rest
 
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
@@ -7,28 +7,27 @@ import ru.nikstep.redink.model.enums.Language
 import java.time.LocalDateTime
 
 /**
- * Bitbucket rest test implementation
+ * Gitlab rest test implementation
  */
-class BitbucketRestManagerTest : AbstractGitRestManagerTest() {
+class GitlabRestManagerTest : AbstractGitRestManagerTest() {
 
     override val repo = Repository(
-        name = "nikita715/plagiarism_test2",
-        gitService = GitProperty.BITBUCKET,
+        name = "testns3/plagiarism_test",
+        gitService = GitProperty.GITLAB,
         language = Language.JAVA
     )
 
     override val pullRequest = PullRequest(
-        number = 4,
-        creatorName = "nikita715",
-        sourceRepoId = 1,
+        number = 1,
+        creatorName = "testns3",
+        sourceRepoId = 11158542,
         repo = repo,
-        headSha = "738c283091cbca80bd3701cc206480f5567d74a7",
+        headSha = "6e12a8d031574dc6a07eaa9125d8ce4fdc2c9776",
         sourceBranchName = branchName,
         date = LocalDateTime.now(),
         sourceRepoFullName = repo.name,
-        mainRepoId = 1,
+        mainRepoId = 11158542,
         mainBranchName = "master"
     )
-
-    override val restManager = BitbucketRestManager(solutionStorage)
+    override val restManager = GitlabRestManager(solutionStorage)
 }

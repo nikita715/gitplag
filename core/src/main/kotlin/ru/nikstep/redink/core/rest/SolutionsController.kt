@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import ru.nikstep.redink.git.loader.GitRestManager
+import ru.nikstep.redink.git.rest.GitRestManager
 import ru.nikstep.redink.git.webhook.PayloadProcessor
 import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.repo.BaseFileRecordRepository

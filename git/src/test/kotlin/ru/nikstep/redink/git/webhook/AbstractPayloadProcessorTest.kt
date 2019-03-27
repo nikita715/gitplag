@@ -9,7 +9,7 @@ import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
-import ru.nikstep.redink.git.loader.GitRestManager
+import ru.nikstep.redink.git.rest.GitRestManager
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.PullRequestRepository

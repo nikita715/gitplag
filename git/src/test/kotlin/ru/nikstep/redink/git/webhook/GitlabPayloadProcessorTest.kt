@@ -1,7 +1,7 @@
 package ru.nikstep.redink.git.webhook
 
 import io.kotlintest.mock.mock
-import ru.nikstep.redink.git.loader.GitlabRestManager
+import ru.nikstep.redink.git.rest.GitlabRestManager
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.enums.GitProperty
