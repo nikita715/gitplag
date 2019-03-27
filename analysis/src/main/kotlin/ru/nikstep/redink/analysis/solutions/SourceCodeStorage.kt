@@ -4,17 +4,11 @@ import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.data.PreparedAnalysisData
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
-import java.io.File
 
 /**
  * Storage of source files: teacher base files and student solutions
  */
-interface SolutionStorage {
-
-    /**
-     * Load all base files from the storage
-     */
-    fun loadBases(settings: AnalysisSettings): List<File>
+interface SourceCodeStorage {
 
     /**
      * Save all files from [tempDir] as base files that belong to the [repo]

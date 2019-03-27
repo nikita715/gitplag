@@ -3,8 +3,13 @@ package ru.nikstep.redink.analysis.analyser
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import ru.nikstep.redink.analysis.solutions.SolutionStorage
-import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
+import ru.nikstep.redink.model.data.AnalysisMatch
+import ru.nikstep.redink.model.data.AnalysisResult
+import ru.nikstep.redink.model.data.AnalysisSettings
+import ru.nikstep.redink.model.data.MatchedLines
+import ru.nikstep.redink.model.data.Solution
+import ru.nikstep.redink.model.data.findSolutionByStudent
 import ru.nikstep.redink.model.enums.AnalysisMode
 import ru.nikstep.redink.util.inTempDirectory
 import java.time.LocalDateTime
@@ -13,7 +18,7 @@ import java.time.LocalDateTime
  * Moss client wrapper
  */
 class MossAnalyser(
-    private val solutionStorage: SolutionStorage,
+    private val sourceCodeStorage: SourceCodeStorage,
     private val mossId: String
 ) : Analyser {
     private val logger = KotlinLogging.logger {}
@@ -23,7 +28,7 @@ class MossAnalyser(
     override fun analyse(settings: AnalysisSettings): AnalysisResult =
         inTempDirectory { tempDir ->
             logger.info { "Analysis:Moss:1.Gathering files for analysis. ${repoInfo(settings)}" }
-            val analysisFiles = solutionStorage.loadBasesAndComposedSolutions(settings, tempDir)
+            val analysisFiles = sourceCodeStorage.loadBasesAndComposedSolutions(settings, tempDir)
 
             logger.info { "Analysis:Moss:2.Start analysis. ${repoInfo(settings)}" }
             val resultLink = MossClient(analysisFiles, mossId).run()

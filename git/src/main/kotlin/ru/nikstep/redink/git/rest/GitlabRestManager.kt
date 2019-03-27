@@ -2,8 +2,7 @@ package ru.nikstep.redink.git.rest
 
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
-import mu.KotlinLogging
-import ru.nikstep.redink.analysis.solutions.SolutionStorage
+import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.util.sendRestRequest
 
@@ -11,10 +10,8 @@ import ru.nikstep.redink.util.sendRestRequest
  * Loader of files from Gitlab
  */
 class GitlabRestManager(
-    solutionStorage: SolutionStorage
-) : AbstractGitRestManager(solutionStorage) {
-
-    private val logger = KotlinLogging.logger {}
+    sourceCodeStorage: SourceCodeStorage
+) : AbstractGitRestManager(sourceCodeStorage) {
 
     override fun findBranchesOfRepo(repo: Repository): List<String> =
         sendRestRequest<JsonArray<JsonObject>>("https://gitlab.com/api/v4/projects/${repo.gitId}/repository/branches")

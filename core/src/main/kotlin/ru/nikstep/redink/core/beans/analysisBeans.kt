@@ -4,7 +4,7 @@ import org.springframework.context.support.beans
 import ru.nikstep.redink.analysis.AnalysisRunner
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.analysis.analyser.MossAnalyser
-import ru.nikstep.redink.analysis.solutions.FileSystemSolutionStorage
+import ru.nikstep.redink.analysis.solutions.FileSystemSourceCodeStorage
 import ru.nikstep.redink.core.util.safeEnvVar
 import ru.nikstep.redink.git.rest.BitbucketRestManager
 import ru.nikstep.redink.git.rest.GitRestManager
@@ -48,6 +48,6 @@ val analysisBeans = beans {
     }
 
     bean { AnalysisRunner(ref("analysers"), ref()) }
-    bean { FileSystemSolutionStorage(ref(), ref(), ref(), ref(), env.safeEnvVar("redink.solutionsDir")) }
+    bean { FileSystemSourceCodeStorage(ref(), ref(), ref(), ref(), env.safeEnvVar("redink.solutionsDir")) }
 
 }

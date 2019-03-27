@@ -6,7 +6,7 @@
 //import org.springframework.web.bind.annotation.GetMapping
 //import org.springframework.web.bind.annotation.PathVariable
 //import org.springframework.web.bind.annotation.RestController
-//import ru.nikstep.redink.analysis.solutions.SolutionStorage
+//import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
 //import ru.nikstep.redink.git.rest.GitRestManager
 //import ru.nikstep.redink.model.repo.AnalysisPairRepository
 //import ru.nikstep.redink.model.repo.AnalysisRepository
@@ -18,7 +18,7 @@
 //@RestController
 //class ResultsController(
 //    private val analysisRepository: AnalysisRepository,
-//    private val solutionStorage: SolutionStorage
+//    private val solutionStorage: SourceCodeStorage
 //) {
 //
 //    private val resultsStyle: HEAD.() -> Unit = {
