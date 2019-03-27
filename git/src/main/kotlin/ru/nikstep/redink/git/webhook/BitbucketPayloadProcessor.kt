@@ -17,7 +17,7 @@ class BitbucketPayloadProcessor(
     bitbucketLoader: BitbucketRestManager
 ) : AbstractPayloadProcessor(pullRequestRepository, repositoryRepository, bitbucketLoader) {
 
-    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+    override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
     override val git = BITBUCKET
 
     override val JsonObject.pullRequest: JsonObject
@@ -50,11 +50,11 @@ class BitbucketPayloadProcessor(
     override val JsonObject?.mainBranchName: String?
         get() = this?.obj("destination")?.obj("branch")?.string("name")
 
-    override val JsonObject?.date: LocalDateTime?
-        get() = LocalDateTime.parse(
-            this?.string("updated_on")?.substring(0, 19),
-            dateFormatter
-        )
+    override val JsonObject?.createdAt: LocalDateTime?
+        get() = this?.string("created_on")?.parseDate()
+
+    override val JsonObject?.updatedAt: LocalDateTime?
+        get() = this?.string("updated_on")?.parseDate()
 
     override val JsonObject.pushRepoId: Long?
         get() = -1

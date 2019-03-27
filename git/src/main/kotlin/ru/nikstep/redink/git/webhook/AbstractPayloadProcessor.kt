@@ -10,6 +10,7 @@ import ru.nikstep.redink.model.repo.PullRequestRepository
 import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.parseAsObject
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Common implementation of the [PayloadProcessor]
@@ -142,7 +143,7 @@ abstract class AbstractPayloadProcessor(
         jsonPayload.apply {
             return copy(
                 headSha = requireNotNull(sourceHeadSha),
-                date = requireNotNull(date)
+                updatedAt = requireNotNull(updatedAt)
             )
         }
     }
@@ -159,12 +160,16 @@ abstract class AbstractPayloadProcessor(
                 headSha = requireNotNull(sourceHeadSha),
                 sourceBranchName = requireNotNull(sourceBranchName),
                 mainBranchName = requireNotNull(mainBranchName),
-                date = requireNotNull(date)
+                createdAt = requireNotNull(createdAt),
+                updatedAt = requireNotNull(updatedAt)
             )
         } catch (e: IllegalArgumentException) {
             logger.error { "Webhook: unable to load pr number $number to repo ${repo.name}, git ${repo.gitService}" }
             null
         }
+
+    protected abstract val dateFormatter: DateTimeFormatter
+    protected fun String?.parseDate() = LocalDateTime.parse(this?.substring(0, 19), dateFormatter)
 
     protected abstract val git: GitProperty
 
@@ -182,7 +187,9 @@ abstract class AbstractPayloadProcessor(
 
     protected abstract val JsonObject?.sourceBranchName: String?
 
-    protected abstract val JsonObject?.date: LocalDateTime?
+    protected abstract val JsonObject?.createdAt: LocalDateTime?
+
+    protected abstract val JsonObject?.updatedAt: LocalDateTime?
 
     protected abstract val JsonObject?.sourceRepoFullName: String?
 

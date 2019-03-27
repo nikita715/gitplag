@@ -7,7 +7,7 @@ import com.nhaarman.mockitokotlin2.verify
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.`when`
-import ru.nikstep.redink.analysis.solutions.SolutionStorage
+import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.repo.RepositoryRepository
@@ -33,7 +33,7 @@ abstract class AbstractGitRestManagerTest {
 
     abstract val pullRequest: PullRequest
 
-    val solutionStorage = mock<SolutionStorage>()
+    val solutionStorage = mock<SourceCodeStorage>()
 
     val repositoryRepository = mock<RepositoryRepository>()
 

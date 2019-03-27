@@ -36,6 +36,7 @@ class GitlabPayloadProcessorTest : AbstractPayloadProcessorTest() {
         headSha = "d647870f53f333e3c0bec84cdd245e7262071331",
         sourceBranchName = "br2",
         mainBranchName = "master",
-        date = LocalDateTime.of(2019, Month.FEBRUARY, 28, 22, 12, 32)
+        createdAt = LocalDateTime.of(2019, Month.FEBRUARY, 28, 19, 14, 37),
+        updatedAt = LocalDateTime.of(2019, Month.FEBRUARY, 28, 22, 12, 32)
     )
 }

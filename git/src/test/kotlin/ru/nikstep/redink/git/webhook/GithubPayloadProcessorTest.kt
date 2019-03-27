@@ -36,6 +36,7 @@ class GithubPayloadProcessorTest : AbstractPayloadProcessorTest() {
         headSha = "6ec548da744248919dc753deac536722a46c31f1",
         sourceBranchName = "testns2-patch-1",
         mainBranchName = "master",
-        date = LocalDateTime.of(2019, Month.FEBRUARY, 27, 21, 31, 43)
+        createdAt = LocalDateTime.of(2019, Month.FEBRUARY, 25, 18, 36, 37),
+        updatedAt = LocalDateTime.of(2019, Month.FEBRUARY, 27, 21, 31, 43)
     )
 }

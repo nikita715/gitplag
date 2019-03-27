@@ -24,7 +24,8 @@ class GithubRestManagerTest : AbstractGitRestManagerTest() {
         repo = repo,
         headSha = "0ab6c9f464e8e8f13a80859178d0886ee438385d",
         sourceBranchName = branchName,
-        date = LocalDateTime.now(),
+        createdAt = LocalDateTime.now(),
+        updatedAt = LocalDateTime.now(),
         sourceRepoFullName = repo.name,
         mainRepoId = 1,
         mainBranchName = "master"

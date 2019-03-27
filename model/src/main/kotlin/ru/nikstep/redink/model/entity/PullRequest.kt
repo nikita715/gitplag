@@ -47,5 +47,8 @@ data class PullRequest(
     val mainBranchName: String,
 
     @Column(nullable = false)
-    val date: LocalDateTime
+    val createdAt: LocalDateTime,
+
+    @Column(nullable = false)
+    val updatedAt: LocalDateTime
 )

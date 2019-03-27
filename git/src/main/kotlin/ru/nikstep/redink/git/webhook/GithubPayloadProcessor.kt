@@ -1,7 +1,6 @@
 package ru.nikstep.redink.git.webhook
 
 import com.beust.klaxon.JsonObject
-import mu.KotlinLogging
 import ru.nikstep.redink.git.rest.GithubRestManager
 import ru.nikstep.redink.model.enums.GitProperty.GITHUB
 import ru.nikstep.redink.model.repo.PullRequestRepository
@@ -18,8 +17,7 @@ class GithubPayloadProcessor(
     githubLoader: GithubRestManager
 ) : AbstractPayloadProcessor(pullRequestRepository, repositoryRepository, githubLoader) {
 
-    private val logger = KotlinLogging.logger {}
-    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+    override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
     override val git = GITHUB
 
     override val JsonObject.pullRequest: JsonObject
@@ -52,11 +50,11 @@ class GithubPayloadProcessor(
     override val JsonObject?.mainBranchName: String?
         get() = this?.obj("base")?.string("ref")
 
-    override val JsonObject?.date: LocalDateTime?
-        get() = LocalDateTime.parse(
-            this?.string("updated_at")?.substring(0, 19),
-            dateFormatter
-        )
+    override val JsonObject?.createdAt: LocalDateTime?
+        get() = this?.string("created_at")?.parseDate()
+
+    override val JsonObject?.updatedAt: LocalDateTime?
+        get() = this?.string("updated_at")?.parseDate()
 
     override val JsonObject.pushBranchName: String?
         get() = string("ref")?.substringAfterLast("/")

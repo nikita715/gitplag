@@ -37,6 +37,7 @@ class BitbucketPayloadProcessorTest : AbstractPayloadProcessorTest() {
         headSha = "1458a8caab0b",
         sourceBranchName = "testns2/javacljava-created-online-with-bitbucket-1551121394025",
         mainBranchName = "master",
-        date = LocalDateTime.of(2019, Month.FEBRUARY, 25, 20, 54, 28)
+        createdAt = LocalDateTime.of(2019, Month.FEBRUARY, 25, 19, 3, 19),
+        updatedAt = LocalDateTime.of(2019, Month.FEBRUARY, 25, 20, 54, 28)
     )
 }
