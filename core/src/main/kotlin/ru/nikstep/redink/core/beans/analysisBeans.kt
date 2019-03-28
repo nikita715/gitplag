@@ -35,8 +35,7 @@ val analysisBeans = beans {
             ref(),
             ref(),
             env.safeEnvVar("redink.solutionsDir"),
-            env.safeEnvVar("redink.jplagResultDir"),
-            env.safeEnvVar("redink.serverUrl")
+            env.safeEnvVar("redink.jplagResultDir")
         )
     }
 

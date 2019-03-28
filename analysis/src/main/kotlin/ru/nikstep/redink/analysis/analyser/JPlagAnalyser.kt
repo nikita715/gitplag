@@ -28,8 +28,7 @@ class JPlagAnalyser(
     private val randomGenerator: RandomGenerator,
     private val jPlagReportRepository: JPlagReportRepository,
     private val solutionsDir: String,
-    private val jplagResultDir: String,
-    private val serverUrl: String
+    private val jplagResultDir: String
 ) :
     Analyser {
 
@@ -57,7 +56,7 @@ class JPlagAnalyser(
                 emptyList()
             }
 
-        val resultLink = "$serverUrl/jplagresult/$hash/index.html"
+        val resultLink = "/jplagresult/$hash/index.html"
         val executionDate = LocalDateTime.now()
         jPlagReportRepository.save(JPlagReport(createdAt = executionDate, hash = hash))
 

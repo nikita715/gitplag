@@ -43,7 +43,6 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
     private val solution9 = File("$relSolutionsDir/$student3/$file9Name")
 
     private val resultDir = Files.createTempDirectory("dir").toFile().absolutePath + "/"
-    private val serverUrl = "url"
 
     private val prefix = "prefix"
     private val randomGenerator = mock<RandomGenerator> {
@@ -81,14 +80,13 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
             randomGenerator,
             jPlagReportRepository,
             solutionsDir,
-            resultDir,
-            serverUrl
+            resultDir
         )
 
     private val expectedResult =
         AnalysisResult(
             repo = testRepoName,
-            resultLink = "$serverUrl/jplagresult/$prefix/index.html",
+            resultLink = "/jplagresult/$prefix/index.html",
             executionDate = LocalDateTime.now(),
             matchData = listOf(
                 AnalysisMatch(
