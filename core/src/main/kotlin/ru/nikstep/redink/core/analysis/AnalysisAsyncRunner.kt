@@ -39,4 +39,16 @@ class AnalysisAsyncRunner(private val analysisRunner: AnalysisRunner) {
             sendAnalysisResult(url = responseUrl, body = body)
         }
     }
+
+    /**
+     * Async runner of an analysis
+     */
+    @Async("analysisTaskExecutor")
+    fun runAndRespond(analysisSettings: AnalysisSettings, responseUrl: String?) {
+        val result = analysisRunner.run(analysisSettings)
+        if (responseUrl != null) {
+            val body = objectMapper.writeValueAsString(result)
+            sendAnalysisResult(url = responseUrl, body = body)
+        }
+    }
 }

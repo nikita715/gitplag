@@ -26,6 +26,11 @@ class PreparedAnalysisData(
     val language: Language,
 
     /**
+     * Root dir with all files
+     */
+    val rootDir: String,
+
+    /**
      * Base files and solution files that were created by students
      */
     val bases: List<File>,
