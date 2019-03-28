@@ -1,5 +1,6 @@
 package ru.nikstep.redink.core.webhook
 
+import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import org.junit.Before
 import org.junit.Test
@@ -12,7 +13,6 @@ import ru.nikstep.redink.git.webhook.PayloadProcessor
 abstract class AbstractWebhookControllerTest {
 
     abstract val payloadProcessor: PayloadProcessor
-
     abstract val webhookController: Any
 
     abstract val endpoint: String
@@ -45,5 +45,15 @@ abstract class AbstractWebhookControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
         )
         verify(payloadProcessor).downloadBasesOfRepository(payload)
+    }
+
+    @Test
+    fun processNothing() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post(endpoint).content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+        verify(payloadProcessor, never()).downloadBasesOfRepository(payload)
+        verify(payloadProcessor, never()).downloadSolutionsOfPullRequest(payload)
     }
 }
