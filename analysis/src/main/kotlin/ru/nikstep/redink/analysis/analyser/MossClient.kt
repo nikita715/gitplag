@@ -1,45 +1,28 @@
 package ru.nikstep.redink.analysis.analyser
 
-import it.zielke.moji.SocketClient
-import mu.KotlinLogging
-import org.apache.commons.lang3.reflect.FieldUtils
 import ru.nikstep.redink.model.data.PreparedAnalysisData
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.util.concurrent.TimeUnit
 
 /**
  * Client of the Moss plagiarism analysis service.
  * See http://moss.stanford.edu
  */
-internal class MossClient(analysisData: PreparedAnalysisData, private val mossId: String) {
-    private val logger = KotlinLogging.logger {}
-
+internal class MossClient(analysisData: PreparedAnalysisData, private val mossPath: String) {
     private val language = analysisData.language.ofMoss()
     private val bases = analysisData.bases
     private val solutions = analysisData.solutions
 
     @Synchronized
-    fun run(): String =
-        SocketClient().use { client ->
-            client.userID = mossId
-            client.language = language
-            client.optD(0)
-            client.run()
-            bases.forEach { client.uploadFile(it, true) }
-            solutions.forEach { client.uploadFile(it.file) }
-            client.sendQuery()
-            client.resultURL.toString()
-        }
-
-
-    fun SocketClient.optD(value: Int) {
-        this::class.java.getDeclaredField("optD").isAccessible = true
-        FieldUtils.writeField(this, "optD", value, true)
+    fun run(): String {
+        val exec = Runtime.getRuntime().exec(
+            "perl $mossPath -l $language -b" +
+                    " ${bases.joinToString(separator = " -b ") { it.absolutePath }} " +
+                    " ${solutions.joinToString(" ") { it.file.absolutePath }}"
+        )
+        exec.waitFor(10, TimeUnit.MINUTES)
+        return BufferedReader(InputStreamReader(exec.inputStream)).readLines().last()
     }
-
-    private inline fun <R> SocketClient.use(action: (SocketClient) -> R): R =
-        try {
-            action(this)
-        } finally {
-            close()
-        }
 
 }
