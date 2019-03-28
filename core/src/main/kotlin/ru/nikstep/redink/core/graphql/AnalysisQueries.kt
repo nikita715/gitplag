@@ -14,7 +14,6 @@ import ru.nikstep.redink.model.repo.RepositoryRepository
 /**
  * Graphql analysis requests resolver
  */
-@Suppress("unused")
 class AnalysisQueries(
     private val repositoryRepository: RepositoryRepository,
     private val analysisRepository: AnalysisRepository,
