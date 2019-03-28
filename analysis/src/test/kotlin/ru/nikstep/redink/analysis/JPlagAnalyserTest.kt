@@ -7,11 +7,7 @@ import com.nhaarman.mockitokotlin2.verify
 import org.junit.Test
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
-import ru.nikstep.redink.model.data.AnalysisMatch
-import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.data.PreparedAnalysisData
-import ru.nikstep.redink.model.data.Solution
+import ru.nikstep.redink.model.data.*
 import ru.nikstep.redink.model.entity.JPlagReport
 import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.enums.Language
@@ -28,7 +24,7 @@ import java.time.LocalDateTime
  */
 class JPlagAnalyserTest : AbstractAnalyserTest() {
 
-    private val relSolutionsDir = asPath("src", "test", "resources", "separateSolutions")
+    private val relSolutionsDir = asPath("src", "test", "resources", "jplagpreparedfiles")
 
     private val solutionsDir = Paths.get(relSolutionsDir).toFile().absolutePath
 
