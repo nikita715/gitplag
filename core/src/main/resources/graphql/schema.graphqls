@@ -93,6 +93,46 @@ type Repository {
     analysisMode: String
 }
 
+type BaseFileRecord {
+    id: ID!,
+
+    fileName: String!,
+
+    branch: String!,
+
+    repo: Repository!
+}
+
+type SolutionFileRecord {
+    id: ID!,
+
+    pullRequest: PullRequest!,
+
+    fileName: String!,
+
+    countOfLines: Int!
+}
+
+type ComposedFiles {
+    bases: [BaseFileRecord]!,
+    solutions: [SolutionFileRecord]!
+}
+
+type PullRequest {
+    id: ID!,
+    repo: Repository!,
+    number: Int!,
+    creatorName: String!,
+    sourceRepoId: Long!,
+    mainRepoId: Long!,
+    sourceRepoFullName: String!,
+    headSha: String!,
+    sourceBranchName: String!,
+    mainBranchName: String!,
+    createdAt: LocalDateTime!,
+    updatedAt: LocalDateTime!
+}
+
 type Query {
 
     # Get a result of the analysis of two solutions
@@ -163,4 +203,26 @@ type Query {
 
     # Processing grade of analysis results
     analysisMode: String):Repository!
+
+    getLocalBases(
+    git: String!, repoName: String!, branch: String,
+            fileName: String
+    ):[BaseFileRecord]!
+
+    getLocalSolutions(
+
+    git: String!, repoName: String!, branch: String,
+            student: String, fileName: String
+
+    ):[SolutionFileRecord]!
+
+    updateFilesOfRepo(
+
+    # Git service of the repository
+    git: String!,
+
+    # Name of the repository
+    name: String!):ComposedFiles!
+
+
 }

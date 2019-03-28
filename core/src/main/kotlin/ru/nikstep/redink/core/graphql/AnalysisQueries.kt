@@ -8,14 +8,14 @@ import ru.nikstep.redink.model.data.language
 import ru.nikstep.redink.model.data.mode
 import ru.nikstep.redink.model.entity.Analysis
 import ru.nikstep.redink.model.enums.GitProperty
+import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.AnalysisRepository
-import ru.nikstep.redink.model.repo.RepositoryRepository
 
 /**
  * Graphql analysis requests resolver
  */
 class AnalysisQueries(
-    private val repositoryRepository: RepositoryRepository,
+    private val repositoryDataManager: RepositoryDataManager,
     private val analysisRepository: AnalysisRepository,
     private val analysisRunner: AnalysisRunner
 ) : GraphQLQueryResolver {
@@ -23,20 +23,18 @@ class AnalysisQueries(
     /**
      * Get the last analysis result by the parameters
      */
-    fun analysis(gitService: String, repo: String): Analysis? =
-        repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(gitService.toUpperCase()), repo)
+    fun analysis(git: GitProperty, repo: String): Analysis? =
+        repositoryDataManager.findByGitServiceAndName(git, repo)
             ?.let(analysisRepository::findFirstByRepositoryOrderByExecutionDateDesc)
 
     /**
      * Initiate the analysis
      */
     fun analyse(
-        gitService: String, repo: String, branch: String,
+        git: GitProperty, repo: String, branch: String,
         analyser: String?, language: String?, mode: String?
     ): Analysis? {
-        val repoValue =
-            repositoryRepository.findByGitServiceAndName(GitProperty.valueOf(gitService.toUpperCase()), repo)
-                ?: return null
+        val repoValue = repositoryDataManager.findByGitServiceAndName(git, repo) ?: return null
         return analysisRunner.run(
             AnalysisSettings(repoValue, branch).language(language).analyser(analyser).mode(mode)
         )

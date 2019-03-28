@@ -25,7 +25,7 @@ class BitbucketPayloadProcessorTest : AbstractPayloadProcessorTest() {
     )
 
     override val payloadProcessor =
-        BitbucketPayloadProcessor(pullRequestRepository, repositoryRepository, gitRestManager)
+        BitbucketPayloadProcessor(pullRequestRepository, repositoryDataManager, gitRestManager)
 
     override val pullRequest = PullRequest(
         number = 3,
