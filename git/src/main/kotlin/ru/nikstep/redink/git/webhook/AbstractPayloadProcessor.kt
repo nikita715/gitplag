@@ -6,8 +6,8 @@ import ru.nikstep.redink.git.rest.GitRestManager
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.enums.GitProperty
+import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.PullRequestRepository
-import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.parseAsObject
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
  */
 abstract class AbstractPayloadProcessor(
     private val pullRequestRepository: PullRequestRepository,
-    private val repositoryRepository: RepositoryRepository,
+    private val repositoryDataManager: RepositoryDataManager,
     private val gitRestManager: GitRestManager
 ) : PayloadProcessor {
     private val logger = KotlinLogging.logger {}
@@ -26,7 +26,7 @@ abstract class AbstractPayloadProcessor(
         val jsonObject = payload.parseAsObject()
 
         val mainRepoFullName = jsonObject.pullRequest.mainRepoFullName
-        val repo = repositoryRepository.findByGitServiceAndName(
+        val repo = repositoryDataManager.findByGitServiceAndName(
             git, requireNotNull(mainRepoFullName)
         )
 
@@ -43,7 +43,7 @@ abstract class AbstractPayloadProcessor(
         val jsonObject = payload.parseAsObject()
         val branchName = requireNotNull(jsonObject.pushBranchName)
         val repoFullName = requireNotNull(jsonObject.pushRepoName)
-        val repo = repositoryRepository.findByGitServiceAndName(GitProperty.GITHUB, repoFullName)
+        val repo = repositoryDataManager.findByGitServiceAndName(GitProperty.GITHUB, repoFullName)
 
         if (repo != null) {
             if (!repo.branches.contains(branchName)) {
@@ -98,7 +98,7 @@ abstract class AbstractPayloadProcessor(
     }
 
     private fun cloneRepoAndAllPullRequests(repoName: String?, repoId: Long?) {
-        val repo = repositoryRepository.save(
+        val repo = repositoryDataManager.save(
             Repository(
                 name = requireNotNull(repoName),
                 gitService = git,

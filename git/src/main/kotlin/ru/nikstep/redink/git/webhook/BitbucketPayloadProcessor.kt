@@ -3,8 +3,8 @@ package ru.nikstep.redink.git.webhook
 import com.beust.klaxon.JsonObject
 import ru.nikstep.redink.git.rest.BitbucketRestManager
 import ru.nikstep.redink.model.enums.GitProperty.BITBUCKET
+import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.PullRequestRepository
-import ru.nikstep.redink.model.repo.RepositoryRepository
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -13,9 +13,9 @@ import java.time.format.DateTimeFormatter
  */
 class BitbucketPayloadProcessor(
     pullRequestRepository: PullRequestRepository,
-    repositoryRepository: RepositoryRepository,
+    repositoryDataManager: RepositoryDataManager,
     bitbucketLoader: BitbucketRestManager
-) : AbstractPayloadProcessor(pullRequestRepository, repositoryRepository, bitbucketLoader) {
+) : AbstractPayloadProcessor(pullRequestRepository, repositoryDataManager, bitbucketLoader) {
 
     override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
     override val git = BITBUCKET

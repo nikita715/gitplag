@@ -6,7 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import ru.nikstep.redink.model.data.AnalysisSettings
 import ru.nikstep.redink.model.manager.JPlagReportDataManager
-import ru.nikstep.redink.model.repo.RepositoryRepository
+import ru.nikstep.redink.model.manager.RepositoryDataManager
 import java.io.File
 import java.time.LocalDateTime
 
@@ -16,7 +16,7 @@ import java.time.LocalDateTime
 @Component
 class AnalysisScheduler(
     private val analysisAsyncRunner: AnalysisAsyncRunner,
-    private val repositoryRepository: RepositoryRepository,
+    private val repositoryDataManager: RepositoryDataManager,
     private val jPlagReportDataManager: JPlagReportDataManager,
     @Value("\${redink.jplagResultDir}") private val jplagResultDir: String
 ) {
@@ -28,7 +28,7 @@ class AnalysisScheduler(
     @Scheduled(cron = "0 * * * * *")
     fun initiateAnalysis() {
         logger.info { "Core: look for periodic analyzes" }
-        val requiredToAnalyse = repositoryRepository.findRequiredToAnalyse()
+        val requiredToAnalyse = repositoryDataManager.findRequiredToAnalyse()
         logger.info { "Core: found ${requiredToAnalyse.size} required analyzes" }
         requiredToAnalyse.flatMap { repository ->
             repository.branches.map { branch ->

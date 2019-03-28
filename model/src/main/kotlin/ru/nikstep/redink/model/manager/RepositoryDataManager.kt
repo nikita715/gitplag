@@ -68,7 +68,20 @@ class RepositoryDataManager(
     }
 
     @Transactional(readOnly = true)
-    fun findByGitServiceAndName(gitService: GitProperty, name: String): Repository? =
-        repositoryRepository.findByGitServiceAndName(gitService, name)
+    fun findByGitServiceAndName(gitService: GitProperty, name: String): Repository? {
+        val repository = repositoryRepository.findByGitServiceAndName(gitService, name)
+        repository?.filePatterns?.size
+        return repository
+    }
+
+    @Transactional
+    fun save(repo: Repository): Repository {
+        val savedRepo = repositoryRepository.save(repo)
+        savedRepo.filePatterns.size
+        return savedRepo
+    }
+
+    @Transactional(readOnly = true)
+    fun findRequiredToAnalyse(): List<Repository> = repositoryRepository.findRequiredToAnalyse()
 
 }

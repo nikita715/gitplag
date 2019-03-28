@@ -10,7 +10,7 @@ import org.mockito.Mockito.`when`
 import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
-import ru.nikstep.redink.model.repo.RepositoryRepository
+import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.util.asPath
 import java.nio.file.Paths
 
@@ -35,14 +35,14 @@ abstract class AbstractGitRestManagerTest {
 
     val solutionStorage = mock<SourceCodeStorage>()
 
-    val repositoryRepository = mock<RepositoryRepository>()
+    private val repositoryDataManager = mock<RepositoryDataManager>()
 
     abstract val restManager: GitRestManager
 
     @Before
     fun setUp() {
         `when`(
-            repositoryRepository.findByGitServiceAndName(
+            repositoryDataManager.findByGitServiceAndName(
                 pullRequest.repo.gitService,
                 pullRequest.repo.name
             )

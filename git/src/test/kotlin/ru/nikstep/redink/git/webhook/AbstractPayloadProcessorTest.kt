@@ -12,8 +12,8 @@ import org.mockito.stubbing.Answer
 import ru.nikstep.redink.git.rest.GitRestManager
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
+import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.PullRequestRepository
-import ru.nikstep.redink.model.repo.RepositoryRepository
 import ru.nikstep.redink.util.asPath
 import java.nio.file.Paths
 
@@ -39,14 +39,14 @@ abstract class AbstractPayloadProcessorTest {
 
     abstract val gitRestManager: GitRestManager
 
-    protected val repositoryRepository = mock<RepositoryRepository>()
+    protected val repositoryDataManager = mock<RepositoryDataManager>()
 
     /**
      * Test saving and requesting of the download of a pull request
      */
     @Test
     fun saveNewPullRequest() {
-        `when`(repositoryRepository.findByGitServiceAndName(any(), any())).thenReturn(repo)
+        `when`(repositoryDataManager.findByGitServiceAndName(any(), any())).thenReturn(repo)
         payloadProcessor.downloadSolutionsOfPullRequest(payload)
         verify(pullRequestRepository).save(argument.capture())
         argument.value shouldEqual pullRequest

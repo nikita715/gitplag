@@ -24,7 +24,7 @@ class GitlabPayloadProcessorTest : AbstractPayloadProcessorTest() {
         branches = listOf("br2")
     )
 
-    override val payloadProcessor = GitlabPayloadProcessor(pullRequestRepository, repositoryRepository, gitRestManager)
+    override val payloadProcessor = GitlabPayloadProcessor(pullRequestRepository, repositoryDataManager, gitRestManager)
 
     override val pullRequest = PullRequest(
         number = 1,
