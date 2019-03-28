@@ -24,12 +24,15 @@ import java.io.File
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-
+/**
+ * Tests for the [FileSystemSourceCodeStorage]
+ */
 class FileSystemSourceCodeStorageTest {
 
-    private val unpackedZip = File(asPath("src", "test", "resources", "unpackedzip")).absolutePath
-    private val solutionDir = File(asPath("src", "test", "resources", "solutiondirsample")).absolutePath
-    private val composedFileDir = File(asPath("src", "test", "resources", "composedfiles")).absolutePath
+    private val resourcesPath = asPath("src", "test", "resources")
+    private val unpackedZip = File(asPath(resourcesPath, "unpackedzip")).absolutePath
+    private val solutionDir = File(asPath(resourcesPath, "solutiondirsample")).absolutePath
+    private val composedFileDir = File(asPath(resourcesPath, "composedfiles")).absolutePath
 
     private val github = GitProperty.GITHUB
     private val java = Language.JAVA
