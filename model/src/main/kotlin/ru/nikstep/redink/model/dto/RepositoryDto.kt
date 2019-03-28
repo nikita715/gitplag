@@ -9,12 +9,31 @@ import ru.nikstep.redink.model.enums.Language
 /**
  * Dto for [Repository] class
  */
-class RepositoryDto(val gitService: GitProperty, val fullName: String) {
-    val language: Language? = null
-    val filePatterns: Collection<String>? = null
-    val analyser: AnalyserProperty? = null
-    val periodicAnalysis: Boolean? = null
-    val periodicAnalysisDelay: Int? = null
-    val branches: List<String>? = null
-    val analysisMode: AnalysisMode? = null
+data class RepositoryDto(val gitService: GitProperty, val fullName: String) {
+    var language: Language? = null
+    var filePatterns: Collection<String>? = null
+    var analyser: AnalyserProperty? = null
+    var periodicAnalysis: Boolean? = null
+    var periodicAnalysisDelay: Int? = null
+    var branches: List<String>? = null
+    var analysisMode: AnalysisMode? = null
+
+    constructor(
+        gitService: GitProperty, fullName: String,
+        language: Language?,
+        filePatterns: Collection<String>?,
+        analyser: AnalyserProperty?,
+        periodicAnalysis: Boolean?,
+        periodicAnalysisDelay: Int?,
+        branches: List<String>?,
+        analysisMode: AnalysisMode?
+    ) : this(gitService, fullName) {
+        this.language = language
+        this.filePatterns = filePatterns
+        this.analyser = analyser
+        this.periodicAnalysis = periodicAnalysis
+        this.periodicAnalysisDelay = periodicAnalysisDelay
+        this.branches = branches
+        this.analysisMode = analysisMode
+    }
 }

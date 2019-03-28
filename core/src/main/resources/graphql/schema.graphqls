@@ -59,6 +59,40 @@ type AnalysisPairLines {
     to2: Int!
 }
 
+# Repo
+type Repository {
+
+    # Repo id
+    id: ID!,
+
+    # Name of the repo
+    name: String!,
+
+    # Git service of the repository
+    gitService: String!,
+
+    # The main language of the repository
+    language: String,
+
+    # Regexps for managed files
+    filePatterns: [String],
+
+    # Default analyser
+    analyser: String,
+
+    # Does the periodic analysis enabled
+    periodicAnalysis: Boolean,
+
+    # Delay of the periodic analysis in minutes
+    periodicAnalysisDelay: Int,
+
+    # Names of managed branches
+    branches: [String],
+
+    # Processing grade of analysis results
+    analysisMode: String
+}
+
 type Query {
 
     # Get a result of the analysis of two solutions
@@ -91,4 +125,42 @@ type Query {
     # Chosen programming language
     language: String):Analysis!
 
+    # Get a repository by name
+    getRepo(
+
+    # Git service of the repository
+    git: String!,
+
+    # Name of the repository
+    name: String!):Repository
+
+    # Create or update a repo by its name
+    manageRepo(
+
+    # Git service of the repository
+    git: String!,
+
+    # Full name of the repository
+    fullName: String!,
+
+    # The main programming language of the repository
+    language: String,
+
+    # Regexps for managed files
+    filePatterns: [String],
+
+    # Default analyser
+    analyser: String,
+
+    # Does the periodic analysis enabled
+    periodicAnalysis: Boolean,
+
+    # Delay of the periodic analysis in minutes
+    periodicAnalysisDelay: Int,
+
+    # Names of managed branches
+    branches: [String],
+
+    # Processing grade of analysis results
+    analysisMode: String):Repository!
 }

@@ -1,8 +1,12 @@
 package ru.nikstep.redink.model.enums
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import ru.nikstep.redink.model.util.LanguageDeserializer
+
 /**
  * Name of a programming language
  */
+@JsonDeserialize(using = LanguageDeserializer::class)
 enum class Language {
     C,
     CPP,
