@@ -16,7 +16,7 @@ server:
   port: 80
 
 redink:
-  mossPath: /opt/moss/moss.pl
+  mossPath: ${MOSS_PATH}
   solutionsDir: ${SOLUTIONS_DIR}
   jplagResultDir: ${JPLAG_REPORT_DIR}
   serverUrl: ${SERVER_HTTP_URL}
