@@ -24,6 +24,9 @@ import ru.nikstep.redink.core.beans.gitBeans
 @EnableAsync
 class RedinkApplication
 
+/**
+ * The application entry point
+ */
 fun main(args: Array<String>) {
     runApplication<RedinkApplication> {
         addInitializers(
