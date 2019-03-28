@@ -61,7 +61,7 @@ class MossAnalyserTest : AbstractAnalyserTest() {
         )
     )
 
-    private val analysisService = MossAnalyser(solutionStorage, System.getenv("MOSS_ID"))
+    private val analysisService = MossAnalyser(solutionStorage, System.getenv("MOSS_PATH"))
 
     private val expectedResult =
         AnalysisResult(
