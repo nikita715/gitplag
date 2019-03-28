@@ -15,7 +15,7 @@ import java.io.File
  */
 abstract class AbstractAnalyserTest {
 
-    private val separateSolutionsDir = asPath("src", "test", "resources", "separateSolutions")
+    private val separateSolutionsDir = asPath("src", "test", "resources", "jplagpreparedfiles")
 
     protected val testRepoName = "nikita715/plagiarism_test"
 
