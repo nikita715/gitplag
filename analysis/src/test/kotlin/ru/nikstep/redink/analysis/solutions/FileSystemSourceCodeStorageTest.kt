@@ -1,6 +1,10 @@
 package ru.nikstep.redink.analysis.solutions
 
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.verify
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.shouldEqual
 import org.apache.commons.io.FileUtils
@@ -104,10 +108,7 @@ class FileSystemSourceCodeStorageTest {
     private lateinit var sourceCodeStorage: FileSystemSourceCodeStorage
 
     private val repositoryDataManager = mock<RepositoryDataManager> {
-        on { nameMatchesRegexp(fileName1, repo) } doReturn true
-        on { nameMatchesRegexp(fileName2, repo) } doReturn true
-        on { nameMatchesRegexp(fileName3, repo) } doReturn false
-        on { nameMatchesRegexp(fileName4, repo) } doReturn false
+        on { findFileNameRegexps(repo) } doReturn listOf(".+\\.java")
     }
 
     private val pullRequestRepository = mock<PullRequestRepository> {
