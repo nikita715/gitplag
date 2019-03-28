@@ -50,84 +50,98 @@ class FileSystemSourceCodeStorage(
             solutions = solutions
         )
 
-    private fun loadBases(settings: AnalysisSettings): List<File> =
-        baseFileRecordRepository.findAllByRepoAndBranch(settings.repository, settings.branch)
+    private fun loadBases(settings: AnalysisSettings): List<File> {
+        val filePatterns = repositoryDataManager.findFileNameRegexps(settings.repository)
+        return baseFileRecordRepository.findAllByRepoAndBranch(settings.repository, settings.branch)
             .mapNotNull { baseRecord ->
-                if (nameMatchesRegex(baseRecord.fileName, settings.repository))
+                if (nameMatchesRegex(baseRecord.fileName, filePatterns))
                     File(pathToBase(settings, baseRecord.fileName))
                 else null
             }
+    }
 
-    private fun loadSeparateSolutions(analysisSettings: AnalysisSettings): List<Solution> =
-        pullRequestRepository.findAllByRepoAndSourceBranchName(analysisSettings.repository, analysisSettings.branch)
-            .flatMap { pullRequest ->
-                solutionFileRecordRepository.findAllByPullRequest(pullRequest).mapNotNull { solutionRecord ->
-                    if (nameMatchesRegex(solutionRecord.fileName, analysisSettings.repository)) {
-                        val file = File(pathToSolution(analysisSettings, solutionRecord))
-                        Solution(
-                            student = pullRequest.creatorName,
-                            fileName = solutionRecord.fileName,
-                            file = file, sha = pullRequest.headSha
-                        )
-                    } else null
+    private fun loadSeparateSolutions(analysisSettings: AnalysisSettings): List<Solution> {
+        val filePatterns = repositoryDataManager.findFileNameRegexps(analysisSettings.repository)
+        return pullRequestRepository.findAllByRepoAndSourceBranchName(
+            analysisSettings.repository,
+            analysisSettings.branch
+        ).flatMap { pullRequest ->
+            solutionFileRecordRepository.findAllByPullRequest(pullRequest).mapNotNull { solutionRecord ->
+                if (nameMatchesRegex(solutionRecord.fileName, filePatterns)) {
+                    val file = File(pathToSolution(analysisSettings, solutionRecord))
+                    Solution(
+                        student = pullRequest.creatorName,
+                        fileName = solutionRecord.fileName,
+                        file = file, sha = pullRequest.headSha
+                    )
+                } else null
+            }
+        }
+    }
+
+    private fun loadSeparateCopiedSolutions(analysisSettings: AnalysisSettings, tempDir: String): List<Solution> {
+        val filePatterns = repositoryDataManager.findFileNameRegexps(analysisSettings.repository)
+        return pullRequestRepository.findAllByRepoAndSourceBranchName(
+            analysisSettings.repository,
+            analysisSettings.branch
+        ).flatMap { pullRequest ->
+            val solutionRecords = solutionFileRecordRepository.findAllByPullRequest(pullRequest)
+            val indexToFileName = mutableListOf<Pair<String, String>>()
+            val studentDir = File("$tempDir/${pullRequest.creatorName}")
+            Files.createDirectory(studentDir.toPath())
+            var fileIterator = 0
+            solutionRecords.mapNotNull { solutionRecord ->
+                if (nameMatchesRegex(solutionRecord.fileName, filePatterns)) {
+                    val generatedFileName = "${fileIterator++}.txt"
+                    val generatedFile = File(studentDir.absolutePath + "/" + generatedFileName)
+                    indexToFileName += generatedFileName to solutionRecord.fileName
+                    Files.copy(
+                        File(pathToSolution(analysisSettings, solutionRecord)).toPath(),
+                        generatedFile.toPath()
+                    )
+                    Solution(
+                        student = pullRequest.creatorName,
+                        fileName = generatedFileName,
+                        file = generatedFile,
+                        sha = pullRequest.headSha,
+                        realFileName = solutionRecord.fileName
+                    )
+                } else null
+            }
+        }
+    }
+
+    private fun loadComposedSolutions(analysisSettings: AnalysisSettings, tempDir: String): List<Solution> {
+        val filePatterns = repositoryDataManager.findFileNameRegexps(analysisSettings.repository)
+        return pullRequestRepository.findAllByRepoAndSourceBranchName(
+            analysisSettings.repository,
+            analysisSettings.branch
+        ).map { pullRequest ->
+            val solutionRecords = solutionFileRecordRepository.findAllByPullRequest(pullRequest)
+            val fileName = pullRequest.creatorName + ".txt"
+            val composedFile = File("$tempDir/$fileName")
+            var composedFileLength = 0
+            val fileNames = mutableListOf<String>()
+            val filePositions = mutableListOf<Int>()
+            solutionRecords.forEach { solutionRecord ->
+                if (nameMatchesRegex(solutionRecord.fileName, filePatterns)) {
+                    val solFile = File(pathToSolution(analysisSettings, solutionRecord))
+                    composedFile.appendText(solFile.readText())
+                    filePositions += solutionRecord.countOfLines + composedFileLength
+                    composedFileLength += solutionRecord.countOfLines
+                    fileNames += solutionRecord.fileName
                 }
             }
-
-    private fun loadSeparateCopiedSolutions(analysisSettings: AnalysisSettings, tempDir: String): List<Solution> =
-        pullRequestRepository.findAllByRepoAndSourceBranchName(analysisSettings.repository, analysisSettings.branch)
-            .flatMap { pullRequest ->
-                val solutionRecords = solutionFileRecordRepository.findAllByPullRequest(pullRequest)
-                val indexToFileName = mutableListOf<Pair<String, String>>()
-                val studentDir = File("$tempDir/${pullRequest.creatorName}")
-                Files.createDirectory(studentDir.toPath())
-                var fileIterator = 0
-                solutionRecords.mapNotNull { solutionRecord ->
-                    if (nameMatchesRegex(solutionRecord.fileName, analysisSettings.repository)) {
-                        val generatedFileName = "${fileIterator++}.txt"
-                        val generatedFile = File(studentDir.absolutePath + "/" + generatedFileName)
-                        indexToFileName += generatedFileName to solutionRecord.fileName
-                        Files.copy(
-                            File(pathToSolution(analysisSettings, solutionRecord)).toPath(),
-                            generatedFile.toPath()
-                        )
-                        Solution(
-                            student = pullRequest.creatorName,
-                            fileName = generatedFileName,
-                            file = generatedFile,
-                            sha = pullRequest.headSha,
-                            realFileName = solutionRecord.fileName
-                        )
-                    } else null
-                }
-            }
-
-    private fun loadComposedSolutions(analysisSettings: AnalysisSettings, tempDir: String): List<Solution> =
-        pullRequestRepository.findAllByRepoAndSourceBranchName(analysisSettings.repository, analysisSettings.branch)
-            .map { pullRequest ->
-                val solutionRecords = solutionFileRecordRepository.findAllByPullRequest(pullRequest)
-                val fileName = pullRequest.creatorName + ".txt"
-                val composedFile = File("$tempDir/$fileName")
-                var composedFileLength = 0
-                val fileNames = mutableListOf<String>()
-                val filePositions = mutableListOf<Int>()
-                solutionRecords.forEach { solutionRecord ->
-                    if (nameMatchesRegex(solutionRecord.fileName, analysisSettings.repository)) {
-                        val solFile = File(pathToSolution(analysisSettings, solutionRecord))
-                        composedFile.appendText(solFile.readText())
-                        filePositions += solutionRecord.countOfLines + composedFileLength
-                        composedFileLength += solutionRecord.countOfLines
-                        fileNames += solutionRecord.fileName
-                    }
-                }
-                Solution(
-                    student = pullRequest.creatorName,
-                    fileName = fileName,
-                    file = composedFile,
-                    includedFileNames = fileNames,
-                    includedFilePositions = filePositions,
-                    sha = pullRequest.headSha
-                )
-            }
+            Solution(
+                student = pullRequest.creatorName,
+                fileName = fileName,
+                file = composedFile,
+                includedFileNames = fileNames,
+                includedFilePositions = filePositions,
+                sha = pullRequest.headSha
+            )
+        }
+    }
 
 
     override fun saveBasesFromDir(
@@ -138,9 +152,10 @@ class FileSystemSourceCodeStorage(
         val pathToBases = pathToBases(repo.gitService, repo.name, branchName)
         File(pathToBases).deleteRecursively()
         baseFileRecordRepository.deleteAllByRepoAndBranch(repo, branchName)
+        val filePatterns = repositoryDataManager.findFileNameRegexps(repo)
         forEachFileInDirectory(tempDir) { foundedFile ->
             val fileName = File(tempDir).toPath().relativize(foundedFile.toPath()).toString()
-            if (repositoryDataManager.nameMatchesRegexp(fileName, repo)) {
+            if (nameMatchesRegex(fileName, filePatterns)) {
                 foundedFile.copyTo(File("$pathToBases/$fileName"))
                 baseFileRecordRepository.save(
                     BaseFileRecord(
@@ -163,9 +178,10 @@ class FileSystemSourceCodeStorage(
         val pathToSolutions = pathToSolutions(pullRequest)
         File(pathToSolutions).deleteRecursively()
         solutionFileRecordRepository.deleteAllByPullRequest(pullRequest)
+        val filePatterns = repositoryDataManager.findFileNameRegexps(pullRequest.repo)
         forEachFileInDirectory(tempDir) { foundedFile ->
             val fileName = File(tempDir).toPath().relativize(foundedFile.toPath()).toString()
-            if (repositoryDataManager.nameMatchesRegexp(fileName, pullRequest.repo)) {
+            if (nameMatchesRegex(fileName, filePatterns)) {
                 foundedFile.copyTo(File("$pathToSolutions/$fileName"))
                 solutionFileRecordRepository.save(
                     SolutionFileRecord(
@@ -187,8 +203,12 @@ class FileSystemSourceCodeStorage(
         }
     }
 
-    private fun nameMatchesRegex(fileName: String, repo: Repository) =
-        repositoryDataManager.nameMatchesRegexp(fileName, repo)
+    private fun nameMatchesRegex(fileName: String, filePatterns: Collection<String>): Boolean {
+        filePatterns.forEach {
+            if (it.toRegex().matches(fileName)) return true
+        }
+        return false
+    }
 
     private fun pathToBases(git: GitProperty, repo: String, branch: String): String =
         asPath(solutionsDir, git, repo, branch.toLowerCase(), baseDir)
