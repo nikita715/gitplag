@@ -33,21 +33,22 @@ class FileSystemSourceCodeStorage(
     private val baseDir = ".base"
 
     override fun loadBasesAndComposedSolutions(settings: AnalysisSettings, tempDir: String) =
-        loadBasesAndSolutions(settings, loadComposedSolutions(settings, tempDir))
+        loadBasesAndSolutions(settings, tempDir, loadComposedSolutions(settings, tempDir))
 
     override fun loadBasesAndSeparatedSolutions(settings: AnalysisSettings) =
-        loadBasesAndSolutions(settings, loadSeparateSolutions(settings))
+        loadBasesAndSolutions(settings, "", loadSeparateSolutions(settings))
 
     override fun loadBasesAndSeparatedCopiedSolutions(settings: AnalysisSettings, tempDir: String) =
-        loadBasesAndSolutions(settings, loadSeparateCopiedSolutions(settings, tempDir))
+        loadBasesAndSolutions(settings, tempDir, loadSeparateCopiedSolutions(settings, tempDir))
 
-    private fun loadBasesAndSolutions(settings: AnalysisSettings, solutions: List<Solution>) =
+    private fun loadBasesAndSolutions(settings: AnalysisSettings, rootDir: String, solutions: List<Solution>) =
         PreparedAnalysisData(
             gitService = settings.repository.gitService,
             repoName = settings.repository.name,
             language = settings.language,
             bases = loadBases(settings),
-            solutions = solutions
+            solutions = solutions,
+            rootDir = rootDir
         )
 
     private fun loadBases(settings: AnalysisSettings): List<File> {

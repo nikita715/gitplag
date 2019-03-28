@@ -153,17 +153,41 @@ type Query {
     # Name of the repository
     repo: String!,
 
-    # Mode of the analysis (link, pairs or full)
-    mode: String!,
-
     # Branch to analyse
     branch: String!,
 
     # Chosen plagiarism analyser (moss or jplag)
     analyser: String,
 
+    # Mode of the analysis (link, pairs or full)
+    mode: String,
+
     # Chosen programming language
     language: String):Analysis!
+
+    # Run analysis of the repo with detached response
+    analyseDetached(
+
+    # Git service of the repository (github, gitlab or bitbucket)
+    gitService: String!,
+
+    # Name of the repository
+    repo: String!,
+
+    # Branch to analyse
+    branch: String!,
+
+    # Response url
+    responseUrl: String!,
+
+    # Chosen plagiarism analyser (moss or jplag)
+    analyser: String,
+
+    # Chosen programming language
+    language: String,
+
+    # Mode of the analysis (link, pairs or full)
+    mode: String): Boolean
 
     # Get a repository by name
     getRepo(
