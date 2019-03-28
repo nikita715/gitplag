@@ -19,7 +19,7 @@ import java.time.LocalDateTime
  */
 class MossAnalyser(
     private val sourceCodeStorage: SourceCodeStorage,
-    private val mossId: String
+    private val mossPath: String
 ) : Analyser {
     private val logger = KotlinLogging.logger {}
 
@@ -31,7 +31,7 @@ class MossAnalyser(
             val analysisFiles = sourceCodeStorage.loadBasesAndComposedSolutions(settings, tempDir)
 
             logger.info { "Analysis:Moss:2.Start analysis. ${repoInfo(settings)}" }
-            val resultLink = MossClient(analysisFiles, mossId).run()
+            val resultLink = MossClient(analysisFiles, mossPath).run()
 
             val matchData =
                 if (settings.mode.order > AnalysisMode.LINK.order) {

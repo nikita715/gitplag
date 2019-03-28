@@ -7,7 +7,11 @@ import org.junit.Test
 import org.mockito.Mockito
 import ru.nikstep.redink.analysis.analyser.MossAnalyser
 import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
-import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.model.data.AnalysisMatch
+import ru.nikstep.redink.model.data.AnalysisResult
+import ru.nikstep.redink.model.data.MatchedLines
+import ru.nikstep.redink.model.data.PreparedAnalysisData
+import ru.nikstep.redink.model.data.Solution
 import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.enums.Language
 import ru.nikstep.redink.util.asPath
@@ -33,6 +37,7 @@ class MossAnalyserTest : AbstractAnalyserTest() {
         GitProperty.GITHUB,
         testRepoName,
         Language.JAVA,
+        "",
         listOf(base1, base2),
         listOf(
             Solution(

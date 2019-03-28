@@ -5,6 +5,9 @@ jdk:
 notifications:
   email: false
 
+before_install:
+  - openssl enc -aes256 -base64 -in ./libs/moss.pl.enc -out /opt/moss/moss.pl -k $MOSS_ENCR_KEY -d
+
 script:
   - ./gradlew check
   - ./gradlew codeCoverageReport

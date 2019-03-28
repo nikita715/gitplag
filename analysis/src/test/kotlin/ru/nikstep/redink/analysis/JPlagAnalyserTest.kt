@@ -7,7 +7,11 @@ import com.nhaarman.mockitokotlin2.verify
 import org.junit.Test
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
-import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.model.data.AnalysisMatch
+import ru.nikstep.redink.model.data.AnalysisResult
+import ru.nikstep.redink.model.data.MatchedLines
+import ru.nikstep.redink.model.data.PreparedAnalysisData
+import ru.nikstep.redink.model.data.Solution
 import ru.nikstep.redink.model.entity.JPlagReport
 import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.enums.Language
@@ -50,6 +54,7 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
         GitProperty.GITHUB,
         testRepoName,
         Language.JAVA,
+        "",
         listOf(base1, base2),
         listOf(
             Solution(student1, file1Name, solution1, sha = sha1),
