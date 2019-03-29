@@ -1,5 +1,6 @@
 package ru.nikstep.redink.analysis.analyser
 
+import mu.KotlinLogging
 import ru.nikstep.redink.model.data.PreparedAnalysisData
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -13,16 +14,18 @@ internal class MossClient(analysisData: PreparedAnalysisData, private val mossPa
     private val language = analysisData.language.ofMoss()
     private val bases = analysisData.bases
     private val solutions = analysisData.solutions
+    private val logger = KotlinLogging.logger {}
 
     @Synchronized
     fun run(): String {
-        val exec = Runtime.getRuntime().exec(
-            "perl $mossPath -l $language -b" +
-                    " ${bases.joinToString(separator = " -b ") { it.absolutePath }} " +
-                    " ${solutions.joinToString(" ") { it.file.absolutePath }}"
-        )
+        val command = "perl $mossPath -d -l $language ${if (bases.isNotEmpty()) "-b" else ""}" +
+                " ${bases.joinToString(separator = " -b ") { it.absolutePath }} " +
+                " ${solutions.joinToString(" ") { it.file.absolutePath }}"
+        val exec = Runtime.getRuntime().exec(command)
         exec.waitFor(10, TimeUnit.MINUTES)
-        return BufferedReader(InputStreamReader(exec.inputStream)).readLines().last()
+        val reader = BufferedReader(InputStreamReader(exec.inputStream))
+        logger.info { command }
+        return reader.readLines().last()
     }
 
 }

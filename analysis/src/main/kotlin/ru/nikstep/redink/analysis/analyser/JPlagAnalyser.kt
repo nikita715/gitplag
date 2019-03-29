@@ -3,18 +3,13 @@ package ru.nikstep.redink.analysis.analyser
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
-import ru.nikstep.redink.model.data.AnalysisMatch
-import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.data.AnalysisSettings
-import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.data.PreparedAnalysisData
-import ru.nikstep.redink.model.data.Solution
-import ru.nikstep.redink.model.data.findSolutionByStudent
+import ru.nikstep.redink.model.data.*
 import ru.nikstep.redink.model.entity.JPlagReport
 import ru.nikstep.redink.model.enums.AnalysisMode
 import ru.nikstep.redink.model.repo.JPlagReportRepository
 import ru.nikstep.redink.util.RandomGenerator
 import ru.nikstep.redink.util.asPath
+import ru.nikstep.redink.util.inTempDirectory
 import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime
@@ -36,33 +31,34 @@ class JPlagAnalyser(
     private val regexUserNames = "^Matches for (.+) & (.+)$".toRegex()
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
-    override fun analyse(settings: AnalysisSettings): AnalysisResult {
-        val (hash, resultDir) = generateResultDir()
+    override fun analyse(settings: AnalysisSettings): AnalysisResult =
+        inTempDirectory { tempDir ->
+            val (hash, resultDir) = generateResultDir()
 
-        logger.info { "Analysis:JPlag:1.Gathering files for analysis. ${repoInfo(settings)}" }
-        val analysisFiles = sourceCodeStorage.loadBasesAndSeparatedSolutions(settings)
+            logger.info { "Analysis:JPlag:1.Gathering files for analysis. ${repoInfo(settings)}" }
+            val analysisFiles = sourceCodeStorage.loadBasesAndSeparatedSolutions(settings, tempDir)
 
-        logger.info { "Analysis:JPlag:2.Start analysis. ${repoInfo(settings)}" }
-        JPlagClient(analysisFiles, solutionsDir, settings.branch, resultDir).run()
+            logger.info { "Analysis:JPlag:2.Start analysis. ${repoInfo(settings)}" }
+            JPlagClient(analysisFiles, solutionsDir, settings.branch, resultDir).run()
 
-        val matchLines =
-            if (settings.mode.order > AnalysisMode.LINK.order) {
-                logger.info { "Analysis:JPlag:3.Start parsing of results. ${repoInfo(settings)}" }
-                analysisFiles.toSolutionPairIndexes().mapNotNull { index ->
-                    parseResults(index, settings, analysisFiles.solutions, resultDir)
+            val matchLines =
+                if (settings.mode.order > AnalysisMode.LINK.order) {
+                    logger.info { "Analysis:JPlag:3.Start parsing of results. ${repoInfo(settings)}" }
+                    analysisFiles.toSolutionPairIndexes().mapNotNull { index ->
+                        parseResults(index, settings, analysisFiles.solutions, resultDir)
+                    }
+                } else {
+                    logger.info { "Analysis:JPlag:3.Skipped parsing. ${repoInfo(settings)}" }
+                    emptyList()
                 }
-            } else {
-                logger.info { "Analysis:JPlag:3.Skipped parsing. ${repoInfo(settings)}" }
-                emptyList()
-            }
 
-        val resultLink = "/jplagresult/$hash/index.html"
-        val executionDate = LocalDateTime.now()
-        jPlagReportRepository.save(JPlagReport(createdAt = executionDate, hash = hash))
+            val resultLink = "/jplagresult/$hash/index.html"
+            val executionDate = LocalDateTime.now()
+            jPlagReportRepository.save(JPlagReport(createdAt = executionDate, hash = hash))
 
-        logger.info { "Analysis:JPlag:4.End of analysis. ${repoInfo(settings)}" }
-        return AnalysisResult(settings, resultLink, executionDate, matchLines)
-    }
+            logger.info { "Analysis:JPlag:4.End of analysis. ${repoInfo(settings)}" }
+            AnalysisResult(settings, resultLink, executionDate, matchLines)
+        }
 
     private fun repoInfo(analysisSettings: AnalysisSettings): String =
         analysisSettings.run { "Repo ${repository.name}, Branch $branch." }
