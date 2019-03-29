@@ -29,7 +29,7 @@ interface SourceCodeStorage {
     /**
      * Load all base solution files and corresponding solution files according to the [settings].
      */
-    fun loadBasesAndSeparatedSolutions(settings: AnalysisSettings): PreparedAnalysisData
+    fun loadBasesAndSeparatedSolutions(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData
 
     /**
      * Load all base solution files and corresponding solution files according to the [settings].
@@ -38,4 +38,6 @@ interface SourceCodeStorage {
      * in solution objects.
      */
     fun loadBasesAndSeparatedCopiedSolutions(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData
+
+    fun prepareAnalysisData(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData
 }
