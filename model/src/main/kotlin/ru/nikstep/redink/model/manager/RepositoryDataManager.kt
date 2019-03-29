@@ -35,6 +35,9 @@ class RepositoryDataManager(
         )
     )
 
+    /**
+     * Update the [repo] by the [repositoryDto]
+     */
     @Transactional
     fun update(repo: Repository, repositoryDto: RepositoryDto): Repository = repositoryRepository.save(
         repo.copy(
@@ -60,17 +63,28 @@ class RepositoryDataManager(
         return false
     }
 
+    /**
+     * Find a repo by [gitService] and [name]
+     */
     @Transactional(readOnly = true)
     fun findByGitServiceAndName(gitService: GitProperty, name: String): Repository? =
         repositoryRepository.findByGitServiceAndName(gitService, name)
 
-
+    /**
+     * Save the [repo]
+     */
     @Transactional
     fun save(repo: Repository): Repository = repositoryRepository.save(repo)
 
+    /**
+     * Find repositories that must be analysed at this time
+     */
     @Transactional(readOnly = true)
     fun findRequiredToAnalyse(): List<Repository> = repositoryRepository.findRequiredToAnalyse()
 
+    /**
+     * Get file name regexps of the [repo]
+     */
     @Transactional(readOnly = true)
     fun findFileNameRegexps(repo: Repository) = repositoryRepository.findById(repo.id)
         .let { if (it.isPresent) it.get().filePatterns else emptyList() }.also { it.size }
