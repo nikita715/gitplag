@@ -12,11 +12,15 @@ RUN apt-get update \
 
 RUN rm -rf $REDINK_HOME \
     && git clone https://github.com/nikita715/redink.git $REDINK_HOME --branch dev \
-    && $REDINK_HOME/gradlew bootJar
+    && cd $REDINK_HOME \
+    && ./gradlew bootJar
 
 FROM ubuntu:18.04 as prod
 
 ENV REDINK_HOME=/opt/redink
+ENV MOSS_PATH=/mnt/redink/moss.pl
+ENV SOLUTIONS_DIR=/mnt/redink/solutions
+ENV JPLAG_REPORT_DIR=/mnt/redink/jplagreports
 
 WORKDIR $REDINK_HOME
 
