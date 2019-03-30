@@ -23,13 +23,17 @@ import java.time.LocalDateTime
  */
 class MossAnalyserTest : AbstractAnalyserTest() {
 
-    private val separateSolutionsDir = asPath("src", "test", "resources", "mosspreparedfiles")
+    private val solutionsDir = asPath("src", "test", "resources", "mosspreparedfiles")
 
     private val solutionStorage = Mockito.mock(SourceCodeStorage::class.java)
 
-    private val file1 = File("$separateSolutionsDir/$student1.txt")
-    private val file2 = File("$separateSolutionsDir/$student2.txt")
-    private val file3 = File("$separateSolutionsDir/$student3.txt")
+    private val file1 = File("$solutionsDir/$student1/$student1.txt")
+    private val file2 = File("$solutionsDir/$student2/$student2.txt")
+    private val file3 = File("$solutionsDir/$student3/$student3.txt")
+    private val base1 =
+        File("$solutionsDir/.base/0.java")
+    private val base2 =
+        File("$solutionsDir/.base/1.java")
 
     private val file10Name = "file10.java"
 
