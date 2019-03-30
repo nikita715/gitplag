@@ -4,11 +4,11 @@ import com.coxautodev.graphql.tools.GraphQLQueryResolver
 import ru.nikstep.redink.analysis.AnalysisRunner
 import ru.nikstep.redink.core.analysis.AnalysisAsyncRunner
 import ru.nikstep.redink.model.data.AnalysisSettings
-import ru.nikstep.redink.model.data.analyser
-import ru.nikstep.redink.model.data.language
-import ru.nikstep.redink.model.data.mode
 import ru.nikstep.redink.model.entity.Analysis
+import ru.nikstep.redink.model.enums.AnalyserProperty
+import ru.nikstep.redink.model.enums.AnalysisMode
 import ru.nikstep.redink.model.enums.GitProperty
+import ru.nikstep.redink.model.enums.Language
 import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.AnalysisRepository
 
@@ -34,11 +34,11 @@ class AnalysisQueries(
      */
     fun analyse(
         git: GitProperty, repo: String, branch: String,
-        analyser: String?, language: String?, mode: String?
+        analyser: AnalyserProperty?, language: Language?, mode: AnalysisMode?
     ): Analysis? {
         val repoValue = repositoryDataManager.findByGitServiceAndName(git, repo) ?: return null
         return analysisRunner.run(
-            AnalysisSettings(repoValue, branch).language(language).analyser(analyser).mode(mode)
+            AnalysisSettings(repoValue, branch, language = language, analyser = analyser, mode = mode)
         )
     }
 
@@ -47,11 +47,11 @@ class AnalysisQueries(
      */
     fun analyseDetached(
         git: GitProperty, repo: String, branch: String, responseUrl: String,
-        analyser: String?, language: String?, mode: String?
+        analyser: AnalyserProperty?, language: Language?, mode: AnalysisMode?
     ): Boolean {
         val repoValue = repositoryDataManager.findByGitServiceAndName(git, repo) ?: return false
         analysisAsyncRunner.runAndRespond(
-            AnalysisSettings(repoValue, branch).language(language).analyser(analyser).mode(mode), responseUrl
+            AnalysisSettings(repoValue, branch, language = language, analyser = analyser, mode = mode), responseUrl
         )
         return true
     }
