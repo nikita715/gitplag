@@ -18,7 +18,7 @@ internal class MossClient(analysisData: PreparedAnalysisData, private val mossPa
 
     @Synchronized
     fun run(): String {
-        val command = "perl $mossPath -d -l $language ${if (bases.isNotEmpty()) "-b" else ""}" +
+        val command = "perl $mossPath -l $language ${if (bases.isNotEmpty()) "-b" else ""}" +
                 " ${bases.joinToString(separator = " -b ") { it.absolutePath }} " +
                 " ${solutions.joinToString(" ") { it.file.absolutePath }}"
         val exec = Runtime.getRuntime().exec(command)

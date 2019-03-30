@@ -3,7 +3,13 @@ package ru.nikstep.redink.analysis.analyser
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
-import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.model.data.AnalysisMatch
+import ru.nikstep.redink.model.data.AnalysisResult
+import ru.nikstep.redink.model.data.AnalysisSettings
+import ru.nikstep.redink.model.data.MatchedLines
+import ru.nikstep.redink.model.data.PreparedAnalysisData
+import ru.nikstep.redink.model.data.Solution
+import ru.nikstep.redink.model.data.findSolutionByStudent
 import ru.nikstep.redink.model.entity.JPlagReport
 import ru.nikstep.redink.model.enums.AnalysisMode
 import ru.nikstep.redink.model.repo.JPlagReportRepository
@@ -39,7 +45,7 @@ class JPlagAnalyser(
             val analysisFiles = sourceCodeStorage.loadBasesAndSeparatedSolutions(settings, tempDir)
 
             logger.info { "Analysis:JPlag:2.Start analysis. ${repoInfo(settings)}" }
-            JPlagClient(analysisFiles, solutionsDir, settings.branch, resultDir).run()
+            JPlagClient(analysisFiles, resultDir).run()
 
             val matchLines =
                 if (settings.mode.order > AnalysisMode.LINK.order) {
