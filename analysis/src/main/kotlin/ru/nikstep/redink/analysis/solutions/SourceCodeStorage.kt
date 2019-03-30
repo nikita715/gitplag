@@ -38,6 +38,4 @@ interface SourceCodeStorage {
      * in solution objects.
      */
     fun loadBasesAndSeparatedCopiedSolutions(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData
-
-    fun prepareAnalysisData(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData
 }

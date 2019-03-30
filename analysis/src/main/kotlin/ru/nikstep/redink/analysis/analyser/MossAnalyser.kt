@@ -4,7 +4,12 @@ import mu.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
-import ru.nikstep.redink.model.data.*
+import ru.nikstep.redink.model.data.AnalysisMatch
+import ru.nikstep.redink.model.data.AnalysisResult
+import ru.nikstep.redink.model.data.AnalysisSettings
+import ru.nikstep.redink.model.data.MatchedLines
+import ru.nikstep.redink.model.data.Solution
+import ru.nikstep.redink.model.data.findSolutionByStudent
 import ru.nikstep.redink.model.enums.AnalysisMode
 import ru.nikstep.redink.util.inTempDirectory
 import java.time.LocalDateTime
@@ -23,7 +28,7 @@ class MossAnalyser(
     override fun analyse(settings: AnalysisSettings): AnalysisResult =
         inTempDirectory { tempDir ->
             logger.info { "Analysis:Moss:1.Gathering files for analysis. ${repoInfo(settings)}" }
-            val analysisFiles = sourceCodeStorage.loadBasesAndSeparatedSolutions(settings, tempDir)
+            val analysisFiles = sourceCodeStorage.loadBasesAndComposedSolutions(settings, tempDir)
 
             logger.info { "Analysis:Moss:2.Start analysis. ${repoInfo(settings)}" }
             val resultLink = MossClient(analysisFiles, mossPath).run()

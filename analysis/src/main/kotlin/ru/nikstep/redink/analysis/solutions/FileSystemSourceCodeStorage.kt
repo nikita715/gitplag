@@ -41,17 +41,7 @@ class FileSystemSourceCodeStorage(
     override fun loadBasesAndSeparatedCopiedSolutions(settings: AnalysisSettings, tempDir: String) =
         loadBasesAndSolutions(settings, tempDir, loadSeparateCopiedSolutions(settings, tempDir))
 
-    override fun prepareAnalysisData(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData =
-        PreparedAnalysisData(
-            gitService = settings.repository.gitService,
-            repoName = settings.repository.name,
-            language = settings.language,
-            bases = loadBasesUniform(settings, tempDir),
-            solutions = loadComposedSolutions(settings, tempDir),
-            rootDir = tempDir
-        )
-
-    private fun loadBasesUniform(settings: AnalysisSettings, tempDir: String): List<File> {
+    private fun loadBases(settings: AnalysisSettings, tempDir: String): List<File> {
         val filePatterns = repositoryDataManager.findFileNameRegexps(settings.repository)
         val baseDir = File("$tempDir/.base")
         Files.createDirectory(baseDir.toPath())
@@ -59,7 +49,7 @@ class FileSystemSourceCodeStorage(
         return baseFileRecordRepository.findAllByRepo(settings.repository)
             .mapNotNull { baseRecord ->
                 if (nameMatchesRegex(baseRecord.fileName, filePatterns)) {
-                    val generatedFileName = "${fileIterator++}.txt"
+                    val generatedFileName = "${fileIterator++}.${baseRecord.fileName.toFileExtension()}"
                     val generatedFile = File(baseDir.absolutePath + "/" + generatedFileName)
                     Files.copy(
                         File(
@@ -80,20 +70,10 @@ class FileSystemSourceCodeStorage(
             gitService = settings.repository.gitService,
             repoName = settings.repository.name,
             language = settings.language,
-            bases = loadBasesUniform(settings, rootDir),
+            bases = loadBases(settings, rootDir),
             solutions = solutions,
             rootDir = rootDir
         )
-
-    private fun loadBases(settings: AnalysisSettings): List<File> {
-        val filePatterns = repositoryDataManager.findFileNameRegexps(settings.repository)
-        return baseFileRecordRepository.findAllByRepoAndBranch(settings.repository, settings.branch)
-            .mapNotNull { baseRecord ->
-                if (nameMatchesRegex(baseRecord.fileName, filePatterns))
-                    File(pathToBase(settings, baseRecord.fileName))
-                else null
-            }
-    }
 
     private fun loadSeparateSolutions(analysisSettings: AnalysisSettings, tempDir: String): List<Solution> {
         val filePatterns = repositoryDataManager.findFileNameRegexps(analysisSettings.repository)
@@ -182,7 +162,6 @@ class FileSystemSourceCodeStorage(
         }
     }
 
-
     override fun saveBasesFromDir(
         tempDir: String,
         repo: Repository,
@@ -241,6 +220,9 @@ class FileSystemSourceCodeStorage(
             }
         }
     }
+
+    private fun String.toFileExtension() =
+        substringAfterLast(".")
 
     private fun nameMatchesRegex(fileName: String, filePatterns: Collection<String>): Boolean {
         filePatterns.forEach {
