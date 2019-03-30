@@ -7,16 +7,11 @@ import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.enums.AnalysisMode
 import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.enums.Language
-import ru.nikstep.redink.util.asPath
-import java.io.File
 
 /**
  * Abstract test for the plagiarism analysers
  */
 abstract class AbstractAnalyserTest {
-
-    private val separateSolutionsDir = asPath("src", "test", "resources", "jplagpreparedfiles")
-
     protected val testRepoName = "nikita715/plagiarism_test"
 
     protected val student1 = "student1"
@@ -31,11 +26,6 @@ abstract class AbstractAnalyserTest {
     protected val file7Name = "file7.java"
     protected val file8Name = "file8.java"
     protected val file9Name = "file9.java"
-
-    protected val base1 =
-        File("$separateSolutionsDir/github/nikita715/plagiarism_test/master/.base/base1.java")
-    protected val base2 =
-        File("$separateSolutionsDir/github/nikita715/plagiarism_test/master/.base/base2.java")
 
     protected val sha1 = "sha1"
     protected val sha2 = "sha2"

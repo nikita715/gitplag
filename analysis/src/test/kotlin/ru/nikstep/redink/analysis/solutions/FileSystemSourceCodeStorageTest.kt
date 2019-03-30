@@ -6,7 +6,6 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import io.kotlintest.matchers.shouldBe
-import io.kotlintest.matchers.shouldEqual
 import org.apache.commons.io.FileUtils
 import org.junit.Test
 import ru.nikstep.redink.model.data.AnalysisSettings
@@ -116,7 +115,7 @@ class FileSystemSourceCodeStorageTest {
     }
 
     private val baseFileRecordRepository = mock<BaseFileRecordRepository> {
-        on { findAllByRepoAndBranch(repo, branchName) } doReturn
+        on { findAllByRepo(repo) } doReturn
                 listOf(baseFileRecord1, baseFileRecord2, baseFileRecord3, baseFileRecord4)
     }
 
@@ -129,6 +128,8 @@ class FileSystemSourceCodeStorageTest {
 
     private val studTxt = "stud.txt"
     private val stud2Txt = "stud2.txt"
+    private val base0Java = "0.java"
+    private val base1Java = "1.java"
 
     private val composedSolution1 = File("$composedFileDir/$studTxt")
     private val composedSolution2 = File("$composedFileDir/$stud2Txt")
@@ -145,7 +146,15 @@ class FileSystemSourceCodeStorageTest {
         inTempDirectory { tempDir ->
             val analysisData =
                 sourceCodeStorage.loadBasesAndComposedSolutions(analysisSettings, tempDir)
-            analysisData.bases shouldEqual listOf(baseFile1, baseFile2)
+
+            analysisData.bases.size shouldBe 2
+
+            analysisData.bases[0].name shouldBe base0Java
+            analysisData.bases[1].name shouldBe base1Java
+
+            FileUtils.contentEquals(analysisData.bases[0], baseFile1) shouldBe true
+            FileUtils.contentEquals(analysisData.bases[1], baseFile2) shouldBe true
+
             analysisData.solutions.size shouldBe 2
             analysisData.gitService shouldBe github
             analysisData.language shouldBe java
@@ -180,39 +189,48 @@ class FileSystemSourceCodeStorageTest {
 
         val analysisSettings = AnalysisSettings(repo, branchName)
 
-        val analysisData = sourceCodeStorage.loadBasesAndSeparatedSolutions(analysisSettings)
+        inTempDirectory { tempDir ->
+            val analysisData = sourceCodeStorage.loadBasesAndSeparatedSolutions(analysisSettings, tempDir)
 
-        analysisData.bases shouldEqual listOf(baseFile1, baseFile2)
-        analysisData.solutions.size shouldBe 4
-        analysisData.gitService shouldBe github
-        analysisData.language shouldBe java
-        analysisData.repoName shouldBe repoName
+            analysisData.bases.size shouldBe 2
 
-        val sortedSolutions = analysisData.solutions.sortedBy { it.fileName }
-        val solution1 = sortedSolutions[0]
-        val solution2 = sortedSolutions[1]
-        val solution3 = sortedSolutions[2]
-        val solution4 = sortedSolutions[3]
+            analysisData.bases[0].name shouldBe base0Java
+            analysisData.bases[1].name shouldBe base1Java
 
-        solution1.fileName shouldBe fileName1
-        solution1.sha shouldBe sha1
-        solution1.student shouldBe student
-        FileUtils.contentEquals(solution1.file, solFile1) shouldBe true
+            FileUtils.contentEquals(analysisData.bases[0], baseFile1) shouldBe true
+            FileUtils.contentEquals(analysisData.bases[1], baseFile2) shouldBe true
 
-        solution2.fileName shouldBe fileName1
-        solution2.sha shouldBe sha2
-        solution2.student shouldBe student2
-        FileUtils.contentEquals(solution2.file, solFile5) shouldBe true
+            analysisData.solutions.size shouldBe 4
+            analysisData.gitService shouldBe github
+            analysisData.language shouldBe java
+            analysisData.repoName shouldBe repoName
 
-        solution3.fileName shouldBe fileName2
-        solution3.sha shouldBe sha1
-        solution3.student shouldBe student
-        FileUtils.contentEquals(solution3.file, solFile2) shouldBe true
+            val sortedSolutions = analysisData.solutions.sortedBy { it.fileName }
+            val solution1 = sortedSolutions[0]
+            val solution2 = sortedSolutions[1]
+            val solution3 = sortedSolutions[2]
+            val solution4 = sortedSolutions[3]
 
-        solution4.fileName shouldBe fileName2
-        solution4.sha shouldBe sha2
-        solution4.student shouldBe student2
-        FileUtils.contentEquals(solution4.file, solFile6) shouldBe true
+            solution1.fileName shouldBe fileName1
+            solution1.sha shouldBe sha1
+            solution1.student shouldBe student
+            FileUtils.contentEquals(solution1.file, solFile1) shouldBe true
+
+            solution2.fileName shouldBe fileName1
+            solution2.sha shouldBe sha2
+            solution2.student shouldBe student2
+            FileUtils.contentEquals(solution2.file, solFile5) shouldBe true
+
+            solution3.fileName shouldBe fileName2
+            solution3.sha shouldBe sha1
+            solution3.student shouldBe student
+            FileUtils.contentEquals(solution3.file, solFile2) shouldBe true
+
+            solution4.fileName shouldBe fileName2
+            solution4.sha shouldBe sha2
+            solution4.student shouldBe student2
+            FileUtils.contentEquals(solution4.file, solFile6) shouldBe true
+        }
     }
 
     @Test
@@ -227,7 +245,15 @@ class FileSystemSourceCodeStorageTest {
         inTempDirectory { tempDir ->
             val analysisData =
                 sourceCodeStorage.loadBasesAndSeparatedCopiedSolutions(analysisSettings, tempDir)
-            analysisData.bases shouldEqual listOf(baseFile1, baseFile2)
+
+            analysisData.bases.size shouldBe 2
+
+            analysisData.bases[0].name shouldBe base0Java
+            analysisData.bases[1].name shouldBe base1Java
+
+            FileUtils.contentEquals(analysisData.bases[0], baseFile1) shouldBe true
+            FileUtils.contentEquals(analysisData.bases[1], baseFile2) shouldBe true
+
             assertTrue { analysisData.solutions.size == 4 }
             analysisData.gitService shouldBe github
             analysisData.language shouldBe java
