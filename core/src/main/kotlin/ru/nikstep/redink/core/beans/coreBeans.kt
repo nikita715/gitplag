@@ -6,7 +6,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 import ru.nikstep.redink.core.graphql.AnalysisQueries
 import ru.nikstep.redink.core.graphql.LocalDateTimeScalarType
 import ru.nikstep.redink.core.graphql.RepositoryQueries
-import ru.nikstep.redink.core.util.TokenCacheManager
 import ru.nikstep.redink.model.manager.AnalysisResultDataManager
 import ru.nikstep.redink.model.manager.JPlagReportDataManager
 import ru.nikstep.redink.model.manager.RepositoryDataManager
@@ -16,9 +15,6 @@ val coreBeans = beans {
     // Data managers
     bean<RepositoryDataManager>()
     bean<AnalysisResultDataManager>()
-
-    // Cache
-    bean { TokenCacheManager("githubAccessTokens") }
 
     // Graphql
     bean<AnalysisQueries>()
