@@ -12,5 +12,5 @@ enum class GitProperty {
     BITBUCKET,
     GITLAB;
 
-    override fun toString(): String = this.name.toLowerCase()
+    override fun toString(): String = name.toLowerCase()
 }

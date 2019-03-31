@@ -8,9 +8,7 @@ private val rootDirRegex = "/\\w+/\\w+$".toRegex()
 /**
  * Combine [parts] to file system path with [separator]
  */
-fun asPath(vararg parts: Any): String {
-    return parts.joinToString(separator = separator)
-}
+fun asPath(vararg parts: Any): String = parts.joinToString(separator = separator)
 
 /**
  * Recognize the folder in the project root and return the path to it

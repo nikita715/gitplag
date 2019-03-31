@@ -27,11 +27,7 @@ class SourceFileQueries(
         val repo = repositoryDataManager.findByGitServiceAndName(git, repoName)
         return if (repo != null) baseFileRecordRepository.findAllByRepo(repo)
             .filter {
-                when {
-                    branch != null -> it.branch == branch
-                    fileName != null -> it.fileName == fileName
-                    else -> true
-                }
+                ((branch == null) || (it.branch == branch)) && ((fileName == null) || (it.fileName == fileName))
             }
         else null
     }
@@ -43,12 +39,9 @@ class SourceFileQueries(
         val repo = repositoryDataManager.findByGitServiceAndName(git, repoName)
         return if (repo != null) solutionFileRecordRepository.findAllByRepo(repo)
             .filter {
-                when {
-                    branch != null -> it.pullRequest.sourceBranchName == branch
-                    student != null -> it.pullRequest.creatorName == student
-                    fileName != null -> it.fileName == fileName
-                    else -> true
-                }
+                ((branch == null) || (it.pullRequest.sourceBranchName == branch))
+                        && ((fileName == null) || (it.fileName == fileName))
+                        && ((student == null) || (it.pullRequest.creatorName == student))
             }
         else null
     }
@@ -68,6 +61,6 @@ class SourceFileQueries(
         } else null
     }
 
-    class ComposedFiles(val bases: List<BaseFileRecord>, val solutions: List<SolutionFileRecord>)
+    data class ComposedFiles(val bases: List<BaseFileRecord>, val solutions: List<SolutionFileRecord>)
 
 }
