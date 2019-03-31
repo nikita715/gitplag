@@ -9,5 +9,7 @@ import ru.nikstep.redink.model.util.AnalyserPropertyDeserializer
 @JsonDeserialize(using = AnalyserPropertyDeserializer::class)
 enum class AnalyserProperty {
     MOSS,
-    JPLAG
+    JPLAG;
+
+    override fun toString(): String = name.toLowerCase()
 }

@@ -11,4 +11,6 @@ enum class AnalysisMode(val order: Int) {
     LINK(1),
     PAIRS(2),
     FULL(3);
+
+    override fun toString(): String = name.toLowerCase()
 }

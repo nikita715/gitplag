@@ -40,32 +40,12 @@ enum class Language {
      */
     fun ofMoss() =
         when (this) {
-            C -> "c"
             CPP -> "cc"
-            JAVA -> "java"
-            ML -> "ml"
-            PASCAL -> "pascal"
-            ADA -> "ada"
-            LISP -> "lisp"
-            SCHEME -> "scheme"
-            HASKELL -> "haskell"
-            FORTRAN -> "fortran"
             TEXT -> "ascii"
-            VHDL -> "vhdl"
-            PERL -> "perl"
-            MATLAB -> "matlab"
-            PYTHON -> "python"
             MIPS_ASSEMBLY -> "mips"
-            PROLOG -> "prolog"
-            SPICE -> "spice"
-            VISUAL_BASIC -> "vb"
-            CSHARP -> "csharp"
-            MODULA2 -> "modula2"
             A8086_ASSEMBLY -> "a8086"
-            JAVASCRIPT -> "javascript"
-            PLSQL -> "plsql"
-            VERILOG -> "verilog"
-            TCL -> "tcl"
+            VISUAL_BASIC -> "vb"
+            else -> toString()
         }
 
     /**
@@ -82,4 +62,5 @@ enum class Language {
             else -> "text"
         }
 
+    override fun toString(): String = name.toLowerCase()
 }
