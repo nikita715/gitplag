@@ -3,6 +3,7 @@ package ru.nikstep.redink.core.view
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.util.ResourceUtils
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
@@ -41,6 +42,7 @@ class ResultsController(
             }
             body {
                 main {
+                    h3 { +"Repositories" }
                     ul {
                         repositoryDataManager.findAll().forEach { repo ->
                             li { a("analyzes?git=${repo.gitService.toString().toUpperCase()}&repoName=${repo.name}") { +"${repo.gitService} - ${repo.name}" } }
@@ -57,11 +59,12 @@ class ResultsController(
         if (repo == null) return null else {
             return createHTML().html {
                 head {
-                    title("$git/$repoName")
+                    title("${git.toLowerCase()}/$repoName")
                     apply(resultsStyle)
                 }
                 body {
                     main {
+                        h3 { +"Analyzes of ${git.toLowerCase()} repository $repoName" }
                         ul {
                             repo.analyzes.forEach { analysis ->
                                 li { a("analyzes/${analysis.id}") { +analysis.id.toString() } }
@@ -84,19 +87,47 @@ class ResultsController(
                 }
                 body {
                     main {
-                        table {
-                            analysis.analysisPairs.sortedWith(compareByDescending(AnalysisPair::percentage))
-                                .forEach { pair ->
-                                    tr {
-                                        td {
-                                            a("${analysis.id}/pair/${pair.id}") { +"${pair.student1}/${pair.student2}" }
-                                        }
-                                        td {
-                                            +"${pair.percentage}%"
+                        h3 { +"Analysis #$analysisId of ${analysis.repository.gitService} repository ${analysis.repository.name}" }
+                        script {
+                            unsafe { +ResourceUtils.getFile("classpath:js/sortTableScript.js").readText() }
+                        }
+                        table(classes = "demo") {
+                            id = "table_demo_ext"
+                            thead {
+                                tr {
+                                    th { +"Id" }
+                                    th { +"First match" }
+                                    th { +"Second match" }
+                                    th { +"Percentage" }
+                                }
+                            }
+                            tbody {
+                                analysis.analysisPairs.sortedWith(compareByDescending(AnalysisPair::percentage))
+                                    .forEach { pair ->
+                                        tr {
+                                            val commonOnClick = "tsDraw(%d,'table_demo_ext'); return false"
+                                            td {
+                                                onClick = commonOnClick.format(0)
+                                                a("${analysis.id}/pair/${pair.id}") { +pair.id.toString() }
+                                            }
+                                            td {
+                                                onClick = commonOnClick.format(1)
+                                                +pair.student1
+                                            }
+                                            td {
+                                                onClick = commonOnClick.format(2)
+                                                +pair.student2
+                                            }
+                                            td {
+                                                onClick = commonOnClick.format(3)
+                                                +pair.percentage.toString()
+                                            }
                                         }
                                     }
-                                }
+                            }
                         }
+                    }
+                    script(src = "http://www.allmyscripts.com/Table_Sort/gs_sortable.js") {
                     }
                 }
             }
