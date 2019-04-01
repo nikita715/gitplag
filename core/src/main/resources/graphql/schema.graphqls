@@ -15,7 +15,9 @@ type Analysis {
     language: String!,
 
     # Pairs of compared users
-    analysisPairs: [AnalysisPair]!
+    analysisPairs: [AnalysisPair]!,
+
+    resultLink: String!
 }
 
 # Pair of two analysed and compared solutions
@@ -139,19 +141,19 @@ type Query {
     analysis(
 
     # Git service of the repository
-    gitService: String!,
+    git: String!,
 
     # Name of the repository
-    repo: String!):Analysis!
+    repoFullName: String!):Analysis!
 
     # Run analysis for a repository
     analyse(
 
     # Git service of the repository (github, gitlab or bitbucket)
-    gitService: String!,
+    git: String!,
 
     # Name of the repository
-    repo: String!,
+    repoFullName: String!,
 
     # Branch to analyse
     branch: String!,
@@ -169,10 +171,10 @@ type Query {
     analyseDetached(
 
     # Git service of the repository (github, gitlab or bitbucket)
-    gitService: String!,
+    git: String!,
 
     # Name of the repository
-    repo: String!,
+    repoFullName: String!,
 
     # Branch to analyse
     branch: String!,
@@ -196,7 +198,7 @@ type Query {
     git: String!,
 
     # Name of the repository
-    name: String!):Repository
+    repoFullName: String!):Repository
 
     # Create or update a repo by its name
     manageRepo(
@@ -205,7 +207,7 @@ type Query {
     git: String!,
 
     # Full name of the repository
-    fullName: String!,
+    repoFullName: String!,
 
     # The main programming language of the repository
     language: String,
@@ -229,13 +231,13 @@ type Query {
     analysisMode: String):Repository!
 
     getLocalBases(
-    git: String!, repoName: String!, branch: String,
+    git: String!, repoFullName: String!, branch: String,
             fileName: String
     ):[BaseFileRecord]!
 
     getLocalSolutions(
 
-    git: String!, repoName: String!, branch: String,
+    git: String!, repoFullName: String!, branch: String,
             student: String, fileName: String
 
     ):[SolutionFileRecord]!
@@ -246,7 +248,7 @@ type Query {
     git: String!,
 
     # Name of the repository
-    name: String!):ComposedFiles!
+    repoFullName: String!):ComposedFiles!
 
 
 }

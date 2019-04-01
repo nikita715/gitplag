@@ -2,22 +2,16 @@ package ru.nikstep.redink.analysis.analyser
 
 import mu.KotlinLogging
 import org.jsoup.Jsoup
+import ru.nikstep.redink.analysis.analyser.Analyser.Companion.repoInfo
 import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
-import ru.nikstep.redink.model.data.AnalysisMatch
-import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.data.AnalysisSettings
-import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.data.PreparedAnalysisData
-import ru.nikstep.redink.model.data.Solution
-import ru.nikstep.redink.model.data.findSolutionByStudent
+import ru.nikstep.redink.model.data.*
 import ru.nikstep.redink.model.entity.JPlagReport
 import ru.nikstep.redink.model.enums.AnalysisMode
 import ru.nikstep.redink.model.repo.JPlagReportRepository
 import ru.nikstep.redink.util.RandomGenerator
 import ru.nikstep.redink.util.asPath
-import ru.nikstep.redink.util.inTempDirectory
+import ru.nikstep.redink.util.generateDir
 import java.io.File
-import java.nio.file.Files
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
 
@@ -28,7 +22,7 @@ class JPlagAnalyser(
     private val sourceCodeStorage: SourceCodeStorage,
     private val randomGenerator: RandomGenerator,
     private val jPlagReportRepository: JPlagReportRepository,
-    private val solutionsDir: String,
+    private val analysisResultFilesDir: String,
     private val jplagResultDir: String
 ) :
     Analyser {
@@ -37,44 +31,33 @@ class JPlagAnalyser(
     private val regexUserNames = "^Matches for (.+) & (.+)$".toRegex()
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
-    override fun analyse(settings: AnalysisSettings): AnalysisResult =
-        inTempDirectory { tempDir ->
-            val (hash, resultDir) = generateResultDir()
+    override fun analyse(settings: AnalysisSettings): AnalysisResult {
+        val (hashFileDir, fileDir) = generateDir(randomGenerator, analysisResultFilesDir)
+        val (hashJplagReport, jplagReportDir) = generateDir(randomGenerator, jplagResultDir)
 
-            logger.info { "Analysis:JPlag:1.Gathering files for analysis. ${repoInfo(settings)}" }
-            val analysisFiles = sourceCodeStorage.loadBasesAndSeparatedSolutions(settings, tempDir)
+        logger.info { "Analysis:JPlag:1.Gathering files for analysis. ${repoInfo(settings)}" }
+        val analysisFiles = sourceCodeStorage.loadBasesAndSeparatedSolutions(settings, fileDir)
 
-            logger.info { "Analysis:JPlag:2.Start analysis. ${repoInfo(settings)}" }
-            JPlagClient(analysisFiles, resultDir).run()
+        logger.info { "Analysis:JPlag:2.Start analysis. ${repoInfo(settings)}" }
+        JPlagClient(analysisFiles, jplagReportDir).run()
 
-            val matchLines =
-                if (settings.mode.order > AnalysisMode.LINK.order) {
-                    logger.info { "Analysis:JPlag:3.Start parsing of results. ${repoInfo(settings)}" }
-                    analysisFiles.toSolutionPairIndexes().mapNotNull { index ->
-                        parseResults(index, settings, analysisFiles.solutions, resultDir)
-                    }
-                } else {
-                    logger.info { "Analysis:JPlag:3.Skipped parsing. ${repoInfo(settings)}" }
-                    emptyList()
+        val matchLines =
+            if (settings.mode.order > AnalysisMode.LINK.order) {
+                logger.info { "Analysis:JPlag:3.Start parsing of results. ${repoInfo(settings)}" }
+                analysisFiles.toSolutionPairIndexes().mapNotNull { index ->
+                    parseResults(index, settings, analysisFiles.solutions, jplagReportDir)
                 }
+            } else {
+                logger.info { "Analysis:JPlag:3.Skipped parsing. ${repoInfo(settings)}" }
+                emptyList()
+            }
 
-            val resultLink = "/jplagresult/$hash/index.html"
-            val executionDate = LocalDateTime.now()
-            jPlagReportRepository.save(JPlagReport(createdAt = executionDate, hash = hash))
+        val resultLink = "/jplagresult/$hashJplagReport/index.html"
+        val executionDate = LocalDateTime.now()
+        jPlagReportRepository.save(JPlagReport(createdAt = executionDate, hash = hashJplagReport))
 
-            logger.info { "Analysis:JPlag:4.End of analysis. ${repoInfo(settings)}" }
-            AnalysisResult(settings, resultLink, executionDate, matchLines)
-        }
-
-    private fun repoInfo(analysisSettings: AnalysisSettings): String =
-        analysisSettings.run { "Repo ${repository.name}, Branch $branch." }
-
-    private fun generateResultDir(): Pair<String, String> {
-        val hash = randomGenerator.randomAlphanumeric(10)
-        val file = File(jplagResultDir + hash)
-        Files.createDirectory(file.toPath())
-        val resultDir = file.absolutePath
-        return Pair(hash, resultDir)
+        logger.info { "Analysis:JPlag:4.End of analysis. ${repoInfo(settings)}" }
+        return AnalysisResult(settings, resultLink, executionDate, matchLines, hashFileDir)
     }
 
     private fun parseResults(

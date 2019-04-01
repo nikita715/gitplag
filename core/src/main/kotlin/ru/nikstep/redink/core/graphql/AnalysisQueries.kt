@@ -25,18 +25,18 @@ class AnalysisQueries(
     /**
      * Get the last analysis result by the parameters
      */
-    fun analysis(git: GitProperty, repo: String): Analysis? =
-        repositoryDataManager.findByGitServiceAndName(git, repo)
+    fun analysis(git: GitProperty, repoFullName: String): Analysis? =
+        repositoryDataManager.findByGitServiceAndName(git, repoFullName)
             ?.let(analysisRepository::findFirstByRepositoryOrderByExecutionDateDesc)
 
     /**
      * Initiate the analysis
      */
     fun analyse(
-        git: GitProperty, repo: String, branch: String,
+        git: GitProperty, repoFullName: String, branch: String,
         analyser: AnalyserProperty?, language: Language?, mode: AnalysisMode?
     ): Analysis? {
-        val repoValue = repositoryDataManager.findByGitServiceAndName(git, repo) ?: return null
+        val repoValue = repositoryDataManager.findByGitServiceAndName(git, repoFullName) ?: return null
         return analysisRunner.run(
             AnalysisSettings(repoValue, branch, language = language, analyser = analyser, mode = mode)
         )
@@ -46,10 +46,10 @@ class AnalysisQueries(
      * Initiate the analysis
      */
     fun analyseDetached(
-        git: GitProperty, repo: String, branch: String, responseUrl: String,
+        git: GitProperty, repoFullName: String, branch: String, responseUrl: String,
         analyser: AnalyserProperty?, language: Language?, mode: AnalysisMode?
     ): Boolean {
-        val repoValue = repositoryDataManager.findByGitServiceAndName(git, repo) ?: return false
+        val repoValue = repositoryDataManager.findByGitServiceAndName(git, repoFullName) ?: return false
         analysisAsyncRunner.runAndRespond(
             AnalysisSettings(repoValue, branch, language = language, analyser = analyser, mode = mode), responseUrl
         )
