@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import ru.nikstep.redink.model.entity.AnalysisPair
 import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
@@ -81,12 +82,18 @@ class ResultsController(
                 }
                 body {
                     main {
-                        ul {
-                            analysis.analysisPairs.forEach { pair ->
-                                li {
-                                    a("${analysis.id}/pair/${pair.id}") { +"${pair.student1}/${pair.student2}" }
+                        table {
+                            analysis.analysisPairs.sortedWith(compareByDescending(AnalysisPair::percentage))
+                                .forEach { pair ->
+                                    tr {
+                                        td {
+                                            a("${analysis.id}/pair/${pair.id}") { +"${pair.student1}/${pair.student2}" }
+                                        }
+                                        td {
+                                            +"${pair.percentage}%"
+                                        }
+                                    }
                                 }
-                            }
                         }
                     }
                 }
@@ -112,16 +119,39 @@ class ResultsController(
                     main("solution-compare") {
                         section("solution") {
                             pre {
+                                var pairIndex = 0
                                 val file1 =
                                     File("$analysisFilesDir/${analysis.hash}/${analysisPair.student1}").listFiles()[0]
-                                +file1.readText()
+                                file1.readLines().forEachIndexed { index, line ->
+                                    val pair = analysisPair.analysisPairLines.getOrNull(pairIndex)
+                                    if (pair != null && index == pair.from1) {
+                                        unsafe { +"<font color=\"#FF0000\">\n" }
+                                    } else if (pair != null && index == pair.to1) {
+                                        pairIndex++
+                                        unsafe { +"</font>\n" }
+                                    }
+
+                                    +line
+                                    +"\n"
+                                }
                             }
                         }
                         section("solution") {
                             pre {
+                                var pairIndex = 0
                                 val file2 =
                                     File("$analysisFilesDir/${analysis.hash}/${analysisPair.student2}").listFiles()[0]
-                                +file2.readText()
+                                file2.readLines().forEachIndexed { index, line ->
+                                    val pair = analysisPair.analysisPairLines.getOrNull(pairIndex)
+                                    if (pair != null && index == pair.from2) {
+                                        unsafe { +"<font color=\"#FF0000\">\n" }
+                                    } else if (pair != null && index == pair.to2) {
+                                        pairIndex++
+                                        unsafe { +"</font>\n" }
+                                    }
+                                    +line
+                                    +"\n"
+                                }
                             }
                         }
                     }
