@@ -12,6 +12,7 @@ import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
 import ru.nikstep.redink.model.repo.AnalysisRepository
+import ru.nikstep.redink.util.RandomGenerator
 import java.io.File
 
 /**
@@ -22,6 +23,7 @@ class ResultsController(
     private val analysisRepository: AnalysisRepository,
     private val repositoryDataManager: RepositoryDataManager,
     private val analysisPairRepository: AnalysisPairRepository,
+    private val randomGenerator: RandomGenerator,
     @Value("\${redink.analysisFilesDir}") private val analysisFilesDir: String
 ) {
 
@@ -117,6 +119,7 @@ class ResultsController(
                         span("student-name") { +analysisPair.student2 }
                     }
                     main("solution-compare") {
+                        val colors = analysisPair.analysisPairLines.map { randomGenerator.randomHexColor() }
                         section("solution") {
                             pre {
                                 var pairIndex = 0
@@ -125,7 +128,7 @@ class ResultsController(
                                 file1.readLines().forEachIndexed { index, line ->
                                     val pair = analysisPair.analysisPairLines.getOrNull(pairIndex)
                                     if (pair != null && index == pair.from1) {
-                                        unsafe { +"<font color=\"#FF0000\">\n" }
+                                        unsafe { +"<font color=\"${colors[pairIndex]}\">\n" }
                                     } else if (pair != null && index == pair.to1) {
                                         pairIndex++
                                         unsafe { +"</font>\n" }
@@ -144,7 +147,7 @@ class ResultsController(
                                 file2.readLines().forEachIndexed { index, line ->
                                     val pair = analysisPair.analysisPairLines.getOrNull(pairIndex)
                                     if (pair != null && index == pair.from2) {
-                                        unsafe { +"<font color=\"#FF0000\">\n" }
+                                        unsafe { +"<font color=\"${colors[pairIndex]}\">\n" }
                                     } else if (pair != null && index == pair.to2) {
                                         pairIndex++
                                         unsafe { +"</font>\n" }
