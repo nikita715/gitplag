@@ -88,4 +88,7 @@ class RepositoryDataManager(
     @Transactional(readOnly = true)
     fun findFileNameRegexps(repo: Repository) = repositoryRepository.findById(repo.id)
         .let { if (it.isPresent) it.get().filePatterns else emptyList() }.also { it.size }
+
+    @Transactional(readOnly = true)
+    fun findAll() = repositoryRepository.findAll()
 }
