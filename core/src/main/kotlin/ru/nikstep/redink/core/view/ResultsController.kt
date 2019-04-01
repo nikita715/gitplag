@@ -1,110 +1,133 @@
-//package ru.nikstep.redink.core.view
-//
-//import kotlinx.html.*
-//import kotlinx.html.stream.createHTML
-//import org.springframework.beans.factory.annotation.Qualifier
-//import org.springframework.web.bind.annotation.GetMapping
-//import org.springframework.web.bind.annotation.PathVariable
-//import org.springframework.web.bind.annotation.RestController
-//import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
-//import ru.nikstep.redink.git.rest.GitRestManager
-//import ru.nikstep.redink.model.repo.AnalysisPairRepository
-//import ru.nikstep.redink.model.repo.AnalysisRepository
-//import ru.nikstep.redink.model.enums.GitProperty
-//
-///**
-// * Analysis results views controller
-// */
-//@RestController
-//class ResultsController(
-//    private val analysisRepository: AnalysisRepository,
-//    private val solutionStorage: SourceCodeStorage
-//) {
-//
-//    private val resultsStyle: HEAD.() -> Unit = {
-//        styleLink("/style.css")
-//        link(href = "https://fonts.googleapis.com/css?family=Roboto", rel = LinkRel.stylesheet)
-//    }
-//
-//    /**
-//     * Get two solutions on one page
-//     */
-//    @GetMapping("result/{id}")
-//    fun getResult(@PathVariable id: Int): String {
-//        val analysisPair = analysisRepository.findById(id.toLong()).get()
-//        val file1 = solutionStorage.
-////            loaders.getValue(analysisPair.gitService)
-////            .loadFileText(analysisPair.repo, analysisPair.student1Sha, analysisPair.analysisPairLines[0].fileName1)
-//        val file2 = ""
-////            loaders.getValue(analysisPair.gitService)
-////            .loadFileText(analysisPair.repo, analysisPair.student2Sha, analysisPair.analysisPairLines[0].fileName2)
-//
-//        return createHTML().html {
-//            head {
-//                title("Result #${analysisPair.id}")
-//                apply(resultsStyle)
-//            }
-//            body {
-//                header("solution-compare-header") {
-//                    span("student-name") { +analysisPair.student1 }
-//                    span("student-name") { +analysisPair.student2 }
-//                }
-//                main("solution-compare") {
-//                    section("solution") {
-//                        pre {
-//                            +file1
-//                        }
-//                    }
-//                    section("solution") {
-//                        pre {
-//                            +file2
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Get list of analysis results by the [repoName]
-//     */
-//    @GetMapping("result/{repoOwner}/{repoName}")
-//    fun getResultsOfRepository(@PathVariable repoOwner: String, @PathVariable repoName: String): String = createHTML()
-//        .html {
-//            val repoFullName = "$repoOwner/$repoName"
-//            head {
-//                title("Results of $repoFullName")
-//                apply(resultsStyle)
-//            }
-//            body {
-//                analysisRepository.findAllByRepoOrderByIdDesc(repoFullName).forEach { analysisPair ->
-//                    a("/result/${analysisPair.id}") { +analysisPair.id.toString() }
-//                    br { }
-//                }
-//            }
-//        }
-//
-//    /**
-//     * Get list of analysis results by the [repoName] and [studentName]
-//     */
-//    @GetMapping("result/{repoOwner}/{repoName}/{studentName}")
-//    fun getResultsOfRepositoryAndStudent(
-//        @PathVariable repoOwner: String,
-//        @PathVariable repoName: String,
-//        @PathVariable studentName: String
-//    ): String = createHTML()
-//        .html {
-//            val repoFullName = "$repoOwner/$repoName"
-//            head {
-//                title("Results of $repoFullName")
-//                apply(resultsStyle)
-//            }
-//            body {
-//                analysisPairRepository.findAllByRepoAndStudentOrderByIdDesc(repoFullName, studentName)
-//                    .forEach { analysisPair ->
-//                        a("/result/${analysisPair.id}") { +analysisPair.id.toString() }
-//                    }
-//            }
-//        }
-//
-//}
+package ru.nikstep.redink.core.view
+
+import kotlinx.html.*
+import kotlinx.html.stream.createHTML
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
+import ru.nikstep.redink.model.enums.GitProperty
+import ru.nikstep.redink.model.manager.RepositoryDataManager
+import ru.nikstep.redink.model.repo.AnalysisPairRepository
+import ru.nikstep.redink.model.repo.AnalysisRepository
+import java.io.File
+
+/**
+ * Analysis results views controller
+ */
+@RestController
+class ResultsController(
+    private val analysisRepository: AnalysisRepository,
+    private val repositoryDataManager: RepositoryDataManager,
+    private val analysisPairRepository: AnalysisPairRepository,
+    @Value("\${redink.analysisFilesDir}") private val analysisFilesDir: String
+) {
+
+    private val resultsStyle: HEAD.() -> Unit = {
+        styleLink("/style.css")
+        link(href = "https://fonts.googleapis.com/css?family=Roboto", rel = LinkRel.stylesheet)
+    }
+
+    @GetMapping("/", "repositories")
+    fun getRepositories(): String {
+        return createHTML().html {
+            head {
+                title("Repositories")
+                apply(resultsStyle)
+            }
+            body {
+                main {
+                    ul {
+                        repositoryDataManager.findAll().forEach { repo ->
+                            li { a("analyzes?git=${repo.gitService.toString().toUpperCase()}&repoName=${repo.name}") { +"${repo.gitService} - ${repo.name}" } }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @GetMapping("analyzes")
+    fun getRepoAnalyzes(@RequestParam("git") git: String, @RequestParam("repoName") repoName: String): String? {
+        val repo = repositoryDataManager.findByGitServiceAndName(GitProperty.valueOf(git), repoName)
+        if (repo == null) return null else {
+            return createHTML().html {
+                head {
+                    title("$git/$repoName")
+                    apply(resultsStyle)
+                }
+                body {
+                    main {
+                        ul {
+                            repo.analyzes.forEach { analysis ->
+                                li { a("analyzes/${analysis.id}") { +analysis.id.toString() } }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @GetMapping("analyzes/{analysisId}")
+    fun getAnalysis(@PathVariable analysisId: Long): String? {
+        val analysis = analysisRepository.findById(analysisId).orElse(null)
+        if (analysis == null) return null else {
+            return createHTML().html {
+                head {
+                    title("Analysis #$analysisId")
+                    apply(resultsStyle)
+                }
+                body {
+                    main {
+                        ul {
+                            analysis.analysisPairs.forEach { pair ->
+                                li {
+                                    a("${analysis.id}/pair/${pair.id}") { +"${pair.student1}/${pair.student2}" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @GetMapping("analyzes/{analysisId}/pair/{analysisPairId}")
+    fun getAnalysis(@PathVariable analysisId: Long, @PathVariable analysisPairId: Long): String? {
+        val analysis = analysisRepository.findById(analysisId).orElse(null)
+        val analysisPair = analysisPairRepository.findById(analysisPairId).orElse(null)
+        if (analysisPair == null) return null else {
+            return createHTML().html {
+                head {
+                    title("Result #${analysisPair.id}")
+                    apply(resultsStyle)
+                }
+                body {
+                    header("solution-compare-header") {
+                        span("student-name") { +analysisPair.student1 }
+                        span("student-name") { +analysisPair.student2 }
+                    }
+                    main("solution-compare") {
+                        section("solution") {
+                            pre {
+                                val file1 =
+                                    File("$analysisFilesDir/${analysis.hash}/${analysisPair.student1}").listFiles()[0]
+                                +file1.readText()
+                            }
+                        }
+                        section("solution") {
+                            pre {
+                                val file2 =
+                                    File("$analysisFilesDir/${analysis.hash}/${analysisPair.student2}").listFiles()[0]
+                                +file2.readText()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
