@@ -11,11 +11,13 @@ import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.enums.Language
 import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.AnalysisRepository
+import javax.transaction.Transactional
 
 /**
  * Graphql analysis requests resolver
  */
-class AnalysisQueries(
+@Transactional
+open class AnalysisQueries(
     private val repositoryDataManager: RepositoryDataManager,
     private val analysisRepository: AnalysisRepository,
     private val analysisRunner: AnalysisRunner,
@@ -25,9 +27,15 @@ class AnalysisQueries(
     /**
      * Get the last analysis result by the parameters
      */
-    fun analysis(git: GitProperty, repoFullName: String): Analysis? =
-        repositoryDataManager.findByGitServiceAndName(git, repoFullName)
+    @Transactional
+    open fun analysis(git: GitProperty, repoFullName: String): Analysis? {
+        val analysis = repositoryDataManager.findByGitServiceAndName(git, repoFullName)
             ?.let(analysisRepository::findFirstByRepositoryOrderByExecutionDateDesc)
+        analysis?.analysisPairs?.forEach {
+            it.analysisPairLines.count()
+        }
+        return analysis
+    }
 
     /**
      * Initiate the analysis
