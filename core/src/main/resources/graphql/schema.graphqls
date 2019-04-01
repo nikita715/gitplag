@@ -161,11 +161,11 @@ type Query {
     # Chosen plagiarism analyser (moss or jplag)
     analyser: String,
 
-    # Mode of the analysis (link, pairs or full)
-    mode: String,
-
     # Chosen programming language
-    language: String):Analysis!
+    language: String,
+
+    # Mode of the analysis (link, pairs or full)
+    mode: String):Analysis!
 
     # Run analysis of the repo with detached response
     analyseDetached(
