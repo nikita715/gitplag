@@ -17,14 +17,15 @@ class RepositoryQueries(private val repositoryDataManager: RepositoryDataManager
     /**
      * Get a repo by name
      */
-    fun getRepo(git: GitProperty, name: String) = repositoryDataManager.findByGitServiceAndName(git, name)
+    fun getRepo(git: GitProperty, repoFullName: String) =
+        repositoryDataManager.findByGitServiceAndName(git, repoFullName)
 
     /**
      * Create or update a repo
      */
     fun manageRepo(
         gitService: GitProperty,
-        fullName: String,
+        repoFullName: String,
         language: Language?,
         filePatterns: Collection<String>?,
         analyser: AnalyserProperty?,
@@ -34,10 +35,10 @@ class RepositoryQueries(private val repositoryDataManager: RepositoryDataManager
         analysisMode: AnalysisMode?
     ): Repository {
         val repositoryDto = RepositoryDto(
-            gitService, fullName, language, filePatterns, analyser, periodicAnalysis,
+            gitService, repoFullName, language, filePatterns, analyser, periodicAnalysis,
             periodicAnalysisDelay, branches, analysisMode
         )
-        val storedRepo = repositoryDataManager.findByGitServiceAndName(gitService, fullName)
+        val storedRepo = repositoryDataManager.findByGitServiceAndName(gitService, repoFullName)
         return if (storedRepo == null) {
             repositoryDataManager.create(repositoryDto)
         } else {

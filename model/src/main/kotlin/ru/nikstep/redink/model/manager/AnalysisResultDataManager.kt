@@ -32,7 +32,8 @@ class AnalysisResultDataManager(
                 language = analysisSettings.language,
                 analyser = analysisSettings.analyser,
                 branch = analysisSettings.branch,
-                resultLink = analysisResults.resultLink
+                resultLink = analysisResults.resultLink,
+                hash = analysisResults.hash
             )
         )
         val analysisPairs = analysisResults.matchData.map {

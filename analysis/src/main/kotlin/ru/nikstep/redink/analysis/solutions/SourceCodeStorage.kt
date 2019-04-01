@@ -22,7 +22,7 @@ interface SourceCodeStorage {
 
     /**
      * Load all base solution files and corresponding solution files according to the [settings].
-     * Merges all files of each students to single file.
+     * Merges all files of each student to single files.
      */
     fun loadBasesAndComposedSolutions(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData
 
@@ -30,12 +30,4 @@ interface SourceCodeStorage {
      * Load all base solution files and corresponding solution files according to the [settings].
      */
     fun loadBasesAndSeparatedSolutions(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData
-
-    /**
-     * Load all base solution files and corresponding solution files according to the [settings].
-     * Creates directories in [tempDir] for each student and copies each file of a student
-     * to the student's directory, names them by digits (0.ext, 1.ext, etc.) and stores the corresponding names
-     * in solution objects.
-     */
-    fun loadBasesAndSeparatedCopiedSolutions(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData
 }

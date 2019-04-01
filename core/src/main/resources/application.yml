@@ -19,3 +19,4 @@ redink:
   mossPath: ${MOSS_PATH}
   solutionsDir: ${SOLUTIONS_DIR}
   jplagResultDir: ${JPLAG_REPORT_DIR}
+  analysisFilesDir: ${ANALYSIS_FILES_DIR}

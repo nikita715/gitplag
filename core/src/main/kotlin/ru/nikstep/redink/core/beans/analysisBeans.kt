@@ -28,13 +28,13 @@ val analysisBeans = beans {
     }
 
     // Analysers
-    bean { MossAnalyser(ref(), env.safeEnvVar("redink.mossPath")) }
+    bean { MossAnalyser(ref(), ref(), env.safeEnvVar("redink.analysisFilesDir"), env.safeEnvVar("redink.mossPath")) }
     bean {
         JPlagAnalyser(
             ref(),
             ref(),
             ref(),
-            env.safeEnvVar("redink.solutionsDir"),
+            env.safeEnvVar("redink.analysisFilesDir"),
             env.safeEnvVar("redink.jplagResultDir")
         )
     }

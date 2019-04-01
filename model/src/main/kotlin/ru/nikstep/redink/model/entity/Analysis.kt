@@ -18,6 +18,9 @@ data class Analysis(
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long = -1,
 
+    @Column(nullable = false, unique = true)
+    val hash: String,
+
     @ManyToOne
     @JoinColumn
     val repository: Repository,

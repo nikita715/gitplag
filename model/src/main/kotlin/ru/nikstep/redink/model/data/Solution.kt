@@ -9,10 +9,7 @@ class Solution(
     val student: String,
     val fileName: String,
     val file: File,
-    val includedFileNames: List<String> = emptyList(),
-    val includedFilePositions: List<Int> = emptyList(),
-    val sha: String,
-    val realFileName: String = ""
+    val sha: String
 )
 
 /**

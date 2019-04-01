@@ -22,9 +22,9 @@ class SourceFileQueries(
 ) : GraphQLQueryResolver {
 
     fun getLocalBases(
-        git: GitProperty, repoName: String, branch: String?, fileName: String?
+        git: GitProperty, repoFullName: String, branch: String?, fileName: String?
     ): List<BaseFileRecord>? {
-        val repo = repositoryDataManager.findByGitServiceAndName(git, repoName)
+        val repo = repositoryDataManager.findByGitServiceAndName(git, repoFullName)
         return if (repo != null) baseFileRecordRepository.findAllByRepo(repo)
             .filter {
                 ((branch == null) || (it.branch == branch)) && ((fileName == null) || (it.fileName == fileName))
@@ -33,10 +33,10 @@ class SourceFileQueries(
     }
 
     fun getLocalSolutions(
-        git: GitProperty, repoName: String, branch: String?,
+        git: GitProperty, repoFullName: String, branch: String?,
         student: String?, fileName: String?
     ): List<SolutionFileRecord>? {
-        val repo = repositoryDataManager.findByGitServiceAndName(git, repoName)
+        val repo = repositoryDataManager.findByGitServiceAndName(git, repoFullName)
         return if (repo != null) solutionFileRecordRepository.findAllByRepo(repo)
             .filter {
                 ((branch == null) || (it.pullRequest.sourceBranchName == branch))
@@ -46,8 +46,8 @@ class SourceFileQueries(
         else null
     }
 
-    fun updateFilesOfRepo(git: GitProperty, repoName: String): ComposedFiles? {
-        val repository = repositoryDataManager.findByGitServiceAndName(git, repoName)
+    fun updateFilesOfRepo(git: GitProperty, repoFullName: String): ComposedFiles? {
+        val repository = repositoryDataManager.findByGitServiceAndName(git, repoFullName)
 
         return if (repository != null) {
             val gitRestManager = restManagers.getValue(git)

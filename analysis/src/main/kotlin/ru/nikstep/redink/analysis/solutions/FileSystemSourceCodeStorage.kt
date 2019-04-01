@@ -38,9 +38,6 @@ class FileSystemSourceCodeStorage(
     override fun loadBasesAndSeparatedSolutions(settings: AnalysisSettings, tempDir: String) =
         loadBasesAndSolutions(settings, tempDir, loadSeparateSolutions(settings, tempDir))
 
-    override fun loadBasesAndSeparatedCopiedSolutions(settings: AnalysisSettings, tempDir: String) =
-        loadBasesAndSolutions(settings, tempDir, loadSeparateCopiedSolutions(settings, tempDir))
-
     private fun loadBases(settings: AnalysisSettings, tempDir: String): List<File> {
         val filePatterns = repositoryDataManager.findFileNameRegexps(settings.repository)
         val baseDir = File("$tempDir/.base")
@@ -90,39 +87,8 @@ class FileSystemSourceCodeStorage(
                     Solution(
                         student = pullRequest.creatorName,
                         fileName = solutionRecord.fileName,
-                        file = copiedFile, sha = pullRequest.headSha
-                    )
-                } else null
-            }
-        }
-    }
-
-    private fun loadSeparateCopiedSolutions(analysisSettings: AnalysisSettings, tempDir: String): List<Solution> {
-        val filePatterns = repositoryDataManager.findFileNameRegexps(analysisSettings.repository)
-        return pullRequestRepository.findAllByRepoAndSourceBranchName(
-            analysisSettings.repository,
-            analysisSettings.branch
-        ).flatMap { pullRequest ->
-            val solutionRecords = solutionFileRecordRepository.findAllByPullRequest(pullRequest)
-            val indexToFileName = mutableListOf<Pair<String, String>>()
-            val studentDir = File("$tempDir/${pullRequest.creatorName}")
-            Files.createDirectory(studentDir.toPath())
-            var fileIterator = 0
-            solutionRecords.mapNotNull { solutionRecord ->
-                if (nameMatchesRegex(solutionRecord.fileName, filePatterns)) {
-                    val generatedFileName = "${fileIterator++}.txt"
-                    val generatedFile = File(studentDir.absolutePath + "/" + generatedFileName)
-                    indexToFileName += generatedFileName to solutionRecord.fileName
-                    Files.copy(
-                        File(pathToSolution(analysisSettings, solutionRecord)).toPath(),
-                        generatedFile.toPath()
-                    )
-                    Solution(
-                        student = pullRequest.creatorName,
-                        fileName = generatedFileName,
-                        file = generatedFile,
-                        sha = pullRequest.headSha,
-                        realFileName = solutionRecord.fileName
+                        file = copiedFile,
+                        sha = pullRequest.headSha
                     )
                 } else null
             }
@@ -139,24 +105,16 @@ class FileSystemSourceCodeStorage(
             val fileName = pullRequest.creatorName + ".txt"
             val composedFile = File("$tempDir/${pullRequest.creatorName}/$fileName")
             composedFile.parentFile.mkdir()
-            var composedFileLength = 0
-            val fileNames = mutableListOf<String>()
-            val filePositions = mutableListOf<Int>()
             solutionRecords.forEach { solutionRecord ->
                 if (nameMatchesRegex(solutionRecord.fileName, filePatterns)) {
                     val solFile = File(pathToSolution(analysisSettings, solutionRecord))
                     composedFile.appendText(solFile.readText())
-                    filePositions += solutionRecord.countOfLines + composedFileLength
-                    composedFileLength += solutionRecord.countOfLines
-                    fileNames += solutionRecord.fileName
                 }
             }
             Solution(
                 student = pullRequest.creatorName,
                 fileName = fileName,
                 file = composedFile,
-                includedFileNames = fileNames,
-                includedFilePositions = filePositions,
                 sha = pullRequest.headSha
             )
         }
