@@ -98,31 +98,39 @@ class ResultsController(
                             id = "table_demo_ext"
                             thead {
                                 tr {
-                                    th { +"Id" }
-                                    th { +"First match" }
-                                    th { +"Second match" }
-                                    th { +"Percentage" }
+                                    val commonOnClick = "tsDraw(%d,'table_demo_ext'); return false"
+                                    th {
+                                        onClick = commonOnClick.format(0)
+                                        +"Id"
+                                    }
+                                    th {
+                                        onClick = commonOnClick.format(1)
+                                        +"First match"
+                                    }
+                                    th {
+                                        onClick = commonOnClick.format(2)
+                                        +"Second match"
+                                    }
+                                    th {
+                                        onClick = commonOnClick.format(3)
+                                        +"Percentage"
+                                    }
                                 }
                             }
                             tbody {
                                 analysis.analysisPairs.sortedWith(compareByDescending(AnalysisPair::percentage))
                                     .forEach { pair ->
                                         tr {
-                                            val commonOnClick = "tsDraw(%d,'table_demo_ext'); return false"
                                             td {
-                                                onClick = commonOnClick.format(0)
                                                 a("${analysis.id}/pair/${pair.id}") { +pair.id.toString() }
                                             }
                                             td {
-                                                onClick = commonOnClick.format(1)
                                                 +pair.student1
                                             }
                                             td {
-                                                onClick = commonOnClick.format(2)
                                                 +pair.student2
                                             }
                                             td {
-                                                onClick = commonOnClick.format(3)
                                                 +pair.percentage.toString()
                                             }
                                         }

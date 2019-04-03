@@ -7,7 +7,19 @@ import ru.nikstep.redink.model.enums.AnalyserProperty
 import ru.nikstep.redink.model.enums.AnalysisMode
 import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.enums.Language
-import javax.persistence.*
+import javax.persistence.CollectionTable
+import javax.persistence.Column
+import javax.persistence.ElementCollection
+import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.FetchType
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.OneToMany
+import javax.persistence.Table
 
 /**
  * Git repository
@@ -60,6 +72,12 @@ data class Repository(
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany(mappedBy = "repository", orphanRemoval = true)
     val analyzes: List<Analysis> = mutableListOf(),
+
+    @Column(nullable = false)
+    val mossParameters: String = "",
+
+    @Column(nullable = false)
+    val jplagParameters: String = "",
 
     val gitId: Long = -1
 )

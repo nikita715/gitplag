@@ -92,7 +92,16 @@ type Repository {
     branches: [String],
 
     # Processing grade of analysis results
-    analysisMode: String
+    analysisMode: String,
+
+    mossParameters: String!,
+    jplagParameters: String!
+}
+
+type AnalysisParameters {
+    id: ID!,
+    analyser: String!,
+    value: String!
 }
 
 type BaseFileRecord {
@@ -228,7 +237,10 @@ type Query {
     branches: [String],
 
     # Processing grade of analysis results
-    analysisMode: String):Repository!
+    analysisMode: String,
+
+    mossParameters: String,
+    jplagParameters: String):Repository!
 
     getLocalBases(
     git: String!, repoFullName: String!, branch: String,

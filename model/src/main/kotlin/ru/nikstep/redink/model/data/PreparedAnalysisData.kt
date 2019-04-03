@@ -38,5 +38,10 @@ class PreparedAnalysisData(
     /**
      * Solution files that were created by students
      */
-    val solutions: List<Solution>
+    val solutions: List<Solution>,
+
+    /**
+     * Parameters that will be used for the analysis
+     */
+    val analysisParameters: String
 )

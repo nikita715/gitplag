@@ -40,7 +40,8 @@ open class AnalysisQueries(
     /**
      * Initiate the analysis
      */
-    fun analyse(
+    @Transactional
+    open fun analyse(
         git: GitProperty, repoFullName: String, branch: String,
         analyser: AnalyserProperty?, language: Language?, mode: AnalysisMode?
     ): Analysis? {
@@ -53,7 +54,8 @@ open class AnalysisQueries(
     /**
      * Initiate the analysis
      */
-    fun analyseDetached(
+    @Transactional
+    open fun analyseDetached(
         git: GitProperty, repoFullName: String, branch: String, responseUrl: String,
         analyser: AnalyserProperty?, language: Language?, mode: AnalysisMode?
     ): Boolean {

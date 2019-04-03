@@ -17,6 +17,8 @@ data class RepositoryDto(val gitService: GitProperty, val fullName: String) {
     var periodicAnalysisDelay: Int? = null
     var branches: List<String>? = null
     var analysisMode: AnalysisMode? = null
+    var mossParameters: String? = null
+    var jplagParameters: String? = null
 
     constructor(
         gitService: GitProperty, fullName: String,
@@ -26,7 +28,9 @@ data class RepositoryDto(val gitService: GitProperty, val fullName: String) {
         periodicAnalysis: Boolean?,
         periodicAnalysisDelay: Int?,
         branches: List<String>?,
-        analysisMode: AnalysisMode?
+        analysisMode: AnalysisMode?,
+        mossParameters: String?,
+        jplagParameters: String?
     ) : this(gitService, fullName) {
         this.language = language
         this.filePatterns = filePatterns
@@ -35,5 +39,7 @@ data class RepositoryDto(val gitService: GitProperty, val fullName: String) {
         this.periodicAnalysisDelay = periodicAnalysisDelay
         this.branches = branches
         this.analysisMode = analysisMode
+        this.mossParameters = mossParameters
+        this.jplagParameters = jplagParameters
     }
 }
