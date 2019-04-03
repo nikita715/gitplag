@@ -8,6 +8,7 @@ import ru.nikstep.redink.model.entity.BaseFileRecord
 import ru.nikstep.redink.model.entity.PullRequest
 import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.entity.SolutionFileRecord
+import ru.nikstep.redink.model.enums.AnalyserProperty
 import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.BaseFileRecordRepository
@@ -69,8 +70,15 @@ class FileSystemSourceCodeStorage(
             language = settings.language,
             bases = loadBases(settings, rootDir),
             solutions = solutions,
-            rootDir = rootDir
+            rootDir = rootDir,
+            analysisParameters = getParameters(settings)
         )
+
+    private fun getParameters(settings: AnalysisSettings) =
+        when (settings.analyser) {
+            AnalyserProperty.MOSS -> settings.repository.mossParameters
+            AnalyserProperty.JPLAG -> settings.repository.jplagParameters
+        }
 
     private fun loadSeparateSolutions(analysisSettings: AnalysisSettings, tempDir: String): List<Solution> {
         val filePatterns = repositoryDataManager.findFileNameRegexps(analysisSettings.repository)

@@ -21,35 +21,41 @@ class RepositoryDataManager(
      * Create a repositoriy
      */
     @Transactional
-    fun create(repositoryDto: RepositoryDto): Repository = repositoryRepository.save(
-        Repository(
-            name = repositoryDto.fullName,
-            gitService = repositoryDto.gitService,
-            language = repositoryDto.language ?: Language.JAVA,
-            filePatterns = repositoryDto.filePatterns ?: emptyList(),
-            analyser = repositoryDto.analyser ?: AnalyserProperty.MOSS,
-            periodicAnalysis = repositoryDto.periodicAnalysis ?: false,
-            periodicAnalysisDelay = repositoryDto.periodicAnalysisDelay ?: 10,
-            branches = repositoryDto.branches ?: emptyList(),
-            analysisMode = repositoryDto.analysisMode ?: AnalysisMode.PAIRS
+    fun create(repositoryDto: RepositoryDto): Repository =
+        repositoryRepository.save(
+            Repository(
+                name = repositoryDto.fullName,
+                gitService = repositoryDto.gitService,
+                language = repositoryDto.language ?: Language.JAVA,
+                filePatterns = repositoryDto.filePatterns ?: emptyList(),
+                analyser = repositoryDto.analyser ?: AnalyserProperty.MOSS,
+                periodicAnalysis = repositoryDto.periodicAnalysis ?: false,
+                periodicAnalysisDelay = repositoryDto.periodicAnalysisDelay ?: 10,
+                branches = repositoryDto.branches ?: emptyList(),
+                analysisMode = repositoryDto.analysisMode ?: AnalysisMode.PAIRS,
+                mossParameters = repositoryDto.mossParameters ?: "",
+                jplagParameters = repositoryDto.jplagParameters ?: ""
+            )
         )
-    )
 
     /**
      * Update the [repo] by the [repositoryDto]
      */
     @Transactional
-    fun update(repo: Repository, repositoryDto: RepositoryDto): Repository = repositoryRepository.save(
-        repo.copy(
-            language = repositoryDto.language ?: repo.language,
-            filePatterns = repositoryDto.filePatterns ?: repo.filePatterns,
-            analyser = repositoryDto.analyser ?: repo.analyser,
-            periodicAnalysis = repositoryDto.periodicAnalysis ?: repo.periodicAnalysis,
-            periodicAnalysisDelay = repositoryDto.periodicAnalysisDelay ?: repo.periodicAnalysisDelay,
-            branches = repositoryDto.branches ?: repo.branches,
-            analysisMode = repositoryDto.analysisMode ?: repo.analysisMode
+    fun update(repo: Repository, repositoryDto: RepositoryDto): Repository =
+        repositoryRepository.save(
+            repo.copy(
+                language = repositoryDto.language ?: repo.language,
+                filePatterns = repositoryDto.filePatterns ?: repo.filePatterns,
+                analyser = repositoryDto.analyser ?: repo.analyser,
+                periodicAnalysis = repositoryDto.periodicAnalysis ?: repo.periodicAnalysis,
+                periodicAnalysisDelay = repositoryDto.periodicAnalysisDelay ?: repo.periodicAnalysisDelay,
+                branches = repositoryDto.branches ?: repo.branches,
+                analysisMode = repositoryDto.analysisMode ?: repo.analysisMode,
+                mossParameters = repositoryDto.mossParameters ?: repo.mossParameters,
+                jplagParameters = repositoryDto.jplagParameters ?: repo.jplagParameters
+            )
         )
-    )
 
 
     /**

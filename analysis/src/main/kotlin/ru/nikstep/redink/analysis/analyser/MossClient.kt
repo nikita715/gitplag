@@ -15,17 +15,17 @@ internal class MossClient(analysisData: PreparedAnalysisData, private val mossPa
     private val bases = analysisData.bases
     private val solutions = analysisData.solutions
     private val logger = KotlinLogging.logger {}
+    private val parameters = analysisData.analysisParameters
 
     @Synchronized
     fun run(): String {
-        val command = "perl $mossPath -l $language ${if (bases.isNotEmpty()) "-b" else ""}" +
+        val command = "perl $mossPath -l $language $parameters ${if (bases.isNotEmpty()) "-b" else ""}" +
                 " ${bases.joinToString(separator = " -b ") { it.absolutePath }} " +
                 " ${solutions.joinToString(" ") { it.file.absolutePath }}"
+        logger.info { command }
         val exec = Runtime.getRuntime().exec(command)
         exec.waitFor(10, TimeUnit.MINUTES)
-        val reader = BufferedReader(InputStreamReader(exec.inputStream))
-        logger.info { command }
-        return reader.readLines().last()
+        return BufferedReader(InputStreamReader(exec.inputStream)).readLines().last()
     }
 
 }

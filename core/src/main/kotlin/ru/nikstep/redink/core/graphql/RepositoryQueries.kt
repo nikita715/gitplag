@@ -32,11 +32,13 @@ class RepositoryQueries(private val repositoryDataManager: RepositoryDataManager
         periodicAnalysis: Boolean?,
         periodicAnalysisDelay: Int?,
         branches: List<String>?,
-        analysisMode: AnalysisMode?
+        analysisMode: AnalysisMode?,
+        mossParameters: String?,
+        jplagParameters: String?
     ): Repository {
         val repositoryDto = RepositoryDto(
             gitService, repoFullName, language, filePatterns, analyser, periodicAnalysis,
-            periodicAnalysisDelay, branches, analysisMode
+            periodicAnalysisDelay, branches, analysisMode, mossParameters, jplagParameters
         )
         val storedRepo = repositoryDataManager.findByGitServiceAndName(gitService, repoFullName)
         return if (storedRepo == null) {
