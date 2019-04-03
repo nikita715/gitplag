@@ -8,12 +8,15 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import ru.nikstep.redink.model.entity.Analysis
 import ru.nikstep.redink.model.entity.AnalysisPair
+import ru.nikstep.redink.model.enums.AnalyserProperty
 import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
 import ru.nikstep.redink.model.repo.AnalysisRepository
 import ru.nikstep.redink.util.RandomGenerator
+import ru.nikstep.redink.util.innerRegularFiles
 import java.io.File
 
 /**
@@ -153,38 +156,42 @@ class ResultsController(
                         val colors = analysisPair.analysisPairLines.map { randomGenerator.randomHexColor() }
                         section("solution") {
                             pre {
-                                var pairIndex = 0
-                                val file1 =
-                                    File("$analysisFilesDir/${analysis.hash}/${analysisPair.student1}").listFiles()[0]
-                                file1.readLines().forEachIndexed { index, line ->
-                                    val pair = analysisPair.analysisPairLines.getOrNull(pairIndex)
-                                    if (pair != null && index == pair.from1) {
-                                        unsafe { +"<font color=\"${colors[pairIndex]}\">\n" }
-                                    } else if (pair != null && index == pair.to1) {
-                                        pairIndex++
-                                        unsafe { +"</font>\n" }
-                                    }
+                                val files1 = findAnalysisFiles(analysis, analysisPair.student1)
+                                val leftAnalysisPairLines = analysisPair.analysisPairLines.sortedBy { it.fileName1 }
+                                files1.forEach { file ->
+                                    var pairIndex = 0
+                                    file.readLines().forEachIndexed { index, line ->
+                                        val pair = leftAnalysisPairLines.getOrNull(pairIndex)
+                                        if (pair != null && index == pair.from1) {
+                                            unsafe { +"<font color=\"${colors[pairIndex]}\">\n" }
+                                        } else if (pair != null && index == pair.to1) {
+                                            pairIndex++
+                                            unsafe { +"</font>\n" }
+                                        }
 
-                                    +line
-                                    +"\n"
+                                        +line
+                                        +"\n"
+                                    }
                                 }
                             }
                         }
                         section("solution") {
                             pre {
-                                var pairIndex = 0
-                                val file2 =
-                                    File("$analysisFilesDir/${analysis.hash}/${analysisPair.student2}").listFiles()[0]
-                                file2.readLines().forEachIndexed { index, line ->
-                                    val pair = analysisPair.analysisPairLines.getOrNull(pairIndex)
-                                    if (pair != null && index == pair.from2) {
-                                        unsafe { +"<font color=\"${colors[pairIndex]}\">\n" }
-                                    } else if (pair != null && index == pair.to2) {
-                                        pairIndex++
-                                        unsafe { +"</font>\n" }
+                                val files2 = findAnalysisFiles(analysis, analysisPair.student2)
+                                val rightAnalysisPairLines = analysisPair.analysisPairLines.sortedBy { it.fileName2 }
+                                files2.forEach { file ->
+                                    var pairIndex = 0
+                                    file.readLines().forEachIndexed { index, line ->
+                                        val pair = rightAnalysisPairLines.getOrNull(pairIndex)
+                                        if (pair != null && index == pair.from2) {
+                                            unsafe { +"<font color=\"${colors[pairIndex]}\">\n" }
+                                        } else if (pair != null && index == pair.to2) {
+                                            pairIndex++
+                                            unsafe { +"</font>\n" }
+                                        }
+                                        +line
+                                        +"\n"
                                     }
-                                    +line
-                                    +"\n"
                                 }
                             }
                         }
@@ -193,5 +200,11 @@ class ResultsController(
             }
         }
     }
+
+    private fun findAnalysisFiles(analysis: Analysis, user: String): List<File> =
+        when (analysis.analyser) {
+            AnalyserProperty.MOSS -> listOf(File("$analysisFilesDir/${analysis.hash}/$user").listFiles()[0])
+            AnalyserProperty.JPLAG -> File("$analysisFilesDir/${analysis.hash}/$user").innerRegularFiles()
+        }
 
 }

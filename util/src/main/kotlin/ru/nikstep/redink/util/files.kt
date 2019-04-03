@@ -6,6 +6,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
 import java.nio.file.Files
+import java.util.stream.Collectors.toList
 
 /**
  * Perform the [action] in a temp directory
@@ -51,8 +52,14 @@ fun <T> downloadAndUnpackZip(resourceUrl: String, action: (unpackedDir: String) 
  * Foreach for regular public files in the [path]
  */
 fun forEachFileInDirectory(path: String, action: (File) -> Unit) {
-    Files.walk(File(path).toPath()).filter { Files.isRegularFile(it) && !Files.isHidden(it) }.forEach { file ->
-        val foundedFile = file.toFile()
-        action(foundedFile)
-    }
+    File(path).innerRegularFiles().forEach { file -> action(file) }
 }
+
+/**
+ * Find all regular public files in the [File]
+ */
+fun File.innerRegularFiles(): List<File> =
+    Files.walk(this.toPath()).filter { Files.isRegularFile(it) && !Files.isHidden(it) }
+        .map { it.toFile() }
+        .sorted { o1, o2 -> o1.absolutePath.compareTo(o2.absolutePath) }
+        .collect(toList())
