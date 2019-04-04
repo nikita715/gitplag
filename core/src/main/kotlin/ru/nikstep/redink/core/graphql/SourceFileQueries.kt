@@ -2,7 +2,6 @@ package ru.nikstep.redink.core.graphql
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.stereotype.Component
 import ru.nikstep.redink.git.rest.GitRestManager
 import ru.nikstep.redink.git.webhook.PayloadProcessor
 import ru.nikstep.redink.model.entity.BaseFileRecord
@@ -12,7 +11,6 @@ import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.BaseFileRecordRepository
 import ru.nikstep.redink.model.repo.SolutionFileRecordRepository
 
-@Component
 class SourceFileQueries(
     private val solutionFileRecordRepository: SolutionFileRecordRepository,
     private val baseFileRecordRepository: BaseFileRecordRepository,

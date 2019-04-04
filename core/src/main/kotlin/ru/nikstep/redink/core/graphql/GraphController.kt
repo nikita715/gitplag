@@ -3,6 +3,10 @@ package ru.nikstep.redink.core.graphql
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
+import ru.nikstep.redink.model.data.graph.Direction
+import ru.nikstep.redink.model.data.graph.GraphData
+import ru.nikstep.redink.model.data.graph.Link
+import ru.nikstep.redink.model.data.graph.Node
 import ru.nikstep.redink.model.entity.AnalysisPair
 import ru.nikstep.redink.model.repo.AnalysisRepository
 
@@ -26,25 +30,4 @@ class GraphController(private val analysisRepository: AnalysisRepository) {
         analysisPair.run { return if (createdAt1 > createdAt2) Direction.FIRST else Direction.SECOND }
     }
 
-}
-
-class GraphData(
-    val nodes: Collection<Node>,
-    val links: Collection<Link>
-)
-
-class Node(
-    val name: String
-)
-
-class Link(
-    val first: String,
-    val second: String,
-    val weight: Int,
-    val directedTo: Direction
-)
-
-enum class Direction {
-    FIRST,
-    SECOND
 }

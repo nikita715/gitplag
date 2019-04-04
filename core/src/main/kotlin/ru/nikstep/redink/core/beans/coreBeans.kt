@@ -6,6 +6,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 import ru.nikstep.redink.core.graphql.AnalysisQueries
 import ru.nikstep.redink.core.graphql.LocalDateTimeScalarType
 import ru.nikstep.redink.core.graphql.RepositoryQueries
+import ru.nikstep.redink.core.graphql.SourceFileQueries
 import ru.nikstep.redink.model.manager.AnalysisResultDataManager
 import ru.nikstep.redink.model.manager.JPlagReportDataManager
 import ru.nikstep.redink.model.manager.RepositoryDataManager
@@ -19,6 +20,7 @@ val coreBeans = beans {
     // Graphql
     bean<AnalysisQueries>()
     bean<RepositoryQueries>()
+    bean<SourceFileQueries>()
     bean<LocalDateTimeScalarType>()
 
     // Main analysis TaskExecutor
