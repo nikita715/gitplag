@@ -45,7 +45,9 @@ class AnalysisResultDataManager(
                     percentage = it.percentage,
                     analysis = analysis,
                     sha1 = it.sha.first,
-                    sha2 = it.sha.second
+                    sha2 = it.sha.second,
+                    createdAt1 = it.createdAt.first,
+                    createdAt2 = it.createdAt.second
                 )
             )
             val analysisPairLines = analysisPairLinesRepository.saveAll(it.matchedLines.map {

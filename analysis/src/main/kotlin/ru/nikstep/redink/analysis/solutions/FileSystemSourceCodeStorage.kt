@@ -96,7 +96,8 @@ class FileSystemSourceCodeStorage(
                         student = pullRequest.creatorName,
                         fileName = solutionRecord.fileName,
                         file = copiedFile,
-                        sha = pullRequest.headSha
+                        sha = pullRequest.headSha,
+                        createdAt = pullRequest.createdAt
                     )
                 } else null
             }
@@ -123,7 +124,8 @@ class FileSystemSourceCodeStorage(
                 student = pullRequest.creatorName,
                 fileName = fileName,
                 file = composedFile,
-                sha = pullRequest.headSha
+                sha = pullRequest.headSha,
+                createdAt = pullRequest.createdAt
             )
         }
     }

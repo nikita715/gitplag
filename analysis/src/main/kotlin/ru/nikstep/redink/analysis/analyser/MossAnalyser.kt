@@ -95,13 +95,15 @@ class MossAnalyser(
                         matchedLines
                     } else mutableListOf()
 
+                val solution1 = findSolutionByStudent(solutions, students.first)
+                val solution2 = findSolutionByStudent(solutions, students.second)
                 AnalysisMatch(
                     students = students.first to students.second,
                     lines = lines,
                     percentage = percentage,
                     matchedLines = matchedLines,
-                    sha = findSolutionByStudent(solutions, students.first).sha
-                            to findSolutionByStudent(solutions, students.second).sha
+                    sha = solution1.sha to solution2.sha,
+                    createdAt = solution1.createdAt to solution2.createdAt
                 )
             }
     }

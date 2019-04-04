@@ -79,13 +79,15 @@ class JPlagAnalyser(
                 parseMatchedLines(index, resultDir)
             } else emptyList<MatchedLines>()
 
+        val solution1 = findSolutionByStudent(solutions, name1)
+        val solution2 = findSolutionByStudent(solutions, name2)
         return AnalysisMatch(
             students = name1 to name2,
             lines = -1,
             percentage = percentage,
             matchedLines = matchedLines,
-            sha = findSolutionByStudent(solutions, name1).sha
-                    to findSolutionByStudent(solutions, name2).sha
+            sha = solution1.sha to solution2.sha,
+            createdAt = solution1.createdAt to solution2.createdAt
         )
     }
 

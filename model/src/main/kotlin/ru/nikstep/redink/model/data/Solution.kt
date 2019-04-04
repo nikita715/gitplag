@@ -1,6 +1,7 @@
 package ru.nikstep.redink.model.data
 
 import java.io.File
+import java.time.LocalDateTime
 
 /**
  * The class that contains the information about a solution file
@@ -9,7 +10,8 @@ class Solution(
     val student: String,
     val fileName: String,
     val file: File,
-    val sha: String
+    val sha: String,
+    val createdAt: LocalDateTime
 )
 
 /**
