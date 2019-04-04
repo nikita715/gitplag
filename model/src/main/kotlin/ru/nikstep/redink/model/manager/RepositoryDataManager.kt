@@ -77,6 +77,13 @@ class RepositoryDataManager(
         repositoryRepository.findByGitServiceAndName(gitService, name)
 
     /**
+     * Find a repo by [repoId]
+     */
+    @Transactional(readOnly = true)
+    fun findById(repoId: Long): Repository? =
+        repositoryRepository.findById(repoId).orElse(null)
+
+    /**
      * Save the [repo]
      */
     @Transactional
