@@ -21,6 +21,7 @@ ENV REDINK_HOME=/opt/redink
 ENV MOSS_PATH=/mnt/redink/moss.pl
 ENV SOLUTIONS_DIR=/mnt/redink/solutions
 ENV JPLAG_REPORT_DIR=/mnt/redink/jplagreports
+ENV ANALYSIS_FILES_DIR=/mnt/redink/analysisfiles
 
 WORKDIR $REDINK_HOME
 
