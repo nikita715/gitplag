@@ -90,6 +90,7 @@ class ResultsController(
                 body {
                     main {
                         h3 { +"Analysis #$analysisId of ${analysis.repository.gitService} repository ${analysis.repository.name}" }
+                        a(href = "http://localhost:8088/?graph_url=http://localhost:8081/graph/$analysisId") { +"Graph" }
                         table {
                             thead {
                                 tr {
