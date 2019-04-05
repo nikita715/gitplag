@@ -1,10 +1,6 @@
 package ru.nikstep.redink.analysis.solutions
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.*
 import io.kotlintest.matchers.shouldBe
 import org.apache.commons.io.FileUtils
 import org.junit.Test
@@ -24,6 +20,7 @@ import ru.nikstep.redink.model.repo.SolutionFileRecordRepository
 import ru.nikstep.redink.util.asPath
 import ru.nikstep.redink.util.inTempDirectory
 import java.io.File
+import java.time.LocalDateTime.now
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -56,6 +53,8 @@ class FileSystemSourceCodeStorageTest {
         on { language } doReturn java
         on { analyser } doReturn AnalyserProperty.MOSS
         on { analysisMode } doReturn AnalysisMode.LINK
+        on { mossParameters } doReturn ""
+        on { jplagParameters } doReturn ""
     }
 
     private val sha1 = "sha1"
@@ -66,6 +65,7 @@ class FileSystemSourceCodeStorageTest {
         on { sourceBranchName } doReturn branchName
         on { creatorName } doReturn student
         on { headSha } doReturn sha1
+        on { createdAt } doReturn now()
     }
 
     private val pullRequest2 = mock<PullRequest> {
@@ -73,6 +73,7 @@ class FileSystemSourceCodeStorageTest {
         on { sourceBranchName } doReturn branchName
         on { creatorName } doReturn student2
         on { headSha } doReturn sha2
+        on { createdAt } doReturn now().minusSeconds(1)
     }
 
     private val pathToFiles = "$solutionDir/$github/$repoName/$branchName"
@@ -165,15 +166,11 @@ class FileSystemSourceCodeStorageTest {
             val solution2 = sortedSolutions[1]
 
             solution1.fileName shouldBe studTxt
-            solution1.includedFileNames shouldBe listOf(fileName1, fileName2)
-            solution1.includedFilePositions shouldBe listOf(2, 6)
             solution1.sha shouldBe sha1
             solution1.student shouldBe student
             FileUtils.contentEquals(solution1.file, composedSolution1) shouldBe true
 
             solution2.fileName shouldBe stud2Txt
-            solution2.includedFileNames shouldBe listOf(fileName1, fileName2)
-            solution2.includedFilePositions shouldBe listOf(2, 6)
             solution2.sha shouldBe sha2
             solution2.student shouldBe student2
             FileUtils.contentEquals(solution2.file, composedSolution2) shouldBe true
@@ -229,71 +226,6 @@ class FileSystemSourceCodeStorageTest {
             solution4.fileName shouldBe fileName2
             solution4.sha shouldBe sha2
             solution4.student shouldBe student2
-            FileUtils.contentEquals(solution4.file, solFile6) shouldBe true
-        }
-    }
-
-    @Test
-    fun loadBasesAndSeparatedCopiedSolutions() {
-        sourceCodeStorage = FileSystemSourceCodeStorage(
-            baseFileRecordRepository, repositoryDataManager,
-            solutionFileRecordRepository, pullRequestRepository, solutionDir
-        )
-
-        val analysisSettings = AnalysisSettings(repo, branchName)
-
-        inTempDirectory { tempDir ->
-            val analysisData =
-                sourceCodeStorage.loadBasesAndSeparatedCopiedSolutions(analysisSettings, tempDir)
-
-            analysisData.bases.size shouldBe 2
-
-            analysisData.bases[0].name shouldBe base0Java
-            analysisData.bases[1].name shouldBe base1Java
-
-            FileUtils.contentEquals(analysisData.bases[0], baseFile1) shouldBe true
-            FileUtils.contentEquals(analysisData.bases[1], baseFile2) shouldBe true
-
-            assertTrue { analysisData.solutions.size == 4 }
-            analysisData.gitService shouldBe github
-            analysisData.language shouldBe java
-            analysisData.repoName shouldBe repoName
-
-            val sortedSolutions = analysisData.solutions.sortedBy { it.fileName }
-            val solution1 = sortedSolutions[0]
-            val solution2 = sortedSolutions[1]
-            val solution3 = sortedSolutions[2]
-            val solution4 = sortedSolutions[3]
-
-            val txt0 = "0.txt"
-            val txt1 = "1.txt"
-
-            solution1.fileName shouldBe txt0
-            solution1.file shouldBe File("$tempDir/$student/$txt0")
-            solution1.sha shouldBe sha1
-            solution1.student shouldBe student
-            solution1.realFileName shouldBe fileName1
-            FileUtils.contentEquals(solution1.file, solFile1) shouldBe true
-
-            solution2.fileName shouldBe txt0
-            solution2.file shouldBe File("$tempDir/$student2/$txt0")
-            solution2.sha shouldBe sha2
-            solution2.student shouldBe student2
-            solution2.realFileName shouldBe fileName1
-            FileUtils.contentEquals(solution2.file, solFile5) shouldBe true
-
-            solution3.fileName shouldBe txt1
-            solution3.file shouldBe File("$tempDir/$student/$txt1")
-            solution3.sha shouldBe sha1
-            solution3.student shouldBe student
-            solution3.realFileName shouldBe fileName2
-            FileUtils.contentEquals(solution3.file, solFile2) shouldBe true
-
-            solution4.fileName shouldBe txt1
-            solution4.file shouldBe File("$tempDir/$student2/$txt1")
-            solution4.sha shouldBe sha2
-            solution4.student shouldBe student2
-            solution4.realFileName shouldBe fileName2
             FileUtils.contentEquals(solution4.file, solFile6) shouldBe true
         }
     }

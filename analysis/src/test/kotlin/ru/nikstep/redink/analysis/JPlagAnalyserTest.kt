@@ -7,16 +7,11 @@ import com.nhaarman.mockitokotlin2.verify
 import org.junit.Test
 import ru.nikstep.redink.analysis.analyser.JPlagAnalyser
 import ru.nikstep.redink.analysis.solutions.SourceCodeStorage
-import ru.nikstep.redink.model.data.AnalysisMatch
-import ru.nikstep.redink.model.data.AnalysisResult
-import ru.nikstep.redink.model.data.MatchedLines
-import ru.nikstep.redink.model.data.PreparedAnalysisData
-import ru.nikstep.redink.model.data.Solution
+import ru.nikstep.redink.model.data.*
 import ru.nikstep.redink.model.entity.JPlagReport
 import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.enums.Language
 import ru.nikstep.redink.model.repo.JPlagReportRepository
-import ru.nikstep.redink.util.RandomGenerator
 import ru.nikstep.redink.util.asPath
 import java.io.File
 import java.nio.file.Files
@@ -47,11 +42,6 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
 
     private val resultDir = Files.createTempDirectory("dir").toFile().absolutePath + "/"
 
-    private val prefix = "prefix"
-    private val randomGenerator = mock<RandomGenerator> {
-        on { randomAlphanumeric(10) } doReturn prefix
-    }
-
     private val testPreparedAnalysisFiles = PreparedAnalysisData(
         GitProperty.GITHUB,
         testRepoName,
@@ -59,16 +49,17 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
         File(solutionsDir).absolutePath,
         listOf(base1, base2),
         listOf(
-            Solution(student1, file1Name, solution1, sha = sha1),
-            Solution(student1, file2Name, solution2, sha = sha1),
-            Solution(student1, file3Name, solution3, sha = sha1),
-            Solution(student2, file4Name, solution4, sha = sha2),
-            Solution(student2, file5Name, solution5, sha = sha2),
-            Solution(student2, file6Name, solution6, sha = sha2),
-            Solution(student3, file7Name, solution7, sha = sha3),
-            Solution(student3, file8Name, solution8, sha = sha3),
-            Solution(student3, file9Name, solution9, sha = sha3)
-        )
+            Solution(student1, file1Name, solution1, sha = sha1, createdAt = createdAtList[0]),
+            Solution(student1, file2Name, solution2, sha = sha1, createdAt = createdAtList[0]),
+            Solution(student1, file3Name, solution3, sha = sha1, createdAt = createdAtList[0]),
+            Solution(student2, file4Name, solution4, sha = sha2, createdAt = createdAtList[1]),
+            Solution(student2, file5Name, solution5, sha = sha2, createdAt = createdAtList[1]),
+            Solution(student2, file6Name, solution6, sha = sha2, createdAt = createdAtList[1]),
+            Solution(student3, file7Name, solution7, sha = sha3, createdAt = createdAtList[2]),
+            Solution(student3, file8Name, solution8, sha = sha3, createdAt = createdAtList[2]),
+            Solution(student3, file9Name, solution9, sha = sha3, createdAt = createdAtList[2])
+        ),
+        analysisParameters = ""
     )
 
     private val solutionStorageService = mock<SourceCodeStorage> {
@@ -89,14 +80,16 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
     private val expectedResult =
         AnalysisResult(
             repo = testRepoName,
-            resultLink = "/jplagresult/$prefix/index.html",
+            resultLink = "/jplagresult/$hash/index.html",
             executionDate = LocalDateTime.now(),
+            hash = hash,
             matchData = listOf(
                 AnalysisMatch(
                     students = "student2" to "student1",
                     sha = sha2 to sha1,
                     lines = -1,
                     percentage = 66,
+                    createdAt = createdAtList[1] to createdAtList[0],
                     matchedLines = listOf(
                         MatchedLines(
                             match1 = 13 to 22,
@@ -119,6 +112,7 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
                     students = "student3" to "student1",
                     lines = -1,
                     percentage = 44,
+                    createdAt = createdAtList[2] to createdAtList[0],
                     matchedLines = listOf(
                         MatchedLines(
                             match1 = 6 to 11,
@@ -141,6 +135,7 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
                     sha = sha3 to sha2,
                     lines = -1,
                     percentage = 39,
+                    createdAt = createdAtList[2] to createdAtList[1],
                     matchedLines = listOf(
                         MatchedLines(
                             match1 = 7 to 20,
@@ -168,7 +163,7 @@ class JPlagAnalyserTest : AbstractAnalyserTest() {
         verify(jPlagReportRepository).save(
             JPlagReport(
                 createdAt = analysisResult.executionDate,
-                hash = prefix
+                hash = hash
             )
         )
     }

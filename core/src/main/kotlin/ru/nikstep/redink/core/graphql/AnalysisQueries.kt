@@ -1,6 +1,7 @@
 package ru.nikstep.redink.core.graphql
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver
+import org.springframework.transaction.annotation.Transactional
 import ru.nikstep.redink.analysis.AnalysisRunner
 import ru.nikstep.redink.core.analysis.AnalysisAsyncRunner
 import ru.nikstep.redink.model.data.AnalysisSettings
@@ -11,13 +12,12 @@ import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.enums.Language
 import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.AnalysisRepository
-import javax.transaction.Transactional
 
 /**
  * Graphql analysis requests resolver
  */
 @Transactional
-open class AnalysisQueries(
+class AnalysisQueries(
     private val repositoryDataManager: RepositoryDataManager,
     private val analysisRepository: AnalysisRepository,
     private val analysisRunner: AnalysisRunner,
@@ -28,7 +28,7 @@ open class AnalysisQueries(
      * Get the last analysis result by the parameters
      */
     @Transactional
-    open fun analysis(git: GitProperty, repoFullName: String): Analysis? {
+    fun analysis(git: GitProperty, repoFullName: String): Analysis? {
         val analysis = repositoryDataManager.findByGitServiceAndName(git, repoFullName)
             ?.let(analysisRepository::findFirstByRepositoryOrderByExecutionDateDesc)
         analysis?.analysisPairs?.forEach {
@@ -41,7 +41,7 @@ open class AnalysisQueries(
      * Initiate the analysis
      */
     @Transactional
-    open fun analyse(
+    fun analyse(
         git: GitProperty, repoFullName: String, branch: String,
         analyser: AnalyserProperty?, language: Language?, mode: AnalysisMode?
     ): Analysis? {
@@ -55,7 +55,7 @@ open class AnalysisQueries(
      * Initiate the analysis
      */
     @Transactional
-    open fun analyseDetached(
+    fun analyseDetached(
         git: GitProperty, repoFullName: String, branch: String, responseUrl: String,
         analyser: AnalyserProperty?, language: Language?, mode: AnalysisMode?
     ): Boolean {

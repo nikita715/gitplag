@@ -77,6 +77,9 @@ class MossAnalyser(
                     .removeSurrounding("(", "%)")
                     .toInt()
 
+                val solution1 = findSolutionByStudent(solutions, students.first)
+                val solution2 = findSolutionByStudent(solutions, students.second)
+
                 val matchedLines =
                     if (analysisSettings.mode == AnalysisMode.FULL) {
                         val rows = Jsoup.connect(firstATag.attr("href").replace(".html", "-top.html"))
@@ -89,14 +92,12 @@ class MossAnalyser(
                             matchedLines += MatchedLines(
                                 match1 = firstMatch[0].toInt() to firstMatch[1].toInt(),
                                 match2 = secondMatch[0].toInt() to secondMatch[1].toInt(),
-                                files = "" to ""
+                                files = solution1.fileName to solution2.fileName
                             )
                         }
                         matchedLines
                     } else mutableListOf()
 
-                val solution1 = findSolutionByStudent(solutions, students.first)
-                val solution2 = findSolutionByStudent(solutions, students.second)
                 AnalysisMatch(
                     students = students.first to students.second,
                     lines = lines,
