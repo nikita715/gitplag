@@ -3,7 +3,6 @@ package ru.nikstep.redink.core.view
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.util.ResourceUtils
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
@@ -91,30 +90,13 @@ class ResultsController(
                 body {
                     main {
                         h3 { +"Analysis #$analysisId of ${analysis.repository.gitService} repository ${analysis.repository.name}" }
-                        script {
-                            unsafe { +ResourceUtils.getFile("classpath:js/sortTableScript.js").readText() }
-                        }
-                        table(classes = "demo") {
-                            id = "table_demo_ext"
+                        table {
                             thead {
                                 tr {
-                                    val commonOnClick = "tsDraw(%d,'table_demo_ext'); return false"
-                                    th {
-                                        onClick = commonOnClick.format(0)
-                                        +"Id"
-                                    }
-                                    th {
-                                        onClick = commonOnClick.format(1)
-                                        +"First match"
-                                    }
-                                    th {
-                                        onClick = commonOnClick.format(2)
-                                        +"Second match"
-                                    }
-                                    th {
-                                        onClick = commonOnClick.format(3)
-                                        +"Percentage"
-                                    }
+                                    th { +"Id" }
+                                    th { +"First match" }
+                                    th { +"Second match" }
+                                    th { +"Percentage" }
                                 }
                             }
                             tbody {
@@ -124,21 +106,13 @@ class ResultsController(
                                             td {
                                                 a("${analysis.id}/pair/${pair.id}") { +pair.id.toString() }
                                             }
-                                            td {
-                                                +pair.student1
-                                            }
-                                            td {
-                                                +pair.student2
-                                            }
-                                            td {
-                                                +pair.percentage.toString()
-                                            }
+                                            td { +pair.student1 }
+                                            td { +pair.student2 }
+                                            td { +pair.percentage.toString() }
                                         }
                                     }
                             }
                         }
-                    }
-                    script(src = "http://www.allmyscripts.com/Table_Sort/gs_sortable.js") {
                     }
                 }
             }

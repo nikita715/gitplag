@@ -7,6 +7,9 @@ import ru.nikstep.redink.model.entity.Repository
 import ru.nikstep.redink.model.enums.AnalysisMode
 import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.enums.Language
+import ru.nikstep.redink.util.RandomGenerator
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 /**
  * Abstract test for the plagiarism analysers
@@ -30,6 +33,14 @@ abstract class AbstractAnalyserTest {
     protected val sha1 = "sha1"
     protected val sha2 = "sha2"
     protected val sha3 = "sha3"
+
+    protected val hash = "hash"
+
+    protected val createdAtList = (0L..2L).map { LocalDateTime.ofEpochSecond(it, 0, ZoneOffset.UTC) }
+
+    protected val randomGenerator = mock<RandomGenerator> {
+        on { randomAlphanumeric(10) } doReturn hash
+    }
 
     private val repository = mock<Repository> {
         on { gitService } doReturn GitProperty.GITHUB
