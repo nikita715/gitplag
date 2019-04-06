@@ -20,3 +20,4 @@ redink:
   solutionsDir: ${SOLUTIONS_DIR}
   jplagResultDir: ${JPLAG_REPORT_DIR}
   analysisFilesDir: ${ANALYSIS_FILES_DIR}
+  graphUrl: https://tcibinan.github.io/data2graph/v0.2.1/?graph_url=

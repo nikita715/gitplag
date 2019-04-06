@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController
 import ru.nikstep.redink.model.entity.Analysis
 import ru.nikstep.redink.model.entity.AnalysisPair
 import ru.nikstep.redink.model.enums.AnalyserProperty
-import ru.nikstep.redink.model.enums.GitProperty
 import ru.nikstep.redink.model.manager.RepositoryDataManager
 import ru.nikstep.redink.model.repo.AnalysisPairRepository
 import ru.nikstep.redink.model.repo.AnalysisRepository
@@ -28,7 +27,9 @@ class ResultsController(
     private val repositoryDataManager: RepositoryDataManager,
     private val analysisPairRepository: AnalysisPairRepository,
     private val randomGenerator: RandomGenerator,
-    @Value("\${redink.analysisFilesDir}") private val analysisFilesDir: String
+    @Value("\${redink.analysisFilesDir}") private val analysisFilesDir: String,
+    @Value("\${redink.graphUrl}") private val graphUrl: String,
+    @Value("\${server.port}") private val serverPort: String
 ) {
 
     private val resultsStyle: HEAD.() -> Unit = {
@@ -36,7 +37,7 @@ class ResultsController(
         link(href = "https://fonts.googleapis.com/css?family=Roboto", rel = LinkRel.stylesheet)
     }
 
-    @GetMapping("/", "repositories")
+    @GetMapping("/")
     fun getRepositories(): String {
         return createHTML().html {
             head {
@@ -48,29 +49,9 @@ class ResultsController(
                     h3 { +"Repositories" }
                     ul {
                         repositoryDataManager.findAll().forEach { repo ->
-                            li { a("analyzes?git=${repo.gitService.toString().toUpperCase()}&repoName=${repo.name}") { +"${repo.gitService} - ${repo.name}" } }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @GetMapping("analyzes")
-    fun getRepoAnalyzes(@RequestParam("git") git: String, @RequestParam("repoName") repoName: String): String? {
-        val repo = repositoryDataManager.findByGitServiceAndName(GitProperty.valueOf(git), repoName)
-        if (repo == null) return null else {
-            return createHTML().html {
-                head {
-                    title("${git.toLowerCase()}/$repoName")
-                    apply(resultsStyle)
-                }
-                body {
-                    main {
-                        h3 { +"Analyzes of ${git.toLowerCase()} repository $repoName" }
-                        ul {
-                            repo.analyzes.forEach { analysis ->
-                                li { a("analyzes/${analysis.id}") { +analysis.id.toString() } }
+                            li {
+                                a("/repository/${repo.id}")
+                                { +"${repo.gitService} - ${repo.name}" }
                             }
                         }
                     }
@@ -79,7 +60,30 @@ class ResultsController(
         }
     }
 
-    @GetMapping("analyzes/{analysisId}")
+    @GetMapping("repository/{repositoryId}")
+    fun getRepoAnalyzes(@PathVariable repositoryId: Long): String? {
+        val repo = repositoryDataManager.findById(repositoryId)
+        if (repo == null) return null else {
+            return createHTML().html {
+                head {
+                    title(repo.run { "$gitService/$name" })
+                    apply(resultsStyle)
+                }
+                body {
+                    main {
+                        h3 { +"Analyzes of ${repo.gitService} repository ${repo.name}" }
+                        ul {
+                            repo.analyzes.forEach { analysis ->
+                                li { a("/analysis/${analysis.id}") { +analysis.id.toString() } }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @GetMapping("analysis/{analysisId}")
     fun getAnalysis(@PathVariable analysisId: Long): String? {
         val analysis = analysisRepository.findById(analysisId).orElse(null)
         if (analysis == null) return null else {
@@ -91,7 +95,7 @@ class ResultsController(
                 body {
                     main {
                         h3 { +"Analysis #$analysisId of ${analysis.repository.gitService} repository ${analysis.repository.name}" }
-                        a(href = "http://localhost:8088/?graph_url=http://localhost:8081/graph/$analysisId") { +"Graph" }
+                        a(href = buildAnalysisGraphUrl(analysisId)) { +"Graph" }
                         table {
                             thead {
                                 tr {
@@ -106,7 +110,7 @@ class ResultsController(
                                     .forEach { pair ->
                                         tr {
                                             td {
-                                                a("${analysis.id}/pair/${pair.id}") { +pair.id.toString() }
+                                                a("/analysis/${analysis.id}/pair/${pair.id}") { +pair.id.toString() }
                                             }
                                             td { +pair.student1 }
                                             td { +pair.student2 }
@@ -121,7 +125,9 @@ class ResultsController(
         }
     }
 
-    @GetMapping("analyzes/{analysisId}/pair/{analysisPairId}")
+    private fun buildAnalysisGraphUrl(analysisId: Long) = "${graphUrl}http://localhost:$serverPort/graph/$analysisId"
+
+    @GetMapping("analysis/{analysisId}/pair/{analysisPairId}")
     fun getAnalysis(@PathVariable analysisId: Long, @PathVariable analysisPairId: Long): String? {
         val analysis = analysisRepository.findById(analysisId).orElse(null)
         val analysisPair = analysisPairRepository.findById(analysisPairId).orElse(null)
@@ -191,7 +197,7 @@ class ResultsController(
     ): String? {
         val analysisPair = analysisPairRepository.findByAnalysisIdAndStudent1AndStudent2(analysisId, student1, student2)
         if (analysisPair != null) {
-            response.sendRedirect("/analyzes/$analysisId/pair/${analysisPair.id}")
+            response.sendRedirect("/analysis/$analysisId/pair/${analysisPair.id}")
         }
         return null
     }
