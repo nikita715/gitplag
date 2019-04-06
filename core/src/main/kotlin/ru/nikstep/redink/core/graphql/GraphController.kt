@@ -22,7 +22,13 @@ class GraphController(private val analysisRepository: AnalysisRepository) {
             nameSet += pair.student2
         }
         return GraphData(nameSet.map(::Node), analysisPairs.map {
-            Link(it.student1, it.student2, it.percentage, findDirection(it))
+            Link(
+                it.student1,
+                it.student2,
+                it.percentage,
+                findDirection(it),
+                "http://localhost/analyzes/$analysisId/pair?student1=${it.student1}&student2=${it.student2}"
+            )
         })
     }
 

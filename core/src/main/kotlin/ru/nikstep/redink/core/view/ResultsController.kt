@@ -17,6 +17,7 @@ import ru.nikstep.redink.model.repo.AnalysisRepository
 import ru.nikstep.redink.util.RandomGenerator
 import ru.nikstep.redink.util.innerRegularFiles
 import java.io.File
+import javax.servlet.http.HttpServletResponse
 
 /**
  * Analysis results views controller
@@ -182,6 +183,17 @@ class ResultsController(
                 }
             }
         }
+    }
+
+    @GetMapping("analyzes/{analysisId}/pair")
+    fun getAnalysisPair(
+        @RequestParam student1: String, @RequestParam student2: String, @PathVariable analysisId: Long, response: HttpServletResponse
+    ): String? {
+        val analysisPair = analysisPairRepository.findByAnalysisIdAndStudent1AndStudent2(analysisId, student1, student2)
+        if (analysisPair != null) {
+            response.sendRedirect("/analyzes/$analysisId/pair/${analysisPair.id}")
+        }
+        return null
     }
 
     private fun findAnalysisFiles(analysis: Analysis, user: String): List<File> =
