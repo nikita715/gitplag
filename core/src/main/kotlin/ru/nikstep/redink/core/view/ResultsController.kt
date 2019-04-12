@@ -5,7 +5,6 @@ import kotlinx.html.stream.createHTML
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import ru.nikstep.redink.model.entity.Analysis
 import ru.nikstep.redink.model.entity.AnalysisPair
@@ -16,7 +15,6 @@ import ru.nikstep.redink.model.repo.AnalysisRepository
 import ru.nikstep.redink.util.RandomGenerator
 import ru.nikstep.redink.util.innerRegularFiles
 import java.io.File
-import javax.servlet.http.HttpServletResponse
 
 /**
  * Analysis results views controller
@@ -29,11 +27,11 @@ class ResultsController(
     private val randomGenerator: RandomGenerator,
     @Value("\${redink.analysisFilesDir}") private val analysisFilesDir: String,
     @Value("\${redink.graphUrl}") private val graphUrl: String,
-    @Value("\${server.port}") private val serverPort: String
+    @Value("\${redink.serverUrl}") private val serverUrl: String
 ) {
 
     private val resultsStyle: HEAD.() -> Unit = {
-        styleLink("/style.css")
+        styleLink("/results.css")
         link(href = "https://fonts.googleapis.com/css?family=Roboto", rel = LinkRel.stylesheet)
     }
 
@@ -125,7 +123,7 @@ class ResultsController(
         }
     }
 
-    private fun buildAnalysisGraphUrl(analysisId: Long) = "${graphUrl}http://localhost:$serverPort/graph/$analysisId"
+    private fun buildAnalysisGraphUrl(analysisId: Long) = "$graphUrl$serverUrl/graph/$analysisId"
 
     @GetMapping("analysis/{analysisId}/pair/{analysisPairId}")
     fun getAnalysis(@PathVariable analysisId: Long, @PathVariable analysisPairId: Long): String? {
@@ -152,9 +150,9 @@ class ResultsController(
                                     var pairIndex = 0
                                     file.readLines().forEachIndexed { index, line ->
                                         val pair = leftAnalysisPairLines.getOrNull(pairIndex)
-                                        if (pair != null && index == pair.from1) {
+                                        if (pair != null && index == pair.from1 - 1) {
                                             unsafe { +"<font color=\"${colors[pairIndex]}\">\n" }
-                                        } else if (pair != null && index == pair.to1) {
+                                        } else if (pair != null && index == pair.to1 - 1) {
                                             pairIndex++
                                             unsafe { +"</font>\n" }
                                         }
@@ -173,9 +171,9 @@ class ResultsController(
                                     var pairIndex = 0
                                     file.readLines().forEachIndexed { index, line ->
                                         val pair = rightAnalysisPairLines.getOrNull(pairIndex)
-                                        if (pair != null && index == pair.from2) {
+                                        if (pair != null && index == pair.from2 - 1) {
                                             unsafe { +"<font color=\"${colors[pairIndex]}\">\n" }
-                                        } else if (pair != null && index == pair.to2) {
+                                        } else if (pair != null && index == pair.to2 - 1) {
                                             pairIndex++
                                             unsafe { +"</font>\n" }
                                         }
@@ -189,17 +187,6 @@ class ResultsController(
                 }
             }
         }
-    }
-
-    @GetMapping("analyzes/{analysisId}/pair")
-    fun getAnalysisPair(
-        @RequestParam student1: String, @RequestParam student2: String, @PathVariable analysisId: Long, response: HttpServletResponse
-    ): String? {
-        val analysisPair = analysisPairRepository.findByAnalysisIdAndStudent1AndStudent2(analysisId, student1, student2)
-        if (analysisPair != null) {
-            response.sendRedirect("/analysis/$analysisId/pair/${analysisPair.id}")
-        }
-        return null
     }
 
     private fun findAnalysisFiles(analysis: Analysis, user: String): List<File> =
