@@ -31,5 +31,5 @@ dependencies {
 bootJar.enabled = true
 
 bootJar {
-    mainClassName = "ru.nikstep.redink.core.RedinkApplicationKt"
+    mainClassName = "io.gitplag.core.GitplagApplicationKt"
 }
