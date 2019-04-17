@@ -6,8 +6,8 @@ notifications:
   email: false
 
 before_install:
-  - mkdir -p $(dirname "$MOSS_PATH")
-  - openssl enc -aes256 -base64 -in ./libs/moss.pl.enc -out $MOSS_PATH -k $MOSS_ENCR_KEY -d
+  - mkdir -p $(dirname "$GITPLAG_MOSS_PATH")
+  - openssl enc -aes256 -base64 -in ./libs/moss.pl.enc -out $GITPLAG_MOSS_PATH -k $MOSS_ENCR_KEY -d
 
 script:
   - ./gradlew check
