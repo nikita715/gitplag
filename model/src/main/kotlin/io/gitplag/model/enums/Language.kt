@@ -18,7 +18,7 @@ enum class Language {
     SCHEME,
     HASKELL,
     FORTRAN,
-    TEXT,
+    ASCII,
     VHDL,
     PERL,
     MATLAB,
@@ -41,7 +41,6 @@ enum class Language {
     fun ofMoss() =
         when (this) {
             CPP -> "cc"
-            TEXT -> "ascii"
             MIPS_ASSEMBLY -> "mips"
             A8086_ASSEMBLY -> "a8086"
             VISUAL_BASIC -> "vb"
@@ -58,7 +57,6 @@ enum class Language {
             SCHEME -> "scheme"
             PYTHON -> "python3"
             CSHARP -> "c#-1.2"
-            TEXT -> "text"
             else -> "text"
         }
 

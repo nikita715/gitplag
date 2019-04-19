@@ -1,9 +1,8 @@
 package io.gitplag.analysis.analyzer
 
 import io.gitplag.model.data.PreparedAnalysisData
-import mossclient.Language
 import mossclient.MossClient
-import mu.KotlinLogging
+import mossclient.MossLanguage
 
 /**
  * Client of the Moss plagiarism analysis service.
@@ -13,11 +12,11 @@ internal class MossClient(analysisData: PreparedAnalysisData, private val mossId
     private val language = analysisData.language
     private val bases = analysisData.bases
     private val solutions = analysisData.solutions
-    private val logger = KotlinLogging.logger {}
     private val parameters = analysisData.analysisParameters
 
     @Synchronized
-    fun run(): String = MossClient(mossId, Language.valueOf(language.name))
+    fun run(): String = MossClient(mossId, MossLanguage.valueOf(language.name))
+        .rawOptions(parameters)
         .submitFiles(bases, isBase = true)
         .submitNamedFiles(solutions.map { it.student to it.file })
         .getResult()
