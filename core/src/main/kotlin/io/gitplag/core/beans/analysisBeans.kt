@@ -15,7 +15,7 @@ val analysisBeans = beans {
         MossAnalyzer(
             ref(), ref(),
             env.safeEnvVar("gitplag.analysisFilesDir"),
-            env.safeEnvVar("gitplag.mossPath")
+            env.safeEnvVar("gitplag.mossId")
         )
     }
     bean {

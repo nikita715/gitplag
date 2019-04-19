@@ -16,7 +16,7 @@ server:
   port: 80
 
 gitplag:
-  mossPath: ${GITPLAG_MOSS_PATH}
+  mossId: ${GITPLAG_MOSS_Id}
   solutionsDir: ${GITPLAG_SOLUTIONS_DIR}
   jplagResultDir: ${GITPLAG_JPLAG_REPORT_DIR}
   analysisFilesDir: ${GITPLAG_ANALYSIS_FILES_DIR}

@@ -2,12 +2,7 @@ package io.gitplag.analysis.analyzer
 
 import io.gitplag.analysis.analyzer.Analyzer.Companion.repoInfo
 import io.gitplag.analysis.solutions.SourceCodeStorage
-import io.gitplag.model.data.AnalysisMatch
-import io.gitplag.model.data.AnalysisResult
-import io.gitplag.model.data.AnalysisSettings
-import io.gitplag.model.data.MatchedLines
-import io.gitplag.model.data.Solution
-import io.gitplag.model.data.findSolutionByStudent
+import io.gitplag.model.data.*
 import io.gitplag.model.enums.AnalysisMode
 import io.gitplag.util.RandomGenerator
 import io.gitplag.util.generateDir
@@ -22,7 +17,7 @@ class MossAnalyzer(
     private val sourceCodeStorage: SourceCodeStorage,
     private val randomGenerator: RandomGenerator,
     private val analysisResultFilesDir: String,
-    private val mossPath: String
+    private val mossId: String
 ) : Analyzer {
     private val logger = KotlinLogging.logger {}
 
@@ -34,7 +29,7 @@ class MossAnalyzer(
         val analysisFiles = sourceCodeStorage.loadBasesAndComposedSolutions(settings, fileDir)
 
         logger.info { "Analysis:Moss:2.Start analysis. ${repoInfo(settings)}" }
-        val resultLink = MossClient(analysisFiles, mossPath).run()
+        val resultLink = MossClient(analysisFiles, mossId).run()
 
         val matchData =
             if (settings.mode.order > AnalysisMode.LINK.order) {
