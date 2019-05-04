@@ -21,3 +21,36 @@ iframe {
 body {
     margin: 0;
 }
+
+.Repo-List {
+    width: 100px;
+}
+
+.New-Repo-Button {
+
+}
+
+form div {
+    margin: 5px 0 5px 0;
+}
+
+.git-select {
+    display: flex;
+    flex-direction: row;
+}
+
+.git-select input {
+    margin-right: 5px;
+}
+
+.git-select label {
+    margin-right: 10px;
+}
+
+.new-repo-form {
+    max-width: 200px;
+}
+
+.new-repo-form input[type=text] {
+    width: 100%;
+}
