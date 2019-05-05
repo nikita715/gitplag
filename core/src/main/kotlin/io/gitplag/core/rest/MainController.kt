@@ -51,6 +51,9 @@ class MainController(
     fun getAllRepositories(): MutableList<Repository>? = repositoryDataManager.findAll()
 
     @GetMapping("/repositories/{id}")
+    fun getRepo(@PathVariable id: Long) = repositoryDataManager.findById(id)
+
+    @GetMapping("/repositories/{id}/analyzes")
     fun getRepository(@PathVariable id: Long): List<Analysis>? = repositoryDataManager.findById(id)?.analyzes
 
     @GetMapping("/analyzes/{id}")
@@ -140,6 +143,18 @@ class MainController(
             val payloadProcessor = payloadProcessors.getValue(repository.gitService)
             gitRestManager.cloneRepository(repository)
             payloadProcessor.downloadAllPullRequestsOfRepository(repository)
+            ComposedFiles(
+                bases = baseFileRecordRepository.findAllByRepo(repository),
+                solutions = solutionFileRecordRepository.findAllByRepo(repository)
+            )
+        } else null
+    }
+
+    @PostMapping("/repositories/{id}/files")
+    fun getFilesOfRepo(@PathVariable id: Long): ComposedFiles? {
+        val repository = repositoryDataManager.findById(id)
+
+        return if (repository != null) {
             ComposedFiles(
                 bases = baseFileRecordRepository.findAllByRepo(repository),
                 solutions = solutionFileRecordRepository.findAllByRepo(repository)

@@ -22,12 +22,11 @@ class Repositories extends React.Component {
     super(props, context);
     axios.get(PROP.serverUrl + "/api/repositories").then((response) => {
       let data = [];
-      response.data.map((repo) => {
-        let id = repo.id;
-        data.push(<li><a onClick={(e) => showRepo(id)}>{repo.name}</a>
-          <button onClick={(e) => changeRepo(id)}>Edit</button>
-        </li>);
-      });
+      response.data.map((repo) =>
+        data.push(<li><span onClick={(e) => showRepo(repo.id)}>{repo.name}</span>
+          <button onClick={(e) => changeRepo(repo.id)}>Edit</button>
+        </li>)
+      );
       this.setState({repos: data});
       window.history.pushState(null, "Repos", "/repos/");
     });
@@ -82,7 +81,7 @@ class RepositoryAnalyzes extends React.Component {
   constructor(props, context) {
     super(props, context);
     let repoId = props.id;
-    axios.get(PROP.serverUrl + "/api/repositories/" + repoId).then((response) => {
+    axios.get(PROP.serverUrl + "/api/repositories/" + repoId + "/analyzes").then((response) => {
       let data = [];
       response.data.map((analysis) => data.push(<li onClick={(e) => showAnalysis(analysis.id)}>{analysis.id}</li>));
       this.setState({analyzes: data, repoId: repoId});
@@ -163,7 +162,8 @@ class IFrame extends React.Component {
   render() {
     return (
       <div>
-        <iframe src={"http://83.243.70.130:8088/?graph_url=http://localhost/graph/" + this.state.analysisId}/>
+        <iframe title="graph"
+                src={"http://83.243.70.130:8088/?graph_url=http://localhost/graph/" + this.state.analysisId}/>
         <BackButton back={(e) => showAnalysis(this.state.analysisId)}/>
       </div>
     );
@@ -362,7 +362,7 @@ class RunAnalysis extends React.Component {
   constructor(props, context) {
     super(props, context);
     let repoId = props.repoId;
-    axios.get(PROP.serverUrl + "/api/repo/" + repoId).then((response) => {
+    axios.get(PROP.serverUrl + "/api/repositories/" + repoId).then((response) => {
       let data = response.data;
       let mossParameters = data.mossParameters;
       let jplagParameters = data.jplagParameters;
