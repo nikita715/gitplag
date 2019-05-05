@@ -1,1 +1,1 @@
-export const serverUrl = "http://localhost";
+export const serverUrl = process.env.GITPLAG_BACKEND_URL == null ? "http://localhost" : process.env.GITPLAG_BACKEND_URL;
