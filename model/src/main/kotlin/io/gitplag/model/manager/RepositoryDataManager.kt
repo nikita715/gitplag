@@ -24,14 +24,11 @@ class RepositoryDataManager(
     fun create(repositoryDto: RepositoryDto): Repository =
         repositoryRepository.save(
             Repository(
-                name = repositoryDto.fullName,
-                gitService = repositoryDto.gitService,
+                name = repositoryDto.name,
+                gitService = repositoryDto.git,
                 language = repositoryDto.language ?: Language.JAVA,
                 filePatterns = repositoryDto.filePatterns ?: emptyList(),
                 analyzer = repositoryDto.analyzer ?: AnalyzerProperty.MOSS,
-                periodicAnalysis = repositoryDto.periodicAnalysis ?: false,
-                periodicAnalysisDelay = repositoryDto.periodicAnalysisDelay ?: 10,
-                branches = repositoryDto.branches ?: emptyList(),
                 analysisMode = repositoryDto.analysisMode ?: AnalysisMode.PAIRS,
                 mossParameters = repositoryDto.mossParameters ?: "",
                 jplagParameters = repositoryDto.jplagParameters ?: ""
@@ -45,18 +42,15 @@ class RepositoryDataManager(
     fun update(repo: Repository, repositoryDto: RepositoryDto): Repository =
         repositoryRepository.save(
             repo.copy(
+                name = repositoryDto.name ?: repo.name,
                 language = repositoryDto.language ?: repo.language,
                 filePatterns = repositoryDto.filePatterns ?: repo.filePatterns,
                 analyzer = repositoryDto.analyzer ?: repo.analyzer,
-                periodicAnalysis = repositoryDto.periodicAnalysis ?: repo.periodicAnalysis,
-                periodicAnalysisDelay = repositoryDto.periodicAnalysisDelay ?: repo.periodicAnalysisDelay,
-                branches = repositoryDto.branches ?: repo.branches,
                 analysisMode = repositoryDto.analysisMode ?: repo.analysisMode,
                 mossParameters = repositoryDto.mossParameters ?: repo.mossParameters,
                 jplagParameters = repositoryDto.jplagParameters ?: repo.jplagParameters
             )
         )
-
 
     /**
      * Check that the file name matches with any of the repo file name patterns
@@ -88,12 +82,6 @@ class RepositoryDataManager(
      */
     @Transactional
     fun save(repo: Repository): Repository = repositoryRepository.save(repo)
-
-    /**
-     * Find repositories that must be analyzed at this time
-     */
-    @Transactional(readOnly = true)
-    fun findRequiredToAnalyze(): List<Repository> = repositoryRepository.findRequiredToAnalyze()
 
     /**
      * Get file name regexps of the [repo]

@@ -1,6 +1,5 @@
 package io.gitplag.core.analysis
 
-import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.manager.JPlagReportDataManager
 import io.gitplag.model.manager.RepositoryDataManager
 import mu.KotlinLogging
@@ -21,22 +20,6 @@ class AnalysisScheduler(
     @Value("\${gitplag.jplagResultDir}") private val jplagResultDir: String
 ) {
     private val logger = KotlinLogging.logger {}
-
-    /**
-     * Find repositories required to analyze and run analyzes
-     */
-    @Scheduled(cron = "0 * * * * *")
-    fun initiateAnalysis() {
-        logger.info { "Core: look for periodic analyzes" }
-        val requiredToAnalyze = repositoryDataManager.findRequiredToAnalyze()
-        logger.info { "Core: found ${requiredToAnalyze.size} required analyzes" }
-        requiredToAnalyze.flatMap { repository ->
-            repository.branches.map { branch ->
-                AnalysisSettings(repository, branch)
-            }
-        }.forEach { analysisAsyncRunner.run(it) }
-        logger.info { "Core: end analyzes" }
-    }
 
     /**
      * Delete outdated jplag reports

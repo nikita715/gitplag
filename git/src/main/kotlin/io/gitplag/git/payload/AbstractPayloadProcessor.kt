@@ -46,10 +46,7 @@ abstract class AbstractPayloadProcessor(
         val repo = repositoryDataManager.findByGitServiceAndName(GitProperty.GITHUB, repoFullName)
 
         if (repo != null) {
-            if (!repo.branches.contains(branchName)) {
-                logger.info { "Webhook: ignored new push from repo ${repo.name} to branch $branchName" }
-                return
-            } else if (repo.autoCloningEnabled) {
+            if (!repo.autoCloningEnabled) {
                 logger.info {
                     "Webhook: cloning disabled, " +
                             "ignored new push from repo ${repo.name} to branch $branchName"
