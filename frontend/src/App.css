@@ -30,10 +30,6 @@ body {
 
 }
 
-form div {
-    margin: 5px 0 5px 0;
-}
-
 .git-select {
     display: flex;
     flex-direction: row;
@@ -49,6 +45,11 @@ form div {
 
 .new-repo-form {
     max-width: 200px;
+    margin: 10px 0 0 10px;
+}
+
+.new-repo-form div {
+    margin: 5px 0 5px 0;
 }
 
 .new-repo-form input[type=text] {

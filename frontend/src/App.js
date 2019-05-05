@@ -36,8 +36,11 @@ class Repositories extends React.Component {
   render() {
     return (
       <div>
-        <button className="New-Repo-Button" onClick={showNewRepoForm}/>
-        <ul className="Repo-List">{this.state.repos}</ul>
+        <ul className="Repo-List">
+          <li>
+            <button className="New-Repo-Button" onClick={showNewRepoForm}>Create new repo</button>
+          </li>
+          {this.state.repos}</ul>
       </div>
     );
   }
@@ -85,7 +88,11 @@ class Repository extends React.Component {
 
   render() {
     return (<div>
-      <ul>{this.state.analyzes}</ul>
+      <ul>
+        <li>
+          <button>Run analysis</button>
+        </li>
+        {this.state.analyzes}</ul>
       <BackButton back={showRepositories}/></div>);
   }
 }
@@ -154,6 +161,35 @@ class IFrame extends React.Component {
   }
 }
 
+class RepoDto {
+  id = 0;
+  name = "";
+  mossParameters = "";
+  jplagParameters = "";
+  analysisMode = "";
+  language = "";
+  git = "";
+  analyzer = "";
+  filePatterns = [];
+
+  constructor(state) {
+    this.id = state.id;
+    this.name = state.name;
+    this.mossParameters = state.mossParameters;
+    this.jplagParameters = state.jplagParameters;
+    this.analysisMode = state.analysisMode;
+    this.language = state.language;
+    this.git = state.git;
+    this.analyzer = state.analyzer;
+    console.log(this.filePatterns);
+    if (state.filePatterns.length === 0) {
+      this.filePatterns = []
+    } else {
+      this.filePatterns = state.filePatterns.split("\n");
+    }
+  }
+}
+
 class NewRepo extends React.Component {
 
   state = {
@@ -161,7 +197,7 @@ class NewRepo extends React.Component {
     name: "",
     mossParameters: "",
     jplagParameters: "",
-    mode: "",
+    analysisMode: "",
     language: "",
     git: "",
     analyzer: "",
@@ -176,43 +212,81 @@ class NewRepo extends React.Component {
         let name = data.name;
         let mossParameters = data.mossParameters;
         let jplagParameters = data.jplagParameters;
-        let mode = data.analysisMode;
+        let analysisMode = data.analysisMode;
         let language = data.language;
         let git = data.gitService;
         let analyzer = data.analyzer;
-        let filePatterns = data.filePatterns.concat();
+        console.log(data.filePatterns);
+        let filePatterns = data.filePatterns.join("\n");
+        console.log(filePatterns);
         this.setState({
-          id: props.id, name: name, analyzer: analyzer, filePatterns: filePatterns,
-          git: git, language: language, mode: mode, jplagParameters: jplagParameters, mossParameters: mossParameters
+          id: props.id,
+          name: name,
+          analyzer: analyzer,
+          filePatterns: filePatterns,
+          git: git,
+          language: language,
+          analysisMode: analysisMode,
+          jplagParameters: jplagParameters,
+          mossParameters: mossParameters
         });
+      });
+    }
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(event) {
+    const target = event.target;
+    console.log(target.name);
+    console.log(target.value);
+    if (target.type === 'radio' && target.checked) {
+      this.setState({
+        [target.name]: target.value
+      });
+    } else {
+      const value = target.value;
+      const name = target.name;
+
+      this.setState({
+        [name]: value
       });
     }
   }
 
   handleSubmit(event) {
-    alert('A name was submitted: ' + this.state.value);
+    let dto = new RepoDto(this.state);
+    console.log(dto);
+    axios.put((PROP.serverUrl + "/api/repositories/" + this.state.id), dto).catch((e) => {
+      console.log(e);
+    });
+    showRepositories();
   }
 
   render() {
     return (
       <div>
-        <form action={this.handleSubmit} className="new-repo-form">
+        <form onSubmit={this.handleSubmit} className="new-repo-form">
           <span>Git</span>
           <div className="git-select">
-            <input type="radio" id="git1" name="git" value="github" checked={this.state.git === "GITHUB"}/>
+            <input type="radio" id="git1" name="git" value="GITHUB" checked={this.state.git === "GITHUB"}
+                   onChange={this.handleChange}/>
             <label htmlFor="git1">Github</label>
 
-            <input type="radio" id="git2" name="git" value="gitlab" checked={this.state.git === "GITLAB"}/>
+            <input type="radio" id="git2" name="git" value="GITLAB" checked={this.state.git === "GITLAB"}
+                   onChange={this.handleChange}/>
             <label htmlFor="git2">Gitlab</label>
 
-            <input type="radio" id="git3" name="git" value="bitbucket" checked={this.state.git === "BITBUCKET"}/>
+            <input type="radio" id="git3" name="git" value="BITBUCKET" checked={this.state.git === "BITBUCKET"}
+                   onChange={this.handleChange}/>
             <label htmlFor="git3">Bitbucket</label>
           </div>
           <label htmlFor="repo-name">Repo name</label>
-          <div><input type="text" autoComplete="off" id="repo-name" name="repo-name" value={this.state.name}/></div>
+          <div><input type="text" autoComplete="off" id="repo-name" name="name" value={this.state.name}
+                      onChange={this.handleChange}/></div>
           <span>Language</span>
           <div>
-            <select name="language" value={this.state.language}>
+            <select name="language" value={this.state.language} onChange={this.handleChange}>
               <option value="JAVA">Java</option>
               <option value="C">C</option>
               <option value="CPP">C++</option>
@@ -223,33 +297,39 @@ class NewRepo extends React.Component {
           </div>
           <span>Analyzer</span>
           <div className="analyzer-select">
-            <input type="radio" id="analyzer1" name="analyzer" value="moss" checked={this.state.analyzer === "MOSS"}/>
-            <label htmlFor="git1">Moss</label>
+            <input type="radio" id="analyzer1" name="analyzer" value="MOSS" checked={this.state.analyzer === "MOSS"}
+                   onChange={this.handleChange}/>
+            <label htmlFor="analyzer1">Moss</label>
 
-            <input type="radio" id="analyzer2" name="analyzer" value="jplag" checked={this.state.analyzer === "JPLAG"}/>
-            <label htmlFor="git2">JPlag</label>
+            <input type="radio" id="analyzer2" name="analyzer" value="JPLAG" checked={this.state.analyzer === "JPLAG"}
+                   onChange={this.handleChange}/>
+            <label htmlFor="analyzer2">JPlag</label>
           </div>
           <span>Analysis mode</span>
           <div className="mode-select">
-            <input type="radio" id="mode1" name="mode" value="link" checked={this.state.mode === "LINK"}/>
+            <input type="radio" id="mode1" name="analysisMode" value="LINK" checked={this.state.analysisMode === "LINK"}
+                   onChange={this.handleChange}/>
             <label htmlFor="mode1">Link</label>
 
-            <input type="radio" id="mode2" name="mode" value="pairs" checked={this.state.mode === "PAIRS"}/>
+            <input type="radio" id="mode2" name="analysisMode" value="PAIRS"
+                   checked={this.state.analysisMode === "PAIRS"} onChange={this.handleChange}/>
             <label htmlFor="mode2">Pairs</label>
 
-            <input type="radio" id="mode3" name="mode" value="full" checked={this.state.mode === "FULL"}/>
+            <input type="radio" id="mode3" name="analysisMode" value="FULL" checked={this.state.analysisMode === "FULL"}
+                   onChange={this.handleChange}/>
             <label htmlFor="mode3">Full</label>
           </div>
           <label htmlFor="moss-parameters">Moss parameters</label>
-          <div><input type="text" autoComplete="off" id="moss-parameters" name="moss-parameters"
-                      value={this.state.mossParameters}/></div>
+          <div><input type="text" autoComplete="off" id="moss-parameters" name="mossParameters"
+                      value={this.state.mossParameters} onChange={this.handleChange}/></div>
           <label htmlFor="jplag-parameters">JPlag parameters</label>
-          <div><input type="text" autoComplete="off" id="jplag-parameters" name="jplag-parameters"
-                      value={this.state.jplagParameters}/></div>
+          <div><input type="text" autoComplete="off" id="jplag-parameters" name="jplagParameters"
+                      value={this.state.jplagParameters} onChange={this.handleChange}/></div>
           <label htmlFor="file-patterns">File patterns</label>
-          <div><textarea name="file-patterns" id="file-patterns" value={this.state.filePatterns}/></div>
+          <div><textarea name="filePatterns" id="file-patterns" value={this.state.filePatterns}
+                         onChange={this.handleChange}/></div>
           <div>
-            <button onClick={this.handleSubmit}>Submit</button>
+            <button form="none" onClick={this.handleSubmit}>Submit</button>
           </div>
         </form>
         <BackButton back={showRepositories}/>
