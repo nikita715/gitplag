@@ -24,13 +24,18 @@ class AnalysisSettings(
         private set(value) {
             field = value
         }
+    var parameters: String = repository.parameters
+        private set(value) {
+            field = value
+        }
 
     constructor(
         repository: Repository, branch: String, analyzer: AnalyzerProperty? = repository.analyzer
-        , language: Language? = repository.language
+        , language: Language? = repository.language, parameters: String? = repository.parameters
         , mode: AnalysisMode? = repository.analysisMode
     ) : this(repository, branch) {
         this.analyzer = analyzer ?: repository.analyzer
+        this.parameters = parameters ?: repository.parametersOfAnalyzer(this.analyzer)
         this.language = language ?: repository.language
         this.mode = mode ?: repository.analysisMode
     }

@@ -7,7 +7,6 @@ import io.gitplag.model.entity.BaseFileRecord
 import io.gitplag.model.entity.PullRequest
 import io.gitplag.model.entity.Repository
 import io.gitplag.model.entity.SolutionFileRecord
-import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.manager.RepositoryDataManager
 import io.gitplag.model.repo.BaseFileRecordRepository
@@ -75,14 +74,8 @@ class FileSystemSourceCodeStorage(
             bases = loadBases(settings, rootDir),
             solutions = solutions,
             rootDir = rootDir,
-            analysisParameters = getParameters(settings)
+            analysisParameters = settings.parameters
         )
-
-    private fun getParameters(settings: AnalysisSettings) =
-        when (settings.analyzer) {
-            AnalyzerProperty.MOSS -> settings.repository.mossParameters
-            AnalyzerProperty.JPLAG -> settings.repository.jplagParameters
-        }
 
     private fun loadSeparateSolutions(
         analysisSettings: AnalysisSettings,

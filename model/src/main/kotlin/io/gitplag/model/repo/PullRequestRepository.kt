@@ -18,4 +18,6 @@ interface PullRequestRepository : JpaRepository<PullRequest, Long> {
      * Find all [PullRequest]s by the [repo] and by the [number]
      */
     fun findByRepoAndNumber(repo: Repository, number: Int): PullRequest?
+
+    fun findAllByRepoId(repoId: Long): List<PullRequest>
 }

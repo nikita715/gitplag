@@ -50,7 +50,7 @@ class Repositories extends React.Component {
 export default App;
 
 function showRepo(id) {
-  render(<Repository id={id}/>, document.getElementById("root"));
+  render(<RepositoryAnalyzes id={id}/>, document.getElementById("root"));
 }
 
 function changeRepo(id) {
@@ -62,14 +62,18 @@ function showRepositories() {
 }
 
 function showAnalysis(id) {
-  render(<Analysis id={id}/>, document.getElementById("root"));
+  render(<AnalysisResult id={id}/>, document.getElementById("root"));
 }
 
 function showNewRepoForm() {
   render(<NewRepo/>, document.getElementById("root"));
 }
 
-class Repository extends React.Component {
+function showRunAnalysisForm(id) {
+  render(<RunAnalysis repoId={id}/>, document.getElementById("root"));
+}
+
+class RepositoryAnalyzes extends React.Component {
   state = {
     repoId: 0,
     analyzes: []
@@ -87,22 +91,24 @@ class Repository extends React.Component {
   }
 
   render() {
+    console.log(this.state.repoId);
     return (<div>
       <ul>
         <li>
-          <button>Run analysis</button>
+          <button onClick={(e) => showRunAnalysisForm(this.state.repoId)}>Run analysis</button>
         </li>
         {this.state.analyzes}</ul>
       <BackButton back={showRepositories}/></div>);
   }
 }
 
-class Analysis extends React.Component {
+class AnalysisResult extends React.Component {
 
   state = {
     analysisId: 0,
     repoId: 0,
-    results: []
+    results: [],
+    resultLink: ""
   };
 
   constructor(props, context) {
@@ -110,13 +116,17 @@ class Analysis extends React.Component {
     axios.get(PROP.serverUrl + "/api/analyzes/" + props.id).then((response) => {
       let data = [];
       response.data.analysisPairs.map((result) => data.push(<li>{result.id}</li>));
-      this.setState({results: data, repoId: response.data.repository.id, analysisId: response.data.id});
+      this.setState({
+        results: data, repoId: response.data.repository.id, analysisId: response.data.id,
+        resultLink: response.data.resultLink
+      });
     });
   }
 
   render() {
     return (<div>
       <button onClick={(e) => showGraph(this.state.analysisId)}>Graph</button>
+      <span>Analyzer result link: {this.state.resultLink}</span>
       <ul>{this.state.results}</ul>
       <BackButton back={(e) => showRepo(this.state.repoId)}/></div>);
   }
@@ -137,8 +147,7 @@ class BackButton extends React.Component {
 }
 
 function showGraph(analysisId) {
-  render(<IFrame iframe={"http://83.243.70.130:8088/?graph_url="}
-                 analysisId={analysisId}/>, document.getElementById("root"));
+  render(<IFrame analysisId={analysisId}/>, document.getElementById("root"));
 }
 
 class IFrame extends React.Component {
@@ -335,5 +344,138 @@ class NewRepo extends React.Component {
         <BackButton back={showRepositories}/>
       </div>
     );
+  }
+}
+
+class RunAnalysis extends React.Component {
+
+  state = {
+    repoId: 0,
+    analyzer: "",
+    language: "",
+    analysisMode: "",
+    jplagParameters: "",
+    mossParameters: "",
+    parameters: ""
+  };
+
+  constructor(props, context) {
+    super(props, context);
+    let repoId = props.repoId;
+    axios.get(PROP.serverUrl + "/api/repo/" + repoId).then((response) => {
+      let data = response.data;
+      let mossParameters = data.mossParameters;
+      let jplagParameters = data.jplagParameters;
+      let analysisMode = data.analysisMode;
+      let language = data.language;
+      let analyzer = data.analyzer;
+      this.setState({
+        repoId: repoId,
+        analyzer: analyzer,
+        language: language,
+        analysisMode: analysisMode,
+        jplagParameters: jplagParameters,
+        mossParameters: mossParameters,
+        parameters: analyzer === "MOSS" ? mossParameters : jplagParameters
+      });
+    });
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(event) {
+    const target = event.target;
+    console.log(target.name);
+    console.log(target.value);
+    if (target.name === "analyzer") {
+      let pars = target.value === "MOSS" ? this.state.mossParameters : this.state.jplagParameters;
+      this.setState({parameters: pars, analyzer: target.value})
+    } else if (target.name === "parameters") {
+      if (this.state.analyzer === "MOSS") {
+        this.setState({
+          parameters: target.value,
+          mossParameters: target.value
+        })
+      } else {
+        this.setState({
+          parameters: target.value,
+          jplagParameters: target.value
+        })
+      }
+    } else {
+      if (target.type === 'radio' && target.checked) {
+        this.setState({
+          [target.name]: target.value
+        });
+      } else {
+        const value = target.value;
+        const name = target.name;
+
+        this.setState({
+          [name]: value
+        });
+      }
+    }
+  }
+
+  handleSubmit(event) {
+    console.log(this.state);
+    axios.post((PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/analyzeWithNoResponse"), this.state).catch((e) => {
+      console.log(e);
+    });
+    showRepo(this.state.repoId);
+  }
+
+  render() {
+    console.log(this.state.language);
+    return (<div>
+      <label htmlFor="branch-name">Branch name</label>
+      <div><input id="branch-name" name="branch" onChange={this.handleChange}/></div>
+      <span>Language</span>
+      <div>
+        <select name="language" value={this.state.language} onChange={this.handleChange}>
+          <option value="JAVA">Java</option>
+          <option value="C">C</option>
+          <option value="CPP">C++</option>
+          <option value="PYTHON">Python</option>
+          <option value="HASKELL">Haskell</option>
+          <option value="PASCAL">Pascal</option>
+        </select>
+      </div>
+      <span>Analyzer</span>
+      <div className="analyzer-select">
+        <input type="radio" id="analyzer1" name="analyzer" value="MOSS" checked={this.state.analyzer === "MOSS"}
+               onChange={this.handleChange}/>
+        <label htmlFor="analyzer1">Moss</label>
+
+        <input type="radio" id="analyzer2" name="analyzer" value="JPLAG" checked={this.state.analyzer === "JPLAG"}
+               onChange={this.handleChange}/>
+        <label htmlFor="analyzer2">JPlag</label>
+      </div>
+      <span>Analysis mode</span>
+      <div className="mode-select">
+        <input type="radio" id="mode1" name="analysisMode" value="LINK" checked={this.state.analysisMode === "LINK"}
+               onChange={this.handleChange}/>
+        <label htmlFor="mode1">Link</label>
+
+        <input type="radio" id="mode2" name="analysisMode" value="PAIRS"
+               checked={this.state.analysisMode === "PAIRS"} onChange={this.handleChange}/>
+        <label htmlFor="mode2">Pairs</label>
+
+        <input type="radio" id="mode3" name="analysisMode" value="FULL" checked={this.state.analysisMode === "FULL"}
+               onChange={this.handleChange}/>
+        <label htmlFor="mode3">Full</label>
+      </div>
+      <label htmlFor="moss-parameters">Parameters</label>
+      <div><input type="text" autoComplete="off" id="parameters" name="parameters"
+                  value={this.state.parameters} onChange={this.handleChange}/></div>
+      <label htmlFor="response-url">Response url</label>
+      <div><input id="response-url" name="responseUrl" onChange={this.handleChange}/>
+      </div>
+      <div>
+        <button type="submit" onClick={this.handleSubmit}>Submit</button>
+      </div>
+      <BackButton back={(e) => showRepo(this.state.repoId)}/>
+    </div>);
   }
 }

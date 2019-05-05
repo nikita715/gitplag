@@ -62,4 +62,15 @@ data class Repository(
     val jplagParameters: String = "",
 
     val gitId: Long = -1
-)
+) {
+    val parameters: String
+        get() = when (analyzer) {
+            AnalyzerProperty.MOSS -> mossParameters
+            AnalyzerProperty.JPLAG -> jplagParameters
+        }
+
+    fun parametersOfAnalyzer(analyzer: AnalyzerProperty) = when (analyzer) {
+        AnalyzerProperty.MOSS -> mossParameters
+        AnalyzerProperty.JPLAG -> jplagParameters
+    }
+}

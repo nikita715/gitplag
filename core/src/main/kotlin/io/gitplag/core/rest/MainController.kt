@@ -17,10 +17,7 @@ import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.enums.Language
 import io.gitplag.model.manager.RepositoryDataManager
-import io.gitplag.model.repo.AnalysisPairRepository
-import io.gitplag.model.repo.AnalysisRepository
-import io.gitplag.model.repo.BaseFileRecordRepository
-import io.gitplag.model.repo.SolutionFileRecordRepository
+import io.gitplag.model.repo.*
 import io.gitplag.util.RandomGenerator
 import io.gitplag.util.innerRegularFiles
 import org.springframework.beans.factory.annotation.Qualifier
@@ -37,6 +34,7 @@ class MainController(
     private val analysisRepository: AnalysisRepository,
     private val repositoryDataManager: RepositoryDataManager,
     private val analysisPairRepository: AnalysisPairRepository,
+    private val pullRequestRepository: PullRequestRepository,
     private val randomGenerator: RandomGenerator,
     private val analysisRunner: AnalysisRunner,
     private val analysisAsyncRunner: AnalysisAsyncRunner,
@@ -77,11 +75,12 @@ class MainController(
         }.sortedBy { it.name }.map { FileDto(user, it.readText()) }
 
     class AnalysisDto(
-        val id: Long,
+        val repoId: Long,
         val branch: String,
         val analyzer: AnalyzerProperty?,
         val language: Language?,
         val mode: AnalysisMode?,
+        val parameters: String?,
         val responseUrl: String?
     )
 
@@ -90,14 +89,15 @@ class MainController(
      */
     @PostMapping("/repositories/{id}/analyze")
     fun analyze(@RequestBody dto: AnalysisDto): Analysis? {
-        val repoValue = repositoryDataManager.findById(dto.id) ?: return null
+        val repoValue = repositoryDataManager.findById(dto.repoId) ?: return null
         return analysisRunner.run(
             AnalysisSettings(
                 repoValue,
                 dto.branch,
                 language = dto.language,
                 analyzer = dto.analyzer,
-                mode = dto.mode
+                mode = dto.mode,
+                parameters = dto.parameters
             )
         )
     }
@@ -107,14 +107,15 @@ class MainController(
      */
     @PostMapping("/repositories/{id}/analyzeWithNoResponse")
     fun analyzeDetached(@RequestBody dto: AnalysisDto): Boolean {
-        val repoValue = repositoryDataManager.findById(dto.id) ?: return false
+        val repoValue = repositoryDataManager.findById(dto.repoId) ?: return false
         analysisAsyncRunner.runAndRespond(
             AnalysisSettings(
                 repoValue,
                 dto.branch,
                 language = dto.language,
                 analyzer = dto.analyzer,
-                mode = dto.mode
+                mode = dto.mode,
+                parameters = dto.parameters
             ), dto.responseUrl
         )
         return true
@@ -176,5 +177,19 @@ class MainController(
         val fileName: String?,
         val student: String?
     )
+
+    class PullRequestDto(
+        val id: Long,
+        val number: Int,
+        val user: String,
+        val from: String,
+        val to: String
+    )
+
+    @GetMapping("/repositories/{id}/pulls")
+    fun getPullRequests(@PathVariable id: Long) =
+        pullRequestRepository.findAllByRepoId(id).map {
+            it.run { PullRequestDto(this.id, number, creatorName, sourceBranchName, mainBranchName) }
+        }
 
 }
