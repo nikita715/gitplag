@@ -42,7 +42,7 @@ class RepositoryDataManager(
     fun update(repo: Repository, repositoryDto: RepositoryDto): Repository =
         repositoryRepository.save(
             repo.copy(
-                name = repositoryDto.name ?: repo.name,
+                name = repositoryDto.name,
                 language = repositoryDto.language ?: repo.language,
                 filePatterns = repositoryDto.filePatterns ?: repo.filePatterns,
                 analyzer = repositoryDto.analyzer ?: repo.analyzer,
@@ -90,6 +90,9 @@ class RepositoryDataManager(
     fun findFileNameRegexps(repo: Repository) = repositoryRepository.findById(repo.id)
         .let { if (it.isPresent) it.get().filePatterns else emptyList() }.also { it.size }
 
+    /**
+     * Get all repositories
+     */
     @Transactional(readOnly = true)
     fun findAll() = repositoryRepository.findAll()
 }

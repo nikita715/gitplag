@@ -23,8 +23,8 @@ class Repositories extends React.Component {
     axios.get(PROP.serverUrl + "/api/repositories").then((response) => {
       let data = [];
       response.data.map((repo) =>
-        data.push(<li><span onClick={(e) => showRepo(repo.id)}>{repo.name}</span>
-          <button onClick={(e) => changeRepo(repo.id)}>Edit</button>
+        data.push(<li><span onClick={() => showRepo(repo.id)}>{repo.name}</span>
+          <button onClick={() => changeRepo(repo.id)}>Edit</button>
         </li>)
       );
       this.setState({repos: data});
@@ -56,9 +56,9 @@ class RepositoryAnalyzes extends React.Component {
     super(props, context);
     let repoId = props.id;
     axios.get(PROP.serverUrl + "/api/repositories/" + repoId + "/analyzes").then((response) => {
-      let data = [];
-      response.data.map((analysis) => data.push(<li onClick={(e) => showAnalysis(analysis.id)}>{analysis.id}</li>));
-      this.setState({analyzes: data, repoId: repoId});
+      let analyzes = [];
+      response.data.map((analysis) => analyzes.push(<li onClick={() => showAnalysis(analysis.id)}>{analysis.id}</li>));
+      this.setState({analyzes, repoId});
       window.history.pushState(null, "Repo " + repoId, "/repos/" + this.state.repoId);
     });
   }
@@ -67,7 +67,7 @@ class RepositoryAnalyzes extends React.Component {
     return (<div>
       <ul>
         <li>
-          <button onClick={(e) => showRunAnalysisForm(this.state.repoId)}>Run analysis</button>
+          <button onClick={() => showRunAnalysisForm(this.state.repoId)}>Run analysis</button>
         </li>
         {this.state.analyzes}</ul>
       <BackButton back={showRepositories}/></div>);
@@ -97,10 +97,10 @@ class AnalysisResult extends React.Component {
 
   render() {
     return (<div>
-      <button onClick={(e) => showGraph(this.state.analysisId)}>Graph</button>
+      <button onClick={() => showGraph(this.state.analysisId)}>Graph</button>
       <span>Analyzer result link: {this.state.resultLink}</span>
       <ul>{this.state.results}</ul>
-      <BackButton back={(e) => showRepo(this.state.repoId)}/></div>);
+      <BackButton back={() => showRepo(this.state.repoId)}/></div>);
   }
 }
 
@@ -137,7 +137,7 @@ class IFrame extends React.Component {
       <div>
         <iframe title="graph"
                 src={"http://83.243.70.130:8088/?graph_url=http://localhost/graph/" + this.state.analysisId}/>
-        <BackButton back={(e) => showAnalysis(this.state.analysisId)}/>
+        <BackButton back={() => showAnalysis(this.state.analysisId)}/>
       </div>
     );
   }
@@ -164,7 +164,7 @@ class RepoDto {
     this.git = state.git;
     this.analyzer = state.analyzer;
     if (state.filePatterns.length === 0) {
-      this.filePatterns = []
+      this.filePatterns = [];
     } else {
       this.filePatterns = state.filePatterns.split("\n");
     }
@@ -217,7 +217,7 @@ class NewRepo extends React.Component {
 
   handleChange(event) {
     const target = event.target;
-    if (target.type === 'radio' && target.checked) {
+    if (target.type === "radio" && target.checked) {
       this.setState({
         [target.name]: target.value
       });
@@ -231,7 +231,7 @@ class NewRepo extends React.Component {
     }
   }
 
-  handleSubmit(event) {
+  handleSubmit() {
     let dto = new RepoDto(this.state);
     axios.put((PROP.serverUrl + "/api/repositories/" + this.state.id), dto);
     showRepositories();
@@ -352,7 +352,7 @@ class RunAnalysis extends React.Component {
     const target = event.target;
     if (target.name === "analyzer") {
       let pars = target.value === "MOSS" ? this.state.mossParameters : this.state.jplagParameters;
-      this.setState({parameters: pars, analyzer: target.value})
+      this.setState({parameters: pars, analyzer: target.value});
     } else if (target.name === "parameters") {
       if (this.state.analyzer === "MOSS") {
         this.setState({
@@ -365,7 +365,7 @@ class RunAnalysis extends React.Component {
           jplagParameters: target.value
         });
       }
-    } else if (target.type === 'radio' && target.checked) {
+    } else if (target.type === "radio" && target.checked) {
       this.setState({
         [target.name]: target.value
       });
@@ -379,7 +379,7 @@ class RunAnalysis extends React.Component {
     }
   }
 
-  handleSubmit(event) {
+  handleSubmit() {
     axios.post((PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/analyzeWithNoResponse"), this.state);
     showRepo(this.state.repoId);
   }
@@ -432,7 +432,7 @@ class RunAnalysis extends React.Component {
       <div>
         <button type="submit" onClick={this.handleSubmit}>Submit</button>
       </div>
-      <BackButton back={(e) => showRepo(this.state.repoId)}/>
+      <BackButton back={() => showRepo(this.state.repoId)}/>
     </div>);
   }
 }
