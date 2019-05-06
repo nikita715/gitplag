@@ -5,12 +5,14 @@ spring:
     password: ${GITPLAG_DATASOURCE_PASSWORD}
     url: ${GITPLAG_DATASOURCE_URL}
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+    generate-ddl: true
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
         jdbc:
           lob:
             non_contextual_creation: true
-    generate-ddl: true
 
 server:
   port: 80

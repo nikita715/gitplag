@@ -1,21 +1,16 @@
-FROM ubuntu:18.04 as init
+FROM alpine:3.7 as init
 
 ENV GITPLAG_HOME=/opt/gitplag
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends openjdk-8-jre openjdk-8-jdk \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+WORKDIR $GITPLAG_HOME
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends git
+RUN apk add --update openjdk8 git \
+    && rm -rf /var/cache/apk/*
 
-RUN rm -rf $GITPLAG_HOME \
-    && git clone https://github.com/nikita715/gitplag.git $GITPLAG_HOME --branch dev \
-    && cd $GITPLAG_HOME \
+RUN git clone https://github.com/nikita715/gitplag.git $GITPLAG_HOME \
     && ./gradlew bootJar
 
-FROM ubuntu:18.04 as prod
+FROM alpine:3.7 as prod
 
 ENV GITPLAG_HOME=/opt/gitplag
 ENV GITPLAG_MOSS_PATH=/mnt/gitplag/moss.pl
@@ -25,10 +20,8 @@ ENV GITPLAG_ANALYSIS_FILES_DIR=/mnt/gitplag/analysisfiles
 
 WORKDIR $GITPLAG_HOME
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends openjdk-8-jre openjdk-8-jdk \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --update openjdk8 \
+    && rm -rf /var/cache/apk/*
 
 COPY --from=init $GITPLAG_HOME/core/build/libs/core.jar .
 
