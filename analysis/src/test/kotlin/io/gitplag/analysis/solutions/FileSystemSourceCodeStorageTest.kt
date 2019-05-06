@@ -1,10 +1,6 @@
 package io.gitplag.analysis.solutions
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.*
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.entity.BaseFileRecord
 import io.gitplag.model.entity.PullRequest
@@ -57,8 +53,9 @@ class FileSystemSourceCodeStorageTest {
         on { language } doReturn java
         on { analyzer } doReturn AnalyzerProperty.MOSS
         on { analysisMode } doReturn AnalysisMode.LINK
-        on { mossParameters } doReturn ""
-        on { jplagParameters } doReturn ""
+        on { parameters } doReturn "par1"
+        on { mossParameters } doReturn "par1"
+        on { jplagParameters } doReturn "par2"
     }
 
     private val sha1 = "sha1"
