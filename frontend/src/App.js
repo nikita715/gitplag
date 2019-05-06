@@ -46,32 +46,6 @@ class Repositories extends React.Component {
 
 }
 
-export default App;
-
-function showRepo(id) {
-  render(<RepositoryAnalyzes id={id}/>, document.getElementById("root"));
-}
-
-function changeRepo(id) {
-  render(<NewRepo id={id}/>, document.getElementById("root"));
-}
-
-function showRepositories() {
-  render(<Repositories/>, document.getElementById("root"));
-}
-
-function showAnalysis(id) {
-  render(<AnalysisResult id={id}/>, document.getElementById("root"));
-}
-
-function showNewRepoForm() {
-  render(<NewRepo/>, document.getElementById("root"));
-}
-
-function showRunAnalysisForm(id) {
-  render(<RunAnalysis repoId={id}/>, document.getElementById("root"));
-}
-
 class RepositoryAnalyzes extends React.Component {
   state = {
     repoId: 0,
@@ -90,7 +64,6 @@ class RepositoryAnalyzes extends React.Component {
   }
 
   render() {
-    console.log(this.state.repoId);
     return (<div>
       <ul>
         <li>
@@ -190,7 +163,6 @@ class RepoDto {
     this.language = state.language;
     this.git = state.git;
     this.analyzer = state.analyzer;
-    console.log(this.filePatterns);
     if (state.filePatterns.length === 0) {
       this.filePatterns = []
     } else {
@@ -216,7 +188,7 @@ class NewRepo extends React.Component {
   constructor(props, context) {
     super(props, context);
     if (props.id) {
-      axios.get(PROP.serverUrl + "/api/repo/" + props.id).then((response) => {
+      axios.get(PROP.serverUrl + "/api/repositories/" + props.id).then((response) => {
         let data = response.data;
         let name = data.name;
         let mossParameters = data.mossParameters;
@@ -225,19 +197,17 @@ class NewRepo extends React.Component {
         let language = data.language;
         let git = data.gitService;
         let analyzer = data.analyzer;
-        console.log(data.filePatterns);
         let filePatterns = data.filePatterns.join("\n");
-        console.log(filePatterns);
         this.setState({
           id: props.id,
-          name: name,
-          analyzer: analyzer,
-          filePatterns: filePatterns,
-          git: git,
-          language: language,
-          analysisMode: analysisMode,
-          jplagParameters: jplagParameters,
-          mossParameters: mossParameters
+          name,
+          analyzer,
+          filePatterns,
+          git,
+          language,
+          analysisMode,
+          jplagParameters,
+          mossParameters
         });
       });
     }
@@ -247,8 +217,6 @@ class NewRepo extends React.Component {
 
   handleChange(event) {
     const target = event.target;
-    console.log(target.name);
-    console.log(target.value);
     if (target.type === 'radio' && target.checked) {
       this.setState({
         [target.name]: target.value
@@ -265,10 +233,7 @@ class NewRepo extends React.Component {
 
   handleSubmit(event) {
     let dto = new RepoDto(this.state);
-    console.log(dto);
-    axios.put((PROP.serverUrl + "/api/repositories/" + this.state.id), dto).catch((e) => {
-      console.log(e);
-    });
+    axios.put((PROP.serverUrl + "/api/repositories/" + this.state.id), dto);
     showRepositories();
   }
 
@@ -370,12 +335,12 @@ class RunAnalysis extends React.Component {
       let language = data.language;
       let analyzer = data.analyzer;
       this.setState({
-        repoId: repoId,
-        analyzer: analyzer,
-        language: language,
-        analysisMode: analysisMode,
-        jplagParameters: jplagParameters,
-        mossParameters: mossParameters,
+        repoId,
+        analyzer,
+        language,
+        analysisMode,
+        jplagParameters,
+        mossParameters,
         parameters: analyzer === "MOSS" ? mossParameters : jplagParameters
       });
     });
@@ -385,8 +350,6 @@ class RunAnalysis extends React.Component {
 
   handleChange(event) {
     const target = event.target;
-    console.log(target.name);
-    console.log(target.value);
     if (target.name === "analyzer") {
       let pars = target.value === "MOSS" ? this.state.mossParameters : this.state.jplagParameters;
       this.setState({parameters: pars, analyzer: target.value})
@@ -395,39 +358,33 @@ class RunAnalysis extends React.Component {
         this.setState({
           parameters: target.value,
           mossParameters: target.value
-        })
+        });
       } else {
         this.setState({
           parameters: target.value,
           jplagParameters: target.value
-        })
+        });
       }
+    } else if (target.type === 'radio' && target.checked) {
+      this.setState({
+        [target.name]: target.value
+      });
     } else {
-      if (target.type === 'radio' && target.checked) {
-        this.setState({
-          [target.name]: target.value
-        });
-      } else {
-        const value = target.value;
-        const name = target.name;
+      const value = target.value;
+      const name = target.name;
 
-        this.setState({
-          [name]: value
-        });
-      }
+      this.setState({
+        [name]: value
+      });
     }
   }
 
   handleSubmit(event) {
-    console.log(this.state);
-    axios.post((PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/analyzeWithNoResponse"), this.state).catch((e) => {
-      console.log(e);
-    });
+    axios.post((PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/analyzeWithNoResponse"), this.state);
     showRepo(this.state.repoId);
   }
 
   render() {
-    console.log(this.state.language);
     return (<div>
       <label htmlFor="branch-name">Branch name</label>
       <div><input id="branch-name" name="branch" onChange={this.handleChange}/></div>
@@ -479,3 +436,29 @@ class RunAnalysis extends React.Component {
     </div>);
   }
 }
+
+function showRepo(id) {
+  render(<RepositoryAnalyzes id={id}/>, document.getElementById("root"));
+}
+
+function changeRepo(id) {
+  render(<NewRepo id={id}/>, document.getElementById("root"));
+}
+
+function showRepositories() {
+  render(<Repositories/>, document.getElementById("root"));
+}
+
+function showAnalysis(id) {
+  render(<AnalysisResult id={id}/>, document.getElementById("root"));
+}
+
+function showNewRepoForm() {
+  render(<NewRepo/>, document.getElementById("root"));
+}
+
+function showRunAnalysisForm(id) {
+  render(<RunAnalysis repoId={id}/>, document.getElementById("root"));
+}
+
+export default App;
