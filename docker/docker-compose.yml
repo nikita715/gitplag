@@ -17,7 +17,7 @@ services:
     container_name: gitplag-ui
     image: nikstep/gitplag-ui:latest
     ports:
-      - 3002:3000
+      - 3002:80
   postgres:
     container_name: gitplag-database
     image: postgres:11.1
