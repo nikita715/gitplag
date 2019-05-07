@@ -179,7 +179,7 @@ class NewRepo extends React.Component {
     mossParameters: "",
     jplagParameters: "",
     analysisMode: "",
-    language: "",
+    language: "JAVA",
     git: "",
     analyzer: "",
     filePatterns: ""
@@ -233,8 +233,10 @@ class NewRepo extends React.Component {
 
   handleSubmit() {
     let dto = new RepoDto(this.state);
-    axios.put((PROP.serverUrl + "/api/repositories/" + this.state.id), dto);
-    showRepositories();
+    let request = (this.state.id === 0) ?
+      axios.post((PROP.serverUrl + "/api/repositories"), dto) :
+      axios.put((PROP.serverUrl + "/api/repositories/" + this.state.id), dto);
+    request.then(() => showRepositories())
   }
 
   render() {

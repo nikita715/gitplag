@@ -5,7 +5,13 @@ import io.gitplag.core.analysis.AnalysisAsyncRunner
 import io.gitplag.git.payload.PayloadProcessor
 import io.gitplag.git.rest.GitRestManager
 import io.gitplag.model.data.AnalysisSettings
-import io.gitplag.model.dto.*
+import io.gitplag.model.dto.AnalysisDto
+import io.gitplag.model.dto.AnalysisPairDto
+import io.gitplag.model.dto.ComposedFiles
+import io.gitplag.model.dto.FileDto
+import io.gitplag.model.dto.LocalFileDto
+import io.gitplag.model.dto.PullRequestDto
+import io.gitplag.model.dto.RepositoryDto
 import io.gitplag.model.entity.Analysis
 import io.gitplag.model.entity.BaseFileRecord
 import io.gitplag.model.entity.Repository
@@ -13,11 +19,21 @@ import io.gitplag.model.entity.SolutionFileRecord
 import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.manager.RepositoryDataManager
-import io.gitplag.model.repo.*
+import io.gitplag.model.repo.AnalysisPairRepository
+import io.gitplag.model.repo.AnalysisRepository
+import io.gitplag.model.repo.BaseFileRecordRepository
+import io.gitplag.model.repo.PullRequestRepository
+import io.gitplag.model.repo.SolutionFileRecordRepository
 import io.gitplag.util.innerRegularFiles
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import java.io.File
 
 /**
@@ -124,17 +140,21 @@ class MainController(
     }
 
     /**
-     * Create or update a repo
+     * Update the repo
      */
     @PutMapping("/repositories/{id}")
-    fun manageRepo(@PathVariable id: Long, @RequestBody dto: RepositoryDto): Repository {
+    fun editRepo(@PathVariable id: Long, @RequestBody dto: RepositoryDto): Repository? {
         val storedRepo = repositoryDataManager.findById(id)
-        return if (storedRepo == null) {
-            repositoryDataManager.create(dto)
-        } else {
+        return if (storedRepo != null) {
             repositoryDataManager.update(storedRepo, dto)
-        }
+        } else null
     }
+
+    /**
+     * Create a repo
+     */
+    @PostMapping("/repositories")
+    fun createRepo(@RequestBody dto: RepositoryDto): Repository = repositoryDataManager.create(dto)
 
     /**
      * Trigger download of files of the repo

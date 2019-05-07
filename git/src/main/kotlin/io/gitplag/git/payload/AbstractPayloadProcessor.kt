@@ -67,11 +67,6 @@ abstract class AbstractPayloadProcessor(
     ) {
         val prJsonObject = jsonObject.pullRequest
         val prNumber = requireNotNull(prJsonObject.number)
-        val sourceBranch = requireNotNull(prJsonObject.sourceBranchName)
-        if (!repo.branches.isEmpty() && !repo.branches.contains(sourceBranch.toLowerCase())) {
-            logger.info { "Webhook: Ignored pr from branch $sourceBranch to repo ${repo.name}, pr number $prNumber" }
-            return
-        }
         val storedPullRequest = pullRequestRepository.findByRepoAndNumber(repo, prNumber)
         if (storedPullRequest != null) {
             if (!repo.autoCloningEnabled) {
@@ -121,8 +116,6 @@ abstract class AbstractPayloadProcessor(
             pullRequestJson.run {
                 if (mainRepoFullName == sourceRepoFullName) {
                     logger.info { "Webhook: Ignored pr to itself repo ${repo.name}" }
-                } else if (!repo.branches.contains(sourceBranchName?.toLowerCase())) {
-                    logger.info { "Webhook: Ignored pr from branch $sourceBranchName to repo ${repo.name}, pr number $number" }
                 } else {
                     val pullRequest = parsePullRequest(repo)
                     if (pullRequest != null) {
