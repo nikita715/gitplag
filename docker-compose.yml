@@ -4,20 +4,25 @@ services:
     container_name: gitplag
     image: nikstep/gitplag:latest
     ports:
-      - 8082:80
+      - 8086:80
     environment:
       GITPLAG_MOSS_ID:
-      GITPLAG_DATASOURCE_URL:
-      GITPLAG_DATASOURCE_USERNAME:
-      GITPLAG_DATASOURCE_PASSWORD:
+      GITPLAG_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      GITPLAG_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      GITPLAG_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
       postgres:
         condition: service_healthy
   frontend:
     container_name: gitplag-ui
-    image: nikstep/gitplag-ui:latest
+    build:
+      context: ./frontend
+      args:
+        - REACT_APP_BACKEND_URL
+    environment:
+      REACT_APP_BACKEND_URL:
     ports:
-      - 3002:80
+      - 3006:80
   postgres:
     container_name: gitplag-database
     image: postgres:11.1
