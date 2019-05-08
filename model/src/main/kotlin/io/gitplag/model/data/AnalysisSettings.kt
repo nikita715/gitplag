@@ -36,7 +36,7 @@ class AnalysisSettings(
     constructor(
         repository: Repository, branch: String, analyzer: AnalyzerProperty? = repository.analyzer
         , language: Language? = repository.language, parameters: String? = repository.parameters
-        , mode: AnalysisMode? = repository.analysisMode, updateFiles: Boolean = true
+        , mode: AnalysisMode? = repository.analysisMode, updateFiles: Boolean = false
     ) : this(repository, branch) {
         this.analyzer = analyzer ?: repository.analyzer
         this.parameters = parameters ?: repository.parametersOfAnalyzer(this.analyzer)

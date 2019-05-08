@@ -69,4 +69,7 @@ class GithubPayloadProcessor(
 
     override val JsonObject.pushRepoId: Long?
         get() = -1
+
+    override val JsonObject.branchUpdatedAt: LocalDateTime?
+        get() = obj("commit")?.obj("commit")?.obj("author")?.string("date").parseDate()
 }

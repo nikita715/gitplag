@@ -107,9 +107,7 @@ abstract class AbstractPayloadProcessor(
     override fun downloadAllPullRequestsOfRepository(repo: Repository) {
         gitRestManager.findBranchesOfRepo(repo).forEach { branchName ->
             val lastUpdated =
-                gitRestManager.getBranchOfRepo(repo, branchName).obj("commit")?.obj("commit")?.obj("author")
-                    ?.string("date")
-                    .parseDate()
+                requireNotNull(gitRestManager.getBranchOfRepo(repo, branchName).branchUpdatedAt)
             val branch = branchRepository.findByRepositoryAndName(repo, branchName)
             if (branch?.updatedAt != lastUpdated) {
                 gitRestManager.cloneRepository(repo, branchName)
@@ -221,4 +219,6 @@ abstract class AbstractPayloadProcessor(
     protected abstract val JsonObject.pushRepoId: Long?
 
     protected abstract val JsonObject.pushLastUpdated: LocalDateTime?
+
+    protected abstract val JsonObject.branchUpdatedAt: LocalDateTime?
 }

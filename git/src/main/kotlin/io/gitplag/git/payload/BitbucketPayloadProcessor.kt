@@ -65,8 +65,11 @@ class BitbucketPayloadProcessor(
         get() = obj("repository")?.string("full_name")
 
     override val JsonObject.pushBranchName: String?
-        get() = obj("push")?.array<JsonObject>("changes")?.get(0)?.obj("new")?.string("name")
+        get() = obj("push")?.array<JsonObject>("changes")?.first()?.obj("new")?.string("name")
 
     override val JsonObject.pushLastUpdated: LocalDateTime?
-        get() = TODO("not implemented")
+        get() = obj("push")?.array<JsonObject>("changes")?.first()?.obj("new")?.obj("target")?.string("date")?.parseDate()
+
+    override val JsonObject.branchUpdatedAt: LocalDateTime?
+        get() = obj("target")?.string("date").parseDate()
 }

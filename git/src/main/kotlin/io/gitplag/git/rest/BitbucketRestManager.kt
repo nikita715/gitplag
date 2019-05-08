@@ -11,13 +11,13 @@ import io.gitplag.util.sendRestRequest
 class BitbucketRestManager(
     sourceCodeStorage: SourceCodeStorage
 ) : AbstractGitRestManager(sourceCodeStorage) {
-    override fun getBranchOfRepo(repo: Repository, name: String): JsonObject {
-        TODO("not implemented")
-    }
+
+    override fun getBranchOfRepo(repo: Repository, name: String) =
+        sendRestRequest<JsonObject>("https://api.bitbucket.org/2.0/repositories/${repo.name}/refs/branches/$name")
 
     override fun findBranchesOfRepo(repo: Repository) =
         requireNotNull(
-            sendRestRequest<JsonObject>("https://api.bitbucket.org/2.0/repositories/nikita715/plagiarism_test2/refs/branches")
+            sendRestRequest<JsonObject>("https://api.bitbucket.org/2.0/repositories/${repo.name}/refs/branches")
                 .array<JsonObject>("values")?.map { requireNotNull(it.string("name")) })
 
     override fun findPullRequests(repo: Repository, page: Int) =

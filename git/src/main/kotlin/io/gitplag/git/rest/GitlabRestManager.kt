@@ -12,14 +12,13 @@ import io.gitplag.util.sendRestRequest
 class GitlabRestManager(
     sourceCodeStorage: SourceCodeStorage
 ) : AbstractGitRestManager(sourceCodeStorage) {
-    override fun getBranchOfRepo(repo: Repository, name: String): JsonObject {
-        TODO("not implemented")
-    }
+
+    override fun getBranchOfRepo(repo: Repository, name: String) =
+        sendRestRequest<JsonObject>("https://gitlab.com/api/v4/projects/${repo.gitId}/repository/branches/$name")
 
     override fun findBranchesOfRepo(repo: Repository): List<String> =
         sendRestRequest<JsonArray<JsonObject>>("https://gitlab.com/api/v4/projects/${repo.gitId}/repository/branches")
             .map { requireNotNull(it.string("name")) }
-
 
     override fun findPullRequests(repo: Repository, page: Int): JsonArray<JsonObject> =
         sendRestRequest("https://gitlab.com/api/v4/projects/${repo.gitId}/merge_requests")

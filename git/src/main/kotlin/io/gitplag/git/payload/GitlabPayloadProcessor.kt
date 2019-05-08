@@ -68,5 +68,8 @@ class GitlabPayloadProcessor(
         get() = long("project_id")
 
     override val JsonObject.pushLastUpdated: LocalDateTime?
-        get() = TODO("not implemented")
+        get() = array<JsonObject>("commits")?.last()?.string("timestamp")?.parseDate()
+
+    override val JsonObject.branchUpdatedAt: LocalDateTime?
+        get() = obj("commit")?.string("committed_date").parseDate()
 }
