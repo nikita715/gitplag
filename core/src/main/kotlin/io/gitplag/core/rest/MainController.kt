@@ -100,7 +100,7 @@ class MainController(
         when (analysis.analyzer) {
             AnalyzerProperty.MOSS -> listOf(File("$analysisFilesDir/${analysis.hash}/$user").listFiles()[0])
             AnalyzerProperty.JPLAG -> File("$analysisFilesDir/${analysis.hash}/$user").innerRegularFiles()
-        }.sortedBy { it.name }.map { FileDto(user, it.readText()) }
+        }.sortedBy { it.name }.map { FileDto(user, it.readLines()) }
 
     /**
      * Initiate the analysis

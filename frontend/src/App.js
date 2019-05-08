@@ -2,13 +2,21 @@ import React from "react";
 import "./App.css";
 import axios from "axios";
 import * as PROP from "./properties";
-import {render} from "react-dom";
+import {BrowserRouter, Link, Redirect, Route} from 'react-router-dom';
 
 function App() {
   return (
-    <div className="App">
-      <Repositories/>
-    </div>
+    <BrowserRouter>
+      <Route exact path="/" component={Repositories}/>
+      <Route exact path="/repos" component={Repositories}/>
+      <Route exact path="/repos/:repoId/analyzes" component={RepositoryAnalyzes}/>
+      <Route exact path="/repos/:id/analyze" component={RunAnalysis}/>
+      <Route exact path="/repos/:id/edit" component={NewRepo}/>
+      <Route exact path="/repos/new" component={NewRepo}/>
+      <Route exact path="/analyzes/:analysisId/graph" component={IFrameGraph}/>
+      <Route exact path="/analyzes/:id" component={AnalysisResult}/>
+      <Route exact path="/analyzes/:analysisId/pairs/:pairId" component={AnalysisResultPair}/>
+    </BrowserRouter>
   );
 }
 
@@ -20,15 +28,15 @@ class Repositories extends React.Component {
 
   constructor(props, context) {
     super(props, context);
+    window.history.pushState(null, "Repos", "/repos/");
     axios.get(PROP.serverUrl + "/api/repositories").then((response) => {
       let data = [];
       response.data.map((repo) =>
-        data.push(<li><span onClick={() => showRepo(repo.id)}>{repo.name}</span>
-          <button onClick={() => changeRepo(repo.id)}>Edit</button>
+        data.push(<li><Link to={"/repos/" + repo.id + "/analyzes"}>{repo.name}</Link>
+          <button><Link to={"/repos/" + repo.id + "/edit"}>Edit</Link></button>
         </li>)
       );
       this.setState({repos: data});
-      window.history.pushState(null, "Repos", "/repos/");
     });
   }
 
@@ -37,7 +45,7 @@ class Repositories extends React.Component {
       <div>
         <ul className="Repo-List">
           <li>
-            <button className="New-Repo-Button" onClick={showNewRepoForm}>Create new repo</button>
+            <button className="New-Repo-Button"><Link to="/repos/new">Create new repo</Link></button>
           </li>
           {this.state.repos}</ul>
       </div>
@@ -54,12 +62,11 @@ class RepositoryAnalyzes extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    let repoId = props.id;
-    axios.get(PROP.serverUrl + "/api/repositories/" + repoId + "/analyzes").then((response) => {
+    axios.get(PROP.serverUrl + "/api/repositories/" + props.match.params.repoId + "/analyzes").then((response) => {
       let analyzes = [];
-      response.data.map((analysis) => analyzes.push(<li onClick={() => showAnalysis(analysis.id)}>{analysis.id}</li>));
-      this.setState({analyzes, repoId});
-      window.history.pushState(null, "Repo " + repoId, "/repos/" + this.state.repoId);
+      response.data.map((analysis) => analyzes.push(<li><Link to={"/analyzes/" + analysis.id}>{analysis.id}</Link>
+      </li>));
+      this.setState({repoId: props.match.params.repoId, analyzes});
     });
   }
 
@@ -67,10 +74,10 @@ class RepositoryAnalyzes extends React.Component {
     return (<div>
       <ul>
         <li>
-          <button onClick={() => showRunAnalysisForm(this.state.repoId)}>Run analysis</button>
+          <button><Link to={"/repos/" + this.state.repoId + "/analyze"}/>Run analysis</button>
         </li>
         {this.state.analyzes}</ul>
-      <BackButton back={showRepositories}/></div>);
+      <BackButton back="/repos"/></div>);
   }
 }
 
@@ -85,9 +92,11 @@ class AnalysisResult extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    axios.get(PROP.serverUrl + "/api/analyzes/" + props.id).then((response) => {
+    let id = props.match.params.id;
+    axios.get(PROP.serverUrl + "/api/analyzes/" + id).then((response) => {
       let data = [];
-      response.data.analysisPairs.map((result) => data.push(<li>{result.id}</li>));
+      response.data.analysisPairs.map((result) => data.push(<li><Link
+        to={"/analyzes/" + id + "/pairs/" + result.id}>{result.id}</Link></li>));
       this.setState({
         results: data, repoId: response.data.repository.id, analysisId: response.data.id,
         resultLink: response.data.resultLink
@@ -97,10 +106,10 @@ class AnalysisResult extends React.Component {
 
   render() {
     return (<div>
-      <button onClick={() => showGraph(this.state.analysisId)}>Graph</button>
+      <button><Link to={"/analyzes/" + this.state.analysisId + "/graph"}>Graph</Link></button>
       <span>Analyzer result link: {this.state.resultLink}</span>
       <ul>{this.state.results}</ul>
-      <BackButton back={() => showRepo(this.state.repoId)}/></div>);
+      <Link to={"/repos/" + this.state.repoId + "/analyzes"}>Back</Link></div>);
   }
 }
 
@@ -114,30 +123,26 @@ class BackButton extends React.Component {
   }
 
   render() {
-    return (<button className="Back-Button" onClick={this.back}>Back</button>);
+    return (<button className="Back-Button"><Link to={this.back}>Back</Link></button>);
   }
 }
 
-function showGraph(analysisId) {
-  render(<IFrame analysisId={analysisId}/>, document.getElementById("root"));
-}
-
-class IFrame extends React.Component {
+class IFrameGraph extends React.Component {
   state = {
     analysisId: 0
   };
 
   constructor(props, context) {
     super(props, context);
-    this.state.analysisId = props.analysisId;
+    this.state.analysisId = props.match.params.analysisId;
   }
 
   render() {
     return (
-      <div>
-        <iframe title="graph"
-                src={"http://83.243.70.130:8088/?graph_url=http://localhost/graph/" + this.state.analysisId}/>
-        <BackButton back={() => showAnalysis(this.state.analysisId)}/>
+      <div onClick={this.handleClick}>
+        <iframe title="graph" onClick={this.handleClick}
+                src={"http://83.243.70.130:8088/?graph_url=" + PROP.serverUrl + "/api/analyzes/" + this.state.analysisId + "/graph"}/>
+        <BackButton back={"/analyzes/" + this.state.analysisId}/>
       </div>
     );
   }
@@ -187,8 +192,9 @@ class NewRepo extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    if (props.id) {
-      axios.get(PROP.serverUrl + "/api/repositories/" + props.id).then((response) => {
+    let id = props.match.params.id;
+    if (id) {
+      axios.get(PROP.serverUrl + "/api/repositories/" + id).then((response) => {
         let data = response.data;
         let name = data.name;
         let mossParameters = data.mossParameters;
@@ -199,7 +205,7 @@ class NewRepo extends React.Component {
         let analyzer = data.analyzer;
         let filePatterns = data.filePatterns.join("\n");
         this.setState({
-          id: props.id,
+          id,
           name,
           analyzer,
           filePatterns,
@@ -236,7 +242,7 @@ class NewRepo extends React.Component {
     let request = (this.state.id === 0) ?
       axios.post((PROP.serverUrl + "/api/repositories"), dto) :
       axios.put((PROP.serverUrl + "/api/repositories/" + this.state.id), dto);
-    request.then(() => showRepositories())
+    request.then(() => Redirect("/repos"))
   }
 
   render() {
@@ -308,7 +314,7 @@ class NewRepo extends React.Component {
             <button form="none" onClick={this.handleSubmit}>Submit</button>
           </div>
         </form>
-        <BackButton back={showRepositories}/>
+        <BackButton back="/repos"/>
       </div>
     );
   }
@@ -382,8 +388,9 @@ class RunAnalysis extends React.Component {
   }
 
   handleSubmit() {
-    axios.post((PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/analyzeWithNoResponse"), this.state);
-    showRepo(this.state.repoId);
+    axios.post((PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/analyzeWithNoResponse"), this.state).then(
+      () => Redirect("/repos/" + this.state.repoId)
+    );
   }
 
   render() {
@@ -434,33 +441,48 @@ class RunAnalysis extends React.Component {
       <div>
         <button type="submit" onClick={this.handleSubmit}>Submit</button>
       </div>
-      <BackButton back={() => showRepo(this.state.repoId)}/>
+      <BackButton back={"/repos/" + this.state.repoId}/>
     </div>);
   }
 }
 
-function showRepo(id) {
-  render(<RepositoryAnalyzes id={id}/>, document.getElementById("root"));
-}
+class AnalysisResultPair extends React.Component {
+  state = {
+    analysisId: 0,
+    pairId: 0,
+    files1: [],
+    files2: [],
+    leftName: "",
+    rightName: ""
+  };
 
-function changeRepo(id) {
-  render(<NewRepo id={id}/>, document.getElementById("root"));
-}
+  constructor(props, context) {
+    super(props, context);
+    let analysisId = props.match.params.analysisId;
+    let pairId = props.match.params.pairId;
+    this.state.analysisId = analysisId;
+    this.state.pairId = pairId;
+    axios.get(PROP.serverUrl + "/api/analyzes/" + analysisId + "/pairs/" + pairId).then((response) => {
+      let files1 = response.data.files1.map((file) => ({fileName: file.name, lines: file.content}));
+      let files2 = response.data.files2.map((file) => ({fileName: file.name, lines: file.content}));
+      this.setState({
+        files1: files1,
+        files2: files2,
+        leftName: response.data.pair.student1,
+        rightName: response.data.pair.student2
+      });
+    });
+  }
 
-function showRepositories() {
-  render(<Repositories/>, document.getElementById("root"));
-}
-
-function showAnalysis(id) {
-  render(<AnalysisResult id={id}/>, document.getElementById("root"));
-}
-
-function showNewRepoForm() {
-  render(<NewRepo/>, document.getElementById("root"));
-}
-
-function showRunAnalysisForm(id) {
-  render(<RunAnalysis repoId={id}/>, document.getElementById("root"));
+  render() {
+    return (
+      <div>
+        <ul className="Repo-List">
+          {this.state.files1.map((it) => it.lines.map(it2 => <li>{it2}</li>))}</ul>
+        <BackButton back={"/analyzes/" + this.state.analysisId}/>
+      </div>
+    );
+  }
 }
 
 export default App;

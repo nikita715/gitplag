@@ -9,12 +9,14 @@ import io.gitplag.model.repo.AnalysisRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 /**
  * Controller for graph representation
  */
 @RestController
+@RequestMapping("/api/analyzes/{analysisId}/graph")
 class GraphController(
     private val analysisRepository: AnalysisRepository,
     @Value("\${gitplag.graphUrl}") private val graphUrl: String,
@@ -24,7 +26,7 @@ class GraphController(
     /**
      * Get analysis result data for graph
      */
-    @GetMapping("/graph/{analysisId}")
+    @GetMapping
     fun graphData(@PathVariable analysisId: Long): GraphData {
         val analysisPairs = analysisRepository.findById(analysisId).get().analysisPairs
         return extractGraphData(analysisPairs, analysisId)
@@ -33,7 +35,7 @@ class GraphController(
     /**
      * Get analysis result data for graph by the [studentName]
      */
-    @GetMapping("/graph/{analysisId}/student/{studentName}")
+    @GetMapping("/student/{studentName}")
     fun graphDataForOneStudent(@PathVariable analysisId: Long, @PathVariable studentName: String): GraphData {
         val analysisPairs = analysisRepository.findById(analysisId).get().analysisPairs.filter {
             it.run { student1 == studentName || student2 == studentName }
@@ -56,13 +58,13 @@ class GraphController(
                 it.student2,
                 it.percentage,
                 findDirection(it),
-                "$serverUrl/analysis/$analysisId/pair/${it.id}"
+                "http://localhost:3000/analyzes/$analysisId/pairs/${it.id}"
             )
         })
     }
 
     private fun createGraphNode(analysisId: Long, name: String) =
-        Node(name, "$graphUrl$serverUrl/graph/$analysisId/student/$name")
+        Node(name, "/?graph_url=$serverUrl/api/analyzes/$analysisId/graph/student/$name")
 
     private fun findDirection(analysisPair: AnalysisPair): Direction {
         analysisPair.run { return if (createdAt1 > createdAt2) Direction.FIRST else Direction.SECOND }
