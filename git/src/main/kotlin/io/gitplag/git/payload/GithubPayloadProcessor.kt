@@ -4,6 +4,7 @@ import com.beust.klaxon.JsonObject
 import io.gitplag.git.rest.GithubRestManager
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.manager.RepositoryDataManager
+import io.gitplag.model.repo.BranchRepository
 import io.gitplag.model.repo.PullRequestRepository
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -14,8 +15,9 @@ import java.time.format.DateTimeFormatter
 class GithubPayloadProcessor(
     pullRequestRepository: PullRequestRepository,
     repositoryDataManager: RepositoryDataManager,
-    githubLoader: GithubRestManager
-) : AbstractPayloadProcessor(pullRequestRepository, repositoryDataManager, githubLoader) {
+    githubLoader: GithubRestManager,
+    branchRepository: BranchRepository
+) : AbstractPayloadProcessor(pullRequestRepository, repositoryDataManager, githubLoader, branchRepository) {
 
     override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
     override val git = GitProperty.GITHUB
@@ -58,6 +60,9 @@ class GithubPayloadProcessor(
 
     override val JsonObject.pushBranchName: String?
         get() = string("ref")?.substringAfterLast("/")
+
+    override val JsonObject.pushLastUpdated: LocalDateTime?
+        get() = obj("repository")?.string("updated_at").parseDate()
 
     override val JsonObject.pushRepoName: String?
         get() = obj("repository")?.string("full_name")

@@ -48,13 +48,11 @@ class MainController(
     private val pullRequestRepository: PullRequestRepository,
     private val analysisRunner: AnalysisRunner,
     private val analysisAsyncRunner: AnalysisAsyncRunner,
-    @Qualifier("gitRestManagers") private val restManagers: Map<GitProperty, GitRestManager>,
-    @Qualifier("payloadProcessors") private val payloadProcessors: Map<GitProperty, PayloadProcessor>,
     private val solutionFileRecordRepository: SolutionFileRecordRepository,
     private val baseFileRecordRepository: BaseFileRecordRepository,
-    @Value("\${gitplag.analysisFilesDir}") private val analysisFilesDir: String,
-    @Value("\${gitplag.graphUrl}") private val graphUrl: String,
-    @Value("\${gitplag.serverUrl}") private val serverUrl: String
+    @Qualifier("gitRestManagers") private val restManagers: Map<GitProperty, GitRestManager>,
+    @Qualifier("payloadProcessors") private val payloadProcessors: Map<GitProperty, PayloadProcessor>,
+    @Value("\${gitplag.analysisFilesDir}") private val analysisFilesDir: String
 ) {
 
     /**
@@ -115,7 +113,8 @@ class MainController(
                 language = dto.language,
                 analyzer = dto.analyzer,
                 mode = dto.mode,
-                parameters = dto.parameters
+                parameters = dto.parameters,
+                updateFiles = dto.updateFiles
             )
         )
     }
@@ -133,7 +132,8 @@ class MainController(
                 language = dto.language,
                 analyzer = dto.analyzer,
                 mode = dto.mode,
-                parameters = dto.parameters
+                parameters = dto.parameters,
+                updateFiles = dto.updateFiles
             ), dto.responseUrl
         )
         return true

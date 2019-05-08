@@ -2,10 +2,12 @@ package io.gitplag.git.payload
 
 import com.beust.klaxon.JsonObject
 import io.gitplag.git.rest.GitRestManager
+import io.gitplag.model.entity.Branch
 import io.gitplag.model.entity.PullRequest
 import io.gitplag.model.entity.Repository
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.manager.RepositoryDataManager
+import io.gitplag.model.repo.BranchRepository
 import io.gitplag.model.repo.PullRequestRepository
 import io.gitplag.util.parseAsObject
 import mu.KotlinLogging
@@ -18,7 +20,8 @@ import java.time.format.DateTimeFormatter
 abstract class AbstractPayloadProcessor(
     private val pullRequestRepository: PullRequestRepository,
     private val repositoryDataManager: RepositoryDataManager,
-    private val gitRestManager: GitRestManager
+    private val gitRestManager: GitRestManager,
+    private val branchRepository: BranchRepository
 ) : PayloadProcessor {
     private val logger = KotlinLogging.logger {}
 
@@ -102,6 +105,22 @@ abstract class AbstractPayloadProcessor(
     }
 
     override fun downloadAllPullRequestsOfRepository(repo: Repository) {
+        gitRestManager.findBranchesOfRepo(repo).forEach { branchName ->
+            val lastUpdated =
+                gitRestManager.getBranchOfRepo(repo, branchName).obj("commit")?.obj("commit")?.obj("author")
+                    ?.string("date")
+                    .parseDate()
+            val branch = branchRepository.findByRepositoryAndName(repo, branchName)
+            if (branch?.updatedAt != lastUpdated) {
+                gitRestManager.cloneRepository(repo, branchName)
+            }
+            branchRepository.save(
+                branch?.copy(updatedAt = lastUpdated) ?: Branch(
+                    updatedAt = lastUpdated,
+                    repository = repo, name = branchName
+                )
+            )
+        }
         var page = 1
         while (true) {
             val pullRequests = gitRestManager.findPullRequests(repo, page++)
@@ -115,17 +134,25 @@ abstract class AbstractPayloadProcessor(
         pullRequestsJsons.forEach { pullRequestJson ->
             pullRequestJson.run {
                 if (mainRepoFullName == sourceRepoFullName) {
-                    logger.info { "Webhook: Ignored pr to itself repo ${repo.name}" }
+                    logger.info { "Webhook: Ignored pr to itself repo ${repo.name} number $number" }
                 } else {
-                    val pullRequest = parsePullRequest(repo)
-                    if (pullRequest != null) {
-                        val savedPullRequest = pullRequestRepository.save(pullRequest)
-                        gitRestManager.clonePullRequest(savedPullRequest)
-                        logger.info { "Webhook: cloned new pr from repo ${repo.name}, pr number ${savedPullRequest.number}" }
-                    }
+                    clonePullRequestIfRequired(repo)
                 }
             }
 
+        }
+    }
+
+    private fun JsonObject.clonePullRequestIfRequired(repo: Repository) {
+        val storedPullRequest = number?.let { pullRequestRepository.findByRepoAndNumber(repo, it) }
+        if (storedPullRequest != null && storedPullRequest.updatedAt == updatedAt) return
+        val pullRequest = parsePullRequest(repo)
+        if (pullRequest != null) {
+            val savedPullRequest = if (storedPullRequest == null) {
+                pullRequestRepository.save(pullRequest)
+            } else pullRequestRepository.save(storedPullRequest.updateFrom(this))
+            gitRestManager.clonePullRequest(savedPullRequest)
+            logger.info { "Webhook: cloned new pr from repo ${repo.name}, pr number ${savedPullRequest.number}" }
         }
     }
 
@@ -192,4 +219,6 @@ abstract class AbstractPayloadProcessor(
     protected abstract val JsonObject.pushBranchName: String?
 
     protected abstract val JsonObject.pushRepoId: Long?
+
+    protected abstract val JsonObject.pushLastUpdated: LocalDateTime?
 }

@@ -1,4 +1,4 @@
-package io.gitplag.analysis
+package io.gitplag.git
 
 import io.gitplag.model.data.AnalysisSettings
 import mu.KLogger

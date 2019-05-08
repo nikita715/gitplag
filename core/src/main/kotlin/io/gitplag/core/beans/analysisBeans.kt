@@ -1,10 +1,10 @@
 package io.gitplag.core.beans
 
-import io.gitplag.analysis.AnalysisRunner
 import io.gitplag.analysis.analyzer.JPlagAnalyzer
 import io.gitplag.analysis.analyzer.MossAnalyzer
 import io.gitplag.analysis.solutions.FileSystemSourceCodeStorage
 import io.gitplag.core.util.safeEnvVar
+import io.gitplag.git.GitAnalysisRunner
 import io.gitplag.model.enums.AnalyzerProperty
 import org.springframework.context.support.beans
 
@@ -33,7 +33,7 @@ val analysisBeans = beans {
         )
     }
 
-    bean { AnalysisRunner(ref("analyzers"), ref()) }
+    bean { GitAnalysisRunner(ref("analyzers"), ref("payloadProcessors"), ref()) }
     bean {
         FileSystemSourceCodeStorage(ref(), ref(), ref(), ref(), env.safeEnvVar("gitplag.solutionsDir"))
     }

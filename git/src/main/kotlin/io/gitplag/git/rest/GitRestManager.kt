@@ -16,8 +16,8 @@ interface GitRestManager {
     fun clonePullRequest(pullRequest: PullRequest)
 
     /**
-     * Upload all branches of the base [repo] (or only [branch])
-     * and store its contents as base files.
+     * Upload all branches of the base [repo] (or only the [branch])
+     * and store the contents as base files.
      */
     fun cloneRepository(repo: Repository, branch: String? = null)
 
@@ -25,5 +25,9 @@ interface GitRestManager {
      * Get payload from a git service about existing pull requests of the [repo]
      */
     fun findPullRequests(repo: Repository, page: Int): Collection<JsonObject>
+
+    fun findBranchesOfRepo(repo: Repository): List<String>
+
+    fun getBranchOfRepo(repo: Repository, name: String): JsonObject
 
 }

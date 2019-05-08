@@ -4,6 +4,7 @@ import com.beust.klaxon.JsonObject
 import io.gitplag.git.rest.BitbucketRestManager
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.manager.RepositoryDataManager
+import io.gitplag.model.repo.BranchRepository
 import io.gitplag.model.repo.PullRequestRepository
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -14,8 +15,9 @@ import java.time.format.DateTimeFormatter
 class BitbucketPayloadProcessor(
     pullRequestRepository: PullRequestRepository,
     repositoryDataManager: RepositoryDataManager,
-    bitbucketLoader: BitbucketRestManager
-) : AbstractPayloadProcessor(pullRequestRepository, repositoryDataManager, bitbucketLoader) {
+    bitbucketLoader: BitbucketRestManager,
+    branchRepository: BranchRepository
+) : AbstractPayloadProcessor(pullRequestRepository, repositoryDataManager, bitbucketLoader, branchRepository) {
 
     override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
     override val git = GitProperty.BITBUCKET
@@ -64,4 +66,7 @@ class BitbucketPayloadProcessor(
 
     override val JsonObject.pushBranchName: String?
         get() = obj("push")?.array<JsonObject>("changes")?.get(0)?.obj("new")?.string("name")
+
+    override val JsonObject.pushLastUpdated: LocalDateTime?
+        get() = TODO("not implemented")
 }

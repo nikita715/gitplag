@@ -15,7 +15,7 @@ interface PullRequestRepository : JpaRepository<PullRequest, Long> {
     fun findAllByRepoAndSourceBranchName(repo: Repository, sourceBranchName: String): List<PullRequest>
 
     /**
-     * Find all [PullRequest]s by the [repo] and by the [number]
+     * Find a [PullRequest] by the [repo] and by the [number]
      */
     fun findByRepoAndNumber(repo: Repository, number: Int): PullRequest?
 

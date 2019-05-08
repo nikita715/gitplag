@@ -14,5 +14,6 @@ class AnalysisDto(
     val language: Language?,
     val mode: AnalysisMode?,
     val parameters: String?,
-    val responseUrl: String?
+    val responseUrl: String?,
+    val updateFiles: Boolean = true
 )

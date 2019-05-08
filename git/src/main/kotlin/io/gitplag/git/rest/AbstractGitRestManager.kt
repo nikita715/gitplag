@@ -36,8 +36,6 @@ abstract class AbstractGitRestManager(
 
     protected abstract fun linkToRepoArchive(repoName: String, branchName: String): String
 
-    protected abstract fun findBranchesOfRepo(repo: Repository): List<String>
-
     private fun cloneBranchOfRepository(repo: Repository, branch: String) {
         logger.info { "Git: download zip archive of repo = ${repo.name}, branch = $branch" }
         downloadAndUnpackZip(linkToRepoArchive(repo.name, branch)) { unpackedDir ->

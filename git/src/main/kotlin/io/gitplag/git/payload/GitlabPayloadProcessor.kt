@@ -4,6 +4,7 @@ import com.beust.klaxon.JsonObject
 import io.gitplag.git.rest.GitlabRestManager
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.manager.RepositoryDataManager
+import io.gitplag.model.repo.BranchRepository
 import io.gitplag.model.repo.PullRequestRepository
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -14,8 +15,9 @@ import java.time.format.DateTimeFormatter
 class GitlabPayloadProcessor(
     pullRequestRepository: PullRequestRepository,
     repositoryDataManager: RepositoryDataManager,
-    gitlabLoader: GitlabRestManager
-) : AbstractPayloadProcessor(pullRequestRepository, repositoryDataManager, gitlabLoader) {
+    gitlabLoader: GitlabRestManager,
+    branchRepository: BranchRepository
+) : AbstractPayloadProcessor(pullRequestRepository, repositoryDataManager, gitlabLoader, branchRepository) {
 
     override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     override val git = GitProperty.GITLAB
@@ -64,4 +66,7 @@ class GitlabPayloadProcessor(
 
     override val JsonObject.pushRepoId: Long?
         get() = long("project_id")
+
+    override val JsonObject.pushLastUpdated: LocalDateTime?
+        get() = TODO("not implemented")
 }

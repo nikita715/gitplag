@@ -28,15 +28,20 @@ class AnalysisSettings(
         private set(value) {
             field = value
         }
+    var updateFiles: Boolean = true
+        private set(value) {
+            field = value
+        }
 
     constructor(
         repository: Repository, branch: String, analyzer: AnalyzerProperty? = repository.analyzer
         , language: Language? = repository.language, parameters: String? = repository.parameters
-        , mode: AnalysisMode? = repository.analysisMode
+        , mode: AnalysisMode? = repository.analysisMode, updateFiles: Boolean = true
     ) : this(repository, branch) {
         this.analyzer = analyzer ?: repository.analyzer
         this.parameters = parameters ?: repository.parametersOfAnalyzer(this.analyzer)
         this.language = language ?: repository.language
         this.mode = mode ?: repository.analysisMode
+        this.updateFiles = updateFiles
     }
 }

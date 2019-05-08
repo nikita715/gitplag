@@ -23,4 +23,6 @@ class GithubRestManager(
         sendRestRequest<JsonArray<JsonObject>>("https://api.github.com/repos/${repo.name}/branches")
             .map { requireNotNull(it.string("name")) }
 
+    override fun getBranchOfRepo(repo: Repository, name: String) =
+        sendRestRequest<JsonObject>("https://api.github.com/repos/${repo.name}/branches/$name")
 }

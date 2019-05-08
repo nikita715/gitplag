@@ -9,13 +9,13 @@ interface PayloadProcessor {
 
     /**
      * Transform payload from a git service
-     * and save it as a pull request
+     * and save its contents as a pull request and solution files
      */
     fun downloadSolutionsOfPullRequest(payload: String)
 
     /**
      * Transform payload from a git service
-     * and save it as a pull request
+     * and save its contents as solution files
      */
     fun downloadBasesOfRepository(payload: String)
 

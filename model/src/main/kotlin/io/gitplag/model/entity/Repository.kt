@@ -62,6 +62,11 @@ data class Repository(
     @OneToMany(mappedBy = "repository", orphanRemoval = true)
     val analyzes: List<Analysis> = mutableListOf(),
 
+    @JsonIgnore
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @OneToMany(mappedBy = "repository", orphanRemoval = true)
+    val branches: List<Branch> = mutableListOf(),
+
     @Column(nullable = false)
     val mossParameters: String = "",
 

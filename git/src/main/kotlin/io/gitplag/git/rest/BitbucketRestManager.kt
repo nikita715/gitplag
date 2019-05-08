@@ -11,6 +11,9 @@ import io.gitplag.util.sendRestRequest
 class BitbucketRestManager(
     sourceCodeStorage: SourceCodeStorage
 ) : AbstractGitRestManager(sourceCodeStorage) {
+    override fun getBranchOfRepo(repo: Repository, name: String): JsonObject {
+        TODO("not implemented")
+    }
 
     override fun findBranchesOfRepo(repo: Repository) =
         requireNotNull(
