@@ -7,11 +7,13 @@ import io.gitplag.git.rest.GitRestManager
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.dto.AnalysisDto
 import io.gitplag.model.dto.AnalysisPairDto
-import io.gitplag.model.dto.ComposedFiles
+import io.gitplag.model.dto.BaseFileInfoDto
 import io.gitplag.model.dto.FileDto
+import io.gitplag.model.dto.FileInfoDto
 import io.gitplag.model.dto.LocalFileDto
 import io.gitplag.model.dto.PullRequestDto
 import io.gitplag.model.dto.RepositoryDto
+import io.gitplag.model.dto.SolutionFileInfoDto
 import io.gitplag.model.entity.Analysis
 import io.gitplag.model.entity.BaseFileRecord
 import io.gitplag.model.entity.Repository
@@ -160,7 +162,7 @@ class MainController(
      * Trigger download of files of the repo
      */
     @PostMapping("/repositories/{id}/updateFiles")
-    fun updateFilesOfRepo(@PathVariable id: Long): ComposedFiles? {
+    fun updateFilesOfRepo(@PathVariable id: Long): FileInfoDto? {
         val repository = repositoryDataManager.findById(id)
 
         return if (repository != null) {
@@ -168,9 +170,9 @@ class MainController(
             val payloadProcessor = payloadProcessors.getValue(repository.gitService)
             gitRestManager.cloneRepository(repository)
             payloadProcessor.downloadAllPullRequestsOfRepository(repository)
-            ComposedFiles(
-                bases = baseFileRecordRepository.findAllByRepo(repository),
-                solutions = solutionFileRecordRepository.findAllByRepo(repository)
+            FileInfoDto(
+                bases = baseFileRecordRepository.findAllByRepo(repository).map { BaseFileInfoDto(it) },
+                solutions = solutionFileRecordRepository.findAllByRepo(repository).map { SolutionFileInfoDto(it) }
             )
         } else null
     }
@@ -179,13 +181,13 @@ class MainController(
      * Get downloaded base and solution files of the repo
      */
     @PostMapping("/repositories/{id}/files")
-    fun getFilesOfRepo(@PathVariable id: Long): ComposedFiles? {
+    fun getFilesOfRepo(@PathVariable id: Long): FileInfoDto? {
         val repository = repositoryDataManager.findById(id)
 
         return if (repository != null) {
-            ComposedFiles(
-                bases = baseFileRecordRepository.findAllByRepo(repository),
-                solutions = solutionFileRecordRepository.findAllByRepo(repository)
+            FileInfoDto(
+                bases = baseFileRecordRepository.findAllByRepo(repository).map { BaseFileInfoDto(it) },
+                solutions = solutionFileRecordRepository.findAllByRepo(repository).map { SolutionFileInfoDto(it) }
             )
         } else null
     }

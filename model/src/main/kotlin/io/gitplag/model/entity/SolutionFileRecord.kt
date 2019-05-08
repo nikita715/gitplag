@@ -1,5 +1,6 @@
 package io.gitplag.model.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -17,6 +18,7 @@ data class SolutionFileRecord(
     val id: Long = -1,
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(nullable = false)
     val pullRequest: PullRequest,
 

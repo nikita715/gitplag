@@ -1,5 +1,6 @@
 package io.gitplag.model.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
@@ -18,6 +19,7 @@ data class BaseFileRecord(
     val id: Long = -1,
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(nullable = false)
     val repo: Repository,
 
