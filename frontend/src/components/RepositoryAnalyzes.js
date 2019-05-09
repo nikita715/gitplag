@@ -7,7 +7,8 @@ import {formatDate} from "../util";
 export class RepositoryAnalyzes extends React.Component {
   state = {
     repoId: 0,
-    analyzes: []
+    analyzes: [],
+    repoName: ""
   };
 
   constructor(props, context) {
@@ -23,7 +24,7 @@ export class RepositoryAnalyzes extends React.Component {
         <td>{analysis.branch}</td>
         <td>{formatDate(analysis.date)}</td>
       </tr>));
-      this.setState({analyzes});
+      this.setState({analyzes, repoName: response.data[0] ? response.data[0].repoName : ""});
     });
   }
 
@@ -31,7 +32,7 @@ export class RepositoryAnalyzes extends React.Component {
     return (
       <div className="Repo-List">
         <Link to={"/repos"}>Back to repositories</Link>
-        <h3>Analyzes of repo #{this.state.repoId}</h3>
+        <h3>Analyzes of repo {this.state.repoName}</h3>
         <Link to={"/repos/" + this.state.repoId + "/analyze"}>Run new analysis</Link>
         <table>
           <tr>

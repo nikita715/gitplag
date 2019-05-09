@@ -3,7 +3,7 @@ package io.gitplag.model.dto
 import io.gitplag.model.entity.AnalysisPairLines
 
 class AnalysisPairLinesDto(
-    id: Long,
+    val id: Long,
     val from1: Int,
     val to1: Int,
     val from2: Int,

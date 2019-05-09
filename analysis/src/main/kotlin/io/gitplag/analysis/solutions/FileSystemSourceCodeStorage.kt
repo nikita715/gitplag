@@ -114,7 +114,8 @@ class FileSystemSourceCodeStorage(
             analysisSettings.branch
         ).map { pullRequest ->
             val solutionRecords = solutionFileRecordRepository.findAllByPullRequest(pullRequest)
-            val fileName = pullRequest.creatorName + ".txt"
+            val extension = solutionRecords.getOrNull(0)?.fileName?.toFileExtension()
+            val fileName = pullRequest.creatorName + "." + (extension ?: "txt")
             val composedFile = File("$tempDir/${pullRequest.creatorName}/$fileName")
             composedFile.parentFile.mkdir()
             solutionRecords.forEach { solutionRecord ->

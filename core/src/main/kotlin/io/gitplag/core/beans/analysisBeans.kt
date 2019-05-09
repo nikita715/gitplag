@@ -22,7 +22,8 @@ val analysisBeans = beans {
         JPlagAnalyzer(
             ref(), ref(), ref(),
             env.safeEnvVar("gitplag.analysisFilesDir"),
-            env.safeEnvVar("gitplag.jplagResultDir")
+            env.safeEnvVar("gitplag.jplagResultDir"),
+            env.safeEnvVar("gitplag.serverUrl")
         )
     }
 

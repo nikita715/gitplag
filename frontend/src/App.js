@@ -8,6 +8,7 @@ import {IFrameGraph} from "./components/IFrameGraph";
 import {AnalysisResult} from "./components/AnalysisResult";
 import {AnalysisResultPair} from "./components/AnalysisResultPair";
 import {NewRepo} from "./components/NewRepo";
+import {NoConnection} from "./components/NoConnection";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <Route exact path="/repos/new" component={NewRepo}/>
       <Route exact path="/analyzes/:analysisId/graph" component={IFrameGraph}/>
       <Route exact path="/analyzes/:id" component={AnalysisResult}/>
+      <Route exact path="/error" component={NoConnection}/>
       <Route exact path="/analyzes/:analysisId/pairs/:pairId" component={AnalysisResultPair}/>
     </BrowserRouter>
   );

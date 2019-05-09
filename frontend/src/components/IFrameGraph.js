@@ -33,6 +33,6 @@ class BackButton extends React.Component {
   }
 
   render() {
-    return (<button className="Back-Button"><Link to={this.back}>Back</Link></button>);
+    return (<button className="Back-Button"><Link to={this.back}>Close</Link></button>);
   }
 }

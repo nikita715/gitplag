@@ -6,6 +6,7 @@ import * as PROP from "../properties";
 export class Repositories extends React.Component {
 
   state = {
+    ready: false,
     repos: []
   };
 
@@ -23,8 +24,8 @@ export class Repositories extends React.Component {
           </td>
         </tr>)
       );
-      this.setState({repos: data});
-    });
+      this.setState({repos: data, ready: true});
+    }).catch(() => this.props.history.push("/error"));
   }
 
   render() {

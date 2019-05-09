@@ -29,7 +29,8 @@ class JPlagAnalyzer(
     private val randomGenerator: RandomGenerator,
     private val jPlagReportRepository: JPlagReportRepository,
     private val analysisResultFilesDir: String,
-    private val jplagResultDir: String
+    private val jplagResultDir: String,
+    private val serverUrl: String
 ) :
     Analyzer {
 
@@ -42,7 +43,7 @@ class JPlagAnalyzer(
         val (hashJplagReport, jplagReportDir) = generateDir(randomGenerator, jplagResultDir)
 
         logger.info { "Analysis:JPlag:1.Gathering files for analysis. ${repoInfo(settings)}" }
-        val analysisFiles = sourceCodeStorage.loadBasesAndSeparatedSolutions(settings, fileDir)
+        val analysisFiles = sourceCodeStorage.loadBasesAndComposedSolutions(settings, fileDir)
 
         logger.info { "Analysis:JPlag:2.Start analysis. ${repoInfo(settings)}" }
         JPlagClient(analysisFiles, jplagReportDir).run()
@@ -58,7 +59,7 @@ class JPlagAnalyzer(
                 emptyList()
             }
 
-        val resultLink = "/jplagresult/$hashJplagReport/index.html"
+        val resultLink = "$serverUrl/jplagresult/$hashJplagReport/index.html"
         val executionDate = LocalDateTime.now()
         jPlagReportRepository.save(JPlagReport(createdAt = executionDate, hash = hashJplagReport))
 

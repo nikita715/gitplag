@@ -2,7 +2,12 @@ package io.gitplag.analysis.analyzer
 
 import io.gitplag.analysis.analyzer.Analyzer.Companion.repoInfo
 import io.gitplag.analysis.solutions.SourceCodeStorage
-import io.gitplag.model.data.*
+import io.gitplag.model.data.AnalysisMatch
+import io.gitplag.model.data.AnalysisResult
+import io.gitplag.model.data.AnalysisSettings
+import io.gitplag.model.data.MatchedLines
+import io.gitplag.model.data.Solution
+import io.gitplag.model.data.findSolutionByStudent
 import io.gitplag.model.enums.AnalysisMode
 import io.gitplag.util.RandomGenerator
 import io.gitplag.util.generateDir
@@ -72,10 +77,16 @@ class MossAnalyzer(
 
                 val lines = tds[2].text().toInt()
 
-                val percentage = firstATag.text().split(" ")
+                val percentage1 = firstATag.text().split(" ")
                     .last()
                     .removeSurrounding("(", "%)")
                     .toInt()
+                val percentage2 = firstATag.text().split(" ")
+                    .last()
+                    .removeSurrounding("(", "%)")
+                    .toInt()
+
+                val percentage = if (percentage1 > percentage2) percentage1 else percentage2
 
                 val solution1 = findSolutionByStudent(solutions, students.first)
                 val solution2 = findSolutionByStudent(solutions, students.second)

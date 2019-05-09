@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import * as PROP from "../properties";
 import {Link} from "react-router-dom";
+import {formatDate} from "../util";
 
 export class AnalysisResult extends React.Component {
 
@@ -10,7 +11,10 @@ export class AnalysisResult extends React.Component {
     repoId: 0,
     results: [],
     resultLink: "",
-    sortedByName: ""
+    sortedByName: "",
+    analyzer: "",
+    date: "",
+    branch: ""
   };
 
   constructor(props, context) {
@@ -26,7 +30,8 @@ export class AnalysisResult extends React.Component {
       }));
       this.setState({
         results: data, repoId: response.data.repo, analysisId: response.data.id,
-        resultLink: response.data.resultLink
+        resultLink: response.data.resultLink, analyzer: response.data.analyzer,
+        date: response.data.date, branch: response.data.branch
       });
     });
     this.handleChange = this.handleChange.bind(this)
@@ -42,7 +47,8 @@ export class AnalysisResult extends React.Component {
   render() {
     return (<div className="Repo-List">
       <Link to={"/repos/" + this.state.repoId + "/analyzes"}>Back to analyzes</Link>
-      <h3>Analysis result #{this.state.analysisId}</h3>
+      <h3>Analysis result #{this.state.analysisId}, executed {formatDate(this.state.date).toLowerCase()}</h3>
+      <span>Analyzed by {this.state.analyzer.toLowerCase()}, branch {this.state.branch}</span><br/>
       <a href={this.state.resultLink}>Source analysis</a><br/>
       <Link to={"/analyzes/" + this.state.analysisId + "/graph"}>Graph</Link><br/>
       <label>Find by student name: </label><input name="sortedByName" onChange={this.handleChange}/>

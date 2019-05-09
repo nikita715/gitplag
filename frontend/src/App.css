@@ -88,7 +88,13 @@ a:hover {
 }
 
 .compare-names div {
-    width: 50%;
+    width: 45%;
+    text-align: center;
+    line-height: 5vh;
+}
+
+.compare-names div:nth-child(2) {
+    width: 10%;
     text-align: center;
     line-height: 5vh;
 }
@@ -96,6 +102,7 @@ a:hover {
 .compare-wrapper {
     display: flex;
     width: 100%;
+    height: 95vh;
 }
 
 .compare-side-wrapper {
@@ -105,10 +112,12 @@ a:hover {
     overflow-y: scroll;
     overflow-x: scroll;
     word-wrap: break-word;
+    flex-direction: column;
+    border-collapse: collapse;
+    resize: horizontal;
 }
 
 .compare {
-    height: 95vh;
     border-collapse: collapse;
     width: 94%;
     /*word-wrap: break-word;*/
@@ -121,16 +130,45 @@ a:hover {
     opacity: 1;
 }
 
-.compare-line-number {
+.compare-line-wrapper {
+    display: flex;
+    width: 100%;
+    border-collapse: collapse;
+}
 
+.compare .red-line {
+    background-color: palevioletred;
+    border-color: #c5637d;
 }
 
 .compare div {
-    border: 1px solid #f5f5f5;
+    margin: 0;
+    padding: 0;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #f5f5f5;
     font-size: 16px;
-    /*background-color: white;*/
 }
 
 pre {
     margin: 0;
+}
+
+.no-connection {
+    width: 100%;
+    height: 100vh;
+    text-align: center;
+    margin-top: 100px;
+}
+
+.compare a {
+    text-decoration: none;
+    color: black;
+}
+
+.compare-exit {
+    position: absolute;
+    left: 1%;
+    text-align: center;
+    line-height: 5vh;
 }
