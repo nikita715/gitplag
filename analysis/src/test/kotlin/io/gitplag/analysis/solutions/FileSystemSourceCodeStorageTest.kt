@@ -1,6 +1,10 @@
 package io.gitplag.analysis.solutions
 
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.verify
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.entity.BaseFileRecord
 import io.gitplag.model.entity.PullRequest
@@ -128,13 +132,13 @@ class FileSystemSourceCodeStorageTest {
                 listOf(solFileRecord5, solFileRecord6, solFileRecord7, solFileRecord8)
     }
 
-    private val studTxt = "stud.txt"
-    private val stud2Txt = "stud2.txt"
+    private val studJava = "stud.java"
+    private val stud2Java = "stud2.java"
     private val base0Java = "0.java"
     private val base1Java = "1.java"
 
-    private val composedSolution1 = File("$composedFileDir/$studTxt")
-    private val composedSolution2 = File("$composedFileDir/$stud2Txt")
+    private val composedSolution1 = File("$composedFileDir/$studJava")
+    private val composedSolution2 = File("$composedFileDir/$stud2Java")
 
     @Test
     fun loadBasesAndComposedSolutions() {
@@ -166,12 +170,12 @@ class FileSystemSourceCodeStorageTest {
             val solution1 = sortedSolutions[0]
             val solution2 = sortedSolutions[1]
 
-            solution1.fileName shouldBe studTxt
+            solution1.fileName shouldBe studJava
             solution1.sha shouldBe sha1
             solution1.student shouldBe student
             FileUtils.contentEquals(solution1.file, composedSolution1) shouldBe true
 
-            solution2.fileName shouldBe stud2Txt
+            solution2.fileName shouldBe stud2Java
             solution2.sha shouldBe sha2
             solution2.student shouldBe student2
             FileUtils.contentEquals(solution2.file, composedSolution2) shouldBe true
