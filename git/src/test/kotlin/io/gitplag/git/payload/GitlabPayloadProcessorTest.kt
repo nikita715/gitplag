@@ -20,12 +20,11 @@ class GitlabPayloadProcessorTest : AbstractPayloadProcessorTest() {
     override val repo = Repository(
         name = "nikita715/plagiarism_test3",
         gitService = GitProperty.GITLAB,
-        language = Language.JAVA,
-        branches = listOf("br2")
+        language = Language.JAVA
     )
 
     override val payloadProcessor =
-        GitlabPayloadProcessor(pullRequestRepository, repositoryDataManager, gitRestManager)
+        GitlabPayloadProcessor(pullRequestRepository, repositoryDataManager, gitRestManager, branchRepository)
 
     override val pullRequest = PullRequest(
         number = 1,

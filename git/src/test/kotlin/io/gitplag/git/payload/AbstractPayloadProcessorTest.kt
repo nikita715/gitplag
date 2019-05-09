@@ -7,6 +7,7 @@ import io.gitplag.git.rest.GitRestManager
 import io.gitplag.model.entity.PullRequest
 import io.gitplag.model.entity.Repository
 import io.gitplag.model.manager.RepositoryDataManager
+import io.gitplag.model.repo.BranchRepository
 import io.gitplag.model.repo.PullRequestRepository
 import io.gitplag.util.asPath
 import io.kotlintest.matchers.shouldEqual
@@ -40,6 +41,7 @@ abstract class AbstractPayloadProcessorTest {
     abstract val gitRestManager: GitRestManager
 
     protected val repositoryDataManager = mock<RepositoryDataManager>()
+    protected val branchRepository = mock<BranchRepository>()
 
     /**
      * Test saving and requesting of the download of a pull request

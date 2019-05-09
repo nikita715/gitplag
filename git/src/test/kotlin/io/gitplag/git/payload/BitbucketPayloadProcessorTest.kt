@@ -20,12 +20,11 @@ class BitbucketPayloadProcessorTest : AbstractPayloadProcessorTest() {
     override val repo = Repository(
         name = "nikita715/plagiarism_test2",
         gitService = GitProperty.BITBUCKET,
-        language = Language.JAVA,
-        branches = listOf("testns2/javacljava-created-online-with-bitbucket-1551121394025")
+        language = Language.JAVA
     )
 
     override val payloadProcessor =
-        BitbucketPayloadProcessor(pullRequestRepository, repositoryDataManager, gitRestManager)
+        BitbucketPayloadProcessor(pullRequestRepository, repositoryDataManager, gitRestManager, branchRepository)
 
     override val pullRequest = PullRequest(
         number = 3,
