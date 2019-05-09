@@ -65,6 +65,7 @@ a {
     color: darkblue;
     text-decoration: none;
     font-weight: normal;
+    cursor: pointer;
 }
 
 a:hover {

@@ -14,6 +14,13 @@ export class RepositoryAnalyzes extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state.repoId = props.match.params.id;
+    this.deleteAnalysis = this.deleteAnalysis.bind(this);
+  }
+
+  deleteAnalysis(repoId, analysisId) {
+    axios.delete(PROP.serverUrl + "/api/analyzes/" + analysisId).then(() => {
+      this.componentDidMount()
+    });
   }
 
   componentDidMount() {
@@ -23,6 +30,7 @@ export class RepositoryAnalyzes extends React.Component {
         <td><Link to={"/analyzes/" + analysis.id}>{analysis.id}</Link></td>
         <td>{analysis.branch}</td>
         <td>{formatDate(analysis.date)}</td>
+        <td><a onClick={(e) => this.deleteAnalysis(this.state.repoId, analysis.id)}>Delete</a></td>
       </tr>));
       this.setState({analyzes, repoName: response.data[0] ? response.data[0].repoName : ""});
     });

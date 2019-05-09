@@ -29,8 +29,10 @@ import io.gitplag.model.repo.BaseFileRecordRepository
 import io.gitplag.model.repo.PullRequestRepository
 import io.gitplag.model.repo.SolutionFileRecordRepository
 import io.gitplag.util.innerRegularFiles
+import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -58,6 +60,7 @@ class MainController(
     @Qualifier("payloadProcessors") private val payloadProcessors: Map<GitProperty, PayloadProcessor>,
     @Value("\${gitplag.analysisFilesDir}") private val analysisFilesDir: String
 ) {
+    private val logger = KotlinLogging.logger {}
 
     /**
      * Get all repositories
@@ -76,7 +79,7 @@ class MainController(
      */
     @GetMapping("/repositories/{id}/analyzes")
     fun getRepository(@PathVariable id: Long) =
-        repositoryDataManager.findById(id)?.analyzes?.map { AnalysisResultDto(it) }?.sortedBy { it.id }
+        repositoryDataManager.findById(id)?.analyzes?.map { AnalysisResultDto(it) }?.sortedBy { it.id } ?: emptyList()
 
     /**
      * Get the analysis result
@@ -84,6 +87,21 @@ class MainController(
     @GetMapping("/analyzes/{id}")
     fun getAnalysis(@PathVariable id: Long): AnalysisResultDto? =
         analysisRepository.findById(id).orElse(null)?.let { AnalysisResultDto(it) }
+
+    /**
+     * Get the analysis result
+     */
+    @DeleteMapping("/analyzes/{id}")
+    fun deleteAnalysis(@PathVariable id: Long) {
+        val analysis: Analysis? = analysisRepository.findById(id).orElse(null)
+        if (analysis != null) {
+            analysisRepository.delete(analysis)
+            deleteAnalysisFiles(analysis)
+            logger.info { "Analysis #${analysis.id} has been deleted" }
+        } else {
+            logger.info { "Attempt to delete analysis with id #$id, not found" }
+        }
+    }
 
     /**
      * Get two files of the analysis result pair and matching lines
@@ -100,6 +118,10 @@ class MainController(
             findAnalysisFiles(analysis, analysisPair.get().student2),
             pair
         )
+    }
+
+    private fun deleteAnalysisFiles(analysis: Analysis) {
+        File("$analysisFilesDir/${analysis.hash}").deleteRecursively()
     }
 
     private fun findAnalysisFiles(analysis: Analysis, user: String): List<FileDto> =
