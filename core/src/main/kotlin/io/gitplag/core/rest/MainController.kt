@@ -61,7 +61,7 @@ class MainController(
      * Get all repositories
      */
     @GetMapping("/repositories")
-    fun getAllRepositories(): MutableList<Repository>? = repositoryDataManager.findAll()
+    fun getAllRepositories() = repositoryDataManager.findAll().sortedBy { it.id }
 
     /**
      * Get the repo
@@ -73,7 +73,8 @@ class MainController(
      * Get analyzes of the repo
      */
     @GetMapping("/repositories/{id}/analyzes")
-    fun getRepository(@PathVariable id: Long): List<Analysis>? = repositoryDataManager.findById(id)?.analyzes
+    fun getRepository(@PathVariable id: Long): List<Analysis>? =
+        repositoryDataManager.findById(id)?.analyzes?.sortedBy { it.id }
 
     /**
      * Get the analysis result

@@ -22,10 +22,6 @@ body {
     margin: 0;
 }
 
-.Repo-List {
-    width: 100px;
-}
-
 .New-Repo-Button {
 
 }
@@ -54,11 +50,34 @@ body {
 
 .new-repo-form input[type=text] {
     width: 100%;
+    font-size: 14px;
+}
+
+.new-repo-form input[type=radio] {
+    margin-right: 5px;
+}
+
+.new-repo-form label {
+    margin-right: 10px;
 }
 
 a {
-    color: black;
+    color: darkblue;
     text-decoration: none;
     font-weight: normal;
 }
 
+a:hover {
+    color: cornflowerblue;
+}
+
+.Repo-List {
+    margin: 10px 0 0 10px;
+}
+
+.new-repo-form textarea {
+    width: 200px;
+    max-width: 200px;
+    height: 40px;
+    font-size: 14px;
+}
