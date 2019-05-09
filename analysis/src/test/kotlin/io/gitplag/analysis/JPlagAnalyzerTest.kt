@@ -27,6 +27,7 @@ import java.time.LocalDateTime
  */
 class JPlagAnalyzerTest : AbstractAnalyzerTest() {
 
+    private val serverUrl = "localhost"
     private val solutionsDir = asPath("src", "test", "resources", "jplagpreparedfiles")
 
     private val base1 =
@@ -78,13 +79,14 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
             randomGenerator,
             jPlagReportRepository,
             Paths.get(solutionsDir).toFile().absolutePath,
-            resultDir
+            resultDir,
+            serverUrl
         )
 
     private val expectedResult =
         AnalysisResult(
             repo = testRepoName,
-            resultLink = "/jplagresult/$hash/index.html",
+            resultLink = "$serverUrl/jplagresult/$hash/index.html",
             executionDate = LocalDateTime.now(),
             hash = hash,
             matchData = listOf(
