@@ -82,22 +82,53 @@ a:hover {
     font-size: 14px;
 }
 
-.compare-wrapper {
+.compare-names {
     display: flex;
+    height: 5vh;
 }
 
-.compare {
-    height: 100vh;
+.compare-names div {
+    width: 50%;
+    text-align: center;
+    line-height: 5vh;
+}
+
+.compare-wrapper {
+    display: flex;
+    width: 100%;
+}
+
+.compare-side-wrapper {
+    width: 50%;
+    display: flex;
     overflow: hidden;
     overflow-y: scroll;
     overflow-x: scroll;
+    word-wrap: break-word;
+}
+
+.compare {
+    height: 95vh;
     border-collapse: collapse;
-    width: 50%;
+    width: 94%;
+    /*word-wrap: break-word;*/
+    /*white-space: pre-wrap;*/
+}
+
+.compare__indexes {
+    width: 6%;
+    background-color: white;
+    opacity: 1;
+}
+
+.compare-line-number {
+
 }
 
 .compare div {
     border: 1px solid #f5f5f5;
     font-size: 16px;
+    /*background-color: white;*/
 }
 
 pre {

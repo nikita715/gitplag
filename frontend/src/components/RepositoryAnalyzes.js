@@ -1,0 +1,45 @@
+import React from "react";
+import axios from "axios";
+import * as PROP from "../properties";
+import {Link} from "react-router-dom";
+import {formatDate} from "../util";
+
+export class RepositoryAnalyzes extends React.Component {
+  state = {
+    repoId: 0,
+    analyzes: []
+  };
+
+  constructor(props, context) {
+    super(props, context);
+    this.state.repoId = props.match.params.id;
+  }
+
+  componentDidMount() {
+    axios.get(PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/analyzes").then((response) => {
+      let analyzes = [];
+      response.data.map((analysis) => analyzes.push(<tr>
+        <td><Link to={"/analyzes/" + analysis.id}>{analysis.id}</Link></td>
+        <td>{analysis.branch}</td>
+        <td>{formatDate(analysis.date)}</td>
+      </tr>));
+      this.setState({analyzes});
+    });
+  }
+
+  render() {
+    return (
+      <div className="Repo-List">
+        <Link to={"/repos"}>Back to repositories</Link>
+        <h3>Analyzes of repo #{this.state.repoId}</h3>
+        <Link to={"/repos/" + this.state.repoId + "/analyze"}>Run new analysis</Link>
+        <table>
+          <tr>
+            <th>Id</th>
+            <th>Branch</th>
+            <th>Date</th>
+          </tr>
+          {this.state.analyzes}</table>
+      </div>);
+  }
+}

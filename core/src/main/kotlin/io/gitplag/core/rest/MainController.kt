@@ -6,7 +6,9 @@ import io.gitplag.git.payload.PayloadProcessor
 import io.gitplag.git.rest.GitRestManager
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.dto.AnalysisDto
+import io.gitplag.model.dto.AnalysisFilePairDto
 import io.gitplag.model.dto.AnalysisPairDto
+import io.gitplag.model.dto.AnalysisResultDto
 import io.gitplag.model.dto.BaseFileInfoDto
 import io.gitplag.model.dto.FileDto
 import io.gitplag.model.dto.FileInfoDto
@@ -73,27 +75,30 @@ class MainController(
      * Get analyzes of the repo
      */
     @GetMapping("/repositories/{id}/analyzes")
-    fun getRepository(@PathVariable id: Long): List<Analysis>? =
-        repositoryDataManager.findById(id)?.analyzes?.sortedBy { it.id }
+    fun getRepository(@PathVariable id: Long) =
+        repositoryDataManager.findById(id)?.analyzes?.map { AnalysisResultDto(it) }?.sortedBy { it.id }
 
     /**
      * Get the analysis result
      */
     @GetMapping("/analyzes/{id}")
-    fun getAnalysis(@PathVariable id: Long): Analysis? = analysisRepository.findById(id).orElse(null)
+    fun getAnalysis(@PathVariable id: Long): AnalysisResultDto? =
+        analysisRepository.findById(id).orElse(null)?.let { AnalysisResultDto(it) }
 
     /**
      * Get two files of the analysis result pair and matching lines
      */
     @GetMapping("/analyzes/{analysisId}/pairs/{analysisPairId}")
-    fun getAnalysisPair(@PathVariable analysisId: Long, @PathVariable analysisPairId: Long): AnalysisPairDto? {
+    fun getAnalysisPair(@PathVariable analysisId: Long, @PathVariable analysisPairId: Long): AnalysisFilePairDto? {
         val analysis = analysisRepository.findById(analysisId).orElse(null)
-        val analysisPair = analysisPairRepository.findById(analysisPairId).orElse(null)
-        if (analysis == null || analysisPair == null) return null
-        return AnalysisPairDto(
-            findAnalysisFiles(analysis, analysisPair.student1),
-            findAnalysisFiles(analysis, analysisPair.student2),
-            analysisPair
+        val analysisPair = analysisPairRepository.findById(analysisPairId)
+
+        if (analysis == null || !analysisPair.isPresent) return null
+        val pair = AnalysisPairDto(analysisPair.get())
+        return AnalysisFilePairDto(
+            findAnalysisFiles(analysis, analysisPair.get().student1),
+            findAnalysisFiles(analysis, analysisPair.get().student2),
+            pair
         )
     }
 
