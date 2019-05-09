@@ -548,10 +548,14 @@ class AnalysisResultPair extends React.Component {
 
   render() {
     return (
-      <div>
-        <Link to={"/analyzes/" + this.state.analysisId}>Back to analysis</Link>
-        <ul className="Repo-List">
-          {this.state.files1.map((it) => it.lines.map(it2 => <li>{it2}</li>))}</ul>
+      <div className="compare-wrapper">
+        {/*<Link to={"/analyzes/" + this.state.analysisId}>Back to analysis</Link>*/}
+        <pre className="compare">
+          {this.state.files1.map((it) => it.lines.map(it2 => <div>{it2 === "" ? " " : it2}</div>))}
+        </pre>
+        <pre className="compare">
+          {this.state.files2.map((it) => it.lines.map(it2 => <div>{it2 === "" ? " " : it2}</div>))}
+        </pre>
       </div>
     );
   }
