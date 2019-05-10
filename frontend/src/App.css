@@ -115,6 +115,16 @@ a:hover {
     flex-direction: column;
     border-collapse: collapse;
     resize: horizontal;
+    width: 50%;
+}
+
+.compare-side-wrapper .compare-line-wrapper a {
+    cursor: pointer;
+}
+
+.compare-side-wrapper .compare-line-wrapper a:not([type]) {
+    cursor: auto;
+    user-select: auto;
 }
 
 .compare {
@@ -126,6 +136,7 @@ a:hover {
     width: 6%;
     background-color: white;
     opacity: 1;
+    user-select: none;
 }
 
 .compare-line-wrapper {
@@ -147,6 +158,7 @@ a:hover {
 .compare .red-line {
     background-color: palevioletred;
     border-color: #c5637d;
+    cursor: pointer;
 }
 
 .compare div {
@@ -170,11 +182,11 @@ pre {
 }
 
 .compare-side-wrapper a {
-    cursor: auto;
+    /*cursor: auto;*/
 }
 
 .compare a {
-    text-decoration: none;
+    /*text-decoration: none;*/
     color: black;
 }
 

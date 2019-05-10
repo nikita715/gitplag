@@ -36,7 +36,10 @@ val analysisBeans = beans {
 
     bean { GitAnalysisRunner(ref("analyzers"), ref("payloadProcessors"), ref()) }
     bean {
-        FileSystemSourceCodeStorage(ref(), ref(), ref(), ref(), env.safeEnvVar("gitplag.solutionsDir"))
+        FileSystemSourceCodeStorage(
+            ref(), ref(), ref(), ref(), env.safeEnvVar("gitplag.solutionsDir"),
+            env.safeEnvVar("gitplag.analysisFilesDir")
+        )
     }
 
 }

@@ -36,6 +36,7 @@ export class AnalysisResultPair extends React.Component {
         leftMatches.push(match.to1);
         rightMatches.push(match.from2);
         rightMatches.push(match.to2);
+        return null;
       });
 
       this.setState({
@@ -50,6 +51,7 @@ export class AnalysisResultPair extends React.Component {
     });
     this.getLineClass = this.getLineClass.bind(this);
     this.getHrefToLine = this.getHrefToLine.bind(this);
+    this.scrollTo = this.scrollTo.bind(this);
   }
 
   getLineClass(matches, lineIndex) {
@@ -64,7 +66,16 @@ export class AnalysisResultPair extends React.Component {
   }
 
   getHrefToLine(side, match2) {
-    return this.redClass ? "#" + side + match2[this.matchIndex - 1] : null;
+    return this.redClass ? side + match2[this.matchIndex - 1] : null;
+  }
+
+  scrollTo(event) {
+    let elementById = document.getElementById(event.target.getAttribute("to"));
+    if (elementById !== undefined && elementById !== null) {
+      elementById.scrollIntoView();
+      let elementById2 = document.getElementById(elementById.getAttribute("to"));
+      if (elementById2 !== undefined && elementById2 !== null) elementById2.scrollIntoView();
+    }
   }
 
   render() {
@@ -84,11 +95,12 @@ export class AnalysisResultPair extends React.Component {
           <div className="compare-wrapper">
             <div className="compare-side-wrapper">
               {times(file1.lines.length + 1).map((index) =>
-                <div id={"left" + index} className="compare-line-wrapper">
+                <div className="compare-line-wrapper">
                   <pre className="compare">
-                    <a href={this.getHrefToLine("right", matches2)}><div className={this.getLineClass(matches1, index)}>
+                    <div id={"left" + index} className={this.getLineClass(matches1, index)}
+                         to={this.getHrefToLine("right", matches2)} onClick={event => this.scrollTo(event)}>
                       {checkLine(file1.lines[index - 1])}
-                    </div></a>
+                    </div>
                   </pre>
                   <pre className="compare compare__indexes"><div>{index}</div></pre>
                 </div>
@@ -96,12 +108,13 @@ export class AnalysisResultPair extends React.Component {
             </div>
             <div className="compare-side-wrapper">
               {times(file2.lines.length + 1).map((index) =>
-                <div id={"right" + index} className="compare-line-wrapper">
+                <div className="compare-line-wrapper">
                   <pre className="compare compare__indexes"><div>{index}</div></pre>
                   <pre className="compare">
-                    <a href={this.getHrefToLine("left", matches1)}><div className={this.getLineClass(matches2, index)}>
+                    <div id={"right" + index} className={this.getLineClass(matches2, index)}
+                         to={this.getHrefToLine("left", matches1)} onClick={event => this.scrollTo(event)}>
                       {checkLine(file2.lines[index - 1])}
-                    </div></a>
+                    </div>
                   </pre>
                 </div>
               )}

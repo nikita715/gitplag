@@ -5,60 +5,34 @@ import io.gitplag.core.analysis.AnalysisAsyncRunner
 import io.gitplag.git.payload.PayloadProcessor
 import io.gitplag.git.rest.GitRestManager
 import io.gitplag.model.data.AnalysisSettings
-import io.gitplag.model.dto.AnalysisDto
-import io.gitplag.model.dto.AnalysisFilePairDto
-import io.gitplag.model.dto.AnalysisPairDto
-import io.gitplag.model.dto.AnalysisResultDto
-import io.gitplag.model.dto.BaseFileInfoDto
-import io.gitplag.model.dto.FileDto
-import io.gitplag.model.dto.FileInfoDto
-import io.gitplag.model.dto.LocalFileDto
-import io.gitplag.model.dto.PullRequestDto
-import io.gitplag.model.dto.RepositoryDto
-import io.gitplag.model.dto.SolutionFileInfoDto
+import io.gitplag.model.dto.*
 import io.gitplag.model.entity.Analysis
 import io.gitplag.model.entity.BaseFileRecord
 import io.gitplag.model.entity.Repository
 import io.gitplag.model.entity.SolutionFileRecord
-import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.manager.RepositoryDataManager
-import io.gitplag.model.repo.AnalysisPairRepository
-import io.gitplag.model.repo.AnalysisRepository
 import io.gitplag.model.repo.BaseFileRecordRepository
 import io.gitplag.model.repo.PullRequestRepository
 import io.gitplag.model.repo.SolutionFileRecordRepository
-import io.gitplag.util.innerRegularFiles
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import java.io.File
+import org.springframework.web.bind.annotation.*
 
 /**
  * Controller for the frontend
  */
 @RestController
 @RequestMapping("/api")
-class MainController(
-    private val analysisRepository: AnalysisRepository,
+class RepositoryController(
     private val repositoryDataManager: RepositoryDataManager,
-    private val analysisPairRepository: AnalysisPairRepository,
     private val pullRequestRepository: PullRequestRepository,
     private val analysisRunner: AnalysisRunner,
     private val analysisAsyncRunner: AnalysisAsyncRunner,
     private val solutionFileRecordRepository: SolutionFileRecordRepository,
     private val baseFileRecordRepository: BaseFileRecordRepository,
     @Qualifier("gitRestManagers") private val restManagers: Map<GitProperty, GitRestManager>,
-    @Qualifier("payloadProcessors") private val payloadProcessors: Map<GitProperty, PayloadProcessor>,
-    @Value("\${gitplag.analysisFilesDir}") private val analysisFilesDir: String
+    @Qualifier("payloadProcessors") private val payloadProcessors: Map<GitProperty, PayloadProcessor>
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -81,54 +55,6 @@ class MainController(
     fun getRepository(@PathVariable id: Long) =
         repositoryDataManager.findById(id)?.analyzes?.map { AnalysisResultDto(it) }?.sortedBy { it.id } ?: emptyList()
 
-    /**
-     * Get the analysis result
-     */
-    @GetMapping("/analyzes/{id}")
-    fun getAnalysis(@PathVariable id: Long): AnalysisResultDto? =
-        analysisRepository.findById(id).orElse(null)?.let { AnalysisResultDto(it) }
-
-    /**
-     * Get the analysis result
-     */
-    @DeleteMapping("/analyzes/{id}")
-    fun deleteAnalysis(@PathVariable id: Long) {
-        val analysis: Analysis? = analysisRepository.findById(id).orElse(null)
-        if (analysis != null) {
-            analysisRepository.delete(analysis)
-            deleteAnalysisFiles(analysis)
-            logger.info { "Analysis #${analysis.id} has been deleted" }
-        } else {
-            logger.info { "Attempt to delete analysis with id #$id, not found" }
-        }
-    }
-
-    /**
-     * Get two files of the analysis result pair and matching lines
-     */
-    @GetMapping("/analyzes/{analysisId}/pairs/{analysisPairId}")
-    fun getAnalysisPair(@PathVariable analysisId: Long, @PathVariable analysisPairId: Long): AnalysisFilePairDto? {
-        val analysis = analysisRepository.findById(analysisId).orElse(null)
-        val analysisPair = analysisPairRepository.findById(analysisPairId)
-
-        if (analysis == null || !analysisPair.isPresent) return null
-        val pair = AnalysisPairDto(analysisPair.get())
-        return AnalysisFilePairDto(
-            findAnalysisFiles(analysis, analysisPair.get().student1),
-            findAnalysisFiles(analysis, analysisPair.get().student2),
-            pair
-        )
-    }
-
-    private fun deleteAnalysisFiles(analysis: Analysis) {
-        File("$analysisFilesDir/${analysis.hash}").deleteRecursively()
-    }
-
-    private fun findAnalysisFiles(analysis: Analysis, user: String): List<FileDto> =
-        when (analysis.analyzer) {
-            AnalyzerProperty.MOSS -> listOf(File("$analysisFilesDir/${analysis.hash}/$user").listFiles()[0])
-            AnalyzerProperty.JPLAG -> File("$analysisFilesDir/${analysis.hash}/$user").innerRegularFiles()
-        }.sortedBy { it.name }.map { FileDto(user, it.readLines()) }
 
     /**
      * Initiate the analysis

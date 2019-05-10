@@ -3,10 +3,8 @@ package io.gitplag.analysis.solutions
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.data.PreparedAnalysisData
 import io.gitplag.model.data.Solution
-import io.gitplag.model.entity.BaseFileRecord
-import io.gitplag.model.entity.PullRequest
-import io.gitplag.model.entity.Repository
-import io.gitplag.model.entity.SolutionFileRecord
+import io.gitplag.model.entity.*
+import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.manager.RepositoryDataManager
 import io.gitplag.model.repo.BaseFileRecordRepository
@@ -14,6 +12,7 @@ import io.gitplag.model.repo.PullRequestRepository
 import io.gitplag.model.repo.SolutionFileRecordRepository
 import io.gitplag.util.asPath
 import io.gitplag.util.forEachFileInDirectory
+import io.gitplag.util.innerRegularFiles
 import mu.KotlinLogging
 import java.io.File
 import java.nio.file.Files
@@ -26,7 +25,8 @@ class FileSystemSourceCodeStorage(
     private val repositoryDataManager: RepositoryDataManager,
     private val solutionFileRecordRepository: SolutionFileRecordRepository,
     private val pullRequestRepository: PullRequestRepository,
-    private val solutionsDir: String
+    private val solutionsDir: String,
+    private val analysisFilesDir: String
 ) : SourceCodeStorage {
 
     private val logger = KotlinLogging.logger {}
@@ -191,6 +191,16 @@ class FileSystemSourceCodeStorage(
                 }
             }
         }
+    }
+
+    override fun getAnalysisFiles(analysis: Analysis, user: String): List<File> =
+        when (analysis.analyzer) {
+            AnalyzerProperty.MOSS -> listOf(File("$analysisFilesDir/${analysis.hash}/$user").listFiles()[0])
+            AnalyzerProperty.JPLAG -> File("$analysisFilesDir/${analysis.hash}/$user").innerRegularFiles()
+        }.sortedBy { it.name }
+
+    override fun deleteAnalysisFiles(analysis: Analysis) {
+        File("$analysisFilesDir/${analysis.hash}").deleteRecursively()
     }
 
     private fun String.toFileExtension() =

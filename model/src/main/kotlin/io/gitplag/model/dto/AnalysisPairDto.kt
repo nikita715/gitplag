@@ -19,6 +19,6 @@ class AnalysisPairDto(
         analysisPair.percentage,
         analysisPair.createdAt1,
         analysisPair.createdAt2,
-        analysisPair.analysisPairLines.map { AnalysisPairLinesDto(it) }
+        analysisPair.analysisPairLines.map { AnalysisPairLinesDto(it) }.sortedBy { it.from1 }
     )
 }
