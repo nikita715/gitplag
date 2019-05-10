@@ -1,10 +1,6 @@
 package io.gitplag.analysis.solutions
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.*
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.entity.BaseFileRecord
 import io.gitplag.model.entity.PullRequest
@@ -37,6 +33,8 @@ class FileSystemSourceCodeStorageTest {
     private val unpackedZip = File(asPath(resourcesPath, "unpackedzip")).absolutePath
     private val solutionDir = File(asPath(resourcesPath, "solutiondirsample")).absolutePath
     private val composedFileDir = File(asPath(resourcesPath, "composedfiles")).absolutePath
+
+    private val analysisFilesDir = "analysisFilesDir"
 
     private val github = GitProperty.GITHUB
     private val java = Language.JAVA
@@ -144,7 +142,7 @@ class FileSystemSourceCodeStorageTest {
     fun loadBasesAndComposedSolutions() {
         sourceCodeStorage = FileSystemSourceCodeStorage(
             baseFileRecordRepository, repositoryDataManager,
-            solutionFileRecordRepository, pullRequestRepository, solutionDir
+            solutionFileRecordRepository, pullRequestRepository, solutionDir, analysisFilesDir
         )
 
         val analysisSettings = AnalysisSettings(repo, branchName)
@@ -186,7 +184,7 @@ class FileSystemSourceCodeStorageTest {
     fun loadBasesAndSeparatedSolutions() {
         sourceCodeStorage = FileSystemSourceCodeStorage(
             baseFileRecordRepository, repositoryDataManager,
-            solutionFileRecordRepository, pullRequestRepository, solutionDir
+            solutionFileRecordRepository, pullRequestRepository, solutionDir, analysisFilesDir
         )
 
         val analysisSettings = AnalysisSettings(repo, branchName)
@@ -240,7 +238,7 @@ class FileSystemSourceCodeStorageTest {
         inTempDirectory { tempDir ->
             sourceCodeStorage = FileSystemSourceCodeStorage(
                 baseFileRecordRepository, repositoryDataManager,
-                solutionFileRecordRepository, pullRequestRepository, tempDir
+                solutionFileRecordRepository, pullRequestRepository, tempDir, analysisFilesDir
             )
 
             sourceCodeStorage.saveBasesFromDir(unpackedZip, repo, branchName)
@@ -264,7 +262,7 @@ class FileSystemSourceCodeStorageTest {
         inTempDirectory { tempDir ->
             sourceCodeStorage = FileSystemSourceCodeStorage(
                 baseFileRecordRepository, repositoryDataManager,
-                solutionFileRecordRepository, pullRequestRepository, tempDir
+                solutionFileRecordRepository, pullRequestRepository, tempDir, analysisFilesDir
             )
 
             sourceCodeStorage.saveSolutionsFromDir(unpackedZip, pullRequest)
