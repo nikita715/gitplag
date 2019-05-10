@@ -107,7 +107,6 @@ a:hover {
 }
 
 .compare-side-wrapper {
-    width: 50%;
     display: flex;
     overflow: hidden;
     overflow-y: scroll;
@@ -121,8 +120,6 @@ a:hover {
 .compare {
     border-collapse: collapse;
     width: 94%;
-    /*word-wrap: break-word;*/
-    /*white-space: pre-wrap;*/
 }
 
 .compare__indexes {
@@ -135,6 +132,16 @@ a:hover {
     display: flex;
     width: 100%;
     border-collapse: collapse;
+}
+
+.compare-line-wrapper pre {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    border: none;
+}
+
+.compare-line-wrapper div {
+    height: 100%;
 }
 
 .compare .red-line {
@@ -160,6 +167,10 @@ pre {
     height: 100vh;
     text-align: center;
     margin-top: 100px;
+}
+
+.compare-side-wrapper a {
+    cursor: auto;
 }
 
 .compare a {
