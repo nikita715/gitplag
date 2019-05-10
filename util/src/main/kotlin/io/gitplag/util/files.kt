@@ -22,7 +22,7 @@ fun <T> inTempDirectory(action: (dirPath: String) -> T): T {
 
 fun generateDir(randomGenerator: RandomGenerator, path: String): Pair<String, String> {
     val hash = randomGenerator.randomAlphanumeric(10)
-    val file = File(path + hash)
+    val file = File("$path/$hash")
     Files.deleteIfExists(file.toPath())
     Files.createDirectories(file.toPath())
     val resultDir = file.absolutePath

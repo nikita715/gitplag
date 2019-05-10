@@ -2,9 +2,11 @@ version: '2.4'
 services:
   backend:
     container_name: gitplag
-    image: nikstep/gitplag:latest
+    build: .
     ports:
       - ${backend_port}:80
+    volumes:
+      - ${gitplag_dir}:/mnt/gitplag
     environment:
       GITPLAG_MOSS_ID:
       GITPLAG_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
