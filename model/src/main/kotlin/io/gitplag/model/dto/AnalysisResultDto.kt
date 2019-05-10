@@ -5,7 +5,7 @@ import io.gitplag.model.enums.AnalyzerProperty
 import java.time.LocalDateTime
 
 /**
- * Analysis result dto
+ * Analysis result dto without line matches
  */
 class AnalysisResultDto(
     val id: Long,

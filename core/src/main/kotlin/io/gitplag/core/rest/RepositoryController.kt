@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.web.bind.annotation.*
 
 /**
- * Controller for the frontend
+ * Controller for repositories
  */
 @RestController
 @RequestMapping("/api")

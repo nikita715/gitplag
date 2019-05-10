@@ -2,6 +2,9 @@ package io.gitplag.model.dto
 
 import io.gitplag.model.entity.AnalysisPairLines
 
+/**
+ * Dto for [AnalysisPairLines]
+ */
 class AnalysisPairLinesDto(
     val id: Long,
     val from1: Int,

@@ -3,6 +3,34 @@ import axios from "axios";
 import * as PROP from "../properties";
 import {Link} from "react-router-dom";
 
+class RepoDto {
+  id = 0;
+  name = "";
+  mossParameters = "";
+  jplagParameters = "";
+  analysisMode = "";
+  language = "";
+  git = "";
+  analyzer = "";
+  filePatterns = [];
+
+  constructor(state) {
+    this.id = state.id;
+    this.name = state.name;
+    this.mossParameters = state.mossParameters;
+    this.jplagParameters = state.jplagParameters;
+    this.analysisMode = state.analysisMode;
+    this.language = state.language;
+    this.git = state.git;
+    this.analyzer = state.analyzer;
+    if (state.filePatterns.length === 0) {
+      this.filePatterns = [];
+    } else {
+      this.filePatterns = state.filePatterns.split("\n");
+    }
+  }
+}
+
 export class NewRepo extends React.Component {
 
   state = {
@@ -145,33 +173,5 @@ export class NewRepo extends React.Component {
         </form>
       </div>
     );
-  }
-}
-
-class RepoDto {
-  id = 0;
-  name = "";
-  mossParameters = "";
-  jplagParameters = "";
-  analysisMode = "";
-  language = "";
-  git = "";
-  analyzer = "";
-  filePatterns = [];
-
-  constructor(state) {
-    this.id = state.id;
-    this.name = state.name;
-    this.mossParameters = state.mossParameters;
-    this.jplagParameters = state.jplagParameters;
-    this.analysisMode = state.analysisMode;
-    this.language = state.language;
-    this.git = state.git;
-    this.analyzer = state.analyzer;
-    if (state.filePatterns.length === 0) {
-      this.filePatterns = [];
-    } else {
-      this.filePatterns = state.filePatterns.split("\n");
-    }
   }
 }

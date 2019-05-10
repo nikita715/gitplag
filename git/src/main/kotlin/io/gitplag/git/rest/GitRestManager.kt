@@ -26,8 +26,14 @@ interface GitRestManager {
      */
     fun findPullRequests(repo: Repository, page: Int): Collection<JsonObject>
 
+    /**
+     * Request a list of branch names
+     */
     fun findBranchesOfRepo(repo: Repository): List<String>
 
+    /**
+     * Request a branch payload
+     */
     fun getBranchOfRepo(repo: Repository, name: String): JsonObject
 
 }

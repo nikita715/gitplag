@@ -3,6 +3,9 @@ package io.gitplag.model.dto
 import io.gitplag.model.entity.AnalysisPair
 import java.time.LocalDateTime
 
+/**
+ * Dto for [AnalysisPair]
+ */
 class AnalysisPairDto(
     val id: Long,
     val student1: String,

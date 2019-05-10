@@ -11,6 +11,9 @@ import io.gitplag.model.repo.AnalysisRepository
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.*
 
+/**
+ * Controller for analyzes
+ */
 @RestController
 @RequestMapping("/api/analyzes")
 class AnalysisController(

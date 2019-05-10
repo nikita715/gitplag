@@ -4,6 +4,10 @@ import * as PROP from "../properties";
 import {times} from "../util";
 import {Link} from "react-router-dom";
 
+function checkLine(line) {
+  return line === "" ? " " : line;
+}
+
 export class AnalysisResultPair extends React.Component {
   state = {
     analysisId: 0,
@@ -40,12 +44,12 @@ export class AnalysisResultPair extends React.Component {
       });
 
       this.setState({
-        files1: files1,
-        files2: files2,
+        files1,
+        files2,
         leftName: response.data.pair.student1,
         rightName: response.data.pair.student2,
-        leftMatches: leftMatches,
-        rightMatches: rightMatches,
+        leftMatches,
+        rightMatches,
         percentage: response.data.pair.percentage
       });
     });
@@ -55,7 +59,9 @@ export class AnalysisResultPair extends React.Component {
   }
 
   getLineClass(matches, lineIndex) {
-    if (matches[this.matchIndex] === undefined) this.matchIndex = 0;
+    if (typeof matches[this.matchIndex] === "undefined") {
+      this.matchIndex = 0;
+    }
     let end = false;
     if (matches[this.matchIndex] === lineIndex) {
       this.redClass = !this.redClass;
@@ -71,10 +77,10 @@ export class AnalysisResultPair extends React.Component {
 
   scrollTo(event) {
     let elementById = document.getElementById(event.target.getAttribute("to"));
-    if (elementById !== undefined && elementById !== null) {
+    if (typeof elementById !== "undefined" && elementById !== null) {
       elementById.scrollIntoView();
       let elementById2 = document.getElementById(elementById.getAttribute("to"));
-      if (elementById2 !== undefined && elementById2 !== null) elementById2.scrollIntoView();
+      if (typeof elementById2 !== "undefined" && elementById2 !== null) elementById2.scrollIntoView();
     }
   }
 
@@ -98,7 +104,7 @@ export class AnalysisResultPair extends React.Component {
                 <div className="compare-line-wrapper">
                   <pre className="compare">
                     <div id={"left" + index} className={this.getLineClass(matches1, index)}
-                         to={this.getHrefToLine("right", matches2)} onClick={event => this.scrollTo(event)}>
+                         to={this.getHrefToLine("right", matches2)} onClick={(event) => this.scrollTo(event)}>
                       {checkLine(file1.lines[index - 1])}
                     </div>
                   </pre>
@@ -112,7 +118,7 @@ export class AnalysisResultPair extends React.Component {
                   <pre className="compare compare__indexes"><div>{index}</div></pre>
                   <pre className="compare">
                     <div id={"right" + index} className={this.getLineClass(matches2, index)}
-                         to={this.getHrefToLine("left", matches1)} onClick={event => this.scrollTo(event)}>
+                         to={this.getHrefToLine("left", matches1)} onClick={(event) => this.scrollTo(event)}>
                       {checkLine(file2.lines[index - 1])}
                     </div>
                   </pre>
@@ -122,10 +128,8 @@ export class AnalysisResultPair extends React.Component {
           </div>
         </div>
       );
-    } else return null;
+    } else {
+      return null;
+    }
   }
-}
-
-function checkLine(line) {
-  return line === "" ? " " : line;
 }

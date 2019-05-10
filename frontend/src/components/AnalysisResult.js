@@ -34,14 +34,13 @@ export class AnalysisResult extends React.Component {
         date: response.data.date, branch: response.data.branch
       });
     });
-    this.handleChange = this.handleChange.bind(this)
+    this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(event) {
     this.setState({
       [event.target.name]: event.target.value.toLowerCase()
     });
-    console.log(this.state.sortedByName);
   }
 
   render() {
@@ -59,16 +58,17 @@ export class AnalysisResult extends React.Component {
           <th>Student 2</th>
           <th>Percentage</th>
         </tr>
-        {this.state.results.filter(it => it.student1.toLowerCase().includes(this.state.sortedByName) || it.student2.toLowerCase().includes(this.state.sortedByName)).map(
-          (result) =>
-            <tr>
-              <td>
-                <Link to={"/analyzes/" + this.state.analysisId + "/pairs/" + result.id}>{result.id}</Link>
-              </td>
-              <td>{result.student1}</td>
-              <td>{result.student2}</td>
-              <td>{result.percentage}</td>
-            </tr>)
+        {this.state.results.filter((it) =>
+          it.student1.toLowerCase().includes(this.state.sortedByName)
+          || it.student2.toLowerCase().includes(this.state.sortedByName)).map((result) =>
+          <tr>
+            <td>
+              <Link to={"/analyzes/" + this.state.analysisId + "/pairs/" + result.id}>{result.id}</Link>
+            </td>
+            <td>{result.student1}</td>
+            <td>{result.student2}</td>
+            <td>{result.percentage}</td>
+          </tr>)
         }
       </table>
     </div>);
