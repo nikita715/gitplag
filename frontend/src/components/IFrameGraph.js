@@ -16,7 +16,7 @@ export class IFrameGraph extends React.Component {
     return (
       <div onClick={this.handleClick}>
         <iframe title="graph" onClick={this.handleClick}
-                src={"http://83.243.70.130:8088/?graph_url=" + PROP.serverUrl + "/api/analyzes/" + this.state.analysisId + "/graph"}/>
+                src={PROP.graphUrl + "/?graph_url=" + PROP.serverUrl + "/api/analyzes/" + this.state.analysisId + "/graph"}/>
         <BackButton back={"/analyzes/" + this.state.analysisId}/>
       </div>
     );

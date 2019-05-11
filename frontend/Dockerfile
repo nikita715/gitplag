@@ -4,10 +4,10 @@ WORKDIR /app/frontend
 
 COPY / /app/frontend
 
-RUN yarn \
+RUN npm install \
     && rm -rf ./node_modules/babel-jest
 
-RUN yarn build
+RUN npm run build
 
 FROM nginx:1.12-alpine as prod
 
