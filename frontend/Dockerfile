@@ -2,10 +2,12 @@ FROM node:8 as react-build
 
 WORKDIR /app/frontend
 
-COPY / /app/frontend
+COPY package*.json ./
 
 RUN npm install \
     && rm -rf ./node_modules/babel-jest
+
+COPY . .
 
 RUN npm run build
 
