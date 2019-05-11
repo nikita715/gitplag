@@ -35,12 +35,12 @@ body {
     margin-right: 5px;
 }
 
-.git-select label {
-    margin-right: 10px;
+label {
+    margin: 0;
 }
 
 .new-repo-form {
-    max-width: 200px;
+    max-width: 220px;
     margin: 10px 0 0 10px;
 }
 
@@ -77,9 +77,9 @@ a:hover {
 }
 
 .new-repo-form textarea {
-    width: 200px;
-    max-width: 200px;
-    height: 40px;
+    width: 220px;
+    max-width: 220px;
+    height: 50px;
     font-size: 14px;
 }
 
@@ -199,4 +199,9 @@ pre {
 
 .alert-wrapper {
     margin: 10px 10px 0 0;
+}
+
+.select-language {
+    margin-left: 10px;
+    width: 135px;
 }

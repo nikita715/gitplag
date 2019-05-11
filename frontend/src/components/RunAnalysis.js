@@ -88,17 +88,6 @@ export class RunAnalysis extends React.Component {
         <h3>New analysis</h3>
         <label htmlFor="branch-name">Branch name</label>
         <div><input type="text" id="branch-name" name="branch" onChange={this.handleChange}/></div>
-        <span>Language</span>
-        <div>
-          <select name="language" value={this.state.language} onChange={this.handleChange}>
-            <option value="JAVA">Java</option>
-            <option value="C">C</option>
-            <option value="CPP">C++</option>
-            <option value="PYTHON">Python</option>
-            <option value="HASKELL">Haskell</option>
-            <option value="PASCAL">Pascal</option>
-          </select>
-        </div>
         <span>Analyzer</span>
         <div className="analyzer-select">
           <input type="radio" id="analyzer1" name="analyzer" value="MOSS" checked={this.state.analyzer === "MOSS"}
