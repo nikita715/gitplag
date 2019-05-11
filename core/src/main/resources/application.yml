@@ -15,7 +15,7 @@ spring:
             non_contextual_creation: true
 
 server:
-  port: 80
+  port: 8090
 
 gitplag:
   mossId: ${GITPLAG_MOSS_ID}

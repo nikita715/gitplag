@@ -196,3 +196,7 @@ pre {
     text-align: center;
     line-height: 5vh;
 }
+
+.alert-wrapper {
+    margin: 10px 10px 0 0;
+}
