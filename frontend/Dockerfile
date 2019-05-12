@@ -1,15 +1,12 @@
 FROM node:8 as react-build
 
-RUN npm install nodemon -g
+RUN git clone https://github.com/nikita715/gitplag.git /app
 
 WORKDIR /app/frontend
 
-COPY / /app/frontend
-
-RUN npm install \
-    && rm -rf ./node_modules/babel-jest
-
-RUN npm run build
+RUN yarn \
+    && rm -rf ./node_modules/babel-jest \
+    && yarn build
 
 FROM nginx:1.12-alpine as prod
 
