@@ -59,8 +59,9 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
     )
 
     private val analysisService = MossAnalyzer(
-        solutionStorage, randomGenerator,
-        Paths.get(solutionsDir).toFile().absolutePath, System.getenv("GITPLAG_MOSS_ID")
+        solutionStorage,
+        Paths.get(solutionsDir).toFile().absolutePath,
+        System.getenv("GITPLAG_MOSS_ID")
     )
 
     private val expectedResult =
@@ -68,7 +69,6 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
             repo = testRepoName,
             resultLink = "",
             executionDate = LocalDateTime.now(),
-            hash = hash,
             matchData = listOf(
                 AnalysisMatch(
                     students = student1 to student3,

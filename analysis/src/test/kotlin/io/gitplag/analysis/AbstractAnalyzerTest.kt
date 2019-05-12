@@ -7,7 +7,6 @@ import io.gitplag.model.entity.Repository
 import io.gitplag.model.enums.AnalysisMode
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.enums.Language
-import io.gitplag.util.RandomGenerator
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
@@ -34,13 +33,9 @@ abstract class AbstractAnalyzerTest {
     protected val sha2 = "sha2"
     protected val sha3 = "sha3"
 
-    protected val hash = "hash"
+    protected val executionDate = LocalDateTime.now()
 
     protected val createdAtList = (0L..2L).map { LocalDateTime.ofEpochSecond(it, 0, ZoneOffset.UTC) }
-
-    protected val randomGenerator = mock<RandomGenerator> {
-        on { randomAlphanumeric(10) } doReturn hash
-    }
 
     private val repository = mock<Repository> {
         on { gitService } doReturn GitProperty.GITHUB

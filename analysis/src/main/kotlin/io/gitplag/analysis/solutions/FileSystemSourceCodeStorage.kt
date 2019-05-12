@@ -1,5 +1,6 @@
 package io.gitplag.analysis.solutions
 
+import io.gitplag.analysis.analysisFilesDirectoryName
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.data.PreparedAnalysisData
 import io.gitplag.model.data.Solution
@@ -26,6 +27,7 @@ class FileSystemSourceCodeStorage(
     private val solutionFileRecordRepository: SolutionFileRecordRepository,
     private val pullRequestRepository: PullRequestRepository,
     private val solutionsDir: String,
+    private val jplagResultDir: String,
     private val analysisFilesDir: String
 ) : SourceCodeStorage {
 
@@ -193,14 +195,20 @@ class FileSystemSourceCodeStorage(
         }
     }
 
-    override fun getAnalysisFiles(analysis: Analysis, user: String): List<File> =
-        when (analysis.analyzer) {
-            AnalyzerProperty.MOSS -> listOf(File("$analysisFilesDir/${analysis.hash}/$user").listFiles()[0])
-            AnalyzerProperty.JPLAG -> File("$analysisFilesDir/${analysis.hash}/$user").innerRegularFiles()
+    override fun getAnalysisFiles(analysis: Analysis, user: String): List<File> {
+        val directoryName = analysisFilesDirectoryName(analysis)
+        return when (analysis.analyzer) {
+            AnalyzerProperty.MOSS -> listOf(File("$analysisFilesDir/$directoryName/$user").listFiles()[0])
+            AnalyzerProperty.JPLAG -> File("$analysisFilesDir/$directoryName/$user").innerRegularFiles()
         }.sortedBy { it.name }
+    }
 
     override fun deleteAnalysisFiles(analysis: Analysis) {
-        File("$analysisFilesDir/${analysis.hash}").deleteRecursively()
+        val directoryName = analysisFilesDirectoryName(analysis)
+        File("$analysisFilesDir/$directoryName").deleteRecursively()
+        if (analysis.analyzer == AnalyzerProperty.JPLAG) {
+            File("$jplagResultDir/$directoryName").deleteRecursively()
+        }
     }
 
     private fun String.toFileExtension() =

@@ -1,18 +1,10 @@
 package io.gitplag.analysis.analyzer
 
+import io.gitplag.analysis.analysisFilesDirectoryName
 import io.gitplag.analysis.analyzer.Analyzer.Companion.repoInfo
 import io.gitplag.analysis.solutions.SourceCodeStorage
-import io.gitplag.model.data.AnalysisMatch
-import io.gitplag.model.data.AnalysisResult
-import io.gitplag.model.data.AnalysisSettings
-import io.gitplag.model.data.MatchedLines
-import io.gitplag.model.data.PreparedAnalysisData
-import io.gitplag.model.data.Solution
-import io.gitplag.model.data.findSolutionByStudent
-import io.gitplag.model.entity.JPlagReport
+import io.gitplag.model.data.*
 import io.gitplag.model.enums.AnalysisMode
-import io.gitplag.model.repo.JPlagReportRepository
-import io.gitplag.util.RandomGenerator
 import io.gitplag.util.asPath
 import io.gitplag.util.generateDir
 import mu.KotlinLogging
@@ -26,8 +18,6 @@ import kotlin.math.roundToInt
  */
 class JPlagAnalyzer(
     private val sourceCodeStorage: SourceCodeStorage,
-    private val randomGenerator: RandomGenerator,
-    private val jPlagReportRepository: JPlagReportRepository,
     private val analysisResultFilesDir: String,
     private val jplagResultDir: String,
     private val serverUrl: String
@@ -39,8 +29,11 @@ class JPlagAnalyzer(
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
     override fun analyze(settings: AnalysisSettings): AnalysisResult {
-        val (hashFileDir, fileDir) = generateDir(randomGenerator, analysisResultFilesDir)
-        val (hashJplagReport, jplagReportDir) = generateDir(randomGenerator, jplagResultDir)
+        val executionDate = LocalDateTime.now()
+        val directoryName = analysisFilesDirectoryName(settings, executionDate)
+
+        val fileDir = generateDir(analysisResultFilesDir, directoryName)
+        val jplagReportDir = generateDir(jplagResultDir, directoryName)
 
         logger.info { "Analysis:JPlag:1.Gathering files for analysis. ${repoInfo(settings)}" }
         val analysisFiles = sourceCodeStorage.loadBasesAndComposedSolutions(settings, fileDir)
@@ -59,17 +52,14 @@ class JPlagAnalyzer(
                 emptyList()
             }
 
-        val resultLink = "$serverUrl/jplagresult/$hashJplagReport/index.html"
-        val executionDate = LocalDateTime.now()
-        jPlagReportRepository.save(JPlagReport(createdAt = executionDate, hash = hashJplagReport))
+        val resultLink = "$serverUrl/jplagresult/$directoryName/index.html"
 
         logger.info { "Analysis:JPlag:4.End of analysis. ${repoInfo(settings)}" }
         return AnalysisResult(
             settings,
             resultLink,
             executionDate,
-            matchLines,
-            hashFileDir
+            matchLines
         )
     }
 

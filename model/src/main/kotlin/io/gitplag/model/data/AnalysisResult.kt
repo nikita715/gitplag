@@ -9,20 +9,17 @@ data class AnalysisResult(
     val repo: String,
     val resultLink: String,
     val executionDate: LocalDateTime,
-    val matchData: List<AnalysisMatch>,
-    val hash: String
+    val matchData: List<AnalysisMatch>
 ) {
     constructor(
         analysisSettings: AnalysisSettings,
         resultLink: String,
         executionDate: LocalDateTime,
-        matchData: List<AnalysisMatch>,
-        hash: String
+        matchData: List<AnalysisMatch>
     ) : this(
         analysisSettings.repository.name,
         resultLink,
         executionDate,
-        matchData,
-        hash
+        matchData
     )
 }

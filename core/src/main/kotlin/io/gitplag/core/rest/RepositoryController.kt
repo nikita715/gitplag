@@ -1,7 +1,8 @@
 package io.gitplag.core.rest
 
 import io.gitplag.analysis.AnalysisRunner
-import io.gitplag.core.analysis.AnalysisAsyncRunner
+import io.gitplag.core.async.AnalysisAsyncRunner
+import io.gitplag.core.async.AsyncFileUploader
 import io.gitplag.core.websocket.NotificationService
 import io.gitplag.git.payload.PayloadProcessor
 import io.gitplag.git.rest.GitRestManager
@@ -36,7 +37,8 @@ class RepositoryController(
     @Qualifier("gitRestManagers") private val restManagers: Map<GitProperty, GitRestManager>,
     @Qualifier("payloadProcessors") private val payloadProcessors: Map<GitProperty, PayloadProcessor>,
     private val branchRepository: BranchRepository,
-    private val notificationService: NotificationService
+    private val notificationService: NotificationService,
+    private val asyncFileUploader: AsyncFileUploader
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -143,20 +145,36 @@ class RepositoryController(
     /**
      * Trigger download of files of the repo
      */
-    @PostMapping("/repositories/{id}/updateFiles")
+    @GetMapping("/repositories/{id}/updateFiles")
     fun updateFilesOfRepo(@PathVariable id: Long): RepositoryFilesInfoDto? {
         val repository = repositoryDataManager.findById(id)
-
         return if (repository != null) {
+            notificationService.notify("Started upload of files from repo ${repository.name}")
             val gitRestManager = restManagers.getValue(repository.gitService)
             val payloadProcessor = payloadProcessors.getValue(repository.gitService)
             gitRestManager.cloneRepository(repository)
             payloadProcessor.downloadAllPullRequestsOfRepository(repository)
+            notificationService.notify("Ended upload of files from repo ${repository.name}")
             RepositoryFilesInfoDto(
                 bases = basesToDto(baseFileRecordRepository.findAllByRepo(repository)),
                 solutions = solutionsToDto(solutionFileRecordRepository.findAllByRepo(repository))
             )
         } else null
+    }
+
+    /**
+     * Trigger download of files of the repo
+     */
+    @GetMapping("/repositories/{id}/updateFilesAsync")
+    fun updateFilesOfRepoAsync(@PathVariable id: Long): Boolean {
+        val repository = repositoryDataManager.findById(id)
+
+        if (repository != null) {
+            asyncFileUploader.uploadFiles(repository)
+            return true
+        }
+
+        return false
     }
 
     /**

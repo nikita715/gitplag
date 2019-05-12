@@ -112,10 +112,10 @@ export class RunAnalysis extends React.Component {
                  onChange={this.handleChange}/>
           <label htmlFor="mode3">Full</label>
         </div>
-        <label htmlFor="moss-parameters">Parameters</label>
+        <label htmlFor="parameters">Parameters</label>
         <div><input type="text" autoComplete="off" id="parameters" name="parameters"
                     value={this.state.parameters} onChange={this.handleChange}/></div>
-        <label htmlFor="moss-parameters">Update files before the analysis</label>
+        <label htmlFor="updateFiles">Update files before the analysis</label>
         <input type="checkbox" id="updateFiles" name="updateFiles"
                value={this.state.updateFiles} onChange={this.handleChange}/>
         <div>

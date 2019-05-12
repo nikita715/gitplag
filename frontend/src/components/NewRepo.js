@@ -42,7 +42,8 @@ export class NewRepo extends React.Component {
     language: "JAVA",
     git: "",
     analyzer: "",
-    filePatterns: ""
+    filePatterns: ".+\\.java",
+    autoCloningEnabled: true
   };
 
   constructor(props, context) {
@@ -58,6 +59,7 @@ export class NewRepo extends React.Component {
         let language = data.language;
         let git = data.gitService;
         let analyzer = data.analyzer;
+        let autoCloningEnabled = data.autoCloningEnabled;
         let filePatterns = data.filePatterns.join("\n");
         this.setState({
           id,
@@ -68,7 +70,8 @@ export class NewRepo extends React.Component {
           language,
           analysisMode,
           jplagParameters,
-          mossParameters
+          mossParameters,
+          autoCloningEnabled
         });
       });
     }
@@ -81,18 +84,11 @@ export class NewRepo extends React.Component {
 
   handleChange(event) {
     const target = event.target;
-    if (target.type === "radio" && target.checked) {
-      this.setState({
-        [target.name]: target.value
-      });
-    } else {
-      const value = target.value;
-      const name = target.name;
-
-      this.setState({
-        [name]: value
-      });
-    }
+    const name = target.name;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    this.setState({
+      [name]: value
+    });
   }
 
   handleSubmit() {
@@ -216,6 +212,9 @@ export class NewRepo extends React.Component {
           <label htmlFor="file-patterns">File patterns (split by lines)</label>
           <div><textarea name="filePatterns" id="file-patterns" value={this.state.filePatterns}
                          onChange={this.handleChange}/></div>
+          <label htmlFor="autoCloningEnabled">Enable auto-upload by webhook</label>
+          <input type="checkbox" id="autoCloningEnabled" name="autoCloningEnabled"
+                 checked={this.state.autoCloningEnabled} onChange={this.handleChange}/>
           <div>
             <button form="none" onClick={this.handleSubmit}>Submit</button>
           </div>

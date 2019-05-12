@@ -35,6 +35,7 @@ class FileSystemSourceCodeStorageTest {
     private val composedFileDir = File(asPath(resourcesPath, "composedfiles")).absolutePath
 
     private val analysisFilesDir = "analysisFilesDir"
+    private val jplagResultDir = "jplagResultDir"
 
     private val github = GitProperty.GITHUB
     private val java = Language.JAVA
@@ -142,7 +143,7 @@ class FileSystemSourceCodeStorageTest {
     fun loadBasesAndComposedSolutions() {
         sourceCodeStorage = FileSystemSourceCodeStorage(
             baseFileRecordRepository, repositoryDataManager,
-            solutionFileRecordRepository, pullRequestRepository, solutionDir, analysisFilesDir
+            solutionFileRecordRepository, pullRequestRepository, solutionDir, jplagResultDir, analysisFilesDir
         )
 
         val analysisSettings = AnalysisSettings(repo, branchName)
@@ -184,7 +185,7 @@ class FileSystemSourceCodeStorageTest {
     fun loadBasesAndSeparatedSolutions() {
         sourceCodeStorage = FileSystemSourceCodeStorage(
             baseFileRecordRepository, repositoryDataManager,
-            solutionFileRecordRepository, pullRequestRepository, solutionDir, analysisFilesDir
+            solutionFileRecordRepository, pullRequestRepository, solutionDir, jplagResultDir, analysisFilesDir
         )
 
         val analysisSettings = AnalysisSettings(repo, branchName)
@@ -238,7 +239,7 @@ class FileSystemSourceCodeStorageTest {
         inTempDirectory { tempDir ->
             sourceCodeStorage = FileSystemSourceCodeStorage(
                 baseFileRecordRepository, repositoryDataManager,
-                solutionFileRecordRepository, pullRequestRepository, tempDir, analysisFilesDir
+                solutionFileRecordRepository, pullRequestRepository, tempDir, jplagResultDir, analysisFilesDir
             )
 
             sourceCodeStorage.saveBasesFromDir(unpackedZip, repo, branchName)
@@ -262,7 +263,7 @@ class FileSystemSourceCodeStorageTest {
         inTempDirectory { tempDir ->
             sourceCodeStorage = FileSystemSourceCodeStorage(
                 baseFileRecordRepository, repositoryDataManager,
-                solutionFileRecordRepository, pullRequestRepository, tempDir, analysisFilesDir
+                solutionFileRecordRepository, pullRequestRepository, tempDir, jplagResultDir, analysisFilesDir
             )
 
             sourceCodeStorage.saveSolutionsFromDir(unpackedZip, pullRequest)

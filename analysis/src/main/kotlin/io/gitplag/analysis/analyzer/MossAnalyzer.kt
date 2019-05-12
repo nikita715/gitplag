@@ -1,15 +1,10 @@
 package io.gitplag.analysis.analyzer
 
+import io.gitplag.analysis.analysisFilesDirectoryName
 import io.gitplag.analysis.analyzer.Analyzer.Companion.repoInfo
 import io.gitplag.analysis.solutions.SourceCodeStorage
-import io.gitplag.model.data.AnalysisMatch
-import io.gitplag.model.data.AnalysisResult
-import io.gitplag.model.data.AnalysisSettings
-import io.gitplag.model.data.MatchedLines
-import io.gitplag.model.data.Solution
-import io.gitplag.model.data.findSolutionByStudent
+import io.gitplag.model.data.*
 import io.gitplag.model.enums.AnalysisMode
-import io.gitplag.util.RandomGenerator
 import io.gitplag.util.generateDir
 import mu.KotlinLogging
 import org.jsoup.Jsoup
@@ -20,7 +15,6 @@ import java.time.LocalDateTime
  */
 class MossAnalyzer(
     private val sourceCodeStorage: SourceCodeStorage,
-    private val randomGenerator: RandomGenerator,
     private val analysisResultFilesDir: String,
     private val mossId: String
 ) : Analyzer {
@@ -29,7 +23,9 @@ class MossAnalyzer(
     private val extensionRegex = "\\.[a-zA-Z]+$".toRegex()
 
     override fun analyze(settings: AnalysisSettings): AnalysisResult {
-        val (hashFileDir, fileDir) = generateDir(randomGenerator, analysisResultFilesDir)
+        val executionDate = LocalDateTime.now()
+        val directoryName = analysisFilesDirectoryName(settings, executionDate)
+        val fileDir = generateDir(analysisResultFilesDir, directoryName)
         logger.info { "Analysis:Moss:1.Gathering files for analysis. ${repoInfo(settings)}" }
         val analysisFiles = sourceCodeStorage.loadBasesAndComposedSolutions(settings, fileDir)
 
@@ -46,8 +42,7 @@ class MossAnalyzer(
             }
 
         logger.info { "Analysis:Moss:4.End of analysis. ${repoInfo(settings)}" }
-        val executionDate = LocalDateTime.now()
-        return AnalysisResult(settings, resultLink, executionDate, matchData, hashFileDir)
+        return AnalysisResult(settings, resultLink, executionDate, matchData)
     }
 
     private fun parseResult(

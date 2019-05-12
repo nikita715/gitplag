@@ -36,13 +36,18 @@ export class RepositoryAnalyzes extends React.Component {
     });
   }
 
+  static startUpdateOfFiles(repoId) {
+    axios.get(PROP.serverUrl + "/api/repositories/" + repoId + "/updateFilesAsync")
+  }
+
   render() {
     return (
       <div className="Repo-List">
         <Link to={"/repos"}>Back to repositories</Link>
         <h3>Analyzes of repo {this.state.repoName}</h3>
         <Link to={"/repos/" + this.state.repoId + "/analyze"}>Run new analysis</Link><br/>
-        <Link to={"/repos/" + this.state.repoId + "/files"}>Downloaded files</Link>
+        <Link to={"/repos/" + this.state.repoId + "/files"}>Downloaded files</Link><br/>
+        <a onClick={() => RepositoryAnalyzes.startUpdateOfFiles(this.state.repoId)}>Update files from git</a>
         <table>
           <tr>
             <th>Id</th>

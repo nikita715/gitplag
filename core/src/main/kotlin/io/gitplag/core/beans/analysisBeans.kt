@@ -14,14 +14,14 @@ val analysisBeans = beans {
     // Analyzers
     bean {
         MossAnalyzer(
-            ref(), ref(),
+            ref(),
             env.safeEnvVar("$gitplag.analysisFilesDir"),
             env.safeEnvVar("$gitplag.mossId")
         )
     }
     bean {
         JPlagAnalyzer(
-            ref(), ref(), ref(),
+            ref(),
             env.safeEnvVar("$gitplag.analysisFilesDir"),
             env.safeEnvVar("$gitplag.jplagResultDir"),
             env.safeEnvVar("$gitplag.serverUrl")
@@ -39,6 +39,7 @@ val analysisBeans = beans {
     bean {
         FileSystemSourceCodeStorage(
             ref(), ref(), ref(), ref(), env.safeEnvVar("$gitplag.solutionsDir"),
+            env.safeEnvVar("$gitplag.jplagResultDir"),
             env.safeEnvVar("$gitplag.analysisFilesDir")
         )
     }

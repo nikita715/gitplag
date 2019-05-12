@@ -3,24 +3,16 @@ package io.gitplag.analysis
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
 import io.gitplag.analysis.analyzer.JPlagAnalyzer
 import io.gitplag.analysis.solutions.SourceCodeStorage
-import io.gitplag.model.data.AnalysisMatch
-import io.gitplag.model.data.AnalysisResult
-import io.gitplag.model.data.MatchedLines
-import io.gitplag.model.data.PreparedAnalysisData
-import io.gitplag.model.data.Solution
-import io.gitplag.model.entity.JPlagReport
+import io.gitplag.model.data.*
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.enums.Language
-import io.gitplag.model.repo.JPlagReportRepository
 import io.gitplag.util.asPath
 import org.junit.Test
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.time.LocalDateTime
 
 /**
  * JPlag tests
@@ -71,13 +63,9 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
         on { loadBasesAndComposedSolutions(any(), any()) } doReturn testPreparedAnalysisFiles
     }
 
-    private val jPlagReportRepository = mock<JPlagReportRepository>()
-
     private val analysisService =
         JPlagAnalyzer(
             solutionStorageService,
-            randomGenerator,
-            jPlagReportRepository,
             Paths.get(solutionsDir).toFile().absolutePath,
             resultDir,
             serverUrl
@@ -86,9 +74,8 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
     private val expectedResult =
         AnalysisResult(
             repo = testRepoName,
-            resultLink = "$serverUrl/jplagresult/$hash/index.html",
-            executionDate = LocalDateTime.now(),
-            hash = hash,
+            resultLink = "$serverUrl/jplagresult/$testRepoName/$executionDate/index.html",
+            executionDate = executionDate,
             matchData = listOf(
                 AnalysisMatch(
                     students = "student2" to "student1",
@@ -166,11 +153,5 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
     fun analyze() {
         val analysisResult = analysisService.analyze(analysisSettings)
 //        analysisResult shouldBe expectedResult.copy(executionDate = analysisResult.executionDate)
-        verify(jPlagReportRepository).save(
-            JPlagReport(
-                createdAt = analysisResult.executionDate,
-                hash = hash
-            )
-        )
     }
 }

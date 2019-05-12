@@ -7,16 +7,7 @@ import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
-import javax.persistence.OneToMany
+import javax.persistence.*
 
 /**
  * Result of the plagiarism analysis
@@ -26,9 +17,6 @@ data class Analysis(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long = -1,
-
-    @Column(nullable = false, unique = true)
-    val hash: String,
 
     @ManyToOne
     @JoinColumn

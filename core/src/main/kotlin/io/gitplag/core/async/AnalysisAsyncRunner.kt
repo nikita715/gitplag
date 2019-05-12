@@ -1,4 +1,4 @@
-package io.gitplag.core.analysis
+package io.gitplag.core.async
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.gitplag.analysis.AnalysisRunner
@@ -25,7 +25,7 @@ class AnalysisAsyncRunner(
     /**
      * Initiate analysis of the [repository] async
      */
-    @Async("analysisTaskExecutor")
+    @Async("customExecutor")
     fun run(settings: AnalysisSettings) {
         notificationService.notify("Started analysis of repo ${settings.repository.name}")
         val analysis = analysisRunner.run(settings)
@@ -35,7 +35,7 @@ class AnalysisAsyncRunner(
     /**
      * Async runner of an analysis
      */
-    @Async("analysisTaskExecutor")
+    @Async("customExecutor")
     fun runAndRespond(analysisSettings: AnalysisSettings, responseUrl: String?) {
         notificationService.notify("Started analysis of repo ${analysisSettings.repository.name}")
         val result = AnalysisResultDto(analysisRunner.run(analysisSettings))

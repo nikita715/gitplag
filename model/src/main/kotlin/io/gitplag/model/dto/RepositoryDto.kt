@@ -15,4 +15,5 @@ data class RepositoryDto(val id: Long, val git: GitProperty, val name: String) {
     var analysisMode: AnalysisMode? = null
     var mossParameters: String? = null
     var jplagParameters: String? = null
+    var autoCloningEnabled: Boolean? = null
 }

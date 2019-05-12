@@ -31,7 +31,8 @@ class RepositoryDataManager(
                 analyzer = repositoryDto.analyzer ?: AnalyzerProperty.MOSS,
                 analysisMode = repositoryDto.analysisMode ?: AnalysisMode.PAIRS,
                 mossParameters = repositoryDto.mossParameters ?: "",
-                jplagParameters = repositoryDto.jplagParameters ?: ""
+                jplagParameters = repositoryDto.jplagParameters ?: "",
+                autoCloningEnabled = repositoryDto.autoCloningEnabled ?: true
             )
         )
 
@@ -48,7 +49,8 @@ class RepositoryDataManager(
                 analyzer = repositoryDto.analyzer ?: repo.analyzer,
                 analysisMode = repositoryDto.analysisMode ?: repo.analysisMode,
                 mossParameters = repositoryDto.mossParameters ?: repo.mossParameters,
-                jplagParameters = repositoryDto.jplagParameters ?: repo.jplagParameters
+                jplagParameters = repositoryDto.jplagParameters ?: repo.jplagParameters,
+                autoCloningEnabled = repositoryDto.autoCloningEnabled ?: repo.autoCloningEnabled
             )
         )
 
