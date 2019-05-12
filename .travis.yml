@@ -6,6 +6,7 @@ notifications:
   email: false
 
 script:
+  - ./gradlew check
   - ./gradlew projectCoverageReport
 
 after_success:
