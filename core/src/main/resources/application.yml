@@ -23,4 +23,5 @@ gitplag:
   jplagResultDir: ${GITPLAG_JPLAG_REPORT_DIR}
   analysisFilesDir: ${GITPLAG_ANALYSIS_FILES_DIR}
   graphUrl: ${GITPLAG_GRAPH_URL:#{'http://localhost:8088'}}?graph_url=
-  serverUrl: ${GITPLAG_SERVER_URL:#{'http://localhost'}}
+  serverUrl: ${GITPLAG_SERVER_URL:#{'http://localhost:8090'}}
+  uiUrl: ${GITPLAG_UI_URL:#{'http://localhost'}}

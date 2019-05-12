@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/analyzes/{analysisId}/graph")
 class GraphController(
     private val analysisRepository: AnalysisRepository,
-    @Value("\${gitplag.graphUrl}") private val graphUrl: String,
-    @Value("\${gitplag.serverUrl}") private val serverUrl: String
+    @Value("\${gitplag.serverUrl}") private val serverUrl: String,
+    @Value("\${gitplag.uiUrl}") private val uiUrl: String
 ) {
 
     /**
@@ -58,7 +58,7 @@ class GraphController(
                 it.student2,
                 it.percentage,
                 findDirection(it),
-                "http://localhost:3000/analyzes/$analysisId/pairs/${it.id}"
+                "$uiUrl/analyzes/$analysisId/pairs/${it.id}"
             )
         })
     }

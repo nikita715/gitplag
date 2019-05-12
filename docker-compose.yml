@@ -11,6 +11,8 @@ services:
       GITPLAG_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
       GITPLAG_DATASOURCE_USERNAME: ${POSTGRES_USER}
       GITPLAG_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      GITPLAG_SERVER_URL: ${server_url}:8090
+      GITPLAG_UI_URL: ${server_url}:${ui_port}
     depends_on:
       postgres:
         condition: service_healthy
@@ -33,6 +35,6 @@ services:
       timeout: 5s
       retries: 5
   data2graph:
-    image: flaxo/data2graph:latest
+    image: flaxo/data2graph:0.4
     ports:
       - 8088:80
