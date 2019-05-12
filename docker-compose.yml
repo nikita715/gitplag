@@ -3,7 +3,7 @@ services:
   backend:
     image: nikstep/gitplag:latest
     ports:
-      - 8090:80
+      - 8090:8090
     volumes:
       - ${gitplag_dir}:/mnt/gitplag
     environment:
