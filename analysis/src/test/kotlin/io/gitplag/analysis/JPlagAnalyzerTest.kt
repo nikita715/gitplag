@@ -9,6 +9,7 @@ import io.gitplag.model.data.*
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.enums.Language
 import io.gitplag.util.asPath
+import io.gitplag.util.asPathInRoot
 import org.junit.Test
 import java.io.File
 import java.nio.file.Files
@@ -68,6 +69,7 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
             solutionStorageService,
             Paths.get(solutionsDir).toFile().absolutePath,
             resultDir,
+            asPath("libs".asPathInRoot(), "jplag.jar"),
             serverUrl
         )
 

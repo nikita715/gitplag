@@ -4,12 +4,11 @@ ENV GITPLAG_HOME=/opt/gitplag
 
 WORKDIR $GITPLAG_HOME
 
-RUN apk add --update openjdk8 \
+RUN apk add --update openjdk8 git \
     && rm -rf /var/cache/apk/*
 
-COPY / $GITPLAG_HOME
-
-RUN ./gradlew bootJar
+RUN git clone https://github.com/nikita715/gitplag.git $GITPLAG_HOME \
+    && ./gradlew bootJar
 
 FROM alpine:3.7 as prod
 

@@ -17,6 +17,7 @@ val analysisBeans = beans {
     val serverUrl = env.safeEnvVar("$gitplag.serverUrl")
     val solutionsDir = env.safeEnvVar("$gitplag.solutionsDir")
     val analysisFilesDir = env.safeEnvVar("$gitplag.analysisFilesDir")
+    val jplagJarPath = env.safeEnvVar("$gitplag.jplagJarPath")
 
     // Analyzers
     bean {
@@ -31,6 +32,7 @@ val analysisBeans = beans {
             ref(),
             analysisFilesDir,
             jplagResultDir,
+            jplagJarPath,
             serverUrl
         )
     }

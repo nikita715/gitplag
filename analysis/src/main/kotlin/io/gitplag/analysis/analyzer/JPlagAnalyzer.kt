@@ -20,6 +20,7 @@ class JPlagAnalyzer(
     private val sourceCodeStorage: SourceCodeStorage,
     private val analysisResultFilesDir: String,
     private val jplagResultDir: String,
+    private val jplagJarPath: String,
     private val serverUrl: String
 ) :
     Analyzer {
@@ -39,7 +40,7 @@ class JPlagAnalyzer(
         val analysisFiles = sourceCodeStorage.loadBasesAndComposedSolutions(settings, fileDir)
 
         logger.info { "Analysis:JPlag:2.Start analysis. ${repoInfo(settings)}" }
-        JPlagClient(analysisFiles, jplagReportDir).run()
+        JPlagClient(jplagJarPath, analysisFiles, jplagReportDir).run()
 
         val matchLines =
             if (settings.mode.order > AnalysisMode.LINK.order) {

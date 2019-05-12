@@ -2,7 +2,6 @@ package io.gitplag.analysis.analyzer
 
 import io.gitplag.model.data.PreparedAnalysisData
 import io.gitplag.util.asPath
-import io.gitplag.util.asPathInRoot
 import mu.KotlinLogging
 import java.util.concurrent.TimeUnit
 
@@ -11,12 +10,12 @@ import java.util.concurrent.TimeUnit
  * See https://jplag.ipd.kit.edu
  */
 internal class JPlagClient(
+    private val jplagJarPath: String,
     analysisData: PreparedAnalysisData,
     private val resultDir: String
 ) {
 
     private val logger = KotlinLogging.logger {}
-    private val jplagPath = asPath("libs".asPathInRoot(), "jplag.jar")
 
     private val language = analysisData.language.ofJPlag()
     private val baseCount = analysisData.bases.size
@@ -25,7 +24,7 @@ internal class JPlagClient(
 
     fun run() =
         buildString {
-            append("java -jar $jplagPath  -l $language -r $resultDir -s $parameters ")
+            append("java -jar $jplagJarPath  -l $language -r $resultDir -s $parameters ")
             if (baseCount != 0) append("-bc .base ")
             append(asPath(solutionsDir))
         }.also {
