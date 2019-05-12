@@ -11,6 +11,8 @@ plugins {
 group 'io.gitplag'
 version '1.0-SNAPSHOT'
 
+apply from: 'coverage.gradle'
+
 allprojects {
     repositories {
         jcenter()
