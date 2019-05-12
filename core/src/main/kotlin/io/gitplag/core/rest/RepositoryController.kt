@@ -13,11 +13,13 @@ import io.gitplag.model.entity.SolutionFileRecord
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.manager.RepositoryDataManager
 import io.gitplag.model.repo.BaseFileRecordRepository
+import io.gitplag.model.repo.BranchRepository
 import io.gitplag.model.repo.PullRequestRepository
 import io.gitplag.model.repo.SolutionFileRecordRepository
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
 
 /**
  * Controller for repositories
@@ -33,6 +35,7 @@ class RepositoryController(
     private val baseFileRecordRepository: BaseFileRecordRepository,
     @Qualifier("gitRestManagers") private val restManagers: Map<GitProperty, GitRestManager>,
     @Qualifier("payloadProcessors") private val payloadProcessors: Map<GitProperty, PayloadProcessor>,
+    private val branchRepository: BranchRepository,
     private val notificationService: NotificationService
 ) {
     private val logger = KotlinLogging.logger {}
@@ -141,7 +144,7 @@ class RepositoryController(
      * Trigger download of files of the repo
      */
     @PostMapping("/repositories/{id}/updateFiles")
-    fun updateFilesOfRepo(@PathVariable id: Long): FileInfoDto? {
+    fun updateFilesOfRepo(@PathVariable id: Long): RepositoryFilesInfoDto? {
         val repository = repositoryDataManager.findById(id)
 
         return if (repository != null) {
@@ -149,9 +152,9 @@ class RepositoryController(
             val payloadProcessor = payloadProcessors.getValue(repository.gitService)
             gitRestManager.cloneRepository(repository)
             payloadProcessor.downloadAllPullRequestsOfRepository(repository)
-            FileInfoDto(
-                bases = baseFileRecordRepository.findAllByRepo(repository).map { BaseFileInfoDto(it) },
-                solutions = solutionFileRecordRepository.findAllByRepo(repository).map { SolutionFileInfoDto(it) }
+            RepositoryFilesInfoDto(
+                bases = basesToDto(baseFileRecordRepository.findAllByRepo(repository)),
+                solutions = solutionsToDto(solutionFileRecordRepository.findAllByRepo(repository))
             )
         } else null
     }
@@ -159,14 +162,13 @@ class RepositoryController(
     /**
      * Get downloaded base and solution files of the repo
      */
-    @PostMapping("/repositories/{id}/files")
-    fun getFilesOfRepo(@PathVariable id: Long): FileInfoDto? {
+    @GetMapping("/repositories/{id}/files")
+    fun getFilesOfRepo(@PathVariable id: Long): RepositoryFilesInfoDto? {
         val repository = repositoryDataManager.findById(id)
-
         return if (repository != null) {
-            FileInfoDto(
-                bases = baseFileRecordRepository.findAllByRepo(repository).map { BaseFileInfoDto(it) },
-                solutions = solutionFileRecordRepository.findAllByRepo(repository).map { SolutionFileInfoDto(it) }
+            RepositoryFilesInfoDto(
+                bases = basesToDto(baseFileRecordRepository.findAllByRepo(repository)),
+                solutions = solutionsToDto(solutionFileRecordRepository.findAllByRepo(repository))
             )
         } else null
     }
@@ -174,30 +176,72 @@ class RepositoryController(
     /**
      * Get downloaded base files of the repo
      */
+    @GetMapping("/repositories/{id}/baseFiles")
+    fun getLocalBases(@PathVariable id: Long): List<BaseBranchInfoDto> {
+        val repo = repositoryDataManager.findById(id)
+        return if (repo != null) basesToDto(baseFileRecordRepository.findAllByRepo(repo)) else emptyList()
+    }
+
+    /**
+     * Get downloaded base files of the repo
+     */
     @PostMapping("/repositories/{id}/baseFiles")
-    fun getLocalBases(@RequestBody dto: LocalFileDto): List<BaseFileRecord>? {
-        val repo = repositoryDataManager.findById(dto.id)
-        return if (repo != null) baseFileRecordRepository.findAllByRepo(repo)
+    fun getLocalBases(@PathVariable id: Long, @RequestBody dto: LocalFileDto): List<BaseBranchInfoDto> {
+        val repo = repositoryDataManager.findById(id)
+        return if (repo != null) basesToDto(baseFileRecordRepository.findAllByRepo(repo)
             .filter {
                 ((dto.branch == null) || (it.branch == dto.branch)) && ((dto.fileName == null) || (it.fileName == dto.fileName))
-            }
-        else null
+            })
+        else emptyList()
+    }
+
+    /**
+     * Get downloaded solution files of the repo
+     */
+    @GetMapping("/repositories/{id}/solutionFiles")
+    fun getLocalSolutions(@PathVariable id: Long): List<SolutionBranchInfoDto> {
+        val repo = repositoryDataManager.findById(id)
+        return if (repo != null) solutionsToDto(solutionFileRecordRepository.findAllByRepo(repo)) else emptyList()
     }
 
     /**
      * Get downloaded solution files of the repo
      */
     @PostMapping("/repositories/{id}/solutionFiles")
-    fun getLocalSolutions(@RequestBody dto: LocalFileDto): List<SolutionFileRecord>? {
-        val repo = repositoryDataManager.findById(dto.id)
-        return if (repo != null) solutionFileRecordRepository.findAllByRepo(repo)
+    fun getLocalSolutions(@PathVariable id: Long, @RequestBody dto: LocalFileDto): List<SolutionBranchInfoDto> {
+        val repo = repositoryDataManager.findById(id)
+        return if (repo != null) solutionsToDto(solutionFileRecordRepository.findAllByRepo(repo)
             .filter {
                 ((dto.branch == null) || (it.pullRequest.sourceBranchName == dto.branch))
                         && ((dto.fileName == null) || (it.fileName == dto.fileName))
                         && ((dto.student == null) || (it.pullRequest.creatorName == dto.student))
-            }
-        else null
+            })
+        else emptyList()
     }
+
+    fun solutionsToDto(solutionRecords: Collection<SolutionFileRecord>) =
+        solutionRecords.groupBy { it.pullRequest.sourceBranchName }.map { branch ->
+            SolutionBranchInfoDto(
+                sourceBranch = branch.key,
+                students = branch.value.groupBy { it.pullRequest }.map { pullRequest ->
+                    StudentFilesDto(
+                        student = pullRequest.key.creatorName,
+                        updated = pullRequest.key.updatedAt,
+                        files = pullRequest.value.map { FileInfoDto(it) }
+                    )
+                }
+            )
+        }
+
+    fun basesToDto(solutionRecords: Collection<BaseFileRecord>) =
+        solutionRecords.groupBy { it.branch }.map { entry ->
+            BaseBranchInfoDto(
+                branch = entry.key,
+                files = entry.value.map { FileInfoDto(it) },
+                updated = branchRepository.findByRepositoryAndName(entry.value.first().repo, entry.key)?.updatedAt
+                    ?: LocalDateTime.MIN
+            )
+        }
 
     /**
      * Get pull requests of the repo

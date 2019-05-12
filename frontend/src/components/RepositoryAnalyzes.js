@@ -41,7 +41,8 @@ export class RepositoryAnalyzes extends React.Component {
       <div className="Repo-List">
         <Link to={"/repos"}>Back to repositories</Link>
         <h3>Analyzes of repo {this.state.repoName}</h3>
-        <Link to={"/repos/" + this.state.repoId + "/analyze"}>Run new analysis</Link>
+        <Link to={"/repos/" + this.state.repoId + "/analyze"}>Run new analysis</Link><br/>
+        <Link to={"/repos/" + this.state.repoId + "/files"}>Downloaded files</Link>
         <table>
           <tr>
             <th>Id</th>

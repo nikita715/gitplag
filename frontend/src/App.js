@@ -12,6 +12,7 @@ import {NoConnection} from "./components/NoConnection";
 import {useAlert} from "react-alert";
 import * as PROP from "./properties";
 import SockJsClient from "react-stomp";
+import {RepositoryFiles} from "./components/RepositoryFiles";
 
 const App = () => {
   const alert = useAlert();
@@ -21,6 +22,7 @@ const App = () => {
         <Route exact path="/" component={Repositories}/>
         <Route exact path="/repos" component={Repositories}/>
         <Route exact path="/repos/:id/analyzes" component={RepositoryAnalyzes}/>
+        <Route exact path="/repos/:id/files" component={RepositoryFiles}/>
         <Route exact path="/repos/:id/analyze" component={RunAnalysis}/>
         <Route exact path="/repos/:id/edit" component={NewRepo}/>
         <Route exact path="/repos/new" component={NewRepo}/>
