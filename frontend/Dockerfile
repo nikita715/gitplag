@@ -1,13 +1,13 @@
 FROM node:8 as react-build
 
+RUN npm install nodemon -g
+
 WORKDIR /app/frontend
 
-COPY package*.json ./
+COPY / /app/frontend
 
 RUN npm install \
     && rm -rf ./node_modules/babel-jest
-
-COPY . .
 
 RUN npm run build
 
