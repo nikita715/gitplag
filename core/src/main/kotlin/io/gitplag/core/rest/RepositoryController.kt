@@ -237,7 +237,7 @@ class RepositoryController(
         else emptyList()
     }
 
-    fun solutionsToDto(solutionRecords: Collection<SolutionFileRecord>) =
+    private fun solutionsToDto(solutionRecords: Collection<SolutionFileRecord>) =
         solutionRecords.groupBy { it.pullRequest.sourceBranchName }.map { branch ->
             SolutionBranchInfoDto(
                 sourceBranch = branch.key,
@@ -251,7 +251,7 @@ class RepositoryController(
             )
         }
 
-    fun basesToDto(solutionRecords: Collection<BaseFileRecord>) =
+    private fun basesToDto(solutionRecords: Collection<BaseFileRecord>) =
         solutionRecords.groupBy { it.branch }.map { entry ->
             BaseBranchInfoDto(
                 branch = entry.key,

@@ -13,6 +13,9 @@ class RandomGenerator {
      */
     fun randomAlphanumeric(size: Int): String = RandomStringUtils.randomAlphanumeric(size)
 
+    /**
+     * Generate a random hex color
+     */
     fun randomHexColor(): String = String.format("#%06x", Random.nextInt(0xffffff + 1))
 
 }

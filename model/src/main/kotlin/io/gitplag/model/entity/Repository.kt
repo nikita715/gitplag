@@ -7,19 +7,7 @@ import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.enums.Language
 import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
-import javax.persistence.CollectionTable
-import javax.persistence.Column
-import javax.persistence.ElementCollection
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.FetchType
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.OneToMany
-import javax.persistence.Table
+import javax.persistence.*
 
 /**
  * Git repository
@@ -81,6 +69,9 @@ data class Repository(
             AnalyzerProperty.JPLAG -> jplagParameters
         }
 
+    /**
+     * Get parameters of the [analyzer]
+     */
     fun parametersOfAnalyzer(analyzer: AnalyzerProperty) = when (analyzer) {
         AnalyzerProperty.MOSS -> mossParameters
         AnalyzerProperty.JPLAG -> jplagParameters

@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 
+/**
+ * The class that asynchronously initiates the downloading of files from git
+ */
 @Component
 class AsyncFileUploader(
     @Qualifier("gitRestManagers") private val restManagers: Map<GitProperty, GitRestManager>,
@@ -16,6 +19,9 @@ class AsyncFileUploader(
     private val notificationService: NotificationService
 ) {
 
+    /**
+     * Download files of the [repository] from git
+     */
     @Async("customExecutor")
     fun uploadFiles(repository: Repository) {
         val gitRestManager = restManagers.getValue(repository.gitService)

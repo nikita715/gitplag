@@ -9,22 +9,29 @@ import io.gitplag.model.enums.AnalyzerProperty
 import org.springframework.context.support.beans
 
 val analysisBeans = beans {
+
     val gitplag = "gitplag"
+
+    val mossId = env.safeEnvVar("$gitplag.mossId")
+    val jplagResultDir = env.safeEnvVar("$gitplag.jplagResultDir")
+    val serverUrl = env.safeEnvVar("$gitplag.serverUrl")
+    val solutionsDir = env.safeEnvVar("$gitplag.solutionsDir")
+    val analysisFilesDir = env.safeEnvVar("$gitplag.analysisFilesDir")
 
     // Analyzers
     bean {
         MossAnalyzer(
             ref(),
-            env.safeEnvVar("$gitplag.analysisFilesDir"),
-            env.safeEnvVar("$gitplag.mossId")
+            analysisFilesDir,
+            mossId
         )
     }
     bean {
         JPlagAnalyzer(
             ref(),
-            env.safeEnvVar("$gitplag.analysisFilesDir"),
-            env.safeEnvVar("$gitplag.jplagResultDir"),
-            env.safeEnvVar("$gitplag.serverUrl")
+            analysisFilesDir,
+            jplagResultDir,
+            serverUrl
         )
     }
 
@@ -38,9 +45,10 @@ val analysisBeans = beans {
     bean { GitAnalysisRunner(ref("analyzers"), ref("payloadProcessors"), ref()) }
     bean {
         FileSystemSourceCodeStorage(
-            ref(), ref(), ref(), ref(), env.safeEnvVar("$gitplag.solutionsDir"),
-            env.safeEnvVar("$gitplag.jplagResultDir"),
-            env.safeEnvVar("$gitplag.analysisFilesDir")
+            ref(), ref(), ref(), ref(),
+            solutionsDir,
+            jplagResultDir,
+            analysisFilesDir
         )
     }
 
