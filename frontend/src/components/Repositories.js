@@ -12,7 +12,17 @@ export class Repositories extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    window.history.pushState(null, "Repos", "/repos/");
+    window.history.pushState(null, "Repos", "/repos");
+    this.deleteRepository = this.deleteRepository.bind(this);
+  }
+
+  deleteRepository(repoId) {
+    axios.delete(PROP.serverUrl + "/api/repositories/" + repoId).then(() => {
+      this.componentDidMount()
+    });
+  }
+
+  componentDidMount() {
     axios.get(PROP.serverUrl + "/api/repositories").then((response) => {
       let data = [];
       response.data.map((repo) =>
@@ -20,8 +30,8 @@ export class Repositories extends React.Component {
           <td><Link to={"/repos/" + repo.id + "/analyzes"}>{repo.id}</Link></td>
           <td>{repo.name}</td>
           <td>{repo.gitService.toLowerCase()}</td>
-          <td><Link to={"/repos/" + repo.id + "/edit"}>Edit</Link>
-          </td>
+          <td><Link to={"/repos/" + repo.id + "/edit"}>Edit</Link></td>
+          <td><a onClick={(e) => this.deleteRepository(repo.id)}>Delete</a></td>
         </tr>)
       );
       this.setState({repos: data, ready: true});

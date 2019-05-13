@@ -1,6 +1,7 @@
 package io.gitplag.core.rest
 
 import io.gitplag.analysis.AnalysisRunner
+import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.core.async.AnalysisAsyncRunner
 import io.gitplag.core.async.AsyncFileUploader
 import io.gitplag.core.websocket.NotificationService
@@ -38,7 +39,8 @@ class RepositoryController(
     @Qualifier("payloadProcessors") private val payloadProcessors: Map<GitProperty, PayloadProcessor>,
     private val branchRepository: BranchRepository,
     private val notificationService: NotificationService,
-    private val asyncFileUploader: AsyncFileUploader
+    private val asyncFileUploader: AsyncFileUploader,
+    private val sourceCodeStorage: SourceCodeStorage
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -140,6 +142,21 @@ class RepositoryController(
         val repository = repositoryDataManager.create(dto)
         notificationService.notify("Created repo ${repository.name} with id ${repository.id}")
         return repository
+    }
+
+    /**
+     * Create a repo
+     */
+    @DeleteMapping("/repositories/{id}")
+    fun deleteRepo(@PathVariable id: Long): Unit {
+        val repository = repositoryDataManager.findById(id)
+        if (repository != null) {
+            repository.analyzes.forEach { analysis ->
+                sourceCodeStorage.deleteAnalysisFiles(analysis)
+            }
+            repositoryDataManager.delete(repository)
+            notificationService.notify("Deleted repo ${repository.name} with id ${repository.id}")
+        }
     }
 
     /**

@@ -13,6 +13,7 @@ import {useAlert} from "react-alert";
 import * as PROP from "./properties";
 import SockJsClient from "react-stomp";
 import {RepositoryFiles} from "./components/RepositoryFiles";
+import {WebhookBanner} from "./components/WebhookBanner";
 
 const App = () => {
   const alert = useAlert();
@@ -20,6 +21,7 @@ const App = () => {
     <div>
       <BrowserRouter>
         <Route exact path="/" component={Repositories}/>
+        <Route exact path="/webhook" component={WebhookBanner}/>
         <Route exact path="/repos" component={Repositories}/>
         <Route exact path="/repos/:id/analyzes" component={RepositoryAnalyzes}/>
         <Route exact path="/repos/:id/files" component={RepositoryFiles}/>

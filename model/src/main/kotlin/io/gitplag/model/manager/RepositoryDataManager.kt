@@ -97,4 +97,10 @@ class RepositoryDataManager(
      */
     @Transactional(readOnly = true)
     fun findAll() = repositoryRepository.findAll()
+
+    /**
+     * Delete the [repo]
+     */
+    @Transactional
+    fun delete(repo: Repository) = repositoryRepository.delete(repo)
 }

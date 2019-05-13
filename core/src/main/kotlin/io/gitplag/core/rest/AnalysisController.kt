@@ -1,6 +1,7 @@
 package io.gitplag.core.rest
 
 import io.gitplag.analysis.solutions.SourceCodeStorage
+import io.gitplag.core.websocket.NotificationService
 import io.gitplag.model.dto.AnalysisFilePairDto
 import io.gitplag.model.dto.AnalysisPairDto
 import io.gitplag.model.dto.AnalysisResultDto
@@ -19,7 +20,8 @@ import org.springframework.web.bind.annotation.*
 class AnalysisController(
     private val analysisRepository: AnalysisRepository,
     private val analysisPairRepository: AnalysisPairRepository,
-    private val sourceCodeStorage: SourceCodeStorage
+    private val sourceCodeStorage: SourceCodeStorage,
+    private val notificationService: NotificationService
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -40,6 +42,7 @@ class AnalysisController(
             analysisRepository.delete(analysis)
             sourceCodeStorage.deleteAnalysisFiles(analysis)
             logger.info { "Analysis #${analysis.id} has been deleted" }
+            notificationService.notify("Deleted analysis #${analysis.id}")
         } else {
             logger.info { "Attempt to delete analysis with id #$id, not found" }
         }

@@ -48,7 +48,16 @@ export class NewRepo extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    let id = props.match.params.id;
+    this.state.id = this.props.match.params.id;
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.selectLanguages = this.selectLanguages.bind(this);
+    this.selectLanguageMoss = this.selectLanguageMoss.bind(this);
+    this.selectLanguageJPlag = this.selectLanguageJPlag.bind(this);
+  }
+
+  componentDidMount() {
+    let id = this.state.id;
     if (id) {
       axios.get(PROP.serverUrl + "/api/repositories/" + id).then((response) => {
         let data = response.data;
@@ -75,11 +84,6 @@ export class NewRepo extends React.Component {
         });
       });
     }
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.selectLanguages = this.selectLanguages.bind(this);
-    this.selectLanguageMoss = this.selectLanguageMoss.bind(this);
-    this.selectLanguageJPlag = this.selectLanguageJPlag.bind(this);
   }
 
   handleChange(event) {
@@ -96,7 +100,7 @@ export class NewRepo extends React.Component {
     let request = (this.state.id === 0) ?
       axios.post((PROP.serverUrl + "/api/repositories"), dto) :
       axios.put((PROP.serverUrl + "/api/repositories/" + this.state.id), dto);
-    request.then(() => this.props.history.push("/repos"))
+    request.then(() => this.props.history.push("/webhook"))
   }
 
   selectLanguageMoss() {
@@ -160,7 +164,7 @@ export class NewRepo extends React.Component {
           <Link to={"/repos"}>Back to repositories</Link><br/>
           <h3>New repository</h3>
           <span>Git</span>
-          {this.state.id !== 0 ? "" : (<div>
+          {this.state.id !== undefined ? "" : (<div>
             <div className="git-select">
               <input type="radio" id="git1" name="git" value="GITHUB" checked={this.state.git === "GITHUB"}
                      onChange={this.handleChange}/>
