@@ -78,13 +78,13 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                     createdAt = createdAtList[0] to createdAtList[2],
                     matchedLines = listOf(
                         MatchedLines(
-                            match1 = 1 to 91,
-                            match2 = 40 to 130,
+                            match1 = 1 to 90,
+                            match2 = 40 to 129,
                             files = file1.name to file3.name
                         ),
                         MatchedLines(
-                            match1 = 107 to 115,
-                            match2 = 12 to 22,
+                            match1 = 107 to 114,
+                            match2 = 12 to 21,
                             files = file1.name to file3.name
                         )
                     )
@@ -96,18 +96,18 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                     createdAt = createdAtList[1] to createdAtList[2],
                     matchedLines = listOf(
                         MatchedLines(
-                            match1 = 44 to 70,
-                            match2 = 104 to 130,
+                            match1 = 44 to 69,
+                            match2 = 104 to 129,
                             files = file2.name to file3.name
                         ),
                         MatchedLines(
-                            match1 = 32 to 43,
-                            match2 = 6 to 17,
+                            match1 = 32 to 42,
+                            match2 = 6 to 16,
                             files = file2.name to file3.name
                         ),
                         MatchedLines(
-                            match1 = 6 to 14,
-                            match2 = 24 to 31,
+                            match1 = 6 to 13,
+                            match2 = 24 to 30,
                             files = file2.name to file3.name
                         )
                     )
@@ -119,13 +119,13 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                     createdAt = createdAtList[0] to createdAtList[1],
                     matchedLines = listOf(
                         MatchedLines(
-                            match1 = 65 to 91,
-                            match2 = 44 to 70,
+                            match1 = 65 to 90,
+                            match2 = 44 to 69,
                             files = file1.name to file2.name
                         ),
                         MatchedLines(
-                            match1 = 100 to 117,
-                            match2 = 6 to 23,
+                            match1 = 100 to 116,
+                            match2 = 6 to 22,
                             files = file1.name to file2.name
                         )
                     )
