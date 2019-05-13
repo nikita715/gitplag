@@ -20,8 +20,7 @@ class JPlagAnalyzer(
     private val sourceCodeStorage: SourceCodeStorage,
     private val analysisResultFilesDir: String,
     private val jplagResultDir: String,
-    private val jplagJarPath: String,
-    private val serverUrl: String
+    private val jplagJarPath: String
 ) :
     Analyzer {
 
@@ -53,7 +52,7 @@ class JPlagAnalyzer(
                 emptyList()
             }
 
-        val resultLink = "$serverUrl/jplagresult/$directoryName/index.html"
+        val resultLink = "/jplagresult/$directoryName/index.html"
 
         logger.info { "Analysis:JPlag:4.End of analysis. ${repoInfo(settings)}" }
         return AnalysisResult(

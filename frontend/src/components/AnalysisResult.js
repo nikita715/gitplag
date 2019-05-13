@@ -48,7 +48,7 @@ export class AnalysisResult extends React.Component {
       <Link to={"/repos/" + this.state.repoId + "/analyzes"}>Back to analyzes</Link>
       <h3>Analysis result #{this.state.analysisId}, executed {formatDate(this.state.date).toLowerCase()}</h3>
       <span>Analyzed by {this.state.analyzer.toLowerCase()}, branch {this.state.branch}</span><br/>
-      <a href={this.state.resultLink}>Source analysis</a><br/>
+      <a href={(this.state.analyzer === "JPLAG" ? PROP.serverUrl : "") + this.state.resultLink}>Source analysis</a><br/>
       <Link to={"/analyzes/" + this.state.analysisId + "/graph"}>Graph</Link><br/>
       <label>Find by student name: </label><input name="sortedByName" onChange={this.handleChange}/>
       <table>

@@ -27,7 +27,6 @@ class MvcConfig : WebMvcConfigurer {
             .allowCredentials(true).maxAge(3600)
     }
 
-
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler("/static/**", "/resources/**")
             .addResourceLocations("classpath:/static/")

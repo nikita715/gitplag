@@ -14,7 +14,6 @@ val analysisBeans = beans {
 
     val mossId = env.safeEnvVar("$gitplag.mossId")
     val jplagResultDir = env.safeEnvVar("$gitplag.jplagResultDir")
-    val serverUrl = env.safeEnvVar("$gitplag.serverUrl")
     val solutionsDir = env.safeEnvVar("$gitplag.solutionsDir")
     val analysisFilesDir = env.safeEnvVar("$gitplag.analysisFilesDir")
     val jplagJarPath = env.safeEnvVar("$gitplag.jplagJarPath")
@@ -32,8 +31,7 @@ val analysisBeans = beans {
             ref(),
             analysisFilesDir,
             jplagResultDir,
-            jplagJarPath,
-            serverUrl
+            jplagJarPath
         )
     }
 
