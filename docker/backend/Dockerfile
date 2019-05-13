@@ -4,11 +4,8 @@ ENV GITPLAG_HOME=/opt/gitplag
 
 WORKDIR $GITPLAG_HOME
 
-RUN apk add --update openjdk8 git curl \
+RUN apk add --update openjdk8 git \
     && rm -rf /var/cache/apk/*
-
-RUN curl -o /opt/jplag.jar \
-    https://github.com/jplag/jplag/releases/download/v2.11.9-SNAPSHOT/jplag-2.11.9-SNAPSHOT-jar-with-dependencies.jar
 
 RUN git clone https://github.com/nikita715/gitplag.git $GITPLAG_HOME \
     && ./gradlew bootJar
@@ -27,6 +24,6 @@ RUN apk add --update openjdk8 \
     && rm -rf /var/cache/apk/*
 
 COPY --from=init $GITPLAG_HOME/core/build/libs/core.jar .
-COPY --from=init /opt/jplag.jar ./jplag.jar
+COPY --from=init $GITPLAG_HOME/libs/jplag.jar ./jplag.jar
 
 CMD java -jar $GITPLAG_HOME/core.jar
