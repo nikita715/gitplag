@@ -18,6 +18,7 @@ export class AnalysisResultPair extends React.Component {
     rightName: "",
     leftMatches: [],
     rightMatches: [],
+    leftRightMatches: [],
     percentage: 0
   };
   matchIndex = 0;
@@ -35,11 +36,13 @@ export class AnalysisResultPair extends React.Component {
 
       let leftMatches = [];
       let rightMatches = [];
+      let leftRightMatches = [];
       response.data.pair.lines.map((match) => {
         leftMatches.push(match.from1);
         leftMatches.push(match.to1);
         rightMatches.push(match.from2);
         rightMatches.push(match.to2);
+        leftRightMatches.push({from1: match.from1, to1: match.to1, from2: match.from2, to2: match.to2});
         return null;
       });
 
@@ -49,17 +52,23 @@ export class AnalysisResultPair extends React.Component {
         leftName: response.data.pair.student1,
         rightName: response.data.pair.student2,
         leftMatches,
-        rightMatches,
-        percentage: response.data.pair.percentage
+        rightMatches: rightMatches.sort(function (a, b) {
+          return parseInt(a) - parseInt(b);
+        }),
+        percentage: response.data.pair.percentage,
+        leftRightMatches
       });
+      console.log(this.state.leftMatches);
+      console.log(this.state.rightMatches);
     });
     this.getLineClass = this.getLineClass.bind(this);
     this.getHrefToLine = this.getHrefToLine.bind(this);
     this.scrollTo = this.scrollTo.bind(this);
+    this.findToHref = this.findToHref.bind(this);
   }
 
   getLineClass(matches, lineIndex) {
-    if (typeof matches[this.matchIndex] === "undefined") {
+    if (this.matchIndex === matches.length) {
       this.matchIndex = 0;
     }
     let end = false;
@@ -71,8 +80,20 @@ export class AnalysisResultPair extends React.Component {
     return this.redClass || end ? "red-line" : "";
   }
 
-  getHrefToLine(side, match2) {
-    return this.redClass ? side + match2[this.matchIndex - 1] : null;
+  getHrefToLine(side, line) {
+    return this.redClass ? side + this.findToHref(side, line) : null;
+  }
+
+  findToHref(side, line) {
+    if (side === "right") {
+      return this.state.leftRightMatches.find(function (el) {
+        return el.from1 <= line && el.to1 > line;
+      }).from2
+    } else {
+      return this.state.leftRightMatches.find(function (el) {
+        return el.from2 <= line && el.to2 > line;
+      }).from1
+    }
   }
 
   scrollTo(event) {
@@ -85,11 +106,11 @@ export class AnalysisResultPair extends React.Component {
   }
 
   render() {
-    let file1 = this.state.files1[0];
-    let file2 = this.state.files2[0];
-    let matches1 = this.state.leftMatches;
-    let matches2 = this.state.rightMatches;
     if (this.state.files1[0] !== undefined) {
+      let file1 = this.state.files1[0];
+      let file2 = this.state.files2[0];
+      let matches1 = this.state.leftMatches;
+      let matches2 = this.state.rightMatches;
       return (
         <div>
           <div className="compare-exit"><Link to={"/analyzes/" + this.state.analysisId}>Back</Link></div>
@@ -104,7 +125,7 @@ export class AnalysisResultPair extends React.Component {
                 <div className="compare-line-wrapper">
                   <pre className="compare">
                     <div id={"left" + index} className={this.getLineClass(matches1, index)}
-                         to={this.getHrefToLine("right", matches2)} onClick={(event) => this.scrollTo(event)}>
+                         to={this.getHrefToLine("right", index)} onClick={(event) => this.scrollTo(event)}>
                       {checkLine(file1.lines[index - 1])}
                     </div>
                   </pre>
@@ -118,7 +139,7 @@ export class AnalysisResultPair extends React.Component {
                   <pre className="compare compare__indexes"><div>{index}</div></pre>
                   <pre className="compare">
                     <div id={"right" + index} className={this.getLineClass(matches2, index)}
-                         to={this.getHrefToLine("left", matches1)} onClick={(event) => this.scrollTo(event)}>
+                         to={this.getHrefToLine("left", index)} onClick={(event) => this.scrollTo(event)}>
                       {checkLine(file2.lines[index - 1])}
                     </div>
                   </pre>
