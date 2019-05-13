@@ -7,11 +7,11 @@ WORKDIR $GITPLAG_HOME
 RUN apk add --update openjdk8 git curl \
     && rm -rf /var/cache/apk/*
 
+RUN curl -o /opt/jplag.jar \
+    https://github.com/jplag/jplag/releases/download/v2.12.1-SNAPSHOT/jplag-2.12.1-SNAPSHOT-jar-with-dependencies.jar
+
 RUN git clone https://github.com/nikita715/gitplag.git $GITPLAG_HOME \
     && ./gradlew bootJar
-
-RUN curl -o jplag.jar \
-    https://github.com/jplag/jplag/releases/download/v2.12.1-SNAPSHOT/jplag-2.12.1-SNAPSHOT-jar-with-dependencies.jar
 
 FROM alpine:3.7 as prod
 
@@ -27,6 +27,6 @@ RUN apk add --update openjdk8 \
     && rm -rf /var/cache/apk/*
 
 COPY --from=init $GITPLAG_HOME/core/build/libs/core.jar .
-COPY --from=init $GITPLAG_HOME/jplag.jar ./jplag.jar
+COPY --from=init /opt/jplag.jar ./jplag.jar
 
 CMD java -jar $GITPLAG_HOME/core.jar
