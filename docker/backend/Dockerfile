@@ -8,7 +8,7 @@ RUN apk add --update openjdk8 git curl \
     && rm -rf /var/cache/apk/*
 
 RUN curl -o /opt/jplag.jar \
-    https://github.com/jplag/jplag/releases/download/v2.12.1-SNAPSHOT/jplag-2.12.1-SNAPSHOT-jar-with-dependencies.jar
+    https://github.com/jplag/jplag/releases/download/v2.11.9-SNAPSHOT/jplag-2.11.9-SNAPSHOT-jar-with-dependencies.jar
 
 RUN git clone https://github.com/nikita715/gitplag.git $GITPLAG_HOME \
     && ./gradlew bootJar
