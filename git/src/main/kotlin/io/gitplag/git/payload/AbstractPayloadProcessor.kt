@@ -46,6 +46,7 @@ abstract class AbstractPayloadProcessor(
         val jsonObject = payload.parseAsObject()
         val branchName = requireNotNull(jsonObject.pushBranchName)
         val repoFullName = requireNotNull(jsonObject.pushRepoName)
+        val updatedAt = requireNotNull(jsonObject.pushLastUpdated)
         val repo = repositoryDataManager.findByGitServiceAndName(GitProperty.GITHUB, repoFullName)
 
         if (repo != null) {
@@ -58,6 +59,11 @@ abstract class AbstractPayloadProcessor(
             }
             logger.info { "Webhook: received new push from repo ${repo.name}" }
             gitRestManager.cloneRepository(repo, branchName)
+            val branch = branchRepository.findByRepositoryAndName(repo, branchName)
+                ?.copy(updatedAt = updatedAt)
+            if (branch != null) branchRepository.save(branch) else branchRepository.save(
+                Branch(updatedAt = updatedAt, repository = repo, name = branchName)
+            )
         } else {
             logger.info { "Webhook: received new repo ${jsonObject.pushRepoName}" }
             cloneRepoAndAllPullRequests(jsonObject.pushRepoName, jsonObject.pushRepoId)
