@@ -69,8 +69,7 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
             solutionStorageService,
             Paths.get(solutionsDir).toFile().absolutePath,
             resultDir,
-            asPath("libs".asPathInRoot(), "jplag.jar"),
-            serverUrl
+            asPath("libs".asPathInRoot(), "jplag.jar")
         )
 
     private val expectedResult =
