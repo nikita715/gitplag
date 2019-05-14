@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import {Link} from "react-router-dom";
 import * as PROP from "../properties";
+import {Header} from "./Header";
 
 export class Repositories extends React.Component {
 
@@ -13,13 +14,6 @@ export class Repositories extends React.Component {
   constructor(props, context) {
     super(props, context);
     window.history.pushState(null, "Repos", "/repos");
-    this.deleteRepository = this.deleteRepository.bind(this);
-  }
-
-  deleteRepository(repoId) {
-    axios.delete(PROP.serverUrl + "/api/repositories/" + repoId).then(() => {
-      this.componentDidMount()
-    });
   }
 
   componentDidMount() {
@@ -27,11 +21,10 @@ export class Repositories extends React.Component {
       let data = [];
       response.data.map((repo) =>
         data.push(<tr>
-          <td><Link to={"/repos/" + repo.id + "/analyzes"}>{repo.id}</Link></td>
-          <td>{repo.name}</td>
+          <td><Link to={"/repos/" + repo.id}>{repo.name}</Link></td>
           <td>{repo.gitService.toLowerCase()}</td>
-          <td><Link to={"/repos/" + repo.id + "/edit"}>Edit</Link></td>
-          <td><a onClick={(e) => this.deleteRepository(repo.id)}>Delete</a></td>
+          <td>
+            <Link className="btn badge badge-warning" to={"/repos/" + repo.id + "/edit"}>Manage</Link></td>
         </tr>)
       );
       this.setState({repos: data, ready: true});
@@ -40,16 +33,41 @@ export class Repositories extends React.Component {
 
   render() {
     return (
-      <div className="Repo-List">
-        <h3>Git repositories</h3>
-        <Link to="/repos/new">Add a repository</Link><br/>
-        <table>
-          <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Git</th>
-          </tr>
-          {this.state.repos}</table>
+      <div className="container">
+        {Header(
+          <ol className="breadcrumb">
+            <li className="breadcrumb-item active" aria-current="page">Repositories</li>
+          </ol>
+        )}
+        <div className="row">
+          <div className="col container">
+            <div className="col">
+              <div className="row">
+                <h5>Repositories</h5>
+              </div>
+              <div className="row">
+                <table className="table table-hover">
+                  <thead className="thead-light">
+                  <tr>
+                    <th>Name</th>
+                    <th>Git</th>
+                    <th className="fit"></th>
+                  </tr>
+                  </thead>
+                  <tbody>{this.state.repos}</tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div className="container col-sm-3">
+            <div className="list-group">
+              <Link to={"/repos/new"}
+                    className="btn list-group-item list-group-item-action">
+                Add new repository
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

@@ -84,7 +84,7 @@ export class RunAnalysis extends React.Component {
   render() {
     return (<div>
       <form className="new-repo-form">
-        <Link to={"/repos/" + this.state.repoId + "/analyzes"}>Back to analyzes</Link>
+        <Link to={"/repos/" + this.state.repoId}>Back to analyzes</Link>
         <h3>New analysis</h3>
         <label htmlFor="branch-name">Branch name</label>
         <div><input type="text" id="branch-name" name="branch" onChange={this.handleChange}/></div>

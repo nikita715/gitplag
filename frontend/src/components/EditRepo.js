@@ -2,18 +2,15 @@ import React from "react";
 import axios from "axios";
 import * as PROP from "../properties";
 import {Link} from "react-router-dom";
-import {RepoDto} from "./RepoDto";
 
-export class NewRepo extends React.Component {
+export class EditRepo extends React.Component {
 
   state = {
     id: 0,
-    name: "",
     mossParameters: "",
     jplagParameters: "",
     analysisMode: "",
     language: "JAVA",
-    git: "",
     analyzer: "",
     filePatterns: ".+\\.java",
     autoCloningEnabled: true
@@ -27,6 +24,41 @@ export class NewRepo extends React.Component {
     this.selectLanguages = this.selectLanguages.bind(this);
     this.selectLanguageMoss = this.selectLanguageMoss.bind(this);
     this.selectLanguageJPlag = this.selectLanguageJPlag.bind(this);
+    this.deleteRepository = this.deleteRepository.bind(this);
+  }
+
+  deleteRepository(repoId) {
+    axios.delete(PROP.serverUrl + "/api/repositories/" + repoId).then(() => {
+      this.componentDidMount()
+    });
+  }
+
+  componentDidMount() {
+    let id = this.state.id;
+    if (id) {
+      axios.get(PROP.serverUrl + "/api/repositories/" + id).then((response) => {
+        let data = response.data;
+        let mossParameters = data.mossParameters;
+        let jplagParameters = data.jplagParameters;
+        let analysisMode = data.analysisMode;
+        let language = data.language;
+        let analyzer = data.analyzer;
+        let autoCloningEnabled = data.autoCloningEnabled;
+        let filePatterns = data.filePatterns.join("\n");
+        this.setState({
+          id,
+          name,
+          analyzer,
+          filePatterns,
+          git,
+          language,
+          analysisMode,
+          jplagParameters,
+          mossParameters,
+          autoCloningEnabled
+        });
+      });
+    }
   }
 
   handleChange(event) {
@@ -40,7 +72,10 @@ export class NewRepo extends React.Component {
 
   handleSubmit() {
     let dto = new RepoDto(this.state);
-    axios.post((PROP.serverUrl + "/api/repositories"), dto).then(() => this.props.history.push("/webhook"))
+    let request = (this.state.id === undefined) ?
+      axios.post((PROP.serverUrl + "/api/repositories"), dto) :
+      axios.put((PROP.serverUrl + "/api/repositories/" + this.state.id), dto);
+    request.then(() => this.props.history.push("/webhook"))
   }
 
   selectLanguageMoss() {
@@ -104,7 +139,7 @@ export class NewRepo extends React.Component {
           <Link to={"/repos"}>Back to repositories</Link><br/>
           <h3>New repository</h3>
           <span>Git</span>
-          <div>
+          {this.state.id !== undefined ? "" : (<div>
             <div className="git-select">
               <input type="radio" id="git1" name="git" value="GITHUB" checked={this.state.git === "GITHUB"}
                      onChange={this.handleChange}/>
@@ -121,7 +156,7 @@ export class NewRepo extends React.Component {
             <label htmlFor="repo-name">Repo name</label>
             <div><input type="text" autoComplete="off" id="repo-name" name="name" value={this.state.name}
                         onChange={this.handleChange}/></div>
-          </div>
+          </div>)}
           <span>Analyzer</span>
           <div className="analyzer-select">
             <input type="radio" id="analyzer1" name="analyzer" value="MOSS" checked={this.state.analyzer === "MOSS"}

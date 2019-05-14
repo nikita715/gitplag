@@ -9,6 +9,7 @@ export class AnalysisResult extends React.Component {
   state = {
     analysisId: 0,
     repoId: 0,
+    repoName: "",
     results: [],
     resultLink: "",
     sortedByName: "",
@@ -29,7 +30,7 @@ export class AnalysisResult extends React.Component {
         percentage: result.percentage
       }));
       this.setState({
-        results: data, repoId: response.data.repo, analysisId: response.data.id,
+        results: data, repoId: response.data.repo, repoName: response.data.repoName, analysisId: response.data.id,
         resultLink: AnalysisResult.createResultLink(response.data.resultLink, response.data.analyzer),
         analyzer: response.data.analyzer, date: response.data.date, branch: response.data.branch
       });
@@ -52,8 +53,14 @@ export class AnalysisResult extends React.Component {
   }
 
   render() {
-    return (<div className="Repo-List">
-      <Link to={"/repos/" + this.state.repoId + "/analyzes"}>Back to analyzes</Link>
+    return (<div className="Repo-List container">
+      <nav aria-label="breadcrumb">
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item"><Link to="/repos">Repositories</Link></li>
+          <li className="breadcrumb-item"><Link to={"/repos/" + this.state.repoId}>{this.state.repoName}</Link></li>
+          <li className="breadcrumb-item active" aria-current="page">Analysis #{this.state.analysisId}</li>
+        </ol>
+      </nav>
       <h3>Analysis result #{this.state.analysisId}, executed {formatDate(this.state.date).toLowerCase()}</h3>
       <span>Analyzed by {this.state.analyzer.toLowerCase()}, branch {this.state.branch}</span><br/>
       <a href={this.state.resultLink}>Source analysis</a><br/>

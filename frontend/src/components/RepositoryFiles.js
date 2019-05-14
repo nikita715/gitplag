@@ -77,7 +77,7 @@ export class RepositoryFiles extends React.Component {
   render() {
     console.log(this.state.data);
     return (<div className="container">
-      <Link to={"/repos/" + this.state.repoId + "/analyzes"}>Back to analyzes</Link><br/>
+      <Link to={"/repos/" + this.state.repoId}>Back to analyzes</Link><br/>
       {this.state.data}
     </div>);
   }
