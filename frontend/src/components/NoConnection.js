@@ -8,7 +8,7 @@ export class NoConnection extends React.Component {
 
     return <div className="no-connection">
       No connection to the server. {PROP.serverUrl} is unavailable.
-      <br/>
+
       <Link to="/repos">Reload</Link>
     </div>;
 

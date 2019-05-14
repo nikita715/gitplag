@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import * as PROP from "../properties";
 import {Link} from "react-router-dom";
+import {RepoDto} from "./RepoDto";
 
 export class EditRepo extends React.Component {
 
@@ -47,10 +48,8 @@ export class EditRepo extends React.Component {
         let filePatterns = data.filePatterns.join("\n");
         this.setState({
           id,
-          name,
           analyzer,
           filePatterns,
-          git,
           language,
           analysisMode,
           jplagParameters,
@@ -72,10 +71,7 @@ export class EditRepo extends React.Component {
 
   handleSubmit() {
     let dto = new RepoDto(this.state);
-    let request = (this.state.id === undefined) ?
-      axios.post((PROP.serverUrl + "/api/repositories"), dto) :
-      axios.put((PROP.serverUrl + "/api/repositories/" + this.state.id), dto);
-    request.then(() => this.props.history.push("/webhook"))
+    axios.put((PROP.serverUrl + "/api/repositories/" + this.state.id), dto).then(() => this.props.history.push("/webhook"))
   }
 
   selectLanguageMoss() {
@@ -136,51 +132,36 @@ export class EditRepo extends React.Component {
     return (
       <div>
         <form onSubmit={this.handleSubmit} className="new-repo-form">
-          <Link to={"/repos"}>Back to repositories</Link><br/>
-          <h3>New repository</h3>
-          <span>Git</span>
-          {this.state.id !== undefined ? "" : (<div>
-            <div className="git-select">
-              <input type="radio" id="git1" name="git" value="GITHUB" checked={this.state.git === "GITHUB"}
-                     onChange={this.handleChange}/>
-              <label htmlFor="git1">Github</label>
-
-              <input type="radio" id="git2" name="git" value="GITLAB" checked={this.state.git === "GITLAB"}
-                     onChange={this.handleChange}/>
-              <label htmlFor="git2">Gitlab</label>
-
-              <input type="radio" id="git3" name="git" value="BITBUCKET" checked={this.state.git === "BITBUCKET"}
-                     onChange={this.handleChange}/>
-              <label htmlFor="git3">Bitbucket</label>
-            </div>
-            <label htmlFor="repo-name">Repo name</label>
-            <div><input type="text" autoComplete="off" id="repo-name" name="name" value={this.state.name}
-                        onChange={this.handleChange}/></div>
-          </div>)}
+          <Link to={"/repos/" + this.state.id}>Back to repositories</Link>
+          <h3>Edit repository</h3>
           <span>Analyzer</span>
-          <div className="analyzer-select">
-            <input type="radio" id="analyzer1" name="analyzer" value="MOSS" checked={this.state.analyzer === "MOSS"}
-                   onChange={this.handleChange}/>
-            <label htmlFor="analyzer1">Moss</label>
-
-            <input type="radio" id="analyzer2" name="analyzer" value="JPLAG" checked={this.state.analyzer === "JPLAG"}
-                   onChange={this.handleChange}/>
-            <label htmlFor="analyzer2">JPlag</label>
+          <div className="btn-group btn-group-toggle" data-toggle="buttons">
+            <label className="btn btn-light" htmlFor="analyzer1">
+              <input type="radio" id="analyzer1" name="analyzer" value="MOSS"
+                     checked={this.state.analyzer === "MOSS"}
+                     onChange={this.handleChange}/>Moss</label>
+            <label className="btn btn-light" htmlFor="analyzer2">
+              <input type="radio" id="analyzer2" name="analyzer" value="JPLAG"
+                     checked={this.state.analyzer === "JPLAG"}
+                     onChange={this.handleChange}/>JPlag</label>
           </div>
           {this.selectLanguages()}
           <span>Analysis mode</span>
-          <div className="mode-select">
-            <input type="radio" id="mode1" name="analysisMode" value="LINK" checked={this.state.analysisMode === "LINK"}
-                   onChange={this.handleChange}/>
-            <label htmlFor="mode1">Link</label>
-
-            <input type="radio" id="mode2" name="analysisMode" value="PAIRS"
-                   checked={this.state.analysisMode === "PAIRS"} onChange={this.handleChange}/>
-            <label htmlFor="mode2">Pairs</label>
-
-            <input type="radio" id="mode3" name="analysisMode" value="FULL" checked={this.state.analysisMode === "FULL"}
-                   onChange={this.handleChange}/>
-            <label htmlFor="mode3">Full</label>
+          <div className="btn-group btn-group-toggle" data-toggle="buttons">
+            <label className="btn btn-light" htmlFor="mode1">
+              <input type="radio" id="mode1" name="analysisMode" value="LINK"
+                     checked={this.state.analysisMode === "LINK"}
+                     onChange={this.handleChange}/>Link</label>
+            <label className="btn btn-light" htmlFor="mode2">
+              <input type="radio" id="mode2" name="analysisMode"
+                     value="PAIRS"
+                     checked={this.state.analysisMode === "PAIRS"}
+                     onChange={this.handleChange}/>Pairs</label>
+            <label className="btn btn-light" htmlFor="mode3">
+              <input type="radio" id="mode3" name="analysisMode"
+                     value="FULL"
+                     checked={this.state.analysisMode === "FULL"}
+                     onChange={this.handleChange}/>Full</label>
           </div>
           <label htmlFor="moss-parameters">Moss parameters</label>
           <div><input type="text" autoComplete="off" id="moss-parameters" name="mossParameters"

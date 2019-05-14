@@ -89,28 +89,32 @@ export class RunAnalysis extends React.Component {
         <label htmlFor="branch-name">Branch name</label>
         <div><input type="text" id="branch-name" name="branch" onChange={this.handleChange}/></div>
         <span>Analyzer</span>
-        <div className="analyzer-select">
-          <input type="radio" id="analyzer1" name="analyzer" value="MOSS" checked={this.state.analyzer === "MOSS"}
-                 onChange={this.handleChange}/>
-          <label htmlFor="analyzer1">Moss</label>
-
-          <input type="radio" id="analyzer2" name="analyzer" value="JPLAG" checked={this.state.analyzer === "JPLAG"}
-                 onChange={this.handleChange}/>
-          <label htmlFor="analyzer2">JPlag</label>
+        <div className="btn-group btn-group-toggle" data-toggle="buttons">
+          <label className="btn btn-light" htmlFor="analyzer1">
+            <input type="radio" id="analyzer1" name="analyzer" value="MOSS"
+                   checked={this.state.analyzer === "MOSS"}
+                   onChange={this.handleChange}/>Moss</label>
+          <label className="btn btn-light" htmlFor="analyzer2">
+            <input type="radio" id="analyzer2" name="analyzer" value="JPLAG"
+                   checked={this.state.analyzer === "JPLAG"}
+                   onChange={this.handleChange}/>JPlag</label>
         </div>
         <span>Analysis mode</span>
-        <div className="mode-select">
-          <input type="radio" id="mode1" name="analysisMode" value="LINK" checked={this.state.analysisMode === "LINK"}
-                 onChange={this.handleChange}/>
-          <label htmlFor="mode1">Link</label>
-
-          <input type="radio" id="mode2" name="analysisMode" value="PAIRS"
-                 checked={this.state.analysisMode === "PAIRS"} onChange={this.handleChange}/>
-          <label htmlFor="mode2">Pairs</label>
-
-          <input type="radio" id="mode3" name="analysisMode" value="FULL" checked={this.state.analysisMode === "FULL"}
-                 onChange={this.handleChange}/>
-          <label htmlFor="mode3">Full</label>
+        <div className="btn-group btn-group-toggle" data-toggle="buttons">
+          <label className="btn btn-light" htmlFor="mode1">
+            <input type="radio" id="mode1" name="analysisMode" value="LINK"
+                   checked={this.state.analysisMode === "LINK"}
+                   onChange={this.handleChange}/>Link</label>
+          <label className="btn btn-light" htmlFor="mode2">
+            <input type="radio" id="mode2" name="analysisMode"
+                   value="PAIRS"
+                   checked={this.state.analysisMode === "PAIRS"}
+                   onChange={this.handleChange}/>Pairs</label>
+          <label className="btn btn-light" htmlFor="mode3">
+            <input type="radio" id="mode3" name="analysisMode"
+                   value="FULL"
+                   checked={this.state.analysisMode === "FULL"}
+                   onChange={this.handleChange}/>Full</label>
         </div>
         <label htmlFor="parameters">Parameters</label>
         <div><input type="text" autoComplete="off" id="parameters" name="parameters"

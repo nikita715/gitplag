@@ -23,8 +23,7 @@ export class Repositories extends React.Component {
         data.push(<tr>
           <td><Link to={"/repos/" + repo.id}>{repo.name}</Link></td>
           <td>{repo.gitService.toLowerCase()}</td>
-          <td>
-            <Link className="btn badge badge-warning" to={"/repos/" + repo.id + "/edit"}>Manage</Link></td>
+          <td></td>
         </tr>)
       );
       this.setState({repos: data, ready: true});
@@ -71,5 +70,4 @@ export class Repositories extends React.Component {
       </div>
     );
   }
-
 }

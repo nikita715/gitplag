@@ -3,6 +3,8 @@ import axios from "axios";
 import * as PROP from "../properties";
 import {Link} from "react-router-dom";
 import {RepoDto} from "./RepoDto";
+import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
+import ToggleButton from "react-bootstrap/ToggleButton";
 
 export class NewRepo extends React.Component {
 
@@ -30,6 +32,7 @@ export class NewRepo extends React.Component {
   }
 
   handleChange(event) {
+    console.log(event);
     const target = event.target;
     const name = target.name;
     const value = target.type === "checkbox" ? target.checked : target.value;
@@ -44,8 +47,9 @@ export class NewRepo extends React.Component {
   }
 
   selectLanguageMoss() {
-    return <div><span>Language</span>
-      <select className="select-language" name="language" value={this.state.language} onChange={this.handleChange}>
+    return <div className="form-group">
+      <legend className="col-form-label">Language</legend>
+      <select className="form-control" name="language" value={this.state.language} onChange={this.handleChange}>
         <option value="C">C</option>
         <option value="CPP">C++</option>
         <option value="JAVA">Java</option>
@@ -76,15 +80,17 @@ export class NewRepo extends React.Component {
   }
 
   selectLanguageJPlag() {
-    return <div><span>Language</span>
-      <select className="select-language" name="language" value={this.state.language} onChange={this.handleChange}>
+    return <div className="form-group">
+      <legend className="col-form-label">Language</legend>
+      <select className="form-control" name="language" value={this.state.language} onChange={this.handleChange}>
         <option value="C">C</option>
         <option value="CPP">C++</option>
         <option value="JAVA">Java</option>
         <option value="SCHEME">Scheme</option>
         <option value="PYTHON">Python</option>
         <option value="ASCII">Text</option>
-      </select></div>;
+      </select>
+    </div>;
   }
 
   selectLanguages() {
@@ -101,66 +107,78 @@ export class NewRepo extends React.Component {
     return (
       <div>
         <form onSubmit={this.handleSubmit} className="new-repo-form">
-          <Link to={"/repos"}>Back to repositories</Link><br/>
-          <h3>New repository</h3>
-          <span>Git</span>
-          <div>
-            <div className="git-select">
-              <input type="radio" id="git1" name="git" value="GITHUB" checked={this.state.git === "GITHUB"}
-                     onChange={this.handleChange}/>
-              <label htmlFor="git1">Github</label>
-
-              <input type="radio" id="git2" name="git" value="GITLAB" checked={this.state.git === "GITLAB"}
-                     onChange={this.handleChange}/>
-              <label htmlFor="git2">Gitlab</label>
-
-              <input type="radio" id="git3" name="git" value="BITBUCKET" checked={this.state.git === "BITBUCKET"}
-                     onChange={this.handleChange}/>
-              <label htmlFor="git3">Bitbucket</label>
-            </div>
-            <label htmlFor="repo-name">Repo name</label>
-            <div><input type="text" autoComplete="off" id="repo-name" name="name" value={this.state.name}
-                        onChange={this.handleChange}/></div>
+          <Link to={"/repos"}>Back to repositories</Link>
+          <h4>New repository</h4>
+          <div className="form-group">
+            <legend className="col-form-label">Git</legend>
+            <ToggleButtonGroup
+              type="radio"
+              name="git"
+              value={this.state.git}>
+              <ToggleButton name="git" value="GITHUB" onClick={this.handleChange}>Github</ToggleButton>
+              <ToggleButton name="git" value="GITLAB" onClick={this.handleChange}>Gitlab</ToggleButton>
+              <ToggleButton name="git" value="BITBUCKET" onClick={this.handleChange}>Bitbucket</ToggleButton>
+            </ToggleButtonGroup>
           </div>
-          <span>Analyzer</span>
-          <div className="analyzer-select">
-            <input type="radio" id="analyzer1" name="analyzer" value="MOSS" checked={this.state.analyzer === "MOSS"}
-                   onChange={this.handleChange}/>
-            <label htmlFor="analyzer1">Moss</label>
-
-            <input type="radio" id="analyzer2" name="analyzer" value="JPLAG" checked={this.state.analyzer === "JPLAG"}
-                   onChange={this.handleChange}/>
-            <label htmlFor="analyzer2">JPlag</label>
+          <div className="form-group">
+            <label htmlFor="repo-name">Repo name</label>
+            <div><input className="form-control" type="text" autoComplete="off" id="repo-name" name="name"
+                        value={this.state.name}
+                        onChange={this.handleChange} placeholder="E.g. myUser/myRepo"/></div>
+          </div>
+          <div className="form-group">
+            <legend className="col-form-label">Default analyser</legend>
+            <ToggleButtonGroup
+              type="radio"
+              name="analyzer"
+              value={this.state.analyzer}>
+              <ToggleButton name="analyzer" value="MOSS" onClick={this.handleChange}>Moss</ToggleButton>
+              <ToggleButton name="analyzer" value="JPLAG" onClick={this.handleChange}>JPlag</ToggleButton>
+            </ToggleButtonGroup>
           </div>
           {this.selectLanguages()}
-          <span>Analysis mode</span>
-          <div className="mode-select">
-            <input type="radio" id="mode1" name="analysisMode" value="LINK" checked={this.state.analysisMode === "LINK"}
-                   onChange={this.handleChange}/>
-            <label htmlFor="mode1">Link</label>
-
-            <input type="radio" id="mode2" name="analysisMode" value="PAIRS"
-                   checked={this.state.analysisMode === "PAIRS"} onChange={this.handleChange}/>
-            <label htmlFor="mode2">Pairs</label>
-
-            <input type="radio" id="mode3" name="analysisMode" value="FULL" checked={this.state.analysisMode === "FULL"}
-                   onChange={this.handleChange}/>
-            <label htmlFor="mode3">Full</label>
+          <div className="form-group">
+            <legend className="col-form-label">Default analysis mode</legend>
+            <ToggleButtonGroup
+              type="radio"
+              name="analysisMode"
+              value={this.state.analysisMode}>
+              <ToggleButton name="analysisMode" value="LINK" onClick={this.handleChange}>Link</ToggleButton>
+              <ToggleButton name="analysisMode" value="PAIRS" onClick={this.handleChange}>Pairs</ToggleButton>
+              <ToggleButton name="analysisMode" value="FULL" onClick={this.handleChange}>Full</ToggleButton>
+            </ToggleButtonGroup>
           </div>
-          <label htmlFor="moss-parameters">Moss parameters</label>
-          <div><input type="text" autoComplete="off" id="moss-parameters" name="mossParameters"
-                      value={this.state.mossParameters} onChange={this.handleChange}/></div>
-          <label htmlFor="jplag-parameters">JPlag parameters</label>
-          <div><input type="text" autoComplete="off" id="jplag-parameters" name="jplagParameters"
-                      value={this.state.jplagParameters} onChange={this.handleChange}/></div>
-          <label htmlFor="file-patterns">File patterns (split by lines)</label>
-          <div><textarea name="filePatterns" id="file-patterns" value={this.state.filePatterns}
-                         onChange={this.handleChange}/></div>
-          <label htmlFor="autoCloningEnabled">Enable auto-upload by webhook</label>
-          <input type="checkbox" id="autoCloningEnabled" name="autoCloningEnabled"
-                 checked={this.state.autoCloningEnabled} onChange={this.handleChange}/>
+          <div className="form-group">
+            <label htmlFor="moss-parameters">Default Moss parameters</label>
+            <div><input className="form-control" type="text" autoComplete="off" id="moss-parameters"
+                        name="mossParameters"
+                        value={this.state.mossParameters} onChange={this.handleChange}/></div>
+            <small id="emailHelp" className="form-text text-muted">See <a
+              href="http://moss.stanford.edu/general/scripts/mossnet">moss docs</a></small>
+          </div>
+          <div className="form-group">
+            <label htmlFor="jplag-parameters">Default JPlag parameters</label>
+            <div><input className="form-control" type="text" autoComplete="off" id="jplag-parameters"
+                        name="jplagParameters"
+                        value={this.state.jplagParameters} onChange={this.handleChange}/></div>
+            <small id="emailHelp" className="form-text text-muted">See <a
+              href="https://github.com/jplag/jplag/blob/master/README.md">jplag docs</a></small>
+          </div>
+          <div className="form-group">
+            <label htmlFor="filePatterns">File patterns</label>
+            <textarea className="form-control" id="filePatterns" name="filePatterns" value={this.state.filePatterns}
+                      onChange={this.handleChange} rows="3"/>
+            <small id="emailHelp" className="form-text text-muted">Split regexps by new lines</small>
+          </div>
+          <div className="form-group">
+            <div className="custom-control custom-switch">
+              <input type="checkbox" className="custom-control-input" id="autoCloningEnabled" name="autoCloningEnabled"
+                     onChange={this.handleChange} checked={this.state.autoCloningEnabled}/>
+              <label className="custom-control-label" htmlFor="autoCloningEnabled">Enable auto-upload by webhook</label>
+            </div>
+          </div>
           <div>
-            <button form="none" onClick={this.handleSubmit}>Submit</button>
+            <button form="none" type="submit" className="btn btn-primary" onClick={this.handleSubmit}>Create</button>
           </div>
         </form>
       </div>

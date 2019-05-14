@@ -87,6 +87,8 @@ export class Repository extends React.Component {
               <div onClick={() => Repository.startUpdateOfFiles(this.state.repoId)}
                    className="btn list-group-item list-group-item-action">Update files from git
               </div>
+              <Link className="btn list-group-item list-group-item-action" to={"/repos/" + this.state.repoId + "/edit"}>Manage
+                the repository</Link>
             </div>
           </div>
         </div>

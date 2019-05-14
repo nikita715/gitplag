@@ -14,6 +14,7 @@ import SockJsClient from "react-stomp";
 import {RepositoryFiles} from "./components/RepositoryFiles";
 import {WebhookBanner} from "./components/WebhookBanner";
 import {Repository} from "./components/Repository";
+import {EditRepo} from "./components/EditRepo";
 
 const App = () => {
   const alert = useAlert();
@@ -27,7 +28,7 @@ const App = () => {
         <Route exact path="/repos/:id(\d+)" component={Repository}/>
         <Route exact path="/repos/:id/files" component={RepositoryFiles}/>
         <Route exact path="/repos/:id/analyze" component={RunAnalysis}/>
-        <Route exact path="/repos/:id/edit" component={NewRepo}/>
+        <Route exact path="/repos/:id/edit" component={EditRepo}/>
         <Route exact path="/analyzes/:analysisId/graph" component={IFrameGraph}/>
         <Route exact path="/analyzes/:id" component={AnalysisResult}/>
         <Route exact path="/error" component={NoConnection}/>
