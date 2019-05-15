@@ -58,8 +58,6 @@ export class AnalysisResultPair extends React.Component {
         percentage: response.data.pair.percentage,
         leftRightMatches
       });
-      console.log(this.state.leftMatches);
-      console.log(this.state.rightMatches);
     });
     this.getLineClass = this.getLineClass.bind(this);
     this.getHrefToLine = this.getHrefToLine.bind(this);
@@ -113,8 +111,10 @@ export class AnalysisResultPair extends React.Component {
       let matches2 = this.state.rightMatches;
       return (
         <div>
-          <div className="compare-exit"><Link className="badge badge-primary" role="button"
-                                              to={"/analyzes/" + this.state.analysisId}>Back</Link></div>
+          <div className="compare-exit">
+            <Link className="badge badge-primary" role="button"
+                  to={"/analyzes/" + this.state.analysisId}>Back</Link>
+          </div>
           <div className="compare-names">
             <div>{this.state.leftName}</div>
             <div><b>{this.state.percentage + "%"}</b></div>

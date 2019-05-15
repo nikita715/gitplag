@@ -9,3 +9,7 @@ export function times(n) {
   for (var i = 1; i < n; i++) accum[i] = i;
   return accum;
 }
+
+export function capitalize(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

@@ -8,6 +8,8 @@ export class EditRepo extends React.Component {
 
   state = {
     id: 0,
+    name: "",
+    git: "",
     mossParameters: "",
     jplagParameters: "",
     analysisMode: "",
@@ -26,11 +28,12 @@ export class EditRepo extends React.Component {
     this.selectLanguageMoss = this.selectLanguageMoss.bind(this);
     this.selectLanguageJPlag = this.selectLanguageJPlag.bind(this);
     this.deleteRepository = this.deleteRepository.bind(this);
+    this.handlePlatformChange = this.handlePlatformChange.bind(this);
   }
 
   deleteRepository(repoId) {
     axios.delete(PROP.serverUrl + "/api/repositories/" + repoId).then(() => {
-      this.componentDidMount()
+      this.props.history.push("/repos")
     });
   }
 
@@ -39,6 +42,8 @@ export class EditRepo extends React.Component {
     if (id) {
       axios.get(PROP.serverUrl + "/api/repositories/" + id).then((response) => {
         let data = response.data;
+        let git = data.gitService;
+        let name = data.name;
         let mossParameters = data.mossParameters;
         let jplagParameters = data.jplagParameters;
         let analysisMode = data.analysisMode;
@@ -48,6 +53,8 @@ export class EditRepo extends React.Component {
         let filePatterns = data.filePatterns.join("\n");
         this.setState({
           id,
+          name,
+          git,
           analyzer,
           filePatterns,
           language,
@@ -71,12 +78,13 @@ export class EditRepo extends React.Component {
 
   handleSubmit() {
     let dto = new RepoDto(this.state);
-    axios.put((PROP.serverUrl + "/api/repositories/" + this.state.id), dto).then(() => this.props.history.push("/webhook"))
+    axios.put((PROP.serverUrl + "/api/repositories/" + this.state.id), dto).then(() => this.props.history.push("/repos/" + this.state.id))
   }
 
   selectLanguageMoss() {
-    return <div><span>Language</span>
-      <select className="select-language" name="language" value={this.state.language} onChange={this.handleChange}>
+    return <div className="form-group">
+      <legend className="col-form-label">Language</legend>
+      <select className="form-control" name="language" value={this.state.language} onChange={this.handleChange}>
         <option value="C">C</option>
         <option value="CPP">C++</option>
         <option value="JAVA">Java</option>
@@ -107,15 +115,17 @@ export class EditRepo extends React.Component {
   }
 
   selectLanguageJPlag() {
-    return <div><span>Language</span>
-      <select className="select-language" name="language" value={this.state.language} onChange={this.handleChange}>
+    return <div className="form-group">
+      <legend className="col-form-label">Language</legend>
+      <select className="form-control" name="language" value={this.state.language} onChange={this.handleChange}>
         <option value="C">C</option>
         <option value="CPP">C++</option>
         <option value="JAVA">Java</option>
         <option value="SCHEME">Scheme</option>
         <option value="PYTHON">Python</option>
         <option value="ASCII">Text</option>
-      </select></div>;
+      </select>
+    </div>;
   }
 
   selectLanguages() {
@@ -128,55 +138,96 @@ export class EditRepo extends React.Component {
     }
   }
 
+  handlePlatformChange(event) {
+    var input = event.currentTarget.querySelector("input");
+    this.setState({
+      [input.name]: input.value
+    });
+  }
+
   render() {
     return (
       <div>
         <form onSubmit={this.handleSubmit} className="new-repo-form">
-          <Link to={"/repos/" + this.state.id}>Back to repositories</Link>
-          <h3>Edit repository</h3>
-          <span>Analyzer</span>
-          <div className="btn-group btn-group-toggle" data-toggle="buttons">
-            <label className="btn btn-light" htmlFor="analyzer1">
-              <input type="radio" id="analyzer1" name="analyzer" value="MOSS"
-                     checked={this.state.analyzer === "MOSS"}
-                     onChange={this.handleChange}/>Moss</label>
-            <label className="btn btn-light" htmlFor="analyzer2">
-              <input type="radio" id="analyzer2" name="analyzer" value="JPLAG"
-                     checked={this.state.analyzer === "JPLAG"}
-                     onChange={this.handleChange}/>JPlag</label>
+          <div className="form-group">
+            <div className="row">
+              <div className="col">
+                <Link to={"/repos/" + this.state.id}>Back to repositories</Link>
+              </div>
+              <div className="col">
+                <div onClick={() => this.deleteRepository(this.state.id)}
+                     className="btn btn-danger mb-0">Delete this repository
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="form-group">
+            <h3 className="text-break">Edit repository {this.state.name}</h3>
+          </div>
+          <div className="form-group">
+            <legend className="col-form-label">Default analyzer</legend>
+            <div className="btn-group btn-group-toggle" data-toggle="buttons">
+              <label className={"btn btn-light " + (this.state.analyzer === "MOSS" ? "active" : "")} htmlFor="analyzer1"
+                     onClick={this.handlePlatformChange}>
+                <input type="radio" id="analyzer1" name="analyzer" value="MOSS"
+                       checked={this.state.analyzer === "MOSS"}/>Moss</label>
+              <label className={"btn btn-light " + (this.state.analyzer === "JPLAG" ? "active" : "")}
+                     htmlFor="analyzer2" onClick={this.handlePlatformChange}>
+                <input type="radio" id="analyzer2" name="analyzer" value="JPLAG"
+                       checked={this.state.analyzer === "JPLAG"}/>JPlag</label>
+            </div>
           </div>
           {this.selectLanguages()}
-          <span>Analysis mode</span>
-          <div className="btn-group btn-group-toggle" data-toggle="buttons">
-            <label className="btn btn-light" htmlFor="mode1">
-              <input type="radio" id="mode1" name="analysisMode" value="LINK"
-                     checked={this.state.analysisMode === "LINK"}
-                     onChange={this.handleChange}/>Link</label>
-            <label className="btn btn-light" htmlFor="mode2">
-              <input type="radio" id="mode2" name="analysisMode"
-                     value="PAIRS"
-                     checked={this.state.analysisMode === "PAIRS"}
-                     onChange={this.handleChange}/>Pairs</label>
-            <label className="btn btn-light" htmlFor="mode3">
-              <input type="radio" id="mode3" name="analysisMode"
-                     value="FULL"
-                     checked={this.state.analysisMode === "FULL"}
-                     onChange={this.handleChange}/>Full</label>
+          <div className="form-group">
+            <legend className="col-form-label">Default analysis mode</legend>
+            <div className="btn-group btn-group-toggle" data-toggle="buttons" onChange={this.handleChange}>
+              <label className={"btn btn-light " + (this.state.analysisMode === "LINK" ? "active" : "")} htmlFor="mode1"
+                     onClick={this.handlePlatformChange} defaultChecked={true}>
+                <input type="radio" id="mode1" name="analysisMode" value="LINK"
+                       checked={this.state.analysisMode === "LINK"}/>Link</label>
+              <label className={"btn btn-light " + (this.state.analysisMode === "PAIRS" ? "active" : "")}
+                     htmlFor="mode2" onClick={this.handlePlatformChange}>
+                <input type="radio" id="mode2" name="analysisMode"
+                       value="PAIRS"
+                       checked={this.state.analysisMode === "PAIRS"}/>Pairs</label>
+              <label className={"btn btn-light " + (this.state.analysisMode === "FULL" ? "active" : "")} htmlFor="mode3"
+                     onClick={this.handlePlatformChange}>
+                <input type="radio" id="mode3" name="analysisMode"
+                       value="FULL"
+                       checked={this.state.analysisMode === "FULL"}/>Full</label>
+            </div>
           </div>
-          <label htmlFor="moss-parameters">Moss parameters</label>
-          <div><input type="text" autoComplete="off" id="moss-parameters" name="mossParameters"
-                      value={this.state.mossParameters} onChange={this.handleChange}/></div>
-          <label htmlFor="jplag-parameters">JPlag parameters</label>
-          <div><input type="text" autoComplete="off" id="jplag-parameters" name="jplagParameters"
-                      value={this.state.jplagParameters} onChange={this.handleChange}/></div>
-          <label htmlFor="file-patterns">File patterns (split by lines)</label>
-          <div><textarea name="filePatterns" id="file-patterns" value={this.state.filePatterns}
-                         onChange={this.handleChange}/></div>
-          <label htmlFor="autoCloningEnabled">Enable auto-upload by webhook</label>
-          <input type="checkbox" id="autoCloningEnabled" name="autoCloningEnabled"
-                 checked={this.state.autoCloningEnabled} onChange={this.handleChange}/>
+          <div className="form-group">
+            <label htmlFor="moss-parameters">Default Moss parameters</label>
+            <div><input className="form-control" type="text" autoComplete="off" id="moss-parameters"
+                        name="mossParameters"
+                        value={this.state.mossParameters} onChange={this.handleChange}/></div>
+            <small id="emailHelp" className="form-text text-muted">See <a
+              href="http://moss.stanford.edu/general/scripts/mossnet">moss docs</a></small>
+          </div>
+          <div className="form-group">
+            <label htmlFor="jplag-parameters">Default JPlag parameters</label>
+            <div><input className="form-control" type="text" autoComplete="off" id="jplag-parameters"
+                        name="jplagParameters"
+                        value={this.state.jplagParameters} onChange={this.handleChange}/></div>
+            <small id="emailHelp" className="form-text text-muted">See <a
+              href="https://github.com/jplag/jplag/blob/master/README.md">jplag docs</a></small>
+          </div>
+          <div className="form-group">
+            <label htmlFor="filePatterns">File patterns</label>
+            <textarea className="form-control" id="filePatterns" name="filePatterns" value={this.state.filePatterns}
+                      onChange={this.handleChange} rows="3"/>
+            <small id="emailHelp" className="form-text text-muted">Split regexps by new lines</small>
+          </div>
+          <div className="form-group">
+            <div className="custom-control custom-switch">
+              <input type="checkbox" className="custom-control-input" id="autoCloningEnabled" name="autoCloningEnabled"
+                     onChange={this.handleChange} checked={this.state.autoCloningEnabled}/>
+              <label className="custom-control-label" htmlFor="autoCloningEnabled">Enable auto-upload by webhook</label>
+            </div>
+          </div>
           <div>
-            <button form="none" onClick={this.handleSubmit}>Submit</button>
+            <button form="none" type="submit" className="btn btn-primary" onClick={this.handleSubmit}>Save</button>
           </div>
         </form>
       </div>

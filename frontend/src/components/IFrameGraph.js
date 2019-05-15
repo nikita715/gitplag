@@ -17,22 +17,9 @@ export class IFrameGraph extends React.Component {
       <div onClick={this.handleClick}>
         <iframe title="graph" onClick={this.handleClick}
                 src={PROP.graphUrl + "/?graph_url=" + PROP.serverUrl + "/api/analyzes/" + this.state.analysisId + "/graph"}/>
-        <BackButton back={"/analyzes/" + this.state.analysisId}/>
+        <Link className="badge badge-primary iframe-back-button" role="button"
+              to={"/analyzes/" + this.state.analysisId}>Back</Link>
       </div>
     );
-  }
-}
-
-class BackButton extends React.Component {
-
-  back = {};
-
-  constructor(props, context) {
-    super(props, context);
-    this.back = props.back;
-  }
-
-  render() {
-    return (<button className="Back-Button"><Link to={this.back}>Close</Link></button>);
   }
 }

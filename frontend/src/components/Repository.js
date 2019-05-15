@@ -68,7 +68,7 @@ export class Repository extends React.Component {
                     <th>Branch</th>
                     <th>Date</th>
                     <th>Analyzer</th>
-                    <th className="fit"></th>
+                    <th className="fit"/>
                   </tr>
                   </thead>
                   <tbody>{this.state.analyzes}</tbody>

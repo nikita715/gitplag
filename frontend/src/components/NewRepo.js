@@ -3,8 +3,6 @@ import axios from "axios";
 import * as PROP from "../properties";
 import {Link} from "react-router-dom";
 import {RepoDto} from "./RepoDto";
-import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
-import ToggleButton from "react-bootstrap/ToggleButton";
 
 export class NewRepo extends React.Component {
 
@@ -29,10 +27,10 @@ export class NewRepo extends React.Component {
     this.selectLanguages = this.selectLanguages.bind(this);
     this.selectLanguageMoss = this.selectLanguageMoss.bind(this);
     this.selectLanguageJPlag = this.selectLanguageJPlag.bind(this);
+    this.handlePlatformChange = this.handlePlatformChange.bind(this);
   }
 
   handleChange(event) {
-    console.log(event);
     const target = event.target;
     const name = target.name;
     const value = target.type === "checkbox" ? target.checked : target.value;
@@ -103,22 +101,35 @@ export class NewRepo extends React.Component {
     }
   }
 
+  handlePlatformChange(event) {
+    var input = event.currentTarget.querySelector("input");
+    this.setState({
+      [input.name]: input.value
+    });
+  }
+
   render() {
     return (
       <div>
         <form onSubmit={this.handleSubmit} className="new-repo-form">
-          <Link to={"/repos"}>Back to repositories</Link>
-          <h4>New repository</h4>
+          <div className="form-group">
+            <Link to={"/repos"}>Back to repositories</Link>
+          </div>
+          <div className="form-group">
+            <h4>New repository</h4>
+          </div>
           <div className="form-group">
             <legend className="col-form-label">Git</legend>
-            <ToggleButtonGroup
-              type="radio"
-              name="git"
-              value={this.state.git}>
-              <ToggleButton name="git" value="GITHUB" onClick={this.handleChange}>Github</ToggleButton>
-              <ToggleButton name="git" value="GITLAB" onClick={this.handleChange}>Gitlab</ToggleButton>
-              <ToggleButton name="git" value="BITBUCKET" onClick={this.handleChange}>Bitbucket</ToggleButton>
-            </ToggleButtonGroup>
+            <div className="btn-group btn-group-toggle" data-toggle="buttons">
+              <label className="btn btn-light" htmlFor="git1" onClick={this.handlePlatformChange}>
+                <input type="radio" id="git1" name="git" value="GITHUB"
+                       checked={this.state.git === "GITHUB"}/>Github</label>
+              <label className="btn btn-light" htmlFor="git2" onClick={this.handlePlatformChange}>
+                <input type="radio" id="git2" name="git" value="GITLAB"
+                       checked={this.state.git === "GITLAB"}/>Gitlab</label>
+              <label className="btn btn-light" htmlFor="git3" onClick={this.handlePlatformChange}>
+                <input type="radio" id="git3" name="git" value="BITBUCKET" checked={this.state.git === "BITBUCKET"}/>Bitbucket</label>
+            </div>
           </div>
           <div className="form-group">
             <label htmlFor="repo-name">Repo name</label>
@@ -127,26 +138,32 @@ export class NewRepo extends React.Component {
                         onChange={this.handleChange} placeholder="E.g. myUser/myRepo"/></div>
           </div>
           <div className="form-group">
-            <legend className="col-form-label">Default analyser</legend>
-            <ToggleButtonGroup
-              type="radio"
-              name="analyzer"
-              value={this.state.analyzer}>
-              <ToggleButton name="analyzer" value="MOSS" onClick={this.handleChange}>Moss</ToggleButton>
-              <ToggleButton name="analyzer" value="JPLAG" onClick={this.handleChange}>JPlag</ToggleButton>
-            </ToggleButtonGroup>
+            <legend className="col-form-label">Default analyzer</legend>
+            <div className="btn-group btn-group-toggle" data-toggle="buttons">
+              <label className="btn btn-light" htmlFor="analyzer1" onClick={this.handlePlatformChange}>
+                <input type="radio" id="analyzer1" name="analyzer" value="MOSS"
+                       checked={this.state.analyzer === "MOSS"}/>Moss</label>
+              <label className="btn btn-light" htmlFor="analyzer2" onClick={this.handlePlatformChange}>
+                <input type="radio" id="analyzer2" name="analyzer" value="JPLAG"
+                       checked={this.state.analyzer === "JPLAG"}/>JPlag</label>
+            </div>
           </div>
           {this.selectLanguages()}
           <div className="form-group">
             <legend className="col-form-label">Default analysis mode</legend>
-            <ToggleButtonGroup
-              type="radio"
-              name="analysisMode"
-              value={this.state.analysisMode}>
-              <ToggleButton name="analysisMode" value="LINK" onClick={this.handleChange}>Link</ToggleButton>
-              <ToggleButton name="analysisMode" value="PAIRS" onClick={this.handleChange}>Pairs</ToggleButton>
-              <ToggleButton name="analysisMode" value="FULL" onClick={this.handleChange}>Full</ToggleButton>
-            </ToggleButtonGroup>
+            <div className="btn-group btn-group-toggle" data-toggle="buttons" onChange={this.handleChange}>
+              <label className="btn btn-light" htmlFor="mode1" onClick={this.handlePlatformChange}>
+                <input type="radio" id="mode1" name="analysisMode" value="LINK"
+                       checked={this.state.analysisMode === "LINK"}/>Link</label>
+              <label className="btn btn-light" htmlFor="mode2" onClick={this.handlePlatformChange}>
+                <input type="radio" id="mode2" name="analysisMode"
+                       value="PAIRS"
+                       checked={this.state.analysisMode === "PAIRS"}/>Pairs</label>
+              <label className="btn btn-light" htmlFor="mode3" onClick={this.handlePlatformChange}>
+                <input type="radio" id="mode3" name="analysisMode"
+                       value="FULL"
+                       checked={this.state.analysisMode === "FULL"}/>Full</label>
+            </div>
           </div>
           <div className="form-group">
             <label htmlFor="moss-parameters">Default Moss parameters</label>

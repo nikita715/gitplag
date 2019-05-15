@@ -52,6 +52,16 @@ data class Repository(
 
     @JsonIgnore
     @LazyCollection(LazyCollectionOption.TRUE)
+    @OneToMany(mappedBy = "repo", orphanRemoval = true)
+    val pullRequests: List<PullRequest> = mutableListOf(),
+
+    @JsonIgnore
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @OneToMany(mappedBy = "repo", orphanRemoval = true)
+    val baseFiles: List<BaseFileRecord> = mutableListOf(),
+
+    @JsonIgnore
+    @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany(mappedBy = "repository", orphanRemoval = true)
     val branches: List<Branch> = mutableListOf(),
 
