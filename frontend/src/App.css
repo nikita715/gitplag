@@ -151,3 +151,8 @@ form {
     align-items: center;
     background-color: white;
 }
+
+.app-name a {
+    text-decoration: none;
+    color: black;
+}

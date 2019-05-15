@@ -3,6 +3,7 @@ import "./App.css";
 import {BrowserRouter, Route} from 'react-router-dom';
 import {Repositories} from "./components/Repositories";
 import {RunAnalysis} from "./components/RunAnalysis";
+import {HomePage} from "./components/HomePage";
 import {IFrameGraph} from "./components/IFrameGraph";
 import {AnalysisResult} from "./components/AnalysisResult";
 import {AnalysisResultPair} from "./components/AnalysisResultPair";
@@ -21,7 +22,7 @@ const App = () => {
   return (
     <div>
       <BrowserRouter>
-        <Route exact path="/" component={Repositories}/>
+        <Route exact path="/" component={HomePage}/>
         <Route exact path="/webhook" component={WebhookBanner}/>
         <Route exact path="/repos" component={Repositories}/>
         <Route exact path="/repos/new" component={NewRepo}/>

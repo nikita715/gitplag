@@ -1,7 +1,7 @@
 import moment from "moment";
 
 export function formatDate(dateString) {
-  return moment(dateString).calendar();
+  return moment(dateString).calendar()
 }
 
 export function times(n) {
