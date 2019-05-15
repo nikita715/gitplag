@@ -24,7 +24,7 @@ class GithubWebhookController(private val githubWebhookService: GithubPayloadPro
         logger.info { "Webhook: got new $event" }
         when (event) {
             "pull_request" -> githubWebhookService.downloadSolutionsOfPullRequest(payload)
-            "push", "ping" -> githubWebhookService.downloadBasesOfRepository(payload)
+            "push" -> githubWebhookService.downloadBasesOfRepository(payload)
             else -> logger.info { "Webhook: $event is not supported" }
         }
     }

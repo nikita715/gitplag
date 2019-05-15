@@ -23,6 +23,22 @@ export class RepositoryFiles extends React.Component {
     this.fetchFiles();
     this.handleChange = this.handleChange.bind(this);
     this.fetchFiles = this.fetchFiles.bind(this);
+    this.deleteBaseFiles = this.deleteBaseFiles.bind(this);
+    this.deleteSolutionFiles = this.deleteSolutionFiles.bind(this);
+  }
+
+  static fileElementBase(base, file) {
+    return {id: file.id, branch: base.branch, updated: base.updated.toString().replace("T", " "), name: file.name};
+  }
+
+  static fileElementSolution(solution, student, file) {
+    return {
+      id: file.id,
+      branch: solution.sourceBranch,
+      student: student.student,
+      updated: student.updated.replace("T", " "),
+      name: file.name
+    };
   }
 
   static filterBase(regStr, base) {
@@ -46,19 +62,28 @@ export class RepositoryFiles extends React.Component {
     return student.files.map((file) => RepositoryFiles.fileElementSolution(solution, student, file));
   }
 
-  static fileElementBase(base, file) {
-    console.log(base);
-    console.log(file);
-    return {branch: base.branch, updated: base.updated.toString().replace("T", " "), name: file.name};
+  deleteBaseFiles() {
+    let selectedFiles = this.state.bases.filter(
+      (it) => RepositoryFiles.filterBase(this.state.sortedByName, it));
+    axios.post(PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/bases/delete",
+      selectedFiles.map((file) => file.id)
+    );
+    this.setState({
+      bases: this.state.bases.filter((it) => selectedFiles.indexOf(it) < 0),
+      sortedByName: ""
+    });
   }
 
-  static fileElementSolution(solution, student, file) {
-    return {
-      branch: solution.sourceBranch,
-      student: student.student,
-      updated: student.updated.replace("T", " "),
-      name: file.name
-    };
+  deleteSolutionFiles() {
+    let selectedFiles = this.state.solutions.filter(
+      (it) => RepositoryFiles.filterSolution(this.state.sortedByName, it));
+    axios.post(PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/solutions/delete",
+      selectedFiles.map((file) => file.id)
+    );
+    this.setState({
+      bases: this.state.solutions.filter((it) => selectedFiles.indexOf(it) < 0),
+      sortedByName: ""
+    });
   }
 
   handleChange(event) {

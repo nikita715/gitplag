@@ -43,7 +43,7 @@ export class NewRepo extends React.Component {
     let dto = new RepoDto(this.state);
     axios.post((PROP.serverUrl + "/api/repositories"), dto).then((response) => {
       if (response.data.length !== 0) {
-        this.props.history.push("/webhook")
+        this.props.history.push("/webhook/" + this.state.git.toLowerCase())
       }
     });
   }

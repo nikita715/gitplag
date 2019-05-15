@@ -42,4 +42,14 @@ interface SourceCodeStorage {
      * Delete files of the [analysis]
      */
     fun deleteAnalysisFiles(analysis: Analysis): Unit
+
+    /**
+     * Delete solution file of the repository
+     */
+    fun deleteSolutionFile(repo: Repository, branch: String, creator: String, fileName: String)
+
+    /**
+     * Delete base file of the repository
+     */
+    fun deleteBaseFile(repo: Repository, branch: String, fileName: String)
 }

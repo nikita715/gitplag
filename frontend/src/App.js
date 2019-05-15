@@ -23,7 +23,7 @@ const App = () => {
     <div>
       <BrowserRouter>
         <Route exact path="/" component={HomePage}/>
-        <Route exact path="/webhook" component={WebhookBanner}/>
+        <Route exact path="/webhook/:git(github|gitlab|bitbucket)" component={WebhookBanner}/>
         <Route exact path="/repos" component={Repositories}/>
         <Route exact path="/repos/new" component={NewRepo}/>
         <Route exact path="/repos/:id(\d+)" component={Repository}/>

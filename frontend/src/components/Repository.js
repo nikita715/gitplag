@@ -42,7 +42,7 @@ export class Repository extends React.Component {
   }
 
   static startUpdateOfFiles(repoId) {
-    axios.get(PROP.serverUrl + "/api/repositories/" + repoId + "/updateFilesAsync")
+    axios.get(PROP.serverUrl + "/api/repositories/" + repoId + "/files/update/detached")
   }
 
   deleteAnalysis(repoId, analysisId) {

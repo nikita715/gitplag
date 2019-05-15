@@ -39,8 +39,7 @@ abstract class AbstractPayloadProcessor(
             logger.info { "Webhook: received new pull request from repo ${repo.name}" }
             cloneReceivedPullRequest(jsonObject, repo)
         } else {
-            logger.info { "Webhook: received new repo $mainRepoFullName" }
-            cloneRepoAndAllPullRequests(mainRepoFullName, jsonObject.pullRequest.mainRepoId)
+            logger.info { "Webhook: ignored pull request to unknown repo $mainRepoFullName" }
         }
     }
 
@@ -75,8 +74,7 @@ abstract class AbstractPayloadProcessor(
                 Branch(updatedAt = updatedAt, repository = repo, name = branchName)
             )
         } else {
-            logger.info { "Webhook: received new repo ${jsonObject.pushRepoName}" }
-            cloneRepoAndAllPullRequests(jsonObject.pushRepoName, jsonObject.pushRepoId)
+            logger.info { "Webhook: ignored push to unknown repo ${jsonObject.pushRepoName}" }
         }
     }
 
@@ -106,18 +104,6 @@ abstract class AbstractPayloadProcessor(
                 logger.info { "Webhook: Ignored pr to itself repo ${repo.name}, pr number $prNumber" }
             }
         }
-    }
-
-    private fun cloneRepoAndAllPullRequests(repoName: String?, repoId: String?) {
-        val repo = repositoryDataManager.save(
-            Repository(
-                name = requireNotNull(repoName),
-                gitService = git,
-                gitId = requireNotNull(repoId)
-            )
-        )
-        gitRestManager.cloneRepository(repo)
-        downloadAllPullRequestsOfRepository(repo)
     }
 
     override fun downloadAllPullRequestsOfRepository(repo: Repository) {

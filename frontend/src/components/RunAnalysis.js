@@ -74,7 +74,7 @@ export class RunAnalysis extends React.Component {
   }
 
   handleSubmit() {
-    axios.post((PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/analyzeWithNoResponse"), this.state).then(
+    axios.post((PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/analyze/detached"), this.state).then(
       () => this.props.history.push("/repos/" + this.state.repoId)
     );
   }

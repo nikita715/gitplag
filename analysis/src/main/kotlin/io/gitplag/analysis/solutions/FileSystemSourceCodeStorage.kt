@@ -157,8 +157,6 @@ class FileSystemSourceCodeStorage(
                     )
                 )
                 logger.info { "Storage: Saved base file with name = $fileName of repo ${repo.name}" }
-            } else {
-                logger.info { "Storage: Ignored base file with name = $fileName of repo ${repo.name}" }
             }
         }
     }
@@ -187,12 +185,6 @@ class FileSystemSourceCodeStorage(
                             " repo ${pullRequest.repo.name}, user ${pullRequest.creatorName}"
                 }
             }
-//            else {
-//                logger.info {
-//                    "Storage: Ignored solution file with name = $fileName of" +
-//                            " repo ${pullRequest.repo.name}, user ${pullRequest.creatorName}"
-//                }
-//            }
         }
     }
 
@@ -210,6 +202,14 @@ class FileSystemSourceCodeStorage(
         if (analysis.analyzer == AnalyzerProperty.JPLAG) {
             File("$jplagResultDir/$directoryName").deleteRecursively()
         }
+    }
+
+    override fun deleteBaseFile(repo: Repository, branch: String, fileName: String) {
+        File(pathToBase(repo.gitService, repo.name, branch, fileName)).deleteRecursively()
+    }
+
+    override fun deleteSolutionFile(repo: Repository, branch: String, creator: String, fileName: String) {
+        File(pathToSolution(repo.gitService, repo.name, branch, creator, fileName)).deleteRecursively()
     }
 
     private fun String.toFileExtension() =
