@@ -20,7 +20,8 @@ class GithubPayloadProcessorTest : AbstractPayloadProcessorTest() {
     override val repo = Repository(
         name = "nikita715/plagiarism_test",
         gitService = GitProperty.GITHUB,
-        language = Language.JAVA
+        language = Language.JAVA,
+        gitId = ""
     )
 
     override val payloadProcessor =
@@ -29,8 +30,6 @@ class GithubPayloadProcessorTest : AbstractPayloadProcessorTest() {
     override val pullRequest = PullRequest(
         number = 8,
         creatorName = "nikita715",
-        sourceRepoId = 155913197,
-        mainRepoId = 12345,
         sourceRepoFullName = "testns/plagiarism_test",
         repo = repo,
         headSha = "6ec548da744248919dc753deac536722a46c31f1",

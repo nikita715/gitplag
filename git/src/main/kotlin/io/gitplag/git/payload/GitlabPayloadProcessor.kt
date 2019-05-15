@@ -19,7 +19,7 @@ class GitlabPayloadProcessor(
     branchRepository: BranchRepository
 ) : AbstractPayloadProcessor(pullRequestRepository, repositoryDataManager, gitlabLoader, branchRepository) {
 
-    override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+    override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     override val git = GitProperty.GITLAB
 
     override val JsonObject.pullRequest: JsonObject

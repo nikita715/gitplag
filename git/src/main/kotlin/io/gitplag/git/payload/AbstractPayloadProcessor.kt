@@ -204,7 +204,7 @@ abstract class AbstractPayloadProcessor(
     protected open fun prFromTheSameRepo(json: JsonObject) = json.run { mainRepoFullName == sourceRepoFullName }
 
     protected abstract val dateFormatter: DateTimeFormatter
-    protected fun String?.parseDate() = LocalDateTime.parse(this?.substring(0, 19), dateFormatter)
+    protected fun String?.parseDate() = LocalDateTime.parse(this?.substring(0, 19)?.replace("T", " "), dateFormatter)
 
     protected abstract val git: GitProperty
 

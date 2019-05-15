@@ -19,7 +19,7 @@ class GithubPayloadProcessor(
     branchRepository: BranchRepository
 ) : AbstractPayloadProcessor(pullRequestRepository, repositoryDataManager, githubLoader, branchRepository) {
 
-    override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+    override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     override val git = GitProperty.GITHUB
 
     override val JsonObject.pullRequest: JsonObject

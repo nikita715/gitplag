@@ -19,7 +19,7 @@ class BitbucketPayloadProcessor(
     branchRepository: BranchRepository
 ) : AbstractPayloadProcessor(pullRequestRepository, repositoryDataManager, bitbucketLoader, branchRepository) {
 
-    override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+    override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     override val git = GitProperty.BITBUCKET
 
     override val JsonObject.pullRequest: JsonObject
