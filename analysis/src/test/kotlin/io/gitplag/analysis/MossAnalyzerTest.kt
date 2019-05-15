@@ -115,7 +115,7 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                     students = student1 to student2,
                     sha = sha1 to sha2,
                     lines = 45,
-                    percentage = 40,
+                    percentage = 53,
                     createdAt = createdAtList[0] to createdAtList[1],
                     matchedLines = listOf(
                         MatchedLines(

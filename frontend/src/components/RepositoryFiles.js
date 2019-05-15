@@ -20,14 +20,18 @@ export class RepositoryFiles extends React.Component {
     axios.get(PROP.serverUrl + "/api/repositories/" + this.state.repoId).then((response) => {
       this.setState({repoName: response.data.name});
     });
-    axios.get(PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/files").then((response) => {
-      let bases = response.data.bases.flatMap((base) => RepositoryFiles.baseElement(base));
-      let solutions = response.data.solutions.flatMap((solution) => RepositoryFiles.solutionElement(solution));
-      this.setState({
-        bases, solutions
-      });
-    });
+    this.fetchFiles();
     this.handleChange = this.handleChange.bind(this);
+    this.fetchFiles = this.fetchFiles.bind(this);
+  }
+
+  static filterBase(regStr, base) {
+    try {
+      let regexp = new RegExp(regStr);
+      return regexp.test(base.name.toLowerCase()) || regexp.test(base.branch.toLowerCase()) || regexp.test(base.updated.toLowerCase());
+    } catch (e) {
+      return true;
+    }
   }
 
   static baseElement(base) {
@@ -63,13 +67,33 @@ export class RepositoryFiles extends React.Component {
     });
   }
 
+  static filterSolution(regStr, sol) {
+    try {
+      let regexp = new RegExp(regStr);
+      return regexp.test(sol.name.toLowerCase()) || regexp.test(sol.branch.toLowerCase()) || regexp.test(sol.updated.toLowerCase()) || regexp.test(sol.student.toLowerCase());
+    } catch (e) {
+      return true;
+    }
+  }
+
+  fetchFiles() {
+    axios.get(PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/files").then((response) => {
+      let bases = response.data.bases.flatMap((base) => RepositoryFiles.baseElement(base));
+      let solutions = response.data.solutions.flatMap((solution) => RepositoryFiles.solutionElement(solution));
+      this.setState({
+        bases, solutions
+      });
+    });
+  }
+
   render() {
     return (<div className="container">
       {Header(
         <ol className="breadcrumb">
           <li className="breadcrumb-item"><Link to="/repos">Repositories</Link></li>
           <li className="breadcrumb-item"><Link to={"/repos/" + this.state.repoId}>{this.state.repoName}</Link></li>
-          <li className="breadcrumb-item">Files</li>
+          <li className="breadcrumb-item"><Link onClick={() => this.fetchFiles()}
+                                                to={"/repos/" + this.state.repoId + "/files"}>Files</Link></li>
         </ol>)}
       <div className="row">
         <div className="col container">
@@ -93,9 +117,7 @@ export class RepositoryFiles extends React.Component {
                 </thead>
                 <tbody>
                 {this.state.bases.filter(
-                  (it) => it.name.toLowerCase().includes(this.state.sortedByName)
-                    || it.branch.toLowerCase().includes(this.state.sortedByName)
-                    || it.updated.toLowerCase().includes(this.state.sortedByName)
+                  (it) => RepositoryFiles.filterBase(this.state.sortedByName, it)
                 ).map((base) => <tr>
                   <td>{base.name}</td>
                   <td>{base.branch}</td>
@@ -117,10 +139,7 @@ export class RepositoryFiles extends React.Component {
                 </thead>
                 <tbody>
                 {this.state.solutions.filter(
-                  (it) => it.name.toLowerCase().includes(this.state.sortedByName)
-                    || it.branch.toLowerCase().includes(this.state.sortedByName)
-                    || it.updated.toLowerCase().includes(this.state.sortedByName)
-                    || it.student.toLowerCase().includes(this.state.sortedByName)
+                  (it) => RepositoryFiles.filterSolution(this.state.sortedByName, it)
                 ).map((base) => <tr>
                   <td>{base.student}</td>
                   <td>{base.name}</td>
@@ -135,7 +154,7 @@ export class RepositoryFiles extends React.Component {
         <div className="container col-sm-3">
           <div className="list-group input-group">
             <input name="sortedByName" onChange={this.handleChange} autoComplete="off"
-                   className="list-group-item list-group-item-action text-input" placeholder="Full text search"/>
+                   className="list-group-item list-group-item-action text-input" placeholder="Full-text search"/>
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ package io.gitplag.git.payload
 
 import com.beust.klaxon.JsonObject
 import io.gitplag.git.rest.GitRestManager
+import io.gitplag.model.dto.InputRepositoryDto
 import io.gitplag.model.entity.Branch
 import io.gitplag.model.entity.PullRequest
 import io.gitplag.model.entity.Repository
@@ -11,6 +12,7 @@ import io.gitplag.model.repo.BranchRepository
 import io.gitplag.model.repo.PullRequestRepository
 import io.gitplag.util.parseAsObject
 import mu.KotlinLogging
+import java.io.FileNotFoundException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -40,6 +42,14 @@ abstract class AbstractPayloadProcessor(
             logger.info { "Webhook: received new repo $mainRepoFullName" }
             cloneRepoAndAllPullRequests(mainRepoFullName, jsonObject.pullRequest.mainRepoId)
         }
+    }
+
+    override fun createRepo(dto: InputRepositoryDto): Repository? {
+        val repoId = gitRestManager.getRepoIdByName(dto.name)
+        return if (repoId != null) {
+            val repository = repositoryDataManager.create(repoId, dto)
+            repositoryDataManager.save(repository.copy(gitId = repoId))
+        } else null
     }
 
     override fun downloadBasesOfRepository(payload: String) {
@@ -87,7 +97,7 @@ abstract class AbstractPayloadProcessor(
             gitRestManager.clonePullRequest(pullRequest)
             pullRequestRepository.save(pullRequest)
         } else {
-            val pullRequest = prJsonObject.run { parsePullRequest(repo) }
+            val pullRequest = parsePullRequest(prJsonObject, repo)
             if (pullRequest != null && pullRequest.sourceRepoFullName != prJsonObject.mainRepoFullName) {
                 logger.info { "Webhook: received new pr from repo ${prJsonObject.pushRepoName}, pr number ${pullRequest.number}" }
                 gitRestManager.clonePullRequest(pullRequest)
@@ -98,7 +108,7 @@ abstract class AbstractPayloadProcessor(
         }
     }
 
-    private fun cloneRepoAndAllPullRequests(repoName: String?, repoId: Long?) {
+    private fun cloneRepoAndAllPullRequests(repoName: String?, repoId: String?) {
         val repo = repositoryDataManager.save(
             Repository(
                 name = requireNotNull(repoName),
@@ -136,27 +146,29 @@ abstract class AbstractPayloadProcessor(
 
     private fun downloadPullRequests(repo: Repository, pullRequestsJsons: Collection<JsonObject>) {
         pullRequestsJsons.forEach { pullRequestJson ->
-            pullRequestJson.run {
-                if (mainRepoFullName == sourceRepoFullName) {
-                    logger.info { "Webhook: Ignored pr to itself repo ${repo.name} number $number" }
-                } else {
-                    clonePullRequestIfRequired(repo)
-                }
+            if (prFromTheSameRepo(pullRequestJson)) {
+                logger.info { "Webhook: Ignored pr to itself repo ${repo.name} number ${pullRequestJson.number}" }
+            } else {
+                clonePullRequestIfRequired(pullRequestJson, repo)
             }
-
         }
     }
 
-    private fun JsonObject.clonePullRequestIfRequired(repo: Repository) {
-        val storedPullRequest = number?.let { pullRequestRepository.findByRepoAndNumber(repo, it) }
-        if (storedPullRequest != null && storedPullRequest.updatedAt == updatedAt) return
-        val pullRequest = parsePullRequest(repo)
+    private fun clonePullRequestIfRequired(json: JsonObject, repo: Repository) {
+        val storedPullRequest = json.number?.let { pullRequestRepository.findByRepoAndNumber(repo, it) }
+        if (storedPullRequest != null && storedPullRequest.updatedAt == json.updatedAt) return
+        val pullRequest = parsePullRequest(json, repo)
         if (pullRequest != null) {
             val savedPullRequest = if (storedPullRequest == null) {
                 pullRequestRepository.save(pullRequest)
-            } else pullRequestRepository.save(storedPullRequest.updateFrom(this))
-            gitRestManager.clonePullRequest(savedPullRequest)
-            logger.info { "Webhook: cloned new pr from repo ${repo.name}, pr number ${savedPullRequest.number}" }
+            } else pullRequestRepository.save(storedPullRequest.updateFrom(json))
+            try {
+                gitRestManager.clonePullRequest(savedPullRequest)
+            } catch (e: FileNotFoundException) {
+                logger.info { "Git: unable to download archive ${repo.name}, pr number ${savedPullRequest.number}" }
+                pullRequestRepository.delete(savedPullRequest)
+            }
+            logger.info { "Git: cloned new pr from repo ${repo.name}, pr number ${savedPullRequest.number}" }
         }
     }
 
@@ -169,25 +181,27 @@ abstract class AbstractPayloadProcessor(
         }
     }
 
-    private fun JsonObject.parsePullRequest(repo: Repository): PullRequest? =
-        try {
-            PullRequest(
-                number = requireNotNull(number),
-                creatorName = requireNotNull(creatorName),
-                sourceRepoId = requireNotNull(sourceRepoId),
-                mainRepoId = requireNotNull(mainRepoId),
-                sourceRepoFullName = requireNotNull(sourceRepoFullName),
-                repo = repo,
-                headSha = requireNotNull(sourceHeadSha),
-                sourceBranchName = requireNotNull(sourceBranchName),
-                mainBranchName = requireNotNull(mainBranchName),
-                createdAt = requireNotNull(createdAt),
-                updatedAt = requireNotNull(updatedAt)
-            )
-        } catch (e: IllegalArgumentException) {
-            logger.error { "Webhook: unable to load pr number $number to repo ${repo.name}, git ${repo.gitService}" }
-            null
+    private fun parsePullRequest(json: JsonObject, repo: Repository): PullRequest? =
+        json.run {
+            try {
+                PullRequest(
+                    number = requireNotNull(number),
+                    creatorName = requireNotNull(creatorName),
+                    sourceRepoFullName = requireNotNull(sourceRepoFullName),
+                    repo = repo,
+                    headSha = requireNotNull(sourceHeadSha),
+                    sourceBranchName = requireNotNull(sourceBranchName),
+                    mainBranchName = requireNotNull(mainBranchName),
+                    createdAt = requireNotNull(createdAt),
+                    updatedAt = requireNotNull(updatedAt)
+                )
+            } catch (e: IllegalArgumentException) {
+                logger.error { "Git: unable to load pr number $number to repo ${repo.name}, git ${repo.gitService}" }
+                null
+            }
         }
+
+    protected open fun prFromTheSameRepo(json: JsonObject) = json.run { mainRepoFullName == sourceRepoFullName }
 
     protected abstract val dateFormatter: DateTimeFormatter
     protected fun String?.parseDate() = LocalDateTime.parse(this?.substring(0, 19), dateFormatter)
@@ -196,7 +210,7 @@ abstract class AbstractPayloadProcessor(
 
     protected abstract val JsonObject.pullRequest: JsonObject
 
-    protected abstract val JsonObject?.sourceRepoId: Long?
+    protected abstract val JsonObject?.sourceRepoId: String?
 
     protected abstract val JsonObject?.number: Int?
 
@@ -216,13 +230,13 @@ abstract class AbstractPayloadProcessor(
 
     protected abstract val JsonObject?.mainBranchName: String?
 
-    protected abstract val JsonObject?.mainRepoId: Long?
+    protected abstract val JsonObject?.mainRepoId: String?
 
     protected abstract val JsonObject.pushRepoName: String?
 
     protected abstract val JsonObject.pushBranchName: String?
 
-    protected abstract val JsonObject.pushRepoId: Long?
+    protected abstract val JsonObject.pushRepoId: String?
 
     protected abstract val JsonObject.pushLastUpdated: LocalDateTime?
 

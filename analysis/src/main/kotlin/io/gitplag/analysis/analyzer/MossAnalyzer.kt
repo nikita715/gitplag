@@ -1,7 +1,7 @@
 package io.gitplag.analysis.analyzer
 
 import io.gitplag.analysis.analysisFilesDirectoryName
-import io.gitplag.analysis.analyzer.Analyzer.Companion.repoInfo
+import io.gitplag.analysis.repoInfo
 import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.model.data.*
 import io.gitplag.model.enums.AnalysisMode
@@ -32,6 +32,7 @@ class MossAnalyzer(
         logger.info { "Analysis:Moss:2.Start analysis. ${repoInfo(settings)}" }
         val resultLink = MossClient(analysisFiles, mossId).run()
 
+        logger.info { "Analysis:Moss:2.Moss result. $resultLink" }
         val matchData =
             if (settings.mode.order > AnalysisMode.LINK.order) {
                 logger.info { "Analysis:Moss:3.Start parsing of results. ${repoInfo(settings)}" }
@@ -60,15 +61,7 @@ class MossAnalyzer(
                 val firstATag = tds[0].selectFirst("a")
                 val secondATag = tds[1].selectFirst("a")
 
-                val firstPath = firstATag.text().split(" ").first().split("/")
-                val secondPath = secondATag.text().split(" ").first().split("/")
-
-                val students =
-                    firstPath.zip(secondPath)
-                        .dropWhile { it.first == it.second }
-                        .first().let {
-                            it.first.replace(extensionRegex, "") to it.second.replace(extensionRegex, "")
-                        }
+                val students = firstATag.text().split(" ").first() to secondATag.text().split(" ").first()
 
                 val lines = tds[2].text().toInt()
 
@@ -76,7 +69,7 @@ class MossAnalyzer(
                     .last()
                     .removeSurrounding("(", "%)")
                     .toInt()
-                val percentage2 = firstATag.text().split(" ")
+                val percentage2 = secondATag.text().split(" ")
                     .last()
                     .removeSurrounding("(", "%)")
                     .toInt()

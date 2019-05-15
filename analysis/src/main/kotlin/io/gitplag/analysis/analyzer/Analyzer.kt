@@ -14,9 +14,4 @@ interface Analyzer {
      * @return student-to-student matches for each file
      */
     fun analyze(settings: AnalysisSettings): AnalysisResult
-
-    companion object {
-        fun repoInfo(analysisSettings: AnalysisSettings): String =
-            analysisSettings.run { "Repo ${repository.name}, Branch $branch." }
-    }
 }

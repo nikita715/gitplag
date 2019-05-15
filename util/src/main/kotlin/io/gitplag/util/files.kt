@@ -20,6 +20,9 @@ fun <T> inTempDirectory(action: (dirPath: String) -> T): T {
     }
 }
 
+/**
+ * Create a directory in [path]/[name]
+ */
 fun generateDir(path: String, name: String): String {
     val file = File("$path/$name")
     Files.deleteIfExists(file.toPath())

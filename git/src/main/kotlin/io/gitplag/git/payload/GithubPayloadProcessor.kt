@@ -31,11 +31,11 @@ class GithubPayloadProcessor(
     override val JsonObject?.creatorName: String?
         get() = this?.obj("head")?.obj("user")?.string("login")
 
-    override val JsonObject?.sourceRepoId: Long?
-        get() = this?.obj("head")?.obj("repo")?.long("id")
+    override val JsonObject?.sourceRepoId: String?
+        get() = this?.obj("head")?.obj("repo")?.long("id")?.toString()
 
-    override val JsonObject?.mainRepoId: Long?
-        get() = this?.obj("base")?.obj("repo")?.long("id")
+    override val JsonObject?.mainRepoId: String?
+        get() = this?.obj("base")?.obj("repo")?.long("id")?.toString()
 
     override val JsonObject?.sourceRepoFullName: String?
         get() = this?.obj("head")?.obj("repo")?.string("full_name")
@@ -67,8 +67,8 @@ class GithubPayloadProcessor(
     override val JsonObject.pushRepoName: String?
         get() = obj("repository")?.string("full_name")
 
-    override val JsonObject.pushRepoId: Long?
-        get() = -1
+    override val JsonObject.pushRepoId: String?
+        get() = obj("repository")?.long("id")?.toString()
 
     override val JsonObject.branchUpdatedAt: LocalDateTime?
         get() = obj("commit")?.obj("commit")?.obj("author")?.string("date").parseDate()

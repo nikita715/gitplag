@@ -1,6 +1,6 @@
 package io.gitplag.model.manager
 
-import io.gitplag.model.dto.RepositoryDto
+import io.gitplag.model.dto.InputRepositoryDto
 import io.gitplag.model.entity.Repository
 import io.gitplag.model.enums.AnalysisMode
 import io.gitplag.model.enums.AnalyzerProperty
@@ -21,10 +21,11 @@ class RepositoryDataManager(
      * Create a repository
      */
     @Transactional
-    fun create(repositoryDto: RepositoryDto): Repository =
+    fun create(gitId: String, repositoryDto: InputRepositoryDto): Repository =
         repositoryRepository.save(
             Repository(
                 name = repositoryDto.name,
+                gitId = gitId,
                 gitService = repositoryDto.git,
                 language = repositoryDto.language ?: Language.JAVA,
                 filePatterns = repositoryDto.filePatterns ?: emptyList(),
@@ -40,10 +41,9 @@ class RepositoryDataManager(
      * Update the [repo] by the [repositoryDto]
      */
     @Transactional
-    fun update(repo: Repository, repositoryDto: RepositoryDto): Repository =
+    fun update(repo: Repository, repositoryDto: InputRepositoryDto): Repository =
         repositoryRepository.save(
             repo.copy(
-                name = repositoryDto.name,
                 language = repositoryDto.language ?: repo.language,
                 filePatterns = repositoryDto.filePatterns ?: repo.filePatterns,
                 analyzer = repositoryDto.analyzer ?: repo.analyzer,

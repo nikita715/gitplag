@@ -8,7 +8,6 @@ import {Header} from "./Header";
 export class AnalysisResult extends React.Component {
 
   state = {
-    analysisId: 0,
     repoId: 0,
     repoName: "",
     results: [],
@@ -21,8 +20,14 @@ export class AnalysisResult extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    let id = props.match.params.id;
-    axios.get(PROP.serverUrl + "/api/analyzes/" + id).then((response) => {
+    this.state.id = props.match.params.id;
+    this.fetchAnalysis();
+    this.fetchAnalysis = this.fetchAnalysis.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  fetchAnalysis() {
+    axios.get(PROP.serverUrl + "/api/analyzes/" + this.state.id).then((response) => {
       let data = [];
       response.data.analysisPairs.map((result) => data.push({
         id: result.id,
@@ -36,7 +41,6 @@ export class AnalysisResult extends React.Component {
         analyzer: response.data.analyzer, date: response.data.date, branch: response.data.branch
       });
     });
-    this.handleChange = this.handleChange.bind(this);
   }
 
   static createResultLink(link, analyzer) {
@@ -59,7 +63,9 @@ export class AnalysisResult extends React.Component {
           <ol className="breadcrumb">
             <li className="breadcrumb-item"><Link to="/repos">Repositories</Link></li>
             <li className="breadcrumb-item"><Link to={"/repos/" + this.state.repoId}>{this.state.repoName}</Link></li>
-            <li className="breadcrumb-item active" aria-current="page">Analysis #{this.state.analysisId}</li>
+            <li className="breadcrumb-item"><Link onClick={() => this.fetchAnalysis()}
+                                                  to={"/analyzes/" + this.state.analysisId}>Analysis
+              #{this.state.analysisId}</Link></li>
           </ol>)}
         <div className="row">
           <div className="col container">

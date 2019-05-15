@@ -29,6 +29,7 @@ import kotlin.test.assertTrue
  */
 class FileSystemSourceCodeStorageTest {
 
+    private val separator = System.getProperty("file.separator")
     private val resourcesPath = asPath("src", "test", "resources")
     private val unpackedZip = File(asPath(resourcesPath, "unpackedzip")).absolutePath
     private val solutionDir = File(asPath(resourcesPath, "solutiondirsample")).absolutePath
@@ -41,9 +42,9 @@ class FileSystemSourceCodeStorageTest {
     private val java = Language.JAVA
 
     private val fileName1 = "File1.java"
-    private val fileName2 = "dir/File2.java"
+    private val fileName2 = "dir${separator}File2.java"
     private val fileName3 = "File3.txt"
-    private val fileName4 = "dir/File4.txt"
+    private val fileName4 = "dir${separator}File4.txt"
 
     private val repoName = "repo"
     private val branchName = "br"

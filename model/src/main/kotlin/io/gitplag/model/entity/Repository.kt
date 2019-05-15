@@ -71,7 +71,8 @@ data class Repository(
     @Column(nullable = false)
     val jplagParameters: String = "",
 
-    val gitId: Long = -1
+    @Column(nullable = false)
+    val gitId: String
 ) {
     val parameters: String
         get() = when (analyzer) {

@@ -1,5 +1,7 @@
 package io.gitplag.core.async
 
+import com.github.kittinunf.fuel.core.FuelError
+import com.github.kittinunf.fuel.core.HttpException
 import io.gitplag.core.websocket.NotificationService
 import io.gitplag.git.payload.PayloadProcessor
 import io.gitplag.git.rest.GitRestManager
@@ -24,12 +26,21 @@ class AsyncFileUploader(
      */
     @Async("customExecutor")
     fun uploadFiles(repository: Repository) {
-        val gitRestManager = restManagers.getValue(repository.gitService)
         val payloadProcessor = payloadProcessors.getValue(repository.gitService)
-        notificationService.notify("Started upload of files from repo ${repository.name}")
-        gitRestManager.cloneRepository(repository)
-        payloadProcessor.downloadAllPullRequestsOfRepository(repository)
+        notificationService.notify("Started upload of files from repo ${repository.name}.")
+        try {
+            payloadProcessor.downloadAllPullRequestsOfRepository(repository)
+        } catch (e: Exception) {
+            var message = "Failed upload of files from repo ${repository.name}."
+            when (e) {
+                is FuelError,
+                is HttpException -> {
+                    message += " Access to git is denied."
+                }
+            }
+            notificationService.notify(message)
+            throw e
+        }
         notificationService.notify("Ended upload of files from repo ${repository.name}")
     }
-
 }

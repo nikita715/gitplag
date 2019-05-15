@@ -186,12 +186,13 @@ class FileSystemSourceCodeStorage(
                     "Storage: Saved solution file with name = $fileName of" +
                             " repo ${pullRequest.repo.name}, user ${pullRequest.creatorName}"
                 }
-            } else {
-                logger.info {
-                    "Storage: Ignored solution file with name = $fileName of" +
-                            " repo ${pullRequest.repo.name}, user ${pullRequest.creatorName}"
-                }
             }
+//            else {
+//                logger.info {
+//                    "Storage: Ignored solution file with name = $fileName of" +
+//                            " repo ${pullRequest.repo.name}, user ${pullRequest.creatorName}"
+//                }
+//            }
         }
     }
 

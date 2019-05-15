@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import * as PROP from "../properties";
-import {times} from "../util";
+import {formatDateSimple, times} from "../util";
 import {Link} from "react-router-dom";
 
 function checkLine(line) {
@@ -16,6 +16,8 @@ export class AnalysisResultPair extends React.Component {
     files2: [],
     leftName: "",
     rightName: "",
+    leftTime: "",
+    rightTime: "",
     leftMatches: [],
     rightMatches: [],
     leftRightMatches: [],
@@ -51,6 +53,8 @@ export class AnalysisResultPair extends React.Component {
         files2,
         leftName: response.data.pair.student1,
         rightName: response.data.pair.student2,
+        leftTime: formatDateSimple(response.data.pair.createdAt1),
+        rightTime: formatDateSimple(response.data.pair.createdAt2),
         leftMatches,
         rightMatches: rightMatches.sort(function (a, b) {
           return parseInt(a) - parseInt(b);
@@ -116,9 +120,9 @@ export class AnalysisResultPair extends React.Component {
                   to={"/analyzes/" + this.state.analysisId}>Back</Link>
           </div>
           <div className="compare-names">
-            <div>{this.state.leftName}</div>
+            <div>Student {this.state.leftName}, created at {this.state.leftTime}</div>
             <div><b>{this.state.percentage + "%"}</b></div>
-            <div>{this.state.rightName}</div>
+            <div>Student {this.state.rightName}, created at {this.state.rightTime}</div>
           </div>
           <div className="compare-wrapper">
             <div className="compare-side-wrapper">

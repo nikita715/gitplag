@@ -5,7 +5,7 @@ services:
     ports:
       - 8090:8090
     volumes:
-      - ${gitplag_dir}:/mnt/gitplag
+      - ${gitplag_directory}/data:/mnt/gitplag
     environment:
       GITPLAG_MOSS_ID: ${MOSS_ID}
       GITPLAG_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
@@ -13,6 +13,9 @@ services:
       GITPLAG_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       GITPLAG_SERVER_URL: ${server_url}:8090
       GITPLAG_UI_URL: ${server_url}:${ui_port}
+      GITPLAG_GITLAB_AUTH:
+      GITPLAG_GITHUB_AUTH:
+      GITPLAG_BITBUCKET_AUTH:
     depends_on:
       postgres:
         condition: service_healthy
@@ -24,7 +27,7 @@ services:
     container_name: gitplag-database
     image: postgres:11.1
     volumes:
-      - ${db_data_dir}:/var/lib/postgresql/data
+      - ${gitplag_directory}/db:/var/lib/postgresql/data
     environment:
       POSTGRES_DB:
       POSTGRES_USER:

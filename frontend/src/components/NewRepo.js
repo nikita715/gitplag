@@ -41,7 +41,11 @@ export class NewRepo extends React.Component {
 
   handleSubmit() {
     let dto = new RepoDto(this.state);
-    axios.post((PROP.serverUrl + "/api/repositories"), dto).then(() => this.props.history.push("/webhook"))
+    axios.post((PROP.serverUrl + "/api/repositories"), dto).then((response) => {
+      if (response.data.length !== 0) {
+        this.props.history.push("/webhook")
+      }
+    });
   }
 
   selectLanguageMoss() {

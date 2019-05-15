@@ -13,7 +13,8 @@ export class NoConnection extends React.Component {
             className="font-weight-bold">{PROP.serverUrl}</span> is unavailable.</h6>
         </div>
         <div className="align-content-center text-center">
-          <Link className="text-center align-content-center" to="/repos">Reload</Link>
+          <Link className="btn btn-primary mr-2 text-center align-content-center" role="button"
+                to="/repos">Reload</Link>
         </div>
       </div>
     </div>;

@@ -15,11 +15,11 @@ import java.time.format.DateTimeFormatter
 class GitlabPayloadProcessor(
     pullRequestRepository: PullRequestRepository,
     repositoryDataManager: RepositoryDataManager,
-    gitlabLoader: GitlabRestManager,
+    private val gitlabLoader: GitlabRestManager,
     branchRepository: BranchRepository
 ) : AbstractPayloadProcessor(pullRequestRepository, repositoryDataManager, gitlabLoader, branchRepository) {
 
-    override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
     override val git = GitProperty.GITLAB
 
     override val JsonObject.pullRequest: JsonObject
@@ -29,22 +29,22 @@ class GitlabPayloadProcessor(
         get() = this?.int("iid")
 
     override val JsonObject?.creatorName: String?
-        get() = this?.obj("source")?.string("namespace")
+        get() = this?.obj("source")?.string("namespace") ?: this?.obj("author")?.string("username")
 
-    override val JsonObject?.sourceRepoId: Long?
-        get() = this?.long("source_project_id")
+    override val JsonObject?.sourceRepoId: String?
+        get() = this?.long("source_project_id")?.toString()
 
-    override val JsonObject?.mainRepoId: Long?
-        get() = this?.long("target_project_id")
+    override val JsonObject?.mainRepoId: String?
+        get() = this?.long("target_project_id")?.toString()
 
     override val JsonObject?.sourceRepoFullName: String?
-        get() = this?.obj("source")?.string("path_with_namespace")
+        get() = this?.obj("source")?.string("path_with_namespace") ?: gitlabLoader.repoNameById(this.sourceRepoId)
 
     override val JsonObject?.mainRepoFullName: String?
-        get() = this?.obj("target")?.string("path_with_namespace")
+        get() = this?.obj("target")?.string("path_with_namespace") ?: gitlabLoader.repoNameById(this.mainRepoId)
 
     override val JsonObject?.sourceHeadSha: String?
-        get() = this?.obj("last_commit")?.string("id")
+        get() = this?.obj("last_commit")?.string("id") ?: this?.string("sha")
 
     override val JsonObject?.sourceBranchName: String?
         get() = this?.string("source_branch")
@@ -56,7 +56,7 @@ class GitlabPayloadProcessor(
         get() = this?.string("created_at")?.parseDate()
 
     override val JsonObject?.updatedAt: LocalDateTime?
-        get() = this?.string("last_edited_at")?.parseDate()
+        get() = (this?.string("last_edited_at") ?: this?.string("updated_at"))?.parseDate()
 
     override val JsonObject.pushRepoName: String?
         get() = obj("project")?.string("path_with_namespace")
@@ -64,12 +64,15 @@ class GitlabPayloadProcessor(
     override val JsonObject.pushBranchName: String?
         get() = string("ref")?.substringAfter("refs/heads/")
 
-    override val JsonObject.pushRepoId: Long?
-        get() = long("project_id")
+    override val JsonObject.pushRepoId: String?
+        get() = long("project_id")?.toString()
 
     override val JsonObject.pushLastUpdated: LocalDateTime?
         get() = array<JsonObject>("commits")?.last()?.string("timestamp")?.parseDate()
 
     override val JsonObject.branchUpdatedAt: LocalDateTime?
         get() = obj("commit")?.string("committed_date").parseDate()
+
+    override fun prFromTheSameRepo(json: JsonObject) =
+        json.run { long("source_project_id") == long("target_project_id") }
 }

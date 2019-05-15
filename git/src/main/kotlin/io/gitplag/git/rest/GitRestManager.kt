@@ -36,4 +36,8 @@ interface GitRestManager {
      */
     fun getBranchOfRepo(repo: Repository, name: String): JsonObject
 
+    /**
+     * Find id of repo with this [repoName]
+     */
+    fun getRepoIdByName(repoName: String): String?
 }

@@ -31,11 +31,11 @@ class BitbucketPayloadProcessor(
     override val JsonObject?.creatorName: String?
         get() = this?.obj("author")?.string("username")
 
-    override val JsonObject?.sourceRepoId: Long?
-        get() = -1
+    override val JsonObject?.sourceRepoId: String?
+        get() = ""
 
-    override val JsonObject?.mainRepoId: Long?
-        get() = -1
+    override val JsonObject?.mainRepoId: String?
+        get() = ""
 
     override val JsonObject?.sourceRepoFullName: String?
         get() = this?.obj("source")?.obj("repository")?.string("full_name")
@@ -58,8 +58,8 @@ class BitbucketPayloadProcessor(
     override val JsonObject?.updatedAt: LocalDateTime?
         get() = this?.string("updated_on")?.parseDate()
 
-    override val JsonObject.pushRepoId: Long?
-        get() = -1
+    override val JsonObject.pushRepoId: String?
+        get() = ""
 
     override val JsonObject.pushRepoName: String?
         get() = obj("repository")?.string("full_name")

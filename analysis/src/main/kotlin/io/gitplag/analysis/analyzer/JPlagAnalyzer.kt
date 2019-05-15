@@ -1,7 +1,7 @@
 package io.gitplag.analysis.analyzer
 
 import io.gitplag.analysis.analysisFilesDirectoryName
-import io.gitplag.analysis.analyzer.Analyzer.Companion.repoInfo
+import io.gitplag.analysis.repoInfo
 import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.model.data.*
 import io.gitplag.model.enums.AnalysisMode

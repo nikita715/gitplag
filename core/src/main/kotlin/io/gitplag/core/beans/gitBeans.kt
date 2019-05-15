@@ -1,5 +1,6 @@
 package io.gitplag.core.beans
 
+import io.gitplag.core.util.safeEnvVar
 import io.gitplag.git.payload.BitbucketPayloadProcessor
 import io.gitplag.git.payload.GithubPayloadProcessor
 import io.gitplag.git.payload.GitlabPayloadProcessor
@@ -26,9 +27,9 @@ val gitBeans = beans {
     }
 
     // Loaders
-    bean<GithubRestManager>()
-    bean<BitbucketRestManager>()
-    bean<GitlabRestManager>()
+    bean { GithubRestManager(ref(), env.safeEnvVar("gitplag.githubToken")) }
+    bean { GitlabRestManager(ref(), env.safeEnvVar("gitplag.gitlabToken")) }
+    bean { BitbucketRestManager(ref(), env.safeEnvVar("gitplag.bitbucketToken")) }
     bean<Map<GitProperty, GitRestManager>>("gitRestManagers") {
         mapOf(
             GitProperty.GITHUB to ref<GithubRestManager>(),

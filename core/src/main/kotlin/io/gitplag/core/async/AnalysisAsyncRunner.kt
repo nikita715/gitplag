@@ -5,10 +5,13 @@ import io.gitplag.analysis.AnalysisRunner
 import io.gitplag.core.websocket.NotificationService
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.dto.AnalysisResultDto
+import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.util.sendAnalysisResult
 import mu.KotlinLogging
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
+import java.net.ConnectException
+import java.net.SocketException
 
 /**
  * The class that asynchronously calls the [AnalysisRunner]
@@ -23,7 +26,7 @@ class AnalysisAsyncRunner(
     private val objectMapper = ObjectMapper()
 
     /**
-     * Initiate analysis of the [repository] async
+     * Initiate analysis by the [settings] async
      */
     @Async("customExecutor")
     fun run(settings: AnalysisSettings) {
@@ -38,11 +41,25 @@ class AnalysisAsyncRunner(
     @Async("customExecutor")
     fun runAndRespond(analysisSettings: AnalysisSettings, responseUrl: String?) {
         notificationService.notify("Started analysis of repo ${analysisSettings.repository.name}")
-        val result = AnalysisResultDto(analysisRunner.run(analysisSettings))
-        if (responseUrl != null) {
-            val body = objectMapper.writeValueAsString(result)
-            sendAnalysisResult(url = responseUrl, body = body)
+        try {
+            val result = AnalysisResultDto(analysisRunner.run(analysisSettings))
+            if (responseUrl != null) {
+                val body = objectMapper.writeValueAsString(result)
+                sendAnalysisResult(url = responseUrl, body = body)
+            }
+            notificationService.notify("Ended analysis #${result.id} of repo ${result.repoName}")
+        } catch (e: Exception) {
+            var message = "Failed analysis of repo ${analysisSettings.repository.name}."
+            when (e) {
+                is ConnectException,
+                is SocketException -> {
+                    if (analysisSettings.analyzer == AnalyzerProperty.MOSS) {
+                        message += " Moss server is unavailable."
+                    }
+                }
+            }
+            notificationService.notify(message)
+            throw e
         }
-        notificationService.notify("Ended analysis #${result.id} of repo ${result.repoName}")
     }
 }

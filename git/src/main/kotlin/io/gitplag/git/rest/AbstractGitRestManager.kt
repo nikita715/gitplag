@@ -18,12 +18,14 @@ abstract class AbstractGitRestManager(
 
     override fun clonePullRequest(pullRequest: PullRequest) {
         val resourceUrl = linkToRepoArchive(pullRequest.sourceRepoFullName, pullRequest.sourceBranchName)
+        logger.info { "Git: trying to download the zip from url $resourceUrl" }
         downloadAndUnpackZip(resourceUrl) { unpackedDir ->
             val sourceDir = File(unpackedDir).listFiles()[0].absolutePath
             sourceCodeStorage.saveSolutionsFromDir(
                 sourceDir, pullRequest
             )
         }
+        logger.info { "Git: downloaded and unpacked the zip from url $resourceUrl" }
     }
 
     override fun cloneRepository(repo: Repository, branch: String?) {

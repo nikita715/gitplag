@@ -8,7 +8,7 @@ import io.gitplag.model.enums.Language
 /**
  * Dto for [Repository] class
  */
-data class RepositoryDto(val id: Long, val git: GitProperty, val name: String) {
+data class InputRepositoryDto(val id: Long, val git: GitProperty, val name: String) {
     var language: Language? = null
     var filePatterns: Collection<String>? = null
     var analyzer: AnalyzerProperty? = null

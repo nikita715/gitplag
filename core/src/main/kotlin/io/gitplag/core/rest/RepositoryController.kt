@@ -10,7 +10,6 @@ import io.gitplag.git.rest.GitRestManager
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.dto.*
 import io.gitplag.model.entity.BaseFileRecord
-import io.gitplag.model.entity.Repository
 import io.gitplag.model.entity.SolutionFileRecord
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.manager.RepositoryDataManager
@@ -48,19 +47,19 @@ class RepositoryController(
      * Get all repositories
      */
     @GetMapping("/repositories")
-    fun getAllRepositories() = repositoryDataManager.findAll().sortedBy { it.id }
+    fun getAllRepositories() = repositoryDataManager.findAll().map(::OutputRepositoryDto).sortedBy { it.id }
 
     /**
      * Get the repo
      */
     @GetMapping("/repositories/{id}")
-    fun getRepo(@PathVariable id: Long) = repositoryDataManager.findById(id)
+    fun getRepo(@PathVariable id: Long) = repositoryDataManager.findById(id)?.let(::OutputRepositoryDto)
 
     /**
      * Get analyzes of the repo
      */
     @GetMapping("/repositories/{id}/analyzes")
-    fun getRepository(@PathVariable id: Long) =
+    fun getRepositoryAnalyzes(@PathVariable id: Long) =
         repositoryDataManager.findById(id)?.analyzes?.map { AnalysisResultDto(it) }?.sortedBy { it.id } ?: emptyList()
 
     /**
@@ -100,7 +99,7 @@ class RepositoryController(
      * Initiate the analysis async
      */
     @PostMapping("/repositories/{id}/analyzeWithNoResponse")
-    fun analyzeDetached(@RequestBody dto: AnalysisDto): Boolean {
+    fun analyzeDetached(@PathVariable id: Long, @RequestBody dto: AnalysisDto): Boolean {
         val repoValue = repositoryDataManager.findById(dto.repoId) ?: return false
         analysisAsyncRunner.runAndRespond(
             AnalysisSettings(
@@ -120,7 +119,7 @@ class RepositoryController(
      * Update the repo
      */
     @PutMapping("/repositories/{id}")
-    fun editRepo(@PathVariable id: Long, @RequestBody dto: RepositoryDto): Repository? {
+    fun editRepo(@PathVariable id: Long, @RequestBody dto: InputRepositoryDto): OutputRepositoryDto? {
         val storedRepo = repositoryDataManager.findById(id)
         val updatedRepo = if (storedRepo != null) {
             repositoryDataManager.update(storedRepo, dto)
@@ -130,7 +129,7 @@ class RepositoryController(
             return null
         } else {
             notificationService.notify("Updated repo with id $id")
-            return updatedRepo
+            return OutputRepositoryDto(updatedRepo)
         }
     }
 
@@ -138,17 +137,22 @@ class RepositoryController(
      * Create a repo
      */
     @PostMapping("/repositories")
-    fun createRepo(@RequestBody dto: RepositoryDto): Repository {
-        val repository = repositoryDataManager.create(dto)
-        notificationService.notify("Created repo ${repository.name} with id ${repository.id}")
-        return repository
+    fun createRepo(@RequestBody dto: InputRepositoryDto): OutputRepositoryDto? {
+        val repository = payloadProcessors.getValue(dto.git).createRepo(dto)
+        return if (repository != null) {
+            notificationService.notify("Created repo ${repository.name} with id ${repository.id}")
+            OutputRepositoryDto(repository)
+        } else {
+            notificationService.notify("Repository with name ${dto.name} is not found in ${dto.git.name.toLowerCase()}")
+            null
+        }
     }
 
     /**
      * Create a repo
      */
     @DeleteMapping("/repositories/{id}")
-    fun deleteRepo(@PathVariable id: Long): Unit {
+    fun deleteRepo(@PathVariable id: Long) {
         val repository = repositoryDataManager.findById(id)
         if (repository != null) {
             repository.analyzes.forEach { analysis ->
@@ -283,8 +287,5 @@ class RepositoryController(
      */
     @GetMapping("/repositories/{id}/pulls")
     fun getPullRequests(@PathVariable id: Long) =
-        pullRequestRepository.findAllByRepoId(id).map {
-            it.run { PullRequestDto(this.id, number, creatorName, sourceBranchName, mainBranchName) }
-        }
-
+        pullRequestRepository.findAllByRepoId(id).map { PullRequestDto(it) }
 }

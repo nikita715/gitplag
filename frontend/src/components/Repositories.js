@@ -11,19 +11,19 @@ export class Repositories extends React.Component {
     repos: []
   };
 
-  constructor(props, context) {
-    super(props, context);
-    window.history.pushState(null, "Repos", "/repos");
+  componentDidMount() {
+    this.fetchRepos();
+    this.fetchRepos = this.fetchRepos.bind(this);
   }
 
-  componentDidMount() {
+  fetchRepos() {
     axios.get(PROP.serverUrl + "/api/repositories").then((response) => {
       let data = [];
       response.data.map((repo) =>
         data.push(<tr>
           <td><Link to={"/repos/" + repo.id}>{repo.name}</Link></td>
           <td>{repo.gitService.toLowerCase()}</td>
-          <td></td>
+          <td/>
         </tr>)
       );
       this.setState({repos: data, ready: true});
@@ -35,7 +35,8 @@ export class Repositories extends React.Component {
       <div className="container">
         {Header(
           <ol className="breadcrumb">
-            <li className="breadcrumb-item active" aria-current="page">Repositories</li>
+            <li className="breadcrumb-item active" aria-current="page"><Link onClick={() => this.fetchRepos()}
+                                                                             to="/repos">Repositories</Link></li>
           </ol>
         )}
         <div className="row">

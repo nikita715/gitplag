@@ -18,7 +18,7 @@ class SourceFileQueriesTest {
 
     private val repoName = "repoName"
     private val github = GitProperty.GITHUB
-    private val repo = Repository(gitService = github, name = repoName)
+    private val repo = Repository(gitService = github, name = repoName, gitId = "")
     private val branch1 = "branch"
     private val branch2 = "branch2"
     private val fileName1 = "file1"
@@ -27,13 +27,13 @@ class SourceFileQueriesTest {
     private val student2 = "user2"
 
     private val pullRequest1 = PullRequest(
-        repo = repo, number = 1, creatorName = student1, sourceRepoId = 1, mainRepoId = 1,
+        repo = repo, number = 1, creatorName = student1,
         sourceBranchName = branch1, mainBranchName = branch1, headSha = "sha1",
         sourceRepoFullName = "sourceRepo", createdAt = LocalDateTime.now(), updatedAt = LocalDateTime.now()
     )
 
     private val pullRequest2 = PullRequest(
-        repo = repo, number = 1, creatorName = student2, sourceRepoId = 1, mainRepoId = 1,
+        repo = repo, number = 1, creatorName = student2,
         sourceBranchName = branch2, mainBranchName = branch2, headSha = "sha2",
         sourceRepoFullName = "sourceRepo", createdAt = LocalDateTime.now(), updatedAt = LocalDateTime.now()
     )

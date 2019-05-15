@@ -18,6 +18,12 @@ export class Repository extends React.Component {
     axios.get(PROP.serverUrl + "/api/repositories/" + this.state.repoId).then((response) => {
       this.setState({repoName: response.data.name});
     });
+    this.downloadAnalyzes();
+    this.downloadAnalyzes = this.downloadAnalyzes.bind(this);
+    this.deleteAnalysis = this.deleteAnalysis.bind(this);
+  }
+
+  downloadAnalyzes() {
     axios.get(PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/analyzes").then((response) => {
       let analyzes = [];
       response.data.map((analysis) => analyzes.push(<tr>
@@ -27,13 +33,12 @@ export class Repository extends React.Component {
         <td>{analysis.analyzer.toLowerCase()}</td>
         <td>
           <div className="btn badge badge-danger"
-               onClick={(e) => this.deleteAnalysis(this.state.repoId, analysis.id)}>Delete
+               onClick={() => this.deleteAnalysis(this.state.repoId, analysis.id)}>Delete
           </div>
         </td>
       </tr>));
       this.setState({analyzes});
     });
-    this.deleteAnalysis = this.deleteAnalysis.bind(this);
   }
 
   static startUpdateOfFiles(repoId) {
@@ -42,7 +47,7 @@ export class Repository extends React.Component {
 
   deleteAnalysis(repoId, analysisId) {
     axios.delete(PROP.serverUrl + "/api/analyzes/" + analysisId).then(() => {
-      this.componentDidMount()
+      this.downloadAnalyzes()
     });
   }
 
@@ -52,7 +57,8 @@ export class Repository extends React.Component {
         {Header(
           <ol className="breadcrumb">
             <li className="breadcrumb-item"><Link to="/repos">Repositories</Link></li>
-            <li className="breadcrumb-item">{this.state.repoName}</li>
+            <li className="breadcrumb-item"><Link onClick={() => this.downloadAnalyzes()}
+                                                  to={"/repos/" + this.state.repoId}>{this.state.repoName}</Link></li>
           </ol>)}
         <div className="row">
           <div className="col container">

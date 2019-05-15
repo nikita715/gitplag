@@ -1,5 +1,6 @@
 package io.gitplag.git.payload
 
+import io.gitplag.model.dto.InputRepositoryDto
 import io.gitplag.model.entity.Repository
 
 /**
@@ -20,7 +21,12 @@ interface PayloadProcessor {
     fun downloadBasesOfRepository(payload: String)
 
     /**
-     * Requests pull requests payload and stores all of them
+     * Requests base branches and pull requests payloads and stores all of them
      */
     fun downloadAllPullRequestsOfRepository(repo: Repository)
+
+    /**
+     * Create a repo by the [dto]
+     */
+    fun createRepo(dto: InputRepositoryDto): Repository?
 }
