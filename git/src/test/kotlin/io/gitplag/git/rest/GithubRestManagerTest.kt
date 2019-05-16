@@ -31,5 +31,5 @@ class GithubRestManagerTest : AbstractGitRestManagerTest() {
     )
 
     override val restManager =
-        GithubRestManager(solutionStorage, "")
+        GithubRestManager(solutionStorage, solutionFileRecordRepository, "")
 }

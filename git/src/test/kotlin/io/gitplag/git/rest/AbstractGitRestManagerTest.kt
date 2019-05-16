@@ -8,6 +8,7 @@ import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.model.entity.PullRequest
 import io.gitplag.model.entity.Repository
 import io.gitplag.model.manager.RepositoryDataManager
+import io.gitplag.model.repo.SolutionFileRecordRepository
 import io.gitplag.util.asPath
 import org.junit.Before
 import org.junit.Test
@@ -34,6 +35,7 @@ abstract class AbstractGitRestManagerTest {
     abstract val pullRequest: PullRequest
 
     val solutionStorage = mock<SourceCodeStorage>()
+    val solutionFileRecordRepository = mock<SolutionFileRecordRepository>()
 
     private val repositoryDataManager = mock<RepositoryDataManager>()
 

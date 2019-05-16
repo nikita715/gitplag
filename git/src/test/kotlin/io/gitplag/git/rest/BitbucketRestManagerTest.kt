@@ -30,5 +30,5 @@ class BitbucketRestManagerTest : AbstractGitRestManagerTest() {
         mainBranchName = "master"
     )
 
-    override val restManager = BitbucketRestManager(solutionStorage, "")
+    override val restManager = BitbucketRestManager(solutionStorage, solutionFileRecordRepository, "")
 }

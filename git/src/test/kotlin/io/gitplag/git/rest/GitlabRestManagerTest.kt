@@ -29,5 +29,5 @@ class GitlabRestManagerTest : AbstractGitRestManagerTest() {
         sourceRepoFullName = repo.name,
         mainBranchName = "master"
     )
-    override val restManager = GitlabRestManager(solutionStorage, "")
+    override val restManager = GitlabRestManager(solutionStorage, solutionFileRecordRepository, "")
 }
