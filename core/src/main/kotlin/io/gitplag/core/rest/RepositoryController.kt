@@ -321,20 +321,24 @@ class RepositoryController(
     @DeleteMapping("/repositories/{id}/bases/delete")
     fun deleteAllBaseFiles(@PathVariable id: Long) {
         val repo = repositoryDataManager.findById(id) ?: return
+        notificationService.notify("Started deletion of base files from repo ${repo.name}")
         repo.branches.forEach { branch ->
             sourceCodeStorage.deleteAllBaseFiles(repo, branch.name)
         }
         branchRepository.deleteAll(repo.branches)
         baseFileRecordRepository.deleteAllByRepo(repo)
+        notificationService.notify("Deleted all base files of repo ${repo.name}")
     }
 
     @DeleteMapping("/repositories/{id}/solutions/delete")
     fun deleteAllSolutionFiles(@PathVariable id: Long) {
         val repo = repositoryDataManager.findById(id) ?: return
+        notificationService.notify("Started deletion of solution files from repo ${repo.name}")
         repo.pullRequests.forEach { pullRequest ->
             solutionFileRecordRepository.deleteAllByPullRequest(pullRequest)
             sourceCodeStorage.deleteAllSolutionFiles(repo, pullRequest.sourceBranchName, pullRequest.creatorName)
         }
         pullRequestRepository.deleteAll(repo.pullRequests)
+        notificationService.notify("Deleted all solution files of repo ${repo.name}")
     }
 }
