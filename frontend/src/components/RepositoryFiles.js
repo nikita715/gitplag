@@ -152,9 +152,11 @@ export class RepositoryFiles extends React.Component {
       </div>
       <div className="row">
         <div className="col container">
-          <h6>Solution files</h6>
-          <button className="badge badge-danger mb-2 ml-2" onClick={() => this.deleteSolutionFiles()}>Delete all
-          </button>
+          <div className="row ml-0">
+            <h6>Solution files</h6>
+            <button className="badge badge-danger mb-2 ml-2" onClick={() => this.deleteSolutionFiles()}>Delete all
+            </button>
+          </div>
           <table className="table table-hover">
             <thead className="thead-light">
             <tr>

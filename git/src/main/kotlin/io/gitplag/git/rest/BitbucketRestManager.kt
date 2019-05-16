@@ -4,6 +4,7 @@ import com.beust.klaxon.JsonObject
 import com.github.kittinunf.fuel.core.FuelError
 import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.model.entity.Repository
+import io.gitplag.model.repo.SolutionFileRecordRepository
 import io.gitplag.util.sendRestRequest
 
 /**
@@ -11,8 +12,9 @@ import io.gitplag.util.sendRestRequest
  */
 class BitbucketRestManager(
     sourceCodeStorage: SourceCodeStorage,
+    solutionFileRecordRepository: SolutionFileRecordRepository,
     private val accessToken: String
-) : AbstractGitRestManager(sourceCodeStorage) {
+) : AbstractGitRestManager(sourceCodeStorage, solutionFileRecordRepository) {
 
     override fun getBranchOfRepo(repo: Repository, name: String) =
         sendRestRequest<JsonObject>(

@@ -9,6 +9,7 @@ import io.gitplag.util.generateDir
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 /**
  * Moss client wrapper
@@ -23,7 +24,7 @@ class MossAnalyzer(
     private val extensionRegex = "\\.[a-zA-Z]+$".toRegex()
 
     override fun analyze(settings: AnalysisSettings): AnalysisResult {
-        val executionDate = LocalDateTime.now()
+        val executionDate = LocalDateTime.parse("").atZone(ZoneId.systemDefault()).toLocalDateTime()
         val directoryName = analysisFilesDirectoryName(settings, executionDate)
         val fileDir = generateDir(analysisResultFilesDir, directoryName)
         logger.info { "Analysis:Moss:1.Gathering files for analysis. ${repoInfo(settings)}" }

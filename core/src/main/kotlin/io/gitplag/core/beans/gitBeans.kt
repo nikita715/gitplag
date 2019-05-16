@@ -27,9 +27,9 @@ val gitBeans = beans {
     }
 
     // Loaders
-    bean { GithubRestManager(ref(), env.safeEnvVar("gitplag.githubToken")) }
-    bean { GitlabRestManager(ref(), env.safeEnvVar("gitplag.gitlabToken")) }
-    bean { BitbucketRestManager(ref(), env.safeEnvVar("gitplag.bitbucketToken")) }
+    bean { GithubRestManager(ref(), ref(), env.safeEnvVar("gitplag.githubToken")) }
+    bean { GitlabRestManager(ref(), ref(), env.safeEnvVar("gitplag.gitlabToken")) }
+    bean { BitbucketRestManager(ref(), ref(), env.safeEnvVar("gitplag.bitbucketToken")) }
     bean<Map<GitProperty, GitRestManager>>("gitRestManagers") {
         mapOf(
             GitProperty.GITHUB to ref<GithubRestManager>(),

@@ -3,6 +3,7 @@ package io.gitplag.git.rest
 import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.model.entity.PullRequest
 import io.gitplag.model.entity.Repository
+import io.gitplag.model.repo.SolutionFileRecordRepository
 import io.gitplag.util.downloadAndUnpackZip
 import mu.KotlinLogging
 import java.io.File
@@ -11,7 +12,8 @@ import java.io.File
  * Common implementation of the [GitRestManager]
  */
 abstract class AbstractGitRestManager(
-    private val sourceCodeStorage: SourceCodeStorage
+    private val sourceCodeStorage: SourceCodeStorage,
+    private val solutionFileRecordRepository: SolutionFileRecordRepository
 ) : GitRestManager {
 
     private val logger = KotlinLogging.logger {}
@@ -29,7 +31,7 @@ abstract class AbstractGitRestManager(
     }
 
     override fun deletePullRequestFiles(pullRequest: PullRequest) {
-        pullRequest.solutionFiles.forEach { file ->
+        solutionFileRecordRepository.findAllByPullRequest(pullRequest).forEach { file ->
             sourceCodeStorage.deleteSolutionFile(
                 pullRequest.repo,
                 pullRequest.sourceBranchName,
@@ -37,7 +39,6 @@ abstract class AbstractGitRestManager(
                 file.fileName
             )
         }
-        logger.info { "Git: deleted duplicated pull request #${pullRequest.id} of repo ${pullRequest.repo.name}" }
     }
 
     override fun cloneRepository(repo: Repository, branch: String?) {

@@ -152,7 +152,7 @@ export class EditRepo extends React.Component {
           <div className="form-group">
             <div className="row">
               <div className="col">
-                <Link to={"/repos/" + this.state.id}>Back to repositories</Link>
+                <Link to={"/repos/" + this.state.id}>Back to analyzes</Link>
               </div>
               <div className="col">
                 <div onClick={() => this.deleteRepository(this.state.id)}

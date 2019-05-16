@@ -144,20 +144,7 @@ abstract class AbstractPayloadProcessor(
         val storedPullRequest = json.number?.let { pullRequestRepository.findByRepoAndNumber(repo, it) }
         if (storedPullRequest != null && storedPullRequest.updatedAt == json.updatedAt) return
         val pullRequest = parsePullRequest(json, repo)
-        if (pullRequest != null) {
-            val duplicatedPullRequest = pullRequestRepository.findByRepoAndCreatorNameAndSourceBranchName(
-                repo = repo,
-                creatorName = pullRequest.creatorName,
-                sourceBranchName = pullRequest.sourceBranchName
-            )
-
-            if (duplicatedPullRequest != null) {
-                if (duplicatedPullRequest.updatedAt < pullRequest.updatedAt) {
-                    gitRestManager.deletePullRequestFiles(duplicatedPullRequest)
-                    pullRequestRepository.delete(duplicatedPullRequest)
-                } else return
-            }
-
+        if (pullRequest != null && hasNoDuplicates(repo, pullRequest)) {
             val savedPullRequest = if (storedPullRequest == null) {
                 pullRequestRepository.save(pullRequest)
             } else pullRequestRepository.save(storedPullRequest.updateFrom(json))
@@ -169,6 +156,35 @@ abstract class AbstractPayloadProcessor(
             }
             logger.info { "Git: cloned new pr from repo ${repo.name}, pr number ${savedPullRequest.number}" }
         }
+    }
+
+    private fun hasNoDuplicates(
+        repo: Repository,
+        pullRequest: PullRequest
+    ): Boolean {
+        val duplicatedPullRequest = pullRequestRepository.findByRepoAndCreatorNameAndSourceBranchName(
+            repo = repo,
+            creatorName = pullRequest.creatorName,
+            sourceBranchName = pullRequest.sourceBranchName
+        )
+
+        if (duplicatedPullRequest != null) {
+            if (duplicatedPullRequest.updatedAt < pullRequest.updatedAt) {
+                logger.info {
+                    "Git: Deleted duplicated pr #${duplicatedPullRequest.number}," +
+                            " another is #${pullRequest.number}, repo ${repo.name}"
+                }
+                gitRestManager.deletePullRequestFiles(duplicatedPullRequest)
+                pullRequestRepository.delete(duplicatedPullRequest)
+            } else {
+                logger.info {
+                    "Git: Skipped duplicated pr #${pullRequest.number} " +
+                            "of #${duplicatedPullRequest.number}, repo ${repo.name}"
+                }
+                return false
+            }
+        }
+        return true
     }
 
     private fun PullRequest.updateFrom(jsonPayload: JsonObject): PullRequest {
