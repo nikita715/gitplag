@@ -40,4 +40,9 @@ interface GitRestManager {
      * Find id of repo with this [repoName]
      */
     fun getRepoIdByName(repoName: String): String?
+
+    /**
+     * Delete all solutions from the [pullRequest]
+     */
+    fun deletePullRequestFiles(pullRequest: PullRequest)
 }

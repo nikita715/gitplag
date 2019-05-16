@@ -46,5 +46,5 @@ data class PullRequest(
     @JsonIgnore
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany(mappedBy = "pullRequest", orphanRemoval = true)
-    val pullRequests: List<SolutionFileRecord> = mutableListOf()
+    val solutionFiles: List<SolutionFileRecord> = mutableListOf()
 )

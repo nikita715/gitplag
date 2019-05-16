@@ -28,6 +28,18 @@ abstract class AbstractGitRestManager(
         logger.info { "Git: downloaded and unpacked the zip from url $resourceUrl" }
     }
 
+    override fun deletePullRequestFiles(pullRequest: PullRequest) {
+        pullRequest.solutionFiles.forEach { file ->
+            sourceCodeStorage.deleteSolutionFile(
+                pullRequest.repo,
+                pullRequest.sourceBranchName,
+                pullRequest.creatorName,
+                file.fileName
+            )
+        }
+        logger.info { "Git: deleted duplicated pull request #${pullRequest.id} of repo ${pullRequest.repo.name}" }
+    }
+
     override fun cloneRepository(repo: Repository, branch: String?) {
         if (branch == null) {
             findBranchesOfRepo(repo).forEach { cloneBranchOfRepository(repo, it) }

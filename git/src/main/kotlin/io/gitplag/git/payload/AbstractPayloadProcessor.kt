@@ -145,6 +145,19 @@ abstract class AbstractPayloadProcessor(
         if (storedPullRequest != null && storedPullRequest.updatedAt == json.updatedAt) return
         val pullRequest = parsePullRequest(json, repo)
         if (pullRequest != null) {
+            val duplicatedPullRequest = pullRequestRepository.findByRepoAndCreatorNameAndSourceBranchName(
+                repo = repo,
+                creatorName = pullRequest.creatorName,
+                sourceBranchName = pullRequest.sourceBranchName
+            )
+
+            if (duplicatedPullRequest != null) {
+                if (duplicatedPullRequest.updatedAt < pullRequest.updatedAt) {
+                    gitRestManager.deletePullRequestFiles(duplicatedPullRequest)
+                    pullRequestRepository.delete(duplicatedPullRequest)
+                } else return
+            }
+
             val savedPullRequest = if (storedPullRequest == null) {
                 pullRequestRepository.save(pullRequest)
             } else pullRequestRepository.save(storedPullRequest.updateFrom(json))
