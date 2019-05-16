@@ -156,7 +156,7 @@ export class RepositoryFiles extends React.Component {
         <div className="container col-sm-3">
           <div className="list-group input-group">
             <input name="sortedByName" onChange={this.handleChange} autoComplete="off"
-                   className="list-group-item list-group-item-action text-input" placeholder="Full-text search"/>
+                   className="list-group-item list-group-item-action text-input" placeholder="Search by regex"/>
           </div>
         </div>
       </div>
