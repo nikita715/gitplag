@@ -26,4 +26,10 @@ interface BaseFileRecordRepository : JpaRepository<BaseFileRecord, Long> {
     @Transactional
     fun deleteAllByRepoAndBranch(repo: Repository, branch: String)
 
+    /**
+     * Delete all [BaseFileRecord]s by the [repo]
+     */
+    @Transactional
+    fun deleteAllByRepo(repo: Repository)
+
 }

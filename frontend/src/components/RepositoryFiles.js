@@ -63,27 +63,15 @@ export class RepositoryFiles extends React.Component {
   }
 
   deleteBaseFiles() {
-    let selectedFiles = this.state.bases.filter(
-      (it) => RepositoryFiles.filterBase(this.state.sortedByName, it));
-    axios.post(PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/bases/delete",
-      selectedFiles.map((file) => file.id)
-    );
-    this.setState({
-      bases: this.state.bases.filter((it) => selectedFiles.indexOf(it) < 0),
-      sortedByName: ""
-    });
+    axios.delete(PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/bases/delete").then(
+      () => this.fetchFiles()
+    )
   }
 
   deleteSolutionFiles() {
-    let selectedFiles = this.state.solutions.filter(
-      (it) => RepositoryFiles.filterSolution(this.state.sortedByName, it));
-    axios.post(PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/solutions/delete",
-      selectedFiles.map((file) => file.id)
-    );
-    this.setState({
-      bases: this.state.solutions.filter((it) => selectedFiles.indexOf(it) < 0),
-      sortedByName: ""
-    });
+    axios.delete(PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/solutions/delete").then(
+      () => this.fetchFiles()
+    )
   }
 
   handleChange(event) {
@@ -132,6 +120,8 @@ export class RepositoryFiles extends React.Component {
             </div>
             <div className="row">
               <h6>Base files</h6>
+              <button className="badge badge-danger mb-2 ml-2" onClick={() => this.deleteBaseFiles()}>Delete all
+              </button>
               <table className="table table-hover">
                 <thead className="thead-light">
                 <tr>
@@ -163,6 +153,8 @@ export class RepositoryFiles extends React.Component {
       <div className="row">
         <div className="col container">
           <h6>Solution files</h6>
+          <button className="badge badge-danger mb-2 ml-2" onClick={() => this.deleteSolutionFiles()}>Delete all
+          </button>
           <table className="table table-hover">
             <thead className="thead-light">
             <tr>

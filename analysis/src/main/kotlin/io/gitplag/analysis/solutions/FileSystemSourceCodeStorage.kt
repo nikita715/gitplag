@@ -212,6 +212,14 @@ class FileSystemSourceCodeStorage(
         File(pathToSolution(repo.gitService, repo.name, branch, creator, fileName)).deleteRecursively()
     }
 
+    override fun deleteAllBaseFiles(repo: Repository, branch: String) {
+        File(pathToBases(repo.gitService, repo.name, branch)).deleteRecursively()
+    }
+
+    override fun deleteAllSolutionFiles(repo: Repository, branch: String, creator: String) {
+        File(pathToSolutions(repo.gitService, repo.name, branch, creator)).deleteRecursively()
+    }
+
     private fun String.toFileExtension() =
         substringAfterLast(".")
 

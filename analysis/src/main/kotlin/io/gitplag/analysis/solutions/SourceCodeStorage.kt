@@ -49,7 +49,17 @@ interface SourceCodeStorage {
     fun deleteSolutionFile(repo: Repository, branch: String, creator: String, fileName: String)
 
     /**
+     * Delete solution file of the repository
+     */
+    fun deleteAllSolutionFiles(repo: Repository, branch: String, creator: String)
+
+    /**
      * Delete base file of the repository
      */
     fun deleteBaseFile(repo: Repository, branch: String, fileName: String)
+
+    /**
+     * Delete base file of the repository
+     */
+    fun deleteAllBaseFiles(repo: Repository, branch: String)
 }
