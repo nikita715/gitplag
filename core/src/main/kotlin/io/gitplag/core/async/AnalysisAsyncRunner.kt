@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 import java.net.ConnectException
 import java.net.SocketException
+import java.net.SocketTimeoutException
 
 /**
  * The class that asynchronously calls the [AnalysisRunner]
@@ -52,7 +53,8 @@ class AnalysisAsyncRunner(
             var message = "Failed analysis of repo ${analysisSettings.repository.name}."
             when (e) {
                 is ConnectException,
-                is SocketException -> {
+                is SocketException,
+                is SocketTimeoutException -> {
                     if (analysisSettings.analyzer == AnalyzerProperty.MOSS) {
                         message += " Moss server is unavailable."
                     }

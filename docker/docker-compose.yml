@@ -1,7 +1,7 @@
 version: '2.4'
 services:
   backend:
-    image: nikstep/gitplag:latest
+    image: nikstep/gitplag:${gitplag_version}
     ports:
       - 8090:8090
     volumes:
@@ -20,7 +20,7 @@ services:
       postgres:
         condition: service_healthy
   frontend:
-    image: nikstep/gitplag-ui:latest
+    image: nikstep/gitplag-ui:${gitplag_version}
     ports:
       - ${ui_port}:80
   postgres:
@@ -38,6 +38,6 @@ services:
       timeout: 5s
       retries: 5
   data2graph:
-    image: flaxo/data2graph:0.4
+    image: flaxo/data2graph:${flaxo_version}
     ports:
       - 8088:80

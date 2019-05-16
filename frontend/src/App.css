@@ -177,3 +177,7 @@ form {
     padding: 8px 20px 8px;
     border: 1px solid lightblue;
 }
+
+.break-word {
+  word-break: break-all;
+}

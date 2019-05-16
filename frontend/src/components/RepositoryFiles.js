@@ -120,22 +120,18 @@ export class RepositoryFiles extends React.Component {
           <li className="breadcrumb-item"><Link onClick={() => this.fetchFiles()}
                                                 to={"/repos/" + this.state.repoId + "/files"}>Files</Link></li>
         </ol>)}
-      <div className="row">
-        <div className="col container">
-          <div className="col">
-            <div className="row mb-2">
-              <div className="col">
-                <div className="row">
+
+        <div className="row container">
+                <div className="row mb-2">
                   <h5>Downloaded files of repository {this.state.repoName}</h5>
                 </div>
-              </div>
-            </div>
+        <div className="col container">
             <div className="row">
               <h6>Base files</h6>
               <table className="table table-hover">
                 <thead className="thead-light">
                 <tr>
-                  <th>Name</th>
+                  <th className="break-word">Name</th>
                   <th>Branch</th>
                   <th>Updated</th>
                 </tr>
@@ -144,22 +140,31 @@ export class RepositoryFiles extends React.Component {
                 {this.state.bases.filter(
                   (it) => RepositoryFiles.filterBase(this.state.sortedByName, it)
                 ).map((base) => <tr>
-                  <td>{base.name}</td>
-                  <td>{base.branch}</td>
-                  <td>{base.updated}</td>
+                  <td className="break-word">{base.name}</td>
+                  <td className="break-word">{base.branch}</td>
+                  <td className="th-lg text-nowrap">{base.updated}</td>
                 </tr>)}
                 </tbody>
               </table>
             </div>
-            <div className="row">
+            </div>
+              <div className="col list-group input-group col-sm-3">
+                <input name="sortedByName" onChange={this.handleChange} autoComplete="off"
+                       className="list-group-item list-group-item-action text-input" placeholder="Full-text search"/>
+              </div>
+            </div>
+
+
+
+          <div className="container table-responsive">
               <h6>Solution files</h6>
               <table className="table table-hover">
                 <thead className="thead-light">
                 <tr>
                   <th>Student</th>
-                  <th>Name</th>
-                  <th>Branch</th>
-                  <th>Updated</th>
+                  <th className="break-word">Name</th>
+                  <th className="break-word">Branch</th>
+                  <th className="th-lg text-nowrap">Updated</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -167,22 +172,14 @@ export class RepositoryFiles extends React.Component {
                   (it) => RepositoryFiles.filterSolution(this.state.sortedByName, it)
                 ).map((base) => <tr>
                   <td>{base.student}</td>
-                  <td>{base.name}</td>
-                  <td>{base.branch}</td>
-                  <td>{base.updated}</td>
+                  <td className="break-word">{base.name}</td>
+                  <td className="break-word">{base.branch}</td>
+                  <td className="th-lg text-nowrap">{base.updated}</td>
                 </tr>)}
                 </tbody>
               </table>
-            </div>
           </div>
-        </div>
-        <div className="container col-sm-3">
-          <div className="list-group input-group">
-            <input name="sortedByName" onChange={this.handleChange} autoComplete="off"
-                   className="list-group-item list-group-item-action text-input" placeholder="Full-text search"/>
-          </div>
-        </div>
-      </div>
+
     </div>);
   }
 }
