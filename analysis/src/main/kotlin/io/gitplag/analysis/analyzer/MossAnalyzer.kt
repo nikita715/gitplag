@@ -34,7 +34,7 @@ class MossAnalyzer(
 
         logger.info { "Analysis:Moss:2.Moss result. $resultLink" }
         val matchData =
-            if (settings.mode.order > AnalysisMode.LINK.order) {
+            if (settings.analysisMode.order > AnalysisMode.LINK.order) {
                 logger.info { "Analysis:Moss:3.Start parsing of results. ${repoInfo(settings)}" }
                 parseResult(settings, analysisFiles.solutions, resultLink)
             } else {
@@ -80,7 +80,7 @@ class MossAnalyzer(
                 val solution2 = findSolutionByStudent(solutions, students.second)
 
                 val matchedLines =
-                    if (analysisSettings.mode == AnalysisMode.FULL) {
+                    if (analysisSettings.analysisMode == AnalysisMode.FULL) {
                         val rows = Jsoup.connect(firstATag.attr("href").replace(".html", "-top.html"))
                             .get().getElementsByTag("tr")
                         val matchedLines = mutableListOf<MatchedLines>()

@@ -76,6 +76,7 @@ iframe {
 .compare {
     border-collapse: collapse;
     width: 94%;
+    font-family: 'Inconsolata', monospace;
 }
 
 .compare__indexes {
@@ -102,8 +103,8 @@ iframe {
 }
 
 .compare .red-line {
-    background-color: orange;
-    border-color: #e58f00;
+    background-color: #FAE6E7;
+    border-color: #FFC0CB;
     cursor: pointer;
 }
 

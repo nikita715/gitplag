@@ -81,7 +81,7 @@ class RepositoryController(
                         dto.branch,
                         language = dto.language,
                         analyzer = dto.analyzer,
-                        mode = dto.mode,
+                        analysisMode = dto.mode,
                         parameters = dto.parameters,
                         updateFiles = dto.updateFiles
                     )
@@ -107,7 +107,7 @@ class RepositoryController(
                 dto.branch,
                 language = dto.language,
                 analyzer = dto.analyzer,
-                mode = dto.mode,
+                analysisMode = dto.mode,
                 parameters = dto.parameters,
                 updateFiles = dto.updateFiles
             ), dto.responseUrl

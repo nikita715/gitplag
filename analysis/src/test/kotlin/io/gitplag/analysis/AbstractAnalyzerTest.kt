@@ -46,6 +46,6 @@ abstract class AbstractAnalyzerTest {
         on { repository } doReturn repository
         on { language } doReturn Language.JAVA
         on { branch } doReturn "master"
-        on { mode } doReturn AnalysisMode.FULL
+        on { analysisMode } doReturn AnalysisMode.FULL
     }
 }

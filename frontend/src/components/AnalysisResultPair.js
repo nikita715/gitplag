@@ -40,11 +40,15 @@ export class AnalysisResultPair extends React.Component {
       let rightMatches = [];
       let leftRightMatches = [];
       response.data.pair.lines.map((match) => {
-        leftMatches.push(match.from1);
-        leftMatches.push(match.to1);
-        rightMatches.push(match.from2);
-        rightMatches.push(match.to2);
-        leftRightMatches.push({from1: match.from1, to1: match.to1, from2: match.from2, to2: match.to2});
+        let from1 = match.from1;
+        let to1 = match.to1 !== match.from1 ? match.to1 : match.to1 + 1;
+        let from2 = match.from2;
+        let to2 = match.to2 !== match.from2 ? match.to2 : match.to2 + 1;
+        leftMatches.push(from1);
+        leftMatches.push(to1);
+        rightMatches.push(from2);
+        rightMatches.push(to2);
+        leftRightMatches.push({from1, to1, from2, to2});
         return null;
       });
 
@@ -77,6 +81,9 @@ export class AnalysisResultPair extends React.Component {
     if (matches[this.matchIndex] === lineIndex) {
       this.redClass = !this.redClass;
       this.matchIndex += 1;
+      end = false;
+    }
+    if (matches[this.matchIndex] - lineIndex === 1) {
       end = true;
     }
     return this.redClass || end ? "red-line" : "";
@@ -89,11 +96,11 @@ export class AnalysisResultPair extends React.Component {
   findToHref(side, line) {
     if (side === "right") {
       return this.state.leftRightMatches.find(function (el) {
-        return el.from1 <= line && el.to1 > line;
+        return el.from1 <= line && el.to1 >= line;
       }).from2
     } else {
       return this.state.leftRightMatches.find(function (el) {
-        return el.from2 <= line && el.to2 > line;
+        return el.from2 <= line && el.to2 >= line;
       }).from1
     }
   }

@@ -42,7 +42,7 @@ class JPlagAnalyzer(
         JPlagClient(jplagJarPath, analysisFiles, jplagReportDir).run()
 
         val matchLines =
-            if (settings.mode.order > AnalysisMode.LINK.order) {
+            if (settings.analysisMode.order > AnalysisMode.LINK.order) {
                 logger.info { "Analysis:JPlag:3.Start parsing of results. ${repoInfo(settings)}" }
                 analysisFiles.toSolutionPairIndexes().mapNotNull { index ->
                     parseResults(index, settings, analysisFiles.solutions, jplagReportDir)
@@ -78,7 +78,7 @@ class JPlagAnalyzer(
         val percentage = body.getElementsByTag("H1")[0].text().replace("%", "").toDouble().roundToInt()
 
         val matchedLines =
-            if (analysisSettings.mode == AnalysisMode.FULL) {
+            if (analysisSettings.analysisMode == AnalysisMode.FULL) {
                 parseMatchedLines(index, resultDir)
             } else emptyList<MatchedLines>()
 
