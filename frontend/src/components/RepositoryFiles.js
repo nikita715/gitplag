@@ -11,7 +11,9 @@ export class RepositoryFiles extends React.Component {
     bases: [],
     solutions: [],
     repoName: "",
-    sortedByName: ""
+    sortedByName: "",
+    baseSortMethod: (a, b) => 0,
+    solutionSortMethod: (a, b) => 0
   };
 
   constructor(props, context) {
@@ -99,6 +101,27 @@ export class RepositoryFiles extends React.Component {
     });
   }
 
+  sortByName = (a, b) => a.name.localeCompare(b.name);
+  sortByStudent = (a, b) => a.student.localeCompare(b.student);
+  sortByBranch = (a, b) => a.branch.localeCompare(b.branch);
+  sortByUpdated = (a, b) => a.updated.localeCompare(b.updated);
+
+  changeBaseSortMethodTo(method) {
+    if (this.state.baseSortMethod === method) {
+      this.setState({baseSortMethod: (a, b) => method(a, b) * -1})
+    } else {
+      this.setState({baseSortMethod: method})
+    }
+  }
+
+  changeSolutionSortMethodTo(method) {
+    if (this.state.solutionSortMethod === method) {
+      this.setState({solutionSortMethod: (a, b) => method(a, b) * -1})
+    } else {
+      this.setState({solutionSortMethod: method})
+    }
+  }
+
   render() {
     return (<div className="container">
       {Header(
@@ -122,18 +145,18 @@ export class RepositoryFiles extends React.Component {
               <h6>Base files</h6>
               <button className="badge badge-danger mb-2 ml-2" onClick={() => this.deleteBaseFiles()}>Delete all
               </button>
-              <table className="table table-hover">
+              <table className="table table-hover file-table">
                 <thead className="thead-light">
                 <tr>
-                  <th className="break-word">Name</th>
-                  <th>Branch</th>
-                  <th>Updated</th>
+                  <th className="break-word" onClick={() => this.changeBaseSortMethodTo(this.sortByName)}>Name</th>
+                  <th onClick={() => this.changeBaseSortMethodTo(this.sortByBranch)}>Branch</th>
+                  <th onClick={() => this.changeBaseSortMethodTo(this.sortByUpdated)}>Updated</th>
                 </tr>
                 </thead>
                 <tbody>
                 {this.state.bases.filter(
                   (it) => RepositoryFiles.filterBase(this.state.sortedByName, it)
-                ).map((base) => <tr>
+                ).sort(this.state.baseSortMethod).map((base) => <tr>
                   <td className="break-word">{base.name}</td>
                   <td className="break-word">{base.branch}</td>
                   <td className="th-lg text-nowrap">{base.updated}</td>
@@ -157,19 +180,22 @@ export class RepositoryFiles extends React.Component {
             <button className="badge badge-danger mb-2 ml-2" onClick={() => this.deleteSolutionFiles()}>Delete all
             </button>
           </div>
-          <table className="table table-hover">
+          <table className="table table-hover file-table">
             <thead className="thead-light">
             <tr>
-              <th className="break-word">Student</th>
-              <th className="break-word">Name</th>
-              <th className="break-word">Branch</th>
-              <th className="th-lg text-nowrap">Updated</th>
+              <th className="break-word" onClick={() => this.changeSolutionSortMethodTo(this.sortByStudent)}>Student
+              </th>
+              <th className="break-word" onClick={() => this.changeSolutionSortMethodTo(this.sortByName)}>Name</th>
+              <th className="break-word" onClick={() => this.changeSolutionSortMethodTo(this.sortByBranch)}>Branch</th>
+              <th className="th-lg text-nowrap"
+                  onClick={() => this.changeSolutionSortMethodTo(this.sortByUpdated)}>Updated
+              </th>
             </tr>
             </thead>
             <tbody>
             {this.state.solutions.filter(
               (it) => RepositoryFiles.filterSolution(this.state.sortedByName, it)
-            ).map((base) => <tr>
+            ).sort(this.state.solutionSortMethod).map((base) => <tr>
               <td>{base.student}</td>
               <td className="break-word">{base.name}</td>
               <td className="break-word">{base.branch}</td>

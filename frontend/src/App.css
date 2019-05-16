@@ -182,3 +182,7 @@ form {
 .break-word {
   word-break: break-all;
 }
+
+.file-table th {
+    cursor: pointer;
+}
