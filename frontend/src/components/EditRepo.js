@@ -12,7 +12,7 @@ export class EditRepo extends React.Component {
     git: "",
     mossParameters: "",
     jplagParameters: "",
-    analysisMode: "",
+    analysisMode: "FULL",
     language: "JAVA",
     analyzer: "",
     filePatterns: ".+\\.java",
@@ -39,32 +39,30 @@ export class EditRepo extends React.Component {
 
   componentDidMount() {
     let id = this.state.id;
-    if (id) {
-      axios.get(PROP.serverUrl + "/api/repositories/" + id).then((response) => {
-        let data = response.data;
-        let git = data.gitService;
-        let name = data.name;
-        let mossParameters = data.mossParameters;
-        let jplagParameters = data.jplagParameters;
-        let analysisMode = data.analysisMode;
-        let language = data.language;
-        let analyzer = data.analyzer;
-        let autoCloningEnabled = data.autoCloningEnabled;
-        let filePatterns = data.filePatterns.join("\n");
-        this.setState({
-          id,
-          name,
-          git,
-          analyzer,
-          filePatterns,
-          language,
-          analysisMode,
-          jplagParameters,
-          mossParameters,
-          autoCloningEnabled
-        });
+    axios.get(PROP.serverUrl + "/api/repositories/" + id).then((response) => {
+      let data = response.data;
+      let git = data.gitService;
+      let name = data.name;
+      let mossParameters = data.mossParameters;
+      let jplagParameters = data.jplagParameters;
+      let analysisMode = data.analysisMode;
+      let language = data.language;
+      let analyzer = data.analyzer;
+      let autoCloningEnabled = data.autoCloningEnabled;
+      let filePatterns = data.filePatterns.join("\n");
+      this.setState({
+        id,
+        name,
+        git,
+        analyzer,
+        filePatterns,
+        language,
+        analysisMode,
+        jplagParameters,
+        mossParameters,
+        autoCloningEnabled
       });
-    }
+    });
   }
 
   handleChange(event) {
@@ -178,25 +176,6 @@ export class EditRepo extends React.Component {
             </div>
           </div>
           {this.selectLanguages()}
-          <div className="form-group">
-            <legend className="col-form-label">Default analysis mode</legend>
-            <div className="btn-group btn-group-toggle" data-toggle="buttons" onChange={this.handleChange}>
-              <label className={"btn btn-light " + (this.state.analysisMode === "LINK" ? "active" : "")} htmlFor="mode1"
-                     onClick={this.handlePlatformChange} defaultChecked={true}>
-                <input type="radio" id="mode1" name="analysisMode" value="LINK"
-                       checked={this.state.analysisMode === "LINK"}/>Link</label>
-              <label className={"btn btn-light " + (this.state.analysisMode === "PAIRS" ? "active" : "")}
-                     htmlFor="mode2" onClick={this.handlePlatformChange}>
-                <input type="radio" id="mode2" name="analysisMode"
-                       value="PAIRS"
-                       checked={this.state.analysisMode === "PAIRS"}/>Pairs</label>
-              <label className={"btn btn-light " + (this.state.analysisMode === "FULL" ? "active" : "")} htmlFor="mode3"
-                     onClick={this.handlePlatformChange}>
-                <input type="radio" id="mode3" name="analysisMode"
-                       value="FULL"
-                       checked={this.state.analysisMode === "FULL"}/>Full</label>
-            </div>
-          </div>
           <div className="form-group">
             <label htmlFor="moss-parameters">Default Moss parameters</label>
             <div><input className="form-control" type="text" autoComplete="off" id="moss-parameters"

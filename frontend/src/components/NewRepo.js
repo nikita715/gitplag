@@ -11,7 +11,7 @@ export class NewRepo extends React.Component {
     name: "",
     mossParameters: "",
     jplagParameters: "",
-    analysisMode: "",
+    analysisMode: "FULL",
     language: "JAVA",
     git: "",
     analyzer: "",
@@ -153,22 +153,22 @@ export class NewRepo extends React.Component {
             </div>
           </div>
           {this.selectLanguages()}
-          <div className="form-group">
-            <legend className="col-form-label">Default analysis mode</legend>
-            <div className="btn-group btn-group-toggle" data-toggle="buttons" onChange={this.handleChange}>
-              <label className="btn btn-light" htmlFor="mode1" onClick={this.handlePlatformChange}>
-                <input type="radio" id="mode1" name="analysisMode" value="LINK"
-                       checked={this.state.analysisMode === "LINK"}/>Link</label>
-              <label className="btn btn-light" htmlFor="mode2" onClick={this.handlePlatformChange}>
-                <input type="radio" id="mode2" name="analysisMode"
-                       value="PAIRS"
-                       checked={this.state.analysisMode === "PAIRS"}/>Pairs</label>
-              <label className="btn btn-light" htmlFor="mode3" onClick={this.handlePlatformChange}>
-                <input type="radio" id="mode3" name="analysisMode"
-                       value="FULL"
-                       checked={this.state.analysisMode === "FULL"}/>Full</label>
-            </div>
-          </div>
+          {/*<div className="form-group">*/}
+          {/*<legend className="col-form-label">Default analysis mode</legend>*/}
+          {/*<div className="btn-group btn-group-toggle" data-toggle="buttons" onChange={this.handleChange}>*/}
+          {/*<label className="btn btn-light" htmlFor="mode1" onClick={this.handlePlatformChange}>*/}
+          {/*<input type="radio" id="mode1" name="analysisMode" value="LINK"*/}
+          {/*checked={this.state.analysisMode === "LINK"}/>Link</label>*/}
+          {/*<label className="btn btn-light" htmlFor="mode2" onClick={this.handlePlatformChange}>*/}
+          {/*<input type="radio" id="mode2" name="analysisMode"*/}
+          {/*value="PAIRS"*/}
+          {/*checked={this.state.analysisMode === "PAIRS"}/>Pairs</label>*/}
+          {/*<label className="btn btn-light" htmlFor="mode3" onClick={this.handlePlatformChange}>*/}
+          {/*<input type="radio" id="mode3" name="analysisMode"*/}
+          {/*value="FULL"*/}
+          {/*checked={this.state.analysisMode === "FULL"}/>Full</label>*/}
+          {/*</div>*/}
+          {/*</div>*/}
           <div className="form-group">
             <label htmlFor="moss-parameters">Default Moss parameters</label>
             <div><input className="form-control" type="text" autoComplete="off" id="moss-parameters"

@@ -9,7 +9,7 @@ export class RunAnalysis extends React.Component {
     repoId: 0,
     analyzer: "",
     language: "",
-    analysisMode: "",
+    analysisMode: "FULL",
     jplagParameters: "",
     mossParameters: "",
     parameters: "",
@@ -118,26 +118,7 @@ export class RunAnalysis extends React.Component {
           </div>
         </div>
         <div className="form-group">
-          <legend className="col-form-label">Analysis mode</legend>
-          <div className="btn-group btn-group-toggle" data-toggle="buttons" onChange={this.handleChange}>
-            <label className={"btn btn-light " + (this.state.analysisMode === "LINK" ? "active" : "")} htmlFor="mode1"
-                   onClick={this.handlePlatformChange} defaultChecked={true}>
-              <input type="radio" id="mode1" name="analysisMode" value="LINK"
-                     checked={this.state.analysisMode === "LINK"}/>Link</label>
-            <label className={"btn btn-light " + (this.state.analysisMode === "PAIRS" ? "active" : "")} htmlFor="mode2"
-                   onClick={this.handlePlatformChange}>
-              <input type="radio" id="mode2" name="analysisMode"
-                     value="PAIRS"
-                     checked={this.state.analysisMode === "PAIRS"}/>Pairs</label>
-            <label className={"btn btn-light " + (this.state.analysisMode === "FULL" ? "active" : "")} htmlFor="mode3"
-                   onClick={this.handlePlatformChange}>
-              <input type="radio" id="mode3" name="analysisMode"
-                     value="FULL"
-                     checked={this.state.analysisMode === "FULL"}/>Full</label>
-          </div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="parameters">Parameters</label>
+          <label htmlFor="parameters">Analyzer parameters</label>
           <div><input type="text" id="parameters" name="parameters" value={this.state.parameters}
                       onChange={this.handleChange} className="form-control" autoComplete="off"/></div>
         </div>
