@@ -40,8 +40,8 @@ class SourceFileQueriesTest {
 
     private val base1 = BaseFileRecord(repo = repo, fileName = fileName1, branch = branch1)
     private val base2 = BaseFileRecord(repo = repo, fileName = fileName2, branch = branch2)
-    private val sol1 = SolutionFileRecord(pullRequest = pullRequest1, fileName = fileName1, countOfLines = 10)
-    private val sol2 = SolutionFileRecord(pullRequest = pullRequest2, fileName = fileName2, countOfLines = 20)
+    private val sol1 = SolutionFileRecord(pullRequest = pullRequest1, fileName = fileName1)
+    private val sol2 = SolutionFileRecord(pullRequest = pullRequest2, fileName = fileName2)
 
     private val solutionFileRecordRepository = mock<SolutionFileRecordRepository> {
         on { findAllByRepo(repo) } doReturn listOf(sol1, sol2)

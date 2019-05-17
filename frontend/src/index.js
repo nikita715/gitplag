@@ -14,7 +14,8 @@ const options = {
 
 const AlertTemplate = ({style, options, message, close}) => (
   <div className="alert-wrapper"><Alert className="shadow"
-                                        onDismiss={(e) => e.currentTarget.parentNode.remove()}>{message}</Alert></div>
+                                        onDismiss={(e) => e.currentTarget.parentNode
+                                        .parentNode.parentNode.remove()}>{message}</Alert></div>
 );
 
 Redirect("/repos");

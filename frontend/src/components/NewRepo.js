@@ -153,22 +153,6 @@ export class NewRepo extends React.Component {
             </div>
           </div>
           {this.selectLanguages()}
-          {/*<div className="form-group">*/}
-          {/*<legend className="col-form-label">Default analysis mode</legend>*/}
-          {/*<div className="btn-group btn-group-toggle" data-toggle="buttons" onChange={this.handleChange}>*/}
-          {/*<label className="btn btn-light" htmlFor="mode1" onClick={this.handlePlatformChange}>*/}
-          {/*<input type="radio" id="mode1" name="analysisMode" value="LINK"*/}
-          {/*checked={this.state.analysisMode === "LINK"}/>Link</label>*/}
-          {/*<label className="btn btn-light" htmlFor="mode2" onClick={this.handlePlatformChange}>*/}
-          {/*<input type="radio" id="mode2" name="analysisMode"*/}
-          {/*value="PAIRS"*/}
-          {/*checked={this.state.analysisMode === "PAIRS"}/>Pairs</label>*/}
-          {/*<label className="btn btn-light" htmlFor="mode3" onClick={this.handlePlatformChange}>*/}
-          {/*<input type="radio" id="mode3" name="analysisMode"*/}
-          {/*value="FULL"*/}
-          {/*checked={this.state.analysisMode === "FULL"}/>Full</label>*/}
-          {/*</div>*/}
-          {/*</div>*/}
           <div className="form-group">
             <label htmlFor="moss-parameters">Default Moss parameters</label>
             <div><input className="form-control" type="text" autoComplete="off" id="moss-parameters"
@@ -189,7 +173,7 @@ export class NewRepo extends React.Component {
             <label htmlFor="filePatterns">File patterns</label>
             <textarea className="form-control" id="filePatterns" name="filePatterns" value={this.state.filePatterns}
                       onChange={this.handleChange} rows="3"/>
-            <small id="emailHelp" className="form-text text-muted">Split regexps by new lines</small>
+            <small id="emailHelp" className="form-text text-muted">Split regexps by new lines. Leave empty to download all files.</small>
           </div>
           <div className="form-group">
             <div className="custom-control custom-switch">

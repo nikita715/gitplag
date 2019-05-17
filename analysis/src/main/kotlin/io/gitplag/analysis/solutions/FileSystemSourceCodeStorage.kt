@@ -146,7 +146,7 @@ class FileSystemSourceCodeStorage(
         baseFileRecordRepository.deleteAllByRepoAndBranch(repo, branchName)
         val filePatterns = repositoryDataManager.findFileNameRegexps(repo)
         forEachFileInDirectory(tempDir) { foundedFile ->
-            val fileName = File(tempDir).toPath().relativize(foundedFile.toPath()).toString()
+            val fileName = File(tempDir).toPath().relativize(foundedFile.toPath()).toString().replace("\\", "/")
             if (nameMatchesRegex(fileName, filePatterns)) {
                 foundedFile.copyTo(File("$pathToBases/$fileName"))
                 baseFileRecordRepository.save(
@@ -170,14 +170,13 @@ class FileSystemSourceCodeStorage(
         solutionFileRecordRepository.deleteAllByPullRequest(pullRequest)
         val filePatterns = repositoryDataManager.findFileNameRegexps(pullRequest.repo)
         forEachFileInDirectory(tempDir) { foundedFile ->
-            val fileName = File(tempDir).toPath().relativize(foundedFile.toPath()).toString()
+            val fileName = File(tempDir).toPath().relativize(foundedFile.toPath()).toString().replace("\\", "/")
             if (nameMatchesRegex(fileName, filePatterns)) {
                 foundedFile.copyTo(File("$pathToSolutions/$fileName"))
                 solutionFileRecordRepository.save(
                     SolutionFileRecord(
                         pullRequest = pullRequest,
-                        fileName = fileName,
-                        countOfLines = Files.lines(foundedFile.toPath()).count().toInt()
+                        fileName = fileName
                     )
                 )
                 logger.info {
@@ -224,6 +223,7 @@ class FileSystemSourceCodeStorage(
         substringAfterLast(".")
 
     private fun nameMatchesRegex(fileName: String, filePatterns: Collection<String>): Boolean {
+        if (filePatterns.isEmpty()) return true
         filePatterns.forEach {
             if (it.toRegex().matches(fileName)) return true
         }

@@ -1,12 +1,7 @@
 package io.gitplag.model.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
+import javax.persistence.*
 
 /**
  * Info class about stored solutions
@@ -22,7 +17,5 @@ data class SolutionFileRecord(
     @JoinColumn(nullable = false)
     val pullRequest: PullRequest,
 
-    val fileName: String,
-
-    val countOfLines: Int
+    val fileName: String
 )
