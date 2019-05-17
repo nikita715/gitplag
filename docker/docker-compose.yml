@@ -1,6 +1,7 @@
 version: '2.4'
 services:
   backend:
+    container_name: gitplag_backend
     image: nikstep/gitplag:${gitplag_version}
     ports:
       - 8090:8090
@@ -8,7 +9,7 @@ services:
       - ${gitplag_directory}/data:/mnt/gitplag
     environment:
       GITPLAG_MOSS_ID: ${MOSS_ID}
-      GITPLAG_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      GITPLAG_DATASOURCE_URL: jdbc:postgresql://gitplag_database:5432/${POSTGRES_DB}
       GITPLAG_DATASOURCE_USERNAME: ${POSTGRES_USER}
       GITPLAG_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       GITPLAG_SERVER_URL: ${server_url}:8090
@@ -17,14 +18,15 @@ services:
       GITPLAG_GITHUB_AUTH:
       GITPLAG_BITBUCKET_AUTH:
     depends_on:
-      postgres:
+      gitplag_database:
         condition: service_healthy
   frontend:
+    container_name: gitplag_frontend
     image: nikstep/gitplag-ui:${gitplag_version}
     ports:
       - ${ui_port}:80
-  postgres:
-    container_name: gitplag-database
+  gitplag_database:
+    container_name: gitplag_database
     image: postgres:11.1
     volumes:
       - ${gitplag_directory}/db:/var/lib/postgresql/data
@@ -38,6 +40,7 @@ services:
       timeout: 5s
       retries: 5
   data2graph:
+    container_name: flaxo_data2graph
     image: flaxo/data2graph:${flaxo_version}
     ports:
       - 8088:80
