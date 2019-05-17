@@ -29,7 +29,6 @@ import kotlin.test.assertTrue
  */
 class FileSystemSourceCodeStorageTest {
 
-    private val separator = System.getProperty("file.separator")
     private val resourcesPath = asPath("src", "test", "resources")
     private val unpackedZip = File(asPath(resourcesPath, "unpackedzip")).absolutePath
     private val solutionDir = File(asPath(resourcesPath, "solutiondirsample")).absolutePath
@@ -42,9 +41,9 @@ class FileSystemSourceCodeStorageTest {
     private val java = Language.JAVA
 
     private val fileName1 = "File1.java"
-    private val fileName2 = "dir${separator}File2.java"
+    private val fileName2 = "dir/File2.java"
     private val fileName3 = "File3.txt"
-    private val fileName4 = "dir${separator}File4.txt"
+    private val fileName4 = "dir/File4.txt"
 
     private val repoName = "repo"
     private val branchName = "br"
@@ -101,14 +100,14 @@ class FileSystemSourceCodeStorageTest {
     private val baseFileRecord3 = BaseFileRecord(-1, repo, fileName3, branchName)
     private val baseFileRecord4 = BaseFileRecord(-1, repo, fileName4, branchName)
 
-    private val solFileRecord1 = SolutionFileRecord(-1, pullRequest, fileName1, 2)
-    private val solFileRecord2 = SolutionFileRecord(-1, pullRequest, fileName2, 4)
-    private val solFileRecord3 = SolutionFileRecord(-1, pullRequest, fileName3, 6)
-    private val solFileRecord4 = SolutionFileRecord(-1, pullRequest, fileName4, 8)
-    private val solFileRecord5 = SolutionFileRecord(-1, pullRequest2, fileName1, 2)
-    private val solFileRecord6 = SolutionFileRecord(-1, pullRequest2, fileName2, 4)
-    private val solFileRecord7 = SolutionFileRecord(-1, pullRequest2, fileName3, 6)
-    private val solFileRecord8 = SolutionFileRecord(-1, pullRequest2, fileName4, 8)
+    private val solFileRecord1 = SolutionFileRecord(-1, pullRequest, fileName1)
+    private val solFileRecord2 = SolutionFileRecord(-1, pullRequest, fileName2)
+    private val solFileRecord3 = SolutionFileRecord(-1, pullRequest, fileName3)
+    private val solFileRecord4 = SolutionFileRecord(-1, pullRequest, fileName4)
+    private val solFileRecord5 = SolutionFileRecord(-1, pullRequest2, fileName1)
+    private val solFileRecord6 = SolutionFileRecord(-1, pullRequest2, fileName2)
+    private val solFileRecord7 = SolutionFileRecord(-1, pullRequest2, fileName3)
+    private val solFileRecord8 = SolutionFileRecord(-1, pullRequest2, fileName4)
 
     private lateinit var sourceCodeStorage: FileSystemSourceCodeStorage
 
