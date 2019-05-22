@@ -91,15 +91,15 @@ abstract class AbstractPayloadProcessor(
                 return
             }
             val pullRequest = storedPullRequest.updateFrom(prJsonObject)
-            logger.info { "Webhook: received updated pr from repo ${prJsonObject.pushRepoName}, pr number ${pullRequest.number}" }
-            gitRestManager.clonePullRequest(pullRequest)
-            pullRequestRepository.save(pullRequest)
+            logger.info { "Webhook: received updated pr from repo ${prJsonObject.mainRepoFullName}, pr number ${pullRequest.number}" }
+            val savedPullRequest = pullRequestRepository.save(pullRequest)
+            gitRestManager.clonePullRequest(savedPullRequest)
         } else {
             val pullRequest = parsePullRequest(prJsonObject, repo)
-            if (pullRequest != null && pullRequest.sourceRepoFullName != prJsonObject.mainRepoFullName) {
-                logger.info { "Webhook: received new pr from repo ${prJsonObject.pushRepoName}, pr number ${pullRequest.number}" }
-                gitRestManager.clonePullRequest(pullRequest)
-                pullRequestRepository.save(pullRequest)
+            if (pullRequest != null && pullRequest.sourceRepoFullName != repo.name) {
+                logger.info { "Webhook: received new pr from repo ${prJsonObject.mainRepoFullName}, pr number ${pullRequest.number}" }
+                val savedPullRequest = pullRequestRepository.save(pullRequest)
+                gitRestManager.clonePullRequest(savedPullRequest)
             } else {
                 logger.info { "Webhook: Ignored pr to itself repo ${repo.name}, pr number $prNumber" }
             }
