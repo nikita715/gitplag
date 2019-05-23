@@ -3,7 +3,6 @@ import axios from "axios";
 import * as PROP from "../properties";
 import {formatDateSimple, times} from "../util";
 import {Link} from "react-router-dom";
-import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 
 function checkLine(line) {
   return line === "" ? " " : line;
@@ -97,20 +96,30 @@ export class AnalysisResultPair extends React.Component {
 //  }
 
   getLineClass(matches, lineIndex) {
+    let lineClass = "";
     if (this.matchIndex === matches.length) {
       this.matchIndex = 0;
     }
-    let end = false;
-    if ((matches[this.matchIndex] === lineIndex && !this.redClass) || (lineIndex - matches[this.matchIndex] === 1 && this.redClass)) {
+    if (lineIndex === 1 && this.matchIndex === 1) {
+      lineClass += " top-red-line";
+    }
+    if (matches[this.matchIndex] === lineIndex && !this.redClass) {
       this.redClass = !this.redClass;
       this.matchIndex += 1;
-      end = true;
+      lineClass += " top-red-line";
+    } else if (lineIndex - matches[this.matchIndex] === 1 && this.redClass) {
+      this.redClass = !this.redClass;
+      this.matchIndex += 1;
       if (lineIndex - matches[this.matchIndex] === 1 || lineIndex === matches[this.matchIndex]) {
         this.redClass = !this.redClass;
         this.matchIndex += 1;
+        lineClass += " top-red-line";
       }
     }
-    return (this.redClass ? "red-line" : "") + (end ? " top-red-line" : "");
+    if (lineIndex - matches[this.matchIndex] === 0 && this.redClass) {
+      lineClass += " bottom-red-line";
+    }
+    return (this.redClass ? "red-line" : "") + lineClass;
   }
 
   getHrefToLine(side, line) {
@@ -161,14 +170,14 @@ export class AnalysisResultPair extends React.Component {
           <div className="compare-names">
             <div>Student {this.state.leftName}, created at {this.state.leftTime}</div>
             <div className="custom-control custom-switch d-inline-flex">
-            <div><b>{this.state.percentage + "%"}</b></div>
+              <div><b>{this.state.percentage + "%"}</b></div>
             </div>
             <div>Student {this.state.rightName}, created at {this.state.rightTime}</div>
           </div>
           <div className="compare-wrapper">
             <div id="left-compare" className="compare-side-wrapper" onScroll={this.handleScroll}>
               {times(file1.lines.length + 1).map((index) =>
-                <div className="compare-line-wrapper">
+                <div className="compare-line-wrapper" key={index}>
                   <pre className="compare">
                     <div id={"left" + index} className={this.getLineClass(matches1, index)}
                          to={this.getHrefToLine("right", index)} onClick={(event) => this.scrollTo(event)}>
@@ -181,7 +190,7 @@ export class AnalysisResultPair extends React.Component {
             </div>
             <div id="right-compare" className="compare-side-wrapper" onScroll={this.handleScroll}>
               {times(file2.lines.length + 1).map((index) =>
-                <div className="compare-line-wrapper">
+                <div className="compare-line-wrapper" key={index}>
                   <pre className="compare compare__indexes"><div onClick={this.scrollToClicked}>{index}</div></pre>
                   <pre className="compare">
                     <div id={"right" + index} className={this.getLineClass(matches2, index)}

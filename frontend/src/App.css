@@ -117,6 +117,10 @@ iframe {
     border-top: 2px solid red;
 }
 
+.compare .bottom-red-line {
+    border-bottom: 2px solid red;
+}
+
 .compare-side-wrapper:nth-child(1) .red-line {
     border-right: 2px solid red;
 }
