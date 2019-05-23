@@ -3,7 +3,6 @@ import axios from "axios";
 import * as PROP from "../properties";
 import {formatDateSimple, times} from "../util";
 import {Link} from "react-router-dom";
-import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 
 function checkLine(line) {
   return line === "" ? " " : line;
