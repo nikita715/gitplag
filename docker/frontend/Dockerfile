@@ -4,9 +4,9 @@ RUN git clone https://github.com/nikita715/gitplag.git /app
 
 WORKDIR /app/frontend
 
-RUN yarn \
+RUN npm install \
     && rm -rf ./node_modules/babel-jest \
-    && yarn build
+    && npm run build
 
 FROM nginx:1.12-alpine as prod
 
