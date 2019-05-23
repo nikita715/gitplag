@@ -8,7 +8,6 @@ import {positions, Provider as AlertProvider} from "react-alert";
 import Alert from "react-bs-notifier/es/alert";
 
 const options = {
-  timeout: 8000,
   position: positions.TOP_RIGHT
 };
 

@@ -84,6 +84,7 @@ iframe {
     background-color: white;
     opacity: 1;
     user-select: none;
+    cursor: pointer;
 }
 
 .compare-line-wrapper {

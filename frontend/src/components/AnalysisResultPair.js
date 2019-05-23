@@ -3,6 +3,7 @@ import axios from "axios";
 import * as PROP from "../properties";
 import {formatDateSimple, times} from "../util";
 import {Link} from "react-router-dom";
+import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 
 function checkLine(line) {
   return line === "" ? " " : line;
@@ -21,7 +22,8 @@ export class AnalysisResultPair extends React.Component {
     leftMatches: [],
     rightMatches: [],
     leftRightMatches: [],
-    percentage: 0
+    percentage: 0,
+    scrollEnabled: false
   };
   matchIndex = 0;
   redClass = false;
@@ -71,13 +73,15 @@ export class AnalysisResultPair extends React.Component {
     this.getHrefToLine = this.getHrefToLine.bind(this);
     this.scrollTo = this.scrollTo.bind(this);
     this.findToHref = this.findToHref.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.scrollToClicked = this.scrollToClicked.bind(this);
   }
 
   getLineClass(matches, lineIndex) {
     if (this.matchIndex === matches.length) {
       this.matchIndex = 0;
     }
-    if (matches[this.matchIndex] === lineIndex && !this.redClass || lineIndex - matches[this.matchIndex] === 1 && this.redClass) {
+    if ((matches[this.matchIndex] === lineIndex && !this.redClass) || (lineIndex - matches[this.matchIndex] === 1 && this.redClass)) {
       this.redClass = !this.redClass;
       this.matchIndex += 1;
     }
@@ -109,6 +113,14 @@ export class AnalysisResultPair extends React.Component {
     }
   }
 
+  scrollToClicked(event) {
+    event.target.scrollIntoView();
+  }
+
+  handleChange() {
+    this.setState({scrollEnabled: !this.state.scrollEnabled});
+  }
+
   render() {
     if (this.state.files1[0] !== undefined) {
       let file1 = this.state.files1[0];
@@ -123,10 +135,16 @@ export class AnalysisResultPair extends React.Component {
           </div>
           <div className="compare-names">
             <div>Student {this.state.leftName}, created at {this.state.leftTime}</div>
-            <div><b>{this.state.percentage + "%"}</b></div>
+            <div className="custom-control custom-switch d-inline-flex">
+              <button type="button" class="btn btn-light m-2" data-toggle="button" aria-pressed="false" autocomplete="off" onClick={this.handleChange} >
+                Sync scroll
+              </button>
+            </div>
             <div>Student {this.state.rightName}, created at {this.state.rightTime}</div>
           </div>
+          <ScrollSync enabled={this.state.scrollEnabled} proportional={false} horizontal={false}>
           <div className="compare-wrapper">
+          <ScrollSyncPane group="vertical">
             <div className="compare-side-wrapper">
               {times(file1.lines.length + 1).map((index) =>
                 <div className="compare-line-wrapper">
@@ -136,14 +154,16 @@ export class AnalysisResultPair extends React.Component {
                       {checkLine(file1.lines[index - 1])}
                     </div>
                   </pre>
-                  <pre className="compare compare__indexes"><div>{index}</div></pre>
+                  <pre className="compare compare__indexes"><div onClick={this.scrollToClicked}>{index}</div></pre>
                 </div>
               )}
             </div>
+          </ScrollSyncPane>
+          <ScrollSyncPane group="vertical">
             <div className="compare-side-wrapper">
               {times(file2.lines.length + 1).map((index) =>
                 <div className="compare-line-wrapper">
-                  <pre className="compare compare__indexes"><div>{index}</div></pre>
+                  <pre className="compare compare__indexes"><div onClick={this.scrollToClicked}>{index}</div></pre>
                   <pre className="compare">
                     <div id={"right" + index} className={this.getLineClass(matches2, index)}
                          to={this.getHrefToLine("left", index)} onClick={(event) => this.scrollTo(event)}>
@@ -153,7 +173,9 @@ export class AnalysisResultPair extends React.Component {
                 </div>
               )}
             </div>
+          </ScrollSyncPane>
           </div>
+          </ScrollSync>
         </div>
       );
     } else {
