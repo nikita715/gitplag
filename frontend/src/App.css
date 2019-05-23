@@ -93,6 +93,10 @@ iframe {
     border-collapse: collapse;
 }
 
+.compare:hover {
+    opacity: 0.7;
+}
+
 .compare-line-wrapper pre {
     word-wrap: break-word;
     white-space: pre-wrap;
@@ -107,6 +111,18 @@ iframe {
     background-color: #FAE6E7;
     border-color: #FFC0CB;
     cursor: pointer;
+}
+
+.compare .top-red-line {
+    border-top: 2px solid red;
+}
+
+.compare-side-wrapper:nth-child(1) .red-line {
+    border-right: 2px solid red;
+}
+
+.compare-side-wrapper:nth-child(2) .red-line {
+    border-left: 2px solid red;
 }
 
 .compare div {

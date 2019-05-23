@@ -22,8 +22,9 @@ export class AnalysisResultPair extends React.Component {
     leftMatches: [],
     rightMatches: [],
     leftRightMatches: [],
-    percentage: 0,
-    scrollEnabled: false
+    percentage: 0
+//    scrollEnabled: false,
+//    offset: 0
   };
   matchIndex = 0;
   redClass = false;
@@ -75,17 +76,41 @@ export class AnalysisResultPair extends React.Component {
     this.findToHref = this.findToHref.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.scrollToClicked = this.scrollToClicked.bind(this);
+//    this.handleScroll = this.handleScroll.bind(this);
   }
+
+//  lastScroll = null;
+//
+//  handleScroll(event) {
+//    let previousOffset = this.state.offset;
+//    let currentOffset = event.nativeEvent.target.scrollTop;
+//    let previousTarget = this.lastScroll;
+//    let currentTarget = event.nativeEvent.target.id;
+//    this.lastScroll = currentTarget;
+//    if (currentOffset !== undefined && previousTarget === currentTarget) {
+//      this.setState({offset: currentOffset});
+//      if (this.state.scrollEnabled) {
+//        let side = event.nativeEvent.target.id === "left-compare" ? document.getElementById("right-compare") : document.getElementById("left-compare");
+//        side.scrollTop = side.scrollTop + (currentOffset - previousOffset);
+//      }
+//    }
+//  }
 
   getLineClass(matches, lineIndex) {
     if (this.matchIndex === matches.length) {
       this.matchIndex = 0;
     }
+    let end = false;
     if ((matches[this.matchIndex] === lineIndex && !this.redClass) || (lineIndex - matches[this.matchIndex] === 1 && this.redClass)) {
       this.redClass = !this.redClass;
       this.matchIndex += 1;
+      end = true;
+      if (lineIndex - matches[this.matchIndex] === 1 || lineIndex === matches[this.matchIndex]) {
+        this.redClass = !this.redClass;
+        this.matchIndex += 1;
+      }
     }
-    return this.redClass ? "red-line" : "";
+    return (this.redClass ? "red-line" : "") + (end ? " top-red-line" : "");
   }
 
   getHrefToLine(side, line) {
@@ -136,16 +161,12 @@ export class AnalysisResultPair extends React.Component {
           <div className="compare-names">
             <div>Student {this.state.leftName}, created at {this.state.leftTime}</div>
             <div className="custom-control custom-switch d-inline-flex">
-              <button type="button" class="btn btn-light m-2" data-toggle="button" aria-pressed="false" autocomplete="off" onClick={this.handleChange} >
-                Sync scroll
-              </button>
+            <div><b>{this.state.percentage + "%"}</b></div>
             </div>
             <div>Student {this.state.rightName}, created at {this.state.rightTime}</div>
           </div>
-          <ScrollSync enabled={this.state.scrollEnabled} proportional={false} horizontal={false}>
           <div className="compare-wrapper">
-          <ScrollSyncPane group="vertical">
-            <div className="compare-side-wrapper">
+            <div id="left-compare" className="compare-side-wrapper" onScroll={this.handleScroll}>
               {times(file1.lines.length + 1).map((index) =>
                 <div className="compare-line-wrapper">
                   <pre className="compare">
@@ -158,9 +179,7 @@ export class AnalysisResultPair extends React.Component {
                 </div>
               )}
             </div>
-          </ScrollSyncPane>
-          <ScrollSyncPane group="vertical">
-            <div className="compare-side-wrapper">
+            <div id="right-compare" className="compare-side-wrapper" onScroll={this.handleScroll}>
               {times(file2.lines.length + 1).map((index) =>
                 <div className="compare-line-wrapper">
                   <pre className="compare compare__indexes"><div onClick={this.scrollToClicked}>{index}</div></pre>
@@ -173,9 +192,7 @@ export class AnalysisResultPair extends React.Component {
                 </div>
               )}
             </div>
-          </ScrollSyncPane>
           </div>
-          </ScrollSync>
         </div>
       );
     } else {
