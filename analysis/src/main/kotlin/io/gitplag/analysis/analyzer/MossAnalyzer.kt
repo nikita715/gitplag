@@ -89,8 +89,8 @@ class MossAnalyzer(
                             val firstMatch = cells[0].selectFirst("a").text().split("-")
                             val secondMatch = cells[2].selectFirst("a").text().split("-")
                             matchedLines += MatchedLines(
-                                match1 = firstMatch[0].toInt() to firstMatch[1].toInt() - 1,
-                                match2 = secondMatch[0].toInt() to secondMatch[1].toInt() - 1,
+                                match1 = firstMatch[0].toInt() to firstMatch[1].toInt(),
+                                match2 = secondMatch[0].toInt() to secondMatch[1].toInt(),
                                 files = solution1.fileName to solution2.fileName
                             )
                         }

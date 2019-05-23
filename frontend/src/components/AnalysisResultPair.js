@@ -41,9 +41,9 @@ export class AnalysisResultPair extends React.Component {
       let leftRightMatches = [];
       response.data.pair.lines.map((match) => {
         let from1 = match.from1;
-        let to1 = match.to1 !== match.from1 ? match.to1 : match.to1 + 1;
+        let to1 = match.to1;
         let from2 = match.from2;
-        let to2 = match.to2 !== match.from2 ? match.to2 : match.to2 + 1;
+        let to2 = match.to2;
         leftMatches.push(from1);
         leftMatches.push(to1);
         rightMatches.push(from2);
@@ -77,16 +77,11 @@ export class AnalysisResultPair extends React.Component {
     if (this.matchIndex === matches.length) {
       this.matchIndex = 0;
     }
-    let end = false;
-    if (matches[this.matchIndex] === lineIndex) {
+    if (matches[this.matchIndex] === lineIndex && !this.redClass || lineIndex - matches[this.matchIndex] === 1 && this.redClass) {
       this.redClass = !this.redClass;
       this.matchIndex += 1;
-      end = false;
     }
-    if (matches[this.matchIndex] - lineIndex === 1) {
-      end = true;
-    }
-    return this.redClass || end ? "red-line" : "";
+    return this.redClass ? "red-line" : "";
   }
 
   getHrefToLine(side, line) {
