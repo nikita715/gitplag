@@ -97,8 +97,9 @@ export class AnalysisResultPair extends React.Component {
 
   getLineClass(matches, lineIndex) {
     let lineClass = "";
-    if (this.matchIndex === matches.length) {
+    if (lineIndex === 1) {
       this.matchIndex = 0;
+      this.redClass = false;
     }
     if (lineIndex === 1 && this.matchIndex === 1) {
       lineClass += " top-red-line";
