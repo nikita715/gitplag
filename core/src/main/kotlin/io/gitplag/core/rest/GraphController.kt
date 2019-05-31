@@ -49,13 +49,13 @@ class GraphController(
     ): GraphData {
         val nameSet = mutableSetOf<String>()
         analysisPairs.forEach { pair ->
-            nameSet += pair.student1
-            nameSet += pair.student2
+            nameSet += nameMap.getValue(pair.student1)
+            nameSet += nameMap.getValue(pair.student2)
         }
         return GraphData(nameSet.map { createGraphNode(analysisId, it) }, analysisPairs.map {
             Link(
-                it.student1,
-                it.student2,
+                nameMap.getValue(it.student1),
+                nameMap.getValue(it.student2),
                 it.percentage,
                 findDirection(it),
                 "$uiUrl/analyzes/$analysisId/pairs/${it.id}"

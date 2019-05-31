@@ -19,8 +19,7 @@ import kotlin.math.roundToInt
 class JPlagAnalyzer(
     private val sourceCodeStorage: SourceCodeStorage,
     private val analysisResultFilesDir: String,
-    private val jplagResultDir: String,
-    private val jplagJarPath: String
+    private val jplagResultDir: String
 ) :
     Analyzer {
 
@@ -39,7 +38,7 @@ class JPlagAnalyzer(
         val analysisFiles = sourceCodeStorage.loadBasesAndComposedSolutions(settings, fileDir)
 
         logger.info { "Analysis:JPlag:2.Start analysis. ${repoInfo(settings)}" }
-        JPlagClient(jplagJarPath, analysisFiles, jplagReportDir).run()
+        JPlagClient(analysisFiles, jplagReportDir).run()
 
         val matchLines =
             if (settings.analysisMode.order > AnalysisMode.LINK.order) {

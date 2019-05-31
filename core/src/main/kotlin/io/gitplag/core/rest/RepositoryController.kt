@@ -341,4 +341,22 @@ class RepositoryController(
         pullRequestRepository.deleteAll(repo.pullRequests)
         notificationService.notify("Deleted all solution files of repo ${repo.name}")
     }
+
+    @GetMapping("/repositories/{id}/fake-names")
+    fun fakeNames(@PathVariable id: Long) {
+        val nameMap = mutableMapOf<String, String>()
+        var i = 1
+        pullRequestRepository.findAllByRepoId(id).forEach { pullRequest ->
+            val creatorName = pullRequest.creatorName
+            var newName = nameMap[creatorName]
+            if (newName == null) {
+                newName = "student" + i++
+                nameMap[creatorName] = newName
+            }
+        }
+
+        nameMap.forEach { t, u ->
+            println("\"$t\" to \"$u\",")
+        }
+    }
 }

@@ -14,10 +14,10 @@ class AnalysisResultSimplePairDto(
     val createdAt1: LocalDateTime,
     val createdAt2: LocalDateTime
 ) {
-    constructor(analysisPair: AnalysisPair) : this(
+    constructor(analysisPair: AnalysisPair, nameMap: Map<String, String>) : this(
         analysisPair.id,
-        analysisPair.student1,
-        analysisPair.student2,
+        nameMap[analysisPair.student1] ?: analysisPair.student1,
+        nameMap[analysisPair.student2] ?: analysisPair.student2,
         analysisPair.percentage,
         analysisPair.createdAt1,
         analysisPair.createdAt2

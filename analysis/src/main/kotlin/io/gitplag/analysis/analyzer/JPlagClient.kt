@@ -2,15 +2,14 @@ package io.gitplag.analysis.analyzer
 
 import io.gitplag.model.data.PreparedAnalysisData
 import io.gitplag.util.asPath
+import jplag.JPlag
 import mu.KotlinLogging
-import java.util.concurrent.TimeUnit
 
 /**
  * Client of the JPlag plagiarism analysis service.
  * See https://jplag.ipd.kit.edu
  */
 internal class JPlagClient(
-    private val jplagJarPath: String,
     analysisData: PreparedAnalysisData,
     private val resultDir: String
 ) {
@@ -24,7 +23,7 @@ internal class JPlagClient(
 
     fun run() =
         buildString {
-            append("java -jar $jplagJarPath  -l $language -r $resultDir -s $parameters ")
+            append("-l $language -r $resultDir -s $parameters ")
             if (baseCount != 0) append("-bc .base ")
             append(asPath(solutionsDir))
         }.also {
@@ -32,7 +31,7 @@ internal class JPlagClient(
         }.also(::execute)
 
     private fun execute(task: String) {
-        Runtime.getRuntime().exec(task).waitFor(10, TimeUnit.MINUTES)
+        JPlag.main(task.split(" ").toTypedArray())
     }
 
 }

@@ -17,9 +17,9 @@ class AnalysisResultDto(
     val resultLink: String,
     val analysisPairs: List<AnalysisResultSimplePairDto>
 ) {
-    constructor(analysis: Analysis) : this(
+    constructor(analysis: Analysis, nameMap: Map<String, String> = emptyMap()) : this(
         analysis.id, analysis.repository.id, analysis.repository.name, analysis.analyzer,
         analysis.branch, analysis.executionDate, analysis.resultLink,
-        analysis.analysisPairs.map { AnalysisResultSimplePairDto(it) }.sortedByDescending { it.percentage }
+        analysis.analysisPairs.map { AnalysisResultSimplePairDto(it, nameMap) }.sortedByDescending { it.percentage }
     )
 }
