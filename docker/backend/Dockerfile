@@ -7,7 +7,7 @@ WORKDIR $GITPLAG_HOME
 RUN apk add --update openjdk8 git \
     && rm -rf /var/cache/apk/*
 
-RUN git clone https://github.com/nikita715/gitplag.git $GITPLAG_HOME \
+RUN git clone https://github.com/nikita715/gitplag.git $GITPLAG_HOME --branch temp \
     && ./gradlew bootJar
 
 FROM alpine:3.7 as prod
