@@ -31,3 +31,5 @@ hs_err_pid*
 */build/
 */out/
 /frontend/node_modules/
+!/analysis/libs/jplag.jar
+.gradle

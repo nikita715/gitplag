@@ -25,7 +25,6 @@ gitplag:
   graphUrl: ${GITPLAG_GRAPH_URL:#{'http://localhost:8088'}}?graph_url=
   serverUrl: ${GITPLAG_SERVER_URL:#{'http://localhost:8090'}}
   uiUrl: ${GITPLAG_UI_URL:#{'http://localhost'}}
-  jplagJarPath: ${GITPLAG_JPLAG_PATH}
   githubToken: ${GITPLAG_GITHUB_AUTH:#{''}}
   gitlabToken: ${GITPLAG_GITLAB_AUTH:#{''}}
   bitbucketToken: ${GITPLAG_BITBUCKET_AUTH:#{''}}
