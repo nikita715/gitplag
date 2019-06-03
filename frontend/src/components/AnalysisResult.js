@@ -117,6 +117,8 @@ export class AnalysisResult extends React.Component {
             <div className="list-group input-group">
               <input name="sortedByName" onChange={this.handleChange} autoComplete="off"
                      className="list-group-item list-group-item-action text-input" placeholder="Type a name"/>
+                     <div className="col mt-2 p-1">
+              <p className="font-weight-light text-notice">Left solutions are made before right ones</p></div>
             </div>
           </div>
         </div>

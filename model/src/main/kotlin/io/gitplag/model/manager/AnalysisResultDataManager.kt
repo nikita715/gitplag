@@ -35,32 +35,60 @@ class AnalysisResultDataManager(
                 resultLink = analysisResults.resultLink
             )
         )
-        val analysisPairs = analysisResults.matchData.map {
-            val analysisPair = analysisPairRepository.save(
-                AnalysisPair(
-                    student1 = it.students.first,
-                    student2 = it.students.second,
-                    lines = it.lines,
-                    percentage = it.percentage,
-                    analysis = analysis,
-                    sha1 = it.sha.first,
-                    sha2 = it.sha.second,
-                    createdAt1 = it.createdAt.first,
-                    createdAt2 = it.createdAt.second
+        val analysisPairs = analysisResults.matchData.map { pair ->
+            if (pair.createdAt.first.isBefore(pair.createdAt.second)) {
+                val analysisPair = analysisPairRepository.save(
+                    AnalysisPair(
+                        student1 = pair.students.first,
+                        student2 = pair.students.second,
+                        lines = pair.lines,
+                        percentage = pair.percentage,
+                        analysis = analysis,
+                        sha1 = pair.sha.first,
+                        sha2 = pair.sha.second,
+                        createdAt1 = pair.createdAt.first,
+                        createdAt2 = pair.createdAt.second
+                    )
                 )
-            )
-            val analysisPairLines = analysisPairLinesRepository.saveAll(it.matchedLines.map {
-                AnalysisPairLines(
-                    from1 = it.match1.first,
-                    to1 = it.match1.second,
-                    from2 = it.match2.first,
-                    to2 = it.match2.second,
-                    fileName1 = it.files.first,
-                    fileName2 = it.files.second,
-                    analysisPair = analysisPair
+                val analysisPairLines = analysisPairLinesRepository.saveAll(pair.matchedLines.map {
+                    AnalysisPairLines(
+                        from1 = it.match1.first,
+                        to1 = it.match1.second,
+                        from2 = it.match2.first,
+                        to2 = it.match2.second,
+                        fileName1 = it.files.first,
+                        fileName2 = it.files.second,
+                        analysisPair = analysisPair
+                    )
+                })
+                analysisPair to analysisPairLines
+            } else {
+                val analysisPair = analysisPairRepository.save(
+                    AnalysisPair(
+                        student1 = pair.students.second,
+                        student2 = pair.students.first,
+                        lines = pair.lines,
+                        percentage = pair.percentage,
+                        analysis = analysis,
+                        sha1 = pair.sha.second,
+                        sha2 = pair.sha.first,
+                        createdAt1 = pair.createdAt.second,
+                        createdAt2 = pair.createdAt.first
+                    )
                 )
-            })
-            analysisPair to analysisPairLines
+                val analysisPairLines = analysisPairLinesRepository.saveAll(pair.matchedLines.map { lines ->
+                    AnalysisPairLines(
+                        from1 = lines.match2.first,
+                        to1 = lines.match2.second,
+                        from2 = lines.match1.first,
+                        to2 = lines.match1.second,
+                        fileName1 = lines.files.second,
+                        fileName2 = lines.files.first,
+                        analysisPair = analysisPair
+                    )
+                })
+                analysisPair to analysisPairLines
+            }
         }
         val res = analysisPairs.map { analysisPairRepository.save(it.first.copy(analysisPairLines = it.second)) }
         return analysisRepository.save(analysis.copy(analysisPairs = res))

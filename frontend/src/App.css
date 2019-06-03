@@ -207,3 +207,7 @@ form {
 .file-table th {
     cursor: pointer;
 }
+
+.text-notice {
+    font-size: 14px;
+}
