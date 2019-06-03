@@ -67,7 +67,7 @@ export class Repository extends React.Component {
                 <h5>Analyzes of repository {this.state.repoName}</h5>
               </div>
               <div className="row">
-                <table className="table table-hover">
+                <table className="table table-hover table-sm">
                   <thead className="thead-light">
                   <tr>
                     <th>Id</th>

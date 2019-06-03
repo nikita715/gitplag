@@ -86,13 +86,13 @@ export class AnalysisResult extends React.Component {
                 </div>
               </div>
               <div className="row">
-                <table className="table table-hover">
+                <table className="table table-hover table-sm">
                   <thead className="thead-light">
                   <tr>
                     <th>Id</th>
-                    <th>Student 1</th>
-                    <th>Student 2</th>
-                    <th>Percentage</th>
+                    <th>First student</th>
+                    <th>Second student</th>
+                    <th>Similarity</th>
                   </tr>
                   </thead>
                   <tbody>

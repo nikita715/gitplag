@@ -46,7 +46,7 @@ export class Repositories extends React.Component {
                 <h5>Repositories</h5>
               </div>
               <div className="row">
-                <table className="table table-hover">
+                <table className="table table-hover table-sm">
                   <thead className="thead-light">
                   <tr>
                     <th>Name</th>

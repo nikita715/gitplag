@@ -145,7 +145,7 @@ export class RepositoryFiles extends React.Component {
               <h6>Base files</h6>
               <button className="badge badge-danger mb-2 ml-2" onClick={() => this.deleteBaseFiles()}>Delete all
               </button>
-              <table className="table table-hover file-table">
+              <table className="table table-hover file-table table-sm">
                 <thead className="thead-light">
                 <tr>
                   <th className="break-word" onClick={() => this.changeBaseSortMethodTo(this.sortByName)}>Name</th>
@@ -180,7 +180,7 @@ export class RepositoryFiles extends React.Component {
             <button className="badge badge-danger mb-2 ml-2" onClick={() => this.deleteSolutionFiles()}>Delete all
             </button>
           </div>
-          <table className="table table-hover file-table">
+          <table className="table table-hover file-table table-sm">
             <thead className="thead-light">
             <tr>
               <th className="break-word" onClick={() => this.changeSolutionSortMethodTo(this.sortByStudent)}>Student
