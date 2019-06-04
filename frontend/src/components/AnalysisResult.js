@@ -15,7 +15,8 @@ export class AnalysisResult extends React.Component {
     sortedByName: "",
     analyzer: "",
     date: "",
-    branch: ""
+    branch: "",
+    minPercent: 0
   };
 
   constructor(props, context) {
@@ -23,7 +24,8 @@ export class AnalysisResult extends React.Component {
     this.state.id = props.match.params.id;
     this.fetchAnalysis();
     this.fetchAnalysis = this.fetchAnalysis.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handleSortByName = this.handleSortByName.bind(this);
+    this.handleMinPercent = this.handleMinPercent.bind(this);
   }
 
   fetchAnalysis() {
@@ -38,7 +40,8 @@ export class AnalysisResult extends React.Component {
       this.setState({
         results: data, repoId: response.data.repo, repoName: response.data.repoName, analysisId: response.data.id,
         resultLink: AnalysisResult.createResultLink(response.data.resultLink, response.data.analyzer),
-        analyzer: response.data.analyzer, date: response.data.date, branch: response.data.branch
+        analyzer: response.data.analyzer, date: response.data.date, branch: response.data.branch,
+        minPercent: data.length
       });
     });
   }
@@ -51,9 +54,15 @@ export class AnalysisResult extends React.Component {
     }
   }
 
-  handleChange(event) {
+  handleSortByName(event) {
     this.setState({
       [event.target.name]: event.target.value.toLowerCase()
+    });
+  }
+
+  handleMinPercent(event) {
+    this.setState({
+      minPercent: event.target.value
     });
   }
 
@@ -97,8 +106,8 @@ export class AnalysisResult extends React.Component {
                   </thead>
                   <tbody>
                   {this.state.results.filter((it) =>
-                    it.student1.toLowerCase().includes(this.state.sortedByName)
-                    || it.student2.toLowerCase().includes(this.state.sortedByName)).map((result) =>
+                    (it.student1.toLowerCase().includes(this.state.sortedByName)
+                    || it.student2.toLowerCase().includes(this.state.sortedByName))).slice(1, this.state.minPercent).map((result) =>
                     <tr>
                       <td>
                         <Link to={"/analyzes/" + this.state.analysisId + "/pairs/" + result.id}>{result.id}</Link>
@@ -115,10 +124,11 @@ export class AnalysisResult extends React.Component {
           </div>
           <div className="container col-sm-3">
             <div className="list-group input-group">
-              <input name="sortedByName" onChange={this.handleChange} autoComplete="off"
+              <input name="sortedByName" onChange={this.handleSortByName} autoComplete="off"
                      className="list-group-item list-group-item-action text-input" placeholder="Type a name"/>
                      <div className="col mt-2 p-1">
-              <p className="font-weight-light text-notice">Left solutions are made before right ones</p></div>
+              <input type="range" class="custom-range mt-2"  min="0" max={this.state.results.length} step="1"  onChange={this.handleMinPercent}/>
+              <p className="font-weight-light text-notice mt-2">Left solutions are made before right ones</p></div>
             </div>
           </div>
         </div>
