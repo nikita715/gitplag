@@ -88,8 +88,9 @@ class FileSystemSourceCodeStorage(
             analysisSettings.repository,
             analysisSettings.branch
         ).flatMap { pullRequest ->
-            solutionFileRecordRepository.findAllByPullRequest(pullRequest).mapNotNull { solutionRecord ->
-                if (nameMatchesRegex(solutionRecord.fileName, filePatterns)) {
+            solutionFileRecordRepository.findAllByPullRequest(pullRequest)
+                .filter { solutionRecord -> nameMatchesRegex(solutionRecord.fileName, filePatterns) }
+                .map { solutionRecord ->
                     val file = File(pathToSolution(analysisSettings, solutionRecord))
                     val copiedFile = File("$tempDir/${pullRequest.creatorName}/${solutionRecord.fileName}")
                     copiedFile.parentFile.mkdirs()
@@ -101,8 +102,7 @@ class FileSystemSourceCodeStorage(
                         sha = pullRequest.headSha,
                         createdAt = pullRequest.createdAt
                     )
-                } else null
-            }
+                }
         }
     }
 
@@ -116,14 +116,16 @@ class FileSystemSourceCodeStorage(
             analysisSettings.branch
         ).map { pullRequest ->
             val solutionRecords = solutionFileRecordRepository.findAllByPullRequest(pullRequest)
+                .filter { solutionRecord -> nameMatchesRegex(solutionRecord.fileName, filePatterns) }
             val extension = solutionRecords.getOrNull(0)?.fileName?.toFileExtension()
             val fileName = pullRequest.creatorName + "." + (extension ?: "txt")
             val composedFile = File("$tempDir/${pullRequest.creatorName}/$fileName")
             composedFile.parentFile.mkdir()
-            solutionRecords.forEach { solutionRecord ->
-                if (nameMatchesRegex(solutionRecord.fileName, filePatterns)) {
-                    val solFile = File(pathToSolution(analysisSettings, solutionRecord))
-                    composedFile.appendText(solFile.readText())
+            solutionRecords.forEachIndexed { index, solutionRecord ->
+                val solFile = File(pathToSolution(analysisSettings, solutionRecord))
+                composedFile.appendText(solFile.readText())
+                if (index != solutionRecords.size - 1) {
+                    composedFile.appendText("\n")
                 }
             }
             Solution(

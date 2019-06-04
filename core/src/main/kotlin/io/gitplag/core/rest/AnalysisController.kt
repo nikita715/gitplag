@@ -66,6 +66,6 @@ class AnalysisController(
     }
 
     private fun getAnalysisFiles(analysis: Analysis, user: String): List<FileDto> =
-        sourceCodeStorage.getAnalysisFiles(analysis, user).map { FileDto(user, it.readLines()) }
+        sourceCodeStorage.getAnalysisFiles(analysis, user).map { FileDto(it.name, it.readLines()) }
 
 }
