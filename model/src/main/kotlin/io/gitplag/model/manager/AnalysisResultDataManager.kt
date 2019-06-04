@@ -8,6 +8,7 @@ import io.gitplag.model.entity.AnalysisPairLines
 import io.gitplag.model.repo.AnalysisPairLinesRepository
 import io.gitplag.model.repo.AnalysisPairRepository
 import io.gitplag.model.repo.AnalysisRepository
+import io.gitplag.model.util.analysisResultComparator
 import org.springframework.transaction.annotation.Transactional
 
 /**
@@ -35,7 +36,7 @@ class AnalysisResultDataManager(
                 resultLink = analysisResults.resultLink
             )
         )
-        val analysisPairs = analysisResults.matchData.map { pair ->
+        val analysisPairs = analysisResults.matchData.sortedWith(analysisResultComparator).map { pair ->
             if (pair.createdAt.first.isBefore(pair.createdAt.second)) {
                 val analysisPair = analysisPairRepository.save(
                     AnalysisPair(

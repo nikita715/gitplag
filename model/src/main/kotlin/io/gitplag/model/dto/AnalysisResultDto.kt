@@ -2,6 +2,7 @@ package io.gitplag.model.dto
 
 import io.gitplag.model.entity.Analysis
 import io.gitplag.model.enums.AnalyzerProperty
+import io.gitplag.model.util.analysisResultSimplePairDtoComparator
 import java.time.LocalDateTime
 
 /**
@@ -20,6 +21,7 @@ class AnalysisResultDto(
     constructor(analysis: Analysis) : this(
         analysis.id, analysis.repository.id, analysis.repository.name, analysis.analyzer,
         analysis.branch, analysis.executionDate, analysis.resultLink,
-        analysis.analysisPairs.map { AnalysisResultSimplePairDto(it) }.sortedByDescending { it.percentage }
+        analysis.analysisPairs.map { AnalysisResultSimplePairDto(it) }
+            .sortedWith(analysisResultSimplePairDtoComparator)
     )
 }
