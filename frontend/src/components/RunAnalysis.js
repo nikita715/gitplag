@@ -115,6 +115,11 @@ export class RunAnalysis extends React.Component {
                    onClick={this.handlePlatformChange}>
               <input type="radio" id="analyzer2" name="analyzer" value="JPLAG"
                      checked={this.state.analyzer === "JPLAG"}/>JPlag</label>
+            <label className={"btn btn-light " + (this.state.analyzer === "COMBINED" ? "active" : "")}
+                   htmlFor="analyzer2"
+                   onClick={this.handlePlatformChange}>
+              <input type="radio" id="analyzer2" name="analyzer" value="COMBINED"
+                     checked={this.state.analyzer === "COMBINED"}/>Combined</label>
           </div>
         </div>
         <div className="form-group">

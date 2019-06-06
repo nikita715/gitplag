@@ -1,6 +1,7 @@
 package io.gitplag.analysis.analyzer
 
 import io.gitplag.model.data.PreparedAnalysisData
+import io.gitplag.model.enums.AnalyzerProperty
 import mossclient.MossClient
 import mossclient.MossLanguage
 
@@ -12,7 +13,7 @@ internal class MossClient(analysisData: PreparedAnalysisData, private val mossId
     private val language = analysisData.language
     private val bases = analysisData.bases
     private val solutions = analysisData.solutions
-    private val parameters = analysisData.analysisParameters
+    private val parameters = analysisData.analysisParameters.getValue(AnalyzerProperty.MOSS)
 
     @Synchronized
     fun run(): String = MossClient(mossId, MossLanguage.valueOf(language.name))

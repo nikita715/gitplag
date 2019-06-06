@@ -13,7 +13,6 @@ import io.gitplag.model.repo.PullRequestRepository
 import io.gitplag.model.repo.SolutionFileRecordRepository
 import io.gitplag.util.asPath
 import io.gitplag.util.forEachFileInDirectory
-import io.gitplag.util.innerRegularFiles
 import mu.KotlinLogging
 import java.io.File
 import java.nio.file.Files
@@ -191,10 +190,7 @@ class FileSystemSourceCodeStorage(
 
     override fun getAnalysisFiles(analysis: Analysis, user: String): List<File> {
         val directoryName = analysisFilesDirectoryName(analysis)
-        return when (analysis.analyzer) {
-            AnalyzerProperty.MOSS -> listOf(File("$analysisFilesDir/$directoryName/$user").listFiles()[0])
-            AnalyzerProperty.JPLAG -> File("$analysisFilesDir/$directoryName/$user").innerRegularFiles()
-        }.sortedBy { it.name }
+        return listOf(File("$analysisFilesDir/$directoryName/$user").listFiles()[0])
     }
 
     override fun deleteAnalysisFiles(analysis: Analysis) {

@@ -1,5 +1,6 @@
 package io.gitplag.model.data
 
+import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.enums.Language
 import java.io.File
@@ -43,5 +44,5 @@ class PreparedAnalysisData(
     /**
      * Parameters that will be used for the analysis
      */
-    val analysisParameters: String
+    val analysisParameters: Map<AnalyzerProperty, String>
 )

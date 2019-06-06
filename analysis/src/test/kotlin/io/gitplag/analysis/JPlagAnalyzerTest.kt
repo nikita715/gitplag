@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.mock
 import io.gitplag.analysis.analyzer.JPlagAnalyzer
 import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.model.data.*
+import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.enums.Language
 import io.gitplag.util.asPath
@@ -56,7 +57,7 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
             Solution(student3, file8Name, solution8, sha = sha3, createdAt = createdAtList[2]),
             Solution(student3, file9Name, solution9, sha = sha3, createdAt = createdAtList[2])
         ),
-        analysisParameters = ""
+        analysisParameters = mapOf(AnalyzerProperty.JPLAG to "")
     )
 
     private val solutionStorageService = mock<SourceCodeStorage> {
@@ -81,6 +82,8 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
                     sha = sha2 to sha1,
                     lines = -1,
                     percentage = 66,
+                    minPercentage = 66,
+                    maxPercentage = 66,
                     createdAt = createdAtList[1] to createdAtList[0],
                     matchedLines = listOf(
                         MatchedLines(
@@ -104,6 +107,8 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
                     students = "student3" to "student1",
                     lines = -1,
                     percentage = 44,
+                    minPercentage = 44,
+                    maxPercentage = 44,
                     createdAt = createdAtList[2] to createdAtList[0],
                     matchedLines = listOf(
                         MatchedLines(
@@ -127,6 +132,8 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
                     sha = sha3 to sha2,
                     lines = -1,
                     percentage = 39,
+                    minPercentage = 39,
+                    maxPercentage = 39,
                     createdAt = createdAtList[2] to createdAtList[1],
                     matchedLines = listOf(
                         MatchedLines(

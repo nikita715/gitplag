@@ -101,6 +101,8 @@ class MossAnalyzer(
                     students = students.first to students.second,
                     lines = lines,
                     percentage = percentage,
+                    minPercentage = percentage,
+                    maxPercentage = percentage,
                     matchedLines = matchedLines,
                     sha = solution1.sha to solution2.sha,
                     createdAt = solution1.createdAt to solution2.createdAt

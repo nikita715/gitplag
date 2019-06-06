@@ -24,7 +24,11 @@ class AnalysisSettings(
         private set(value) {
             field = value
         }
-    var parameters: String = repository.parameters
+    var parameters: Map<AnalyzerProperty, String> =
+        mapOf(
+            AnalyzerProperty.MOSS to repository.mossParameters,
+            AnalyzerProperty.JPLAG to repository.jplagParameters
+        )
         private set(value) {
             field = value
         }
@@ -39,9 +43,15 @@ class AnalysisSettings(
         analysisMode: AnalysisMode?, updateFiles: Boolean?
     ) : this(repository, branch) {
         this.analyzer = analyzer ?: repository.analyzer
-        this.parameters = parameters ?: repository.parametersOfAnalyzer(this.analyzer)
+        this.parameters = repository.analyzerParameters()
         this.language = language ?: repository.language
         this.analysisMode = analysisMode ?: repository.analysisMode
         this.updateFiles = updateFiles ?: false
     }
+
+    private fun Repository.analyzerParameters() =
+        mapOf(
+            AnalyzerProperty.MOSS to mossParameters,
+            AnalyzerProperty.JPLAG to jplagParameters
+        )
 }

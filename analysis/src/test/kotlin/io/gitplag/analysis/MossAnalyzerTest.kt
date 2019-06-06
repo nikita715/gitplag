@@ -4,6 +4,7 @@ import com.nhaarman.mockitokotlin2.any
 import io.gitplag.analysis.analyzer.MossAnalyzer
 import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.model.data.*
+import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.enums.Language
 import io.gitplag.util.asPath
@@ -55,7 +56,7 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                 createdAt = createdAtList[2]
             )
         ),
-        analysisParameters = ""
+        analysisParameters = mapOf(AnalyzerProperty.MOSS to "")
     )
 
     private val analysisService = MossAnalyzer(
@@ -75,6 +76,8 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                     sha = sha1 to sha3,
                     lines = 102,
                     percentage = 82,
+                    minPercentage = 82,
+                    maxPercentage = 82,
                     createdAt = createdAtList[0] to createdAtList[2],
                     matchedLines = listOf(
                         MatchedLines(
@@ -93,6 +96,8 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                     sha = sha2 to sha3,
                     lines = 48,
                     percentage = 55,
+                    minPercentage = 55,
+                    maxPercentage = 55,
                     createdAt = createdAtList[1] to createdAtList[2],
                     matchedLines = listOf(
                         MatchedLines(
@@ -116,6 +121,8 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                     sha = sha1 to sha2,
                     lines = 45,
                     percentage = 53,
+                    minPercentage = 53,
+                    maxPercentage = 53,
                     createdAt = createdAtList[0] to createdAtList[1],
                     matchedLines = listOf(
                         MatchedLines(

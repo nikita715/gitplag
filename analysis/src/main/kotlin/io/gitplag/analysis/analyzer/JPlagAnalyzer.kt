@@ -87,6 +87,8 @@ class JPlagAnalyzer(
             students = name1 to name2,
             lines = -1,
             percentage = percentage,
+            minPercentage = percentage,
+            maxPercentage = percentage,
             matchedLines = matchedLines,
             sha = solution1.sha to solution2.sha,
             createdAt = solution1.createdAt to solution2.createdAt

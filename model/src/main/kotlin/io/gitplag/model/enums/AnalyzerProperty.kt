@@ -9,7 +9,8 @@ import io.gitplag.model.util.AnalyzerPropertyDeserializer
 @JsonDeserialize(using = AnalyzerPropertyDeserializer::class)
 enum class AnalyzerProperty {
     MOSS,
-    JPLAG;
+    JPLAG,
+    COMBINED;
 
     override fun toString(): String = name.toLowerCase()
 }

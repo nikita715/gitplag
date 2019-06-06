@@ -33,7 +33,7 @@ export class AnalysisResult extends React.Component {
         id: result.id,
         student1: result.student1,
         student2: result.student2,
-        percentage: result.percentage
+        percentage: result.minPercentage === result.maxPercentage ? result.percentage : (result.minPercentage + "-" + result.maxPercentage)
       }));
       this.setState({
         results: data, repoId: response.data.repo, repoName: response.data.repoName, analysisId: response.data.id,

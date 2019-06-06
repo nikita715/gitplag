@@ -73,18 +73,4 @@ data class Repository(
 
     @Column(nullable = false)
     val gitId: String
-) {
-    val parameters: String
-        get() = when (analyzer) {
-            AnalyzerProperty.MOSS -> mossParameters
-            AnalyzerProperty.JPLAG -> jplagParameters
-        }
-
-    /**
-     * Get parameters of the [analyzer]
-     */
-    fun parametersOfAnalyzer(analyzer: AnalyzerProperty) = when (analyzer) {
-        AnalyzerProperty.MOSS -> mossParameters
-        AnalyzerProperty.JPLAG -> jplagParameters
-    }
-}
+)
