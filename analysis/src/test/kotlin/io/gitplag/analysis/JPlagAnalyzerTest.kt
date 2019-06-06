@@ -156,7 +156,7 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
         val executionDate = analysisResult.executionDate
         analysisResult shouldBe expectedResult.copy(
             executionDate = executionDate,
-            resultLink = "/jplagresult/${analysisFilesDirectoryName(analysisSettings, executionDate)}/index.html"
+            resultLink = "/jplagresult/${analysisFilesDirectoryName(analysisSettings)}/index.html"
         )
     }
 }

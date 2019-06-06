@@ -4,13 +4,15 @@ import io.gitplag.model.entity.Repository
 import io.gitplag.model.enums.AnalysisMode
 import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.model.enums.Language
+import java.time.LocalDateTime
 
 /**
  * Input analysis properties
  */
 class AnalysisSettings(
     val repository: Repository,
-    val branch: String
+    val branch: String,
+    val executionDate: LocalDateTime = LocalDateTime.now()
 ) {
     var analyzer: AnalyzerProperty = repository.analyzer
         private set(value) {
@@ -30,9 +32,12 @@ class AnalysisSettings(
         }
 
     constructor(
-        repository: Repository, branch: String, analyzer: AnalyzerProperty? = repository.analyzer,
-        language: Language?, parameters: String?,
-        analysisMode: AnalysisMode?, updateFiles: Boolean?
+        repository: Repository,
+        branch: String,
+        analyzer: AnalyzerProperty? = repository.analyzer,
+        language: Language?,
+        analysisMode: AnalysisMode?,
+        updateFiles: Boolean?
     ) : this(repository, branch) {
         this.analyzer = analyzer ?: repository.analyzer
         this.language = language ?: repository.language

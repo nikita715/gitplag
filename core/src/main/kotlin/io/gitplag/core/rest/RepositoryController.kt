@@ -79,10 +79,9 @@ class RepositoryController(
                     AnalysisSettings(
                         repoValue,
                         dto.branch,
-                        language = dto.language,
                         analyzer = dto.analyzer,
+                        language = dto.language,
                         analysisMode = dto.mode,
-                        parameters = dto.parameters,
                         updateFiles = dto.updateFiles
                     )
                 )
@@ -105,10 +104,9 @@ class RepositoryController(
             AnalysisSettings(
                 repoValue,
                 dto.branch,
-                language = dto.language,
                 analyzer = dto.analyzer,
+                language = dto.language,
                 analysisMode = dto.mode,
-                parameters = dto.parameters,
                 updateFiles = dto.updateFiles
             ), dto.responseUrl
         )

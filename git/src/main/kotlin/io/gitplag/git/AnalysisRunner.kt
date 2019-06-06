@@ -2,7 +2,9 @@ package io.gitplag.git
 
 import io.gitplag.analysis.AnalysisRunner
 import io.gitplag.analysis.analyzer.Analyzer
+import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.git.payload.PayloadProcessor
+import io.gitplag.model.data.AnalysisResult
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.entity.Analysis
 import io.gitplag.model.enums.AnalyzerProperty
@@ -16,7 +18,8 @@ import mu.KotlinLogging
 class GitAnalysisRunner(
     private val analyzers: Map<AnalyzerProperty, Analyzer>,
     private val payloadProcessors: Map<GitProperty, PayloadProcessor>,
-    private val analysisResultDataManager: AnalysisResultDataManager
+    private val analysisResultDataManager: AnalysisResultDataManager,
+    private val sourceCodeStorage: SourceCodeStorage
 ) : AnalysisRunner {
     private val logger = KotlinLogging.logger {}
 
@@ -29,8 +32,14 @@ class GitAnalysisRunner(
                 .downloadAllPullRequestsOfRepository(settings.repository)
         }
         val analysisService = analyzers.getValue(settings.analyzer)
-        return logger.loggedAnalysis(settings) { analysisService.analyze(settings) }
-            .let { analysisResultDataManager.saveAnalysis(settings, it) }
+        val analysisResult: AnalysisResult
+        try {
+            analysisResult = logger.loggedAnalysis(settings) { analysisService.analyze(settings) }
+        } catch (e: Exception) {
+            sourceCodeStorage.deleteAnalysisFiles(settings.repository.name, settings.executionDate, settings.analyzer)
+            throw e
+        }
+        return analysisResult.let { analysisResultDataManager.saveAnalysis(settings, it) }
     }
 
     /**

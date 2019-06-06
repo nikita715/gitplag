@@ -16,6 +16,7 @@ import io.gitplag.util.forEachFileInDirectory
 import mu.KotlinLogging
 import java.io.File
 import java.nio.file.Files
+import java.time.LocalDateTime
 
 /**
  * Storage of source files based on file system
@@ -196,6 +197,14 @@ class FileSystemSourceCodeStorage(
         val directoryName = analysisFilesDirectoryName(analysis)
         File("$analysisFilesDir/$directoryName").deleteRecursively()
         if (analysis.analyzer == AnalyzerProperty.JPLAG) {
+            File("$jplagResultDir/$directoryName").deleteRecursively()
+        }
+    }
+
+    override fun deleteAnalysisFiles(repoName: String, executionDate: LocalDateTime, analyzer: AnalyzerProperty) {
+        val directoryName = analysisFilesDirectoryName(repoName, executionDate)
+        File("$analysisFilesDir/$directoryName").deleteRecursively()
+        if (analyzer == AnalyzerProperty.JPLAG) {
             File("$jplagResultDir/$directoryName").deleteRecursively()
         }
     }

@@ -34,7 +34,12 @@ val analysisBeans = beans {
         )
     }
 
-    bean<CombinedAnalyzer>()
+    bean {
+        CombinedAnalyzer(
+            ref(), ref(), ref(),
+            analysisFilesDir
+        )
+    }
 
     bean("analyzers") {
         mapOf(
@@ -44,7 +49,7 @@ val analysisBeans = beans {
         )
     }
 
-    bean { GitAnalysisRunner(ref("analyzers"), ref("payloadProcessors"), ref()) }
+    bean { GitAnalysisRunner(ref("analyzers"), ref("payloadProcessors"), ref(), ref()) }
     bean {
         FileSystemSourceCodeStorage(
             ref(), ref(), ref(), ref(),

@@ -5,7 +5,9 @@ import io.gitplag.model.data.PreparedAnalysisData
 import io.gitplag.model.entity.Analysis
 import io.gitplag.model.entity.PullRequest
 import io.gitplag.model.entity.Repository
+import io.gitplag.model.enums.AnalyzerProperty
 import java.io.File
+import java.time.LocalDateTime
 
 /**
  * Storage of source files: teacher base files and student solutions
@@ -62,4 +64,9 @@ interface SourceCodeStorage {
      * Delete base file of the repository
      */
     fun deleteAllBaseFiles(repo: Repository, branch: String)
+
+    /**
+     * Delete files of an analysis by its parameters
+     */
+    fun deleteAnalysisFiles(repoName: String, executionDate: LocalDateTime, analyzer: AnalyzerProperty)
 }

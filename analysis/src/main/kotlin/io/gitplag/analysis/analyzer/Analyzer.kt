@@ -2,6 +2,7 @@ package io.gitplag.analysis.analyzer
 
 import io.gitplag.model.data.AnalysisResult
 import io.gitplag.model.data.AnalysisSettings
+import io.gitplag.model.data.PreparedAnalysisData
 
 /**
  * Analyzer for plagiarism in pull requests
@@ -9,9 +10,16 @@ import io.gitplag.model.data.AnalysisSettings
 interface Analyzer {
 
     /**
-     * Analyze the pull request for plagiarism
+     * Analyze the branch for plagiarism
      *
      * @return student-to-student matches for each file
      */
     fun analyze(settings: AnalysisSettings): AnalysisResult
+
+    /**
+     * Analyze the files for plagiarism
+     *
+     * @return student-to-student matches for each file
+     */
+    fun analyze(settings: AnalysisSettings, analysisFiles: PreparedAnalysisData): AnalysisResult
 }

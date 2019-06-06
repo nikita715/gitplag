@@ -10,7 +10,6 @@ import io.gitplag.util.generateDir
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 import java.io.File
-import java.time.LocalDateTime
 import kotlin.math.roundToInt
 
 /**
@@ -20,22 +19,22 @@ class JPlagAnalyzer(
     private val sourceCodeStorage: SourceCodeStorage,
     private val analysisResultFilesDir: String,
     private val jplagResultDir: String
-) :
-    Analyzer {
+) : Analyzer {
 
     private val logger = KotlinLogging.logger {}
     private val regexUserNames = "^Matches for (.+) & (.+)$".toRegex()
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
 
     override fun analyze(settings: AnalysisSettings): AnalysisResult {
-        val executionDate = LocalDateTime.now()
-        val directoryName = analysisFilesDirectoryName(settings, executionDate)
-
+        val directoryName = analysisFilesDirectoryName(settings)
         val fileDir = generateDir(analysisResultFilesDir, directoryName)
-        val jplagReportDir = generateDir(jplagResultDir, directoryName)
-
-        logger.info { "Analysis:JPlag:1.Gathering files for analysis. ${repoInfo(settings)}" }
         val analysisFiles = sourceCodeStorage.loadBasesAndComposedSolutions(settings, fileDir)
+        return analyze(settings, analysisFiles)
+    }
+
+    override fun analyze(settings: AnalysisSettings, analysisFiles: PreparedAnalysisData): AnalysisResult {
+        val directoryName = analysisFilesDirectoryName(settings)
+        val jplagReportDir = generateDir(jplagResultDir, directoryName)
 
         logger.info { "Analysis:JPlag:2.Start analysis. ${repoInfo(settings)}" }
         JPlagClient(analysisFiles, jplagReportDir).run()
@@ -57,7 +56,7 @@ class JPlagAnalyzer(
         return AnalysisResult(
             settings,
             resultLink,
-            executionDate,
+            settings.executionDate,
             matchLines
         )
     }

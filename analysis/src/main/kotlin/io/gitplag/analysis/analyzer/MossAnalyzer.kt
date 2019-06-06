@@ -8,7 +8,6 @@ import io.gitplag.model.enums.AnalysisMode
 import io.gitplag.util.generateDir
 import mu.KotlinLogging
 import org.jsoup.Jsoup
-import java.time.LocalDateTime
 
 /**
  * Moss client wrapper
@@ -20,30 +19,29 @@ class MossAnalyzer(
 ) : Analyzer {
     private val logger = KotlinLogging.logger {}
 
-    private val extensionRegex = "\\.[a-zA-Z]+$".toRegex()
-
     override fun analyze(settings: AnalysisSettings): AnalysisResult {
-        val executionDate = LocalDateTime.now()
-        val directoryName = analysisFilesDirectoryName(settings, executionDate)
+        val directoryName = analysisFilesDirectoryName(settings)
         val fileDir = generateDir(analysisResultFilesDir, directoryName)
-        logger.info { "Analysis:Moss:1.Gathering files for analysis. ${repoInfo(settings)}" }
         val analysisFiles = sourceCodeStorage.loadBasesAndComposedSolutions(settings, fileDir)
+        return analyze(settings, analysisFiles)
+    }
 
-        logger.info { "Analysis:Moss:2.Start analysis. ${repoInfo(settings)}" }
+    override fun analyze(settings: AnalysisSettings, analysisFiles: PreparedAnalysisData): AnalysisResult {
+        logger.info { "Analysis:Moss.Start analysis. ${repoInfo(settings)}" }
         val resultLink = MossClient(analysisFiles, mossId).run()
 
-        logger.info { "Analysis:Moss:2.Moss result. $resultLink" }
+        logger.info { "Analysis:Moss.Moss result. $resultLink" }
         val matchData =
             if (settings.analysisMode.order > AnalysisMode.LINK.order) {
-                logger.info { "Analysis:Moss:3.Start parsing of results. ${repoInfo(settings)}" }
+                logger.info { "Analysis:Moss.Start parsing of results. ${repoInfo(settings)}" }
                 parseResult(settings, analysisFiles.solutions, resultLink)
             } else {
-                logger.info { "Analysis:JPlag:3.Skipped parsing. ${repoInfo(settings)}" }
+                logger.info { "Analysis:Moss.Skipped parsing. ${repoInfo(settings)}" }
                 emptyList()
             }
 
-        logger.info { "Analysis:Moss:4.End of analysis. ${repoInfo(settings)}" }
-        return AnalysisResult(settings, resultLink, executionDate, matchData)
+        logger.info { "Analysis:Moss.End of analysis. ${repoInfo(settings)}" }
+        return AnalysisResult(settings, resultLink, settings.executionDate, matchData)
     }
 
     private fun parseResult(
