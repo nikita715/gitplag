@@ -1,7 +1,6 @@
 import React from "react";
 import axios from "axios";
 import * as PROP from "../properties";
-import {Link} from "react-router-dom";
 
 export class RunAnalysis extends React.Component {
 
@@ -15,7 +14,7 @@ export class RunAnalysis extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    let repoId = props.match.params.id;
+    let repoId = props.id;
     axios.get(PROP.serverUrl + "/api/repositories/" + repoId).then((response) => {
       let data = response.data;
       let analysisMode = data.analysisMode;
@@ -54,9 +53,7 @@ export class RunAnalysis extends React.Component {
   }
 
   handleSubmit() {
-    axios.post((PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/analyze/detached"), this.state).then(
-      () => this.props.history.push("/repos/" + this.state.repoId)
-    );
+    axios.post((PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/analyze/detached"), this.state);
   }
 
   handlePlatformChange(event) {
@@ -71,48 +68,61 @@ export class RunAnalysis extends React.Component {
   }
 
   render() {
-    return (<div>
-      <form className="new-repo-form">
-        <div className="form-group">
-          <Link to={"/repos/" + this.state.repoId}>Back to analyzes</Link>
-        </div>
-        <div className="form-group">
-          <h3>New analysis</h3>
-        </div>
-        <div className="form-group">
-          <label htmlFor="branch">Branch name</label>
-          <div><input type="text" id="branch" name="branch" onChange={this.handleChange} className="form-control"
-                      autoComplete="off"/></div>
-        </div>
-        <div className="form-group">
-          <legend className="col-form-label">Analyzer</legend>
-          <div className="btn-group btn-group-toggle" data-toggle="buttons">
-            <label className={"btn btn-light " + (this.state.analyzer === "MOSS" ? "active" : "")} htmlFor="analyzer1"
-                   onClick={this.handlePlatformChange}>
-              <input type="radio" id="analyzer1" name="analyzer" value="MOSS"
-                     checked={this.state.analyzer === "MOSS"}/>Moss</label>
-            <label className={"btn btn-light " + (this.state.analyzer === "JPLAG" ? "active" : "")} htmlFor="analyzer2"
-                   onClick={this.handlePlatformChange}>
-              <input type="radio" id="analyzer2" name="analyzer" value="JPLAG"
-                     checked={this.state.analyzer === "JPLAG"}/>JPlag</label>
-            <label className={"btn btn-light " + (this.state.analyzer === "COMBINED" ? "active" : "")}
-                   htmlFor="analyzer3"
-                   onClick={this.handlePlatformChange}>
-              <input type="radio" id="analyzer3" name="analyzer" value="COMBINED"
-                     checked={this.state.analyzer === "COMBINED"}/>Combined</label>
+    return (
+      <div className="modal fade" id="exampleModalLong" tabindex="-1" role="dialog"
+           aria-labelledby="exampleModalLongTitle"
+           aria-hidden="true">
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3 className="modal-title">New analysis</h3>
+            </div>
+            <div className="modal-body">
+              <form className="new-repo-form">
+                <div className="form-group">
+                  <label htmlFor="branch">Branch name</label>
+                  <div><input type="text" id="branch" name="branch" onChange={this.handleChange}
+                              className="form-control"
+                              autoComplete="off"/></div>
+                </div>
+                <div className="form-group">
+                  <legend className="col-form-label">Analyzer</legend>
+                  <div className="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label className={"btn btn-light " + (this.state.analyzer === "MOSS" ? "active" : "")}
+                           htmlFor="analyzer1"
+                           onClick={this.handlePlatformChange}>
+                      <input type="radio" id="analyzer1" name="analyzer" value="MOSS"
+                             checked={this.state.analyzer === "MOSS"}/>Moss</label>
+                    <label className={"btn btn-light " + (this.state.analyzer === "JPLAG" ? "active" : "")}
+                           htmlFor="analyzer2"
+                           onClick={this.handlePlatformChange}>
+                      <input type="radio" id="analyzer2" name="analyzer" value="JPLAG"
+                             checked={this.state.analyzer === "JPLAG"}/>JPlag</label>
+                    <label className={"btn btn-light " + (this.state.analyzer === "COMBINED" ? "active" : "")}
+                           htmlFor="analyzer3"
+                           onClick={this.handlePlatformChange}>
+                      <input type="radio" id="analyzer3" name="analyzer" value="COMBINED"
+                             checked={this.state.analyzer === "COMBINED"}/>Combined</label>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <div className="custom-control custom-switch">
+                    <input type="checkbox" className="custom-control-input" id="updateFiles" name="updateFiles"
+                           onChange={this.handleChange} checked={this.state.updateFiles}/>
+                    <label className="custom-control-label" htmlFor="updateFiles">Update files before the
+                      analysis</label>
+                  </div>
+                </div>
+                <div>
+                  <button form="none" type="submit" data-dismiss="modal" className="btn btn-primary"
+                          onClick={this.handleSubmit}>Submit
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-        <div className="form-group">
-          <div className="custom-control custom-switch">
-            <input type="checkbox" className="custom-control-input" id="updateFiles" name="updateFiles"
-                   onChange={this.handleChange} checked={this.state.updateFiles}/>
-            <label className="custom-control-label" htmlFor="updateFiles">Update files before the analysis</label>
-          </div>
-        </div>
-        <div>
-          <button form="none" type="submit" className="btn btn-primary" onClick={this.handleSubmit}>Submit</button>
-        </div>
-      </form>
-    </div>);
+      </div>
+    );
   }
 }

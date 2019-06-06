@@ -15,8 +15,8 @@ class CombinedAnalyzer(
     private val executor: Executor = Executors.newCachedThreadPool()
 
     override fun analyze(settings: AnalysisSettings): AnalysisResult {
-        val mossAnalysis =
-            CompletableFuture.supplyAsync<AnalysisResult>(Supplier { mossAnalyzer.analyze(settings) }, executor)
-        return mergeAnalysisResults(jPlagAnalyzer.analyze(settings), mossAnalysis.join())
+        val jplagAnalysis =
+            CompletableFuture.supplyAsync<AnalysisResult>(Supplier { jPlagAnalyzer.analyze(settings) }, executor)
+        return mergeAnalysisResults(mossAnalyzer.analyze(settings), jplagAnalysis.join())
     }
 }

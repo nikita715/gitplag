@@ -4,6 +4,7 @@ import * as PROP from "../properties";
 import {Link} from "react-router-dom";
 import {formatDate} from "../util";
 import {Header} from "./Header";
+import {RunAnalysis} from "./RunAnalysis";
 
 export class Repository extends React.Component {
   state = {
@@ -84,10 +85,10 @@ export class Repository extends React.Component {
           </div>
           <div className="container col-sm-3">
             <div className="list-group">
-              <Link to={"/repos/" + this.state.repoId + "/analyze"}
-                    className="btn list-group-item list-group-item-action">
+              <button className="btn list-group-item list-group-item-action" type="button" data-toggle="modal"
+                      data-target="#exampleModalLong">
                 Run new analysis
-              </Link>
+              </button>
               <Link to={"/repos/" + this.state.repoId + "/files"} className="list-group-item list-group-item-action">Downloaded
                 files</Link>
               <div onClick={() => Repository.startUpdateOfFiles(this.state.repoId)}
@@ -98,6 +99,7 @@ export class Repository extends React.Component {
             </div>
           </div>
         </div>
+        <RunAnalysis id={this.state.repoId}/>
       </div>);
   }
 }
