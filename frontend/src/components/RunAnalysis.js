@@ -10,9 +10,6 @@ export class RunAnalysis extends React.Component {
     analyzer: "",
     language: "",
     analysisMode: "FULL",
-    jplagParameters: "",
-    mossParameters: "",
-    parameters: "",
     updateFiles: false
   };
 
@@ -21,8 +18,6 @@ export class RunAnalysis extends React.Component {
     let repoId = props.match.params.id;
     axios.get(PROP.serverUrl + "/api/repositories/" + repoId).then((response) => {
       let data = response.data;
-      let mossParameters = data.mossParameters;
-      let jplagParameters = data.jplagParameters;
       let analysisMode = data.analysisMode;
       let language = data.language;
       let analyzer = data.analyzer;
@@ -30,10 +25,7 @@ export class RunAnalysis extends React.Component {
         repoId,
         analyzer,
         language,
-        analysisMode,
-        jplagParameters,
-        mossParameters,
-        parameters: analyzer === "MOSS" ? mossParameters : jplagParameters
+        analysisMode
       });
     });
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -43,19 +35,7 @@ export class RunAnalysis extends React.Component {
 
   handleChange(event) {
     const target = event.target;
-    if (target.name === "parameters") {
-      if (this.state.analyzer === "MOSS") {
-        this.setState({
-          parameters: target.value,
-          mossParameters: target.value
-        });
-      } else {
-        this.setState({
-          parameters: target.value,
-          jplagParameters: target.value
-        });
-      }
-    } else if (target.type === "radio" && target.checked) {
+    if (target.type === "radio" && target.checked) {
       this.setState({
         [target.name]: target.value
       });
@@ -116,16 +96,11 @@ export class RunAnalysis extends React.Component {
               <input type="radio" id="analyzer2" name="analyzer" value="JPLAG"
                      checked={this.state.analyzer === "JPLAG"}/>JPlag</label>
             <label className={"btn btn-light " + (this.state.analyzer === "COMBINED" ? "active" : "")}
-                   htmlFor="analyzer2"
+                   htmlFor="analyzer3"
                    onClick={this.handlePlatformChange}>
-              <input type="radio" id="analyzer2" name="analyzer" value="COMBINED"
+              <input type="radio" id="analyzer3" name="analyzer" value="COMBINED"
                      checked={this.state.analyzer === "COMBINED"}/>Combined</label>
           </div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="parameters">Analyzer parameters</label>
-          <div><input type="text" id="parameters" name="parameters" value={this.state.parameters}
-                      onChange={this.handleChange} className="form-control" autoComplete="off"/></div>
         </div>
         <div className="form-group">
           <div className="custom-control custom-switch">

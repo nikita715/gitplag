@@ -4,7 +4,6 @@ import com.nhaarman.mockitokotlin2.any
 import io.gitplag.analysis.analyzer.MossAnalyzer
 import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.model.data.*
-import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.enums.Language
 import io.gitplag.util.asPath
@@ -55,8 +54,7 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                 sha = sha3,
                 createdAt = createdAtList[2]
             )
-        ),
-        analysisParameters = mapOf(AnalyzerProperty.MOSS to "")
+        )
     )
 
     private val analysisService = MossAnalyzer(

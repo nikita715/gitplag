@@ -66,11 +66,5 @@ data class Repository(
     val branches: List<Branch> = mutableListOf(),
 
     @Column(nullable = false)
-    val mossParameters: String = "",
-
-    @Column(nullable = false)
-    val jplagParameters: String = "",
-
-    @Column(nullable = false)
     val gitId: String
 )

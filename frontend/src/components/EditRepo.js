@@ -10,8 +10,6 @@ export class EditRepo extends React.Component {
     id: 0,
     name: "",
     git: "",
-    mossParameters: "",
-    jplagParameters: "",
     analysisMode: "FULL",
     language: "JAVA",
     analyzer: "",
@@ -43,8 +41,6 @@ export class EditRepo extends React.Component {
       let data = response.data;
       let git = data.gitService;
       let name = data.name;
-      let mossParameters = data.mossParameters;
-      let jplagParameters = data.jplagParameters;
       let analysisMode = data.analysisMode;
       let language = data.language;
       let analyzer = data.analyzer;
@@ -58,8 +54,6 @@ export class EditRepo extends React.Component {
         filePatterns,
         language,
         analysisMode,
-        jplagParameters,
-        mossParameters,
         autoCloningEnabled
       });
     });
@@ -173,25 +167,13 @@ export class EditRepo extends React.Component {
                      htmlFor="analyzer2" onClick={this.handlePlatformChange}>
                 <input type="radio" id="analyzer2" name="analyzer" value="JPLAG"
                        checked={this.state.analyzer === "JPLAG"}/>JPlag</label>
+              <label className={"btn btn-light " + (this.state.analyzer === "COMBINED" ? "active" : "")}
+                     htmlFor="analyzer3" onClick={this.handlePlatformChange}>
+                <input type="radio" id="analyzer3" name="analyzer" value="COMBINED"
+                       checked={this.state.analyzer === "COMBINED"}/>Combined</label>
             </div>
           </div>
           {this.selectLanguages()}
-          <div className="form-group">
-            <label htmlFor="moss-parameters">Default Moss parameters</label>
-            <div><input className="form-control" type="text" autoComplete="off" id="moss-parameters"
-                        name="mossParameters"
-                        value={this.state.mossParameters} onChange={this.handleChange}/></div>
-            <small id="emailHelp" className="form-text text-muted">See <a
-              href="http://moss.stanford.edu/general/scripts/mossnet">moss docs</a></small>
-          </div>
-          <div className="form-group">
-            <label htmlFor="jplag-parameters">Default JPlag parameters</label>
-            <div><input className="form-control" type="text" autoComplete="off" id="jplag-parameters"
-                        name="jplagParameters"
-                        value={this.state.jplagParameters} onChange={this.handleChange}/></div>
-            <small id="emailHelp" className="form-text text-muted">See <a
-              href="https://github.com/jplag/jplag/blob/master/README.md">jplag docs</a></small>
-          </div>
           <div className="form-group">
             <label htmlFor="filePatterns">File patterns</label>
             <textarea className="form-control" id="filePatterns" name="filePatterns" value={this.state.filePatterns}

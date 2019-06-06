@@ -9,8 +9,6 @@ export class NewRepo extends React.Component {
   state = {
     id: 0,
     name: "",
-    mossParameters: "",
-    jplagParameters: "",
     analysisMode: "FULL",
     language: "JAVA",
     git: "",
@@ -98,7 +96,7 @@ export class NewRepo extends React.Component {
   selectLanguages() {
     if (this.state.analyzer === "MOSS") {
       return this.selectLanguageMoss();
-    } else if (this.state.analyzer === "JPLAG") {
+    } else if (this.state.analyzer === "JPLAG" || this.state.analyzer === "COMBINED") {
       return this.selectLanguageJPlag();
     } else {
       return "";
@@ -150,25 +148,12 @@ export class NewRepo extends React.Component {
               <label className="btn btn-light" htmlFor="analyzer2" onClick={this.handlePlatformChange}>
                 <input type="radio" id="analyzer2" name="analyzer" value="JPLAG"
                        checked={this.state.analyzer === "JPLAG"}/>JPlag</label>
+              <label className="btn btn-light" htmlFor="analyzer3" onClick={this.handlePlatformChange}>
+                <input type="radio" id="analyzer3" name="analyzer" value="COMBINED"
+                       checked={this.state.analyzer === "COMBINED"}/>Combined</label>
             </div>
           </div>
           {this.selectLanguages()}
-          <div className="form-group">
-            <label htmlFor="moss-parameters">Default Moss parameters</label>
-            <div><input className="form-control" type="text" autoComplete="off" id="moss-parameters"
-                        name="mossParameters"
-                        value={this.state.mossParameters} onChange={this.handleChange}/></div>
-            <small id="emailHelp" className="form-text text-muted">See <a
-              href="http://moss.stanford.edu/general/scripts/mossnet">moss docs</a></small>
-          </div>
-          <div className="form-group">
-            <label htmlFor="jplag-parameters">Default JPlag parameters</label>
-            <div><input className="form-control" type="text" autoComplete="off" id="jplag-parameters"
-                        name="jplagParameters"
-                        value={this.state.jplagParameters} onChange={this.handleChange}/></div>
-            <small id="emailHelp" className="form-text text-muted">See <a
-              href="https://github.com/jplag/jplag/blob/master/README.md">jplag docs</a></small>
-          </div>
           <div className="form-group">
             <label htmlFor="filePatterns">File patterns</label>
             <textarea className="form-control" id="filePatterns" name="filePatterns" value={this.state.filePatterns}

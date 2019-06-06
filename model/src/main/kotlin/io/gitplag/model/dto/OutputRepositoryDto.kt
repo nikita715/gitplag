@@ -17,9 +17,7 @@ data class OutputRepositoryDto(
     val gitService: GitProperty,
     val language: Language,
     val analysisMode: AnalysisMode,
-    val autoCloningEnabled: Boolean,
-    val mossParameters: String,
-    val jplagParameters: String
+    val autoCloningEnabled: Boolean
 ) {
     constructor(repo: Repository) : this(
         id = repo.id,
@@ -29,8 +27,6 @@ data class OutputRepositoryDto(
         gitService = repo.gitService,
         language = repo.language,
         analysisMode = repo.analysisMode,
-        autoCloningEnabled = repo.autoCloningEnabled,
-        mossParameters = repo.mossParameters,
-        jplagParameters = repo.jplagParameters
+        autoCloningEnabled = repo.autoCloningEnabled
     )
 }

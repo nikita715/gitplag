@@ -1,7 +1,6 @@
 package io.gitplag.analysis.analyzer
 
 import io.gitplag.model.data.PreparedAnalysisData
-import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.util.asPath
 import jplag.JPlag
 import mu.KotlinLogging
@@ -20,11 +19,10 @@ internal class JPlagClient(
     private val language = analysisData.language.ofJPlag()
     private val baseCount = analysisData.bases.size
     private val solutionsDir = analysisData.rootDir
-    private val parameters = analysisData.analysisParameters.getValue(AnalyzerProperty.JPLAG)
 
     fun run() =
         buildString {
-            append("-l $language -r $resultDir -s $parameters ")
+            append("-l $language -r $resultDir -s ")
             if (baseCount != 0) append("-bc .base ")
             append(asPath(solutionsDir))
         }.also {
