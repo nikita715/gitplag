@@ -7,7 +7,6 @@ import java.time.LocalDateTime
  */
 data class AnalysisMatch(
     val students: Pair<String, String>,
-    val lines: Int,
     val percentage: Int,
     val minPercentage: Int,
     val maxPercentage: Int,

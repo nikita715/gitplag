@@ -76,16 +76,17 @@ class JPlagAnalyzer(
             .groupValues.subList(1, 3)
         val percentage = body.getElementsByTag("H1")[0].text().replace("%", "").toDouble().roundToInt()
 
+        val notReversed = name1 < name2
+
         val matchedLines =
             if (analysisSettings.analysisMode == AnalysisMode.FULL) {
-                parseMatchedLines(index, resultDir)
+                parseMatchedLines(index, notReversed, resultDir)
             } else emptyList<MatchedLines>()
 
         val solution1 = findSolutionByStudent(solutions, name1)
         val solution2 = findSolutionByStudent(solutions, name2)
-        return AnalysisMatch(
+        return if (notReversed) AnalysisMatch(
             students = name1 to name2,
-            lines = -1,
             percentage = percentage,
             minPercentage = percentage,
             maxPercentage = percentage,
@@ -93,10 +94,21 @@ class JPlagAnalyzer(
             sha = solution1.sha to solution2.sha,
             createdAt = solution1.createdAt to solution2.createdAt
         )
+        else
+            AnalysisMatch(
+                students = name2 to name1,
+                percentage = percentage,
+                minPercentage = percentage,
+                maxPercentage = percentage,
+                matchedLines = matchedLines,
+                sha = solution2.sha to solution1.sha,
+                createdAt = solution2.createdAt to solution1.createdAt
+            )
     }
 
     private fun parseMatchedLines(
         index: Int,
+        notReversed: Boolean,
         resultDir: String
     ): MutableList<MatchedLines> {
         val matchedLines = mutableListOf<MatchedLines>()
@@ -109,11 +121,18 @@ class JPlagAnalyzer(
                 .groupValues.subList(1, 4)
             val (fileName2, from2, to2) = requireNotNull(regexMatchedRows.find(columns[2].text()))
                 .groupValues.subList(1, 4)
-            matchedLines += MatchedLines(
-                match1 = from1.toInt() to to1.toInt(),
-                match2 = from2.toInt() to to2.toInt(),
-                files = fileName1 to fileName2
-            )
+            matchedLines += if (notReversed)
+                MatchedLines(
+                    match1 = from1.toInt() to to1.toInt(),
+                    match2 = from2.toInt() to to2.toInt(),
+                    files = fileName1 to fileName2
+                )
+            else
+                MatchedLines(
+                    match2 = from1.toInt() to to1.toInt(),
+                    match1 = from2.toInt() to to2.toInt(),
+                    files = fileName2 to fileName1
+                )
         }
         return matchedLines
     }

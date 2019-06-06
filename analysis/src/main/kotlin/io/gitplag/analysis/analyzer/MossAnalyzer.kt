@@ -63,7 +63,7 @@ class MossAnalyzer(
 
                 val students = firstATag.text().split(" ").first() to secondATag.text().split(" ").first()
 
-                val lines = tds[2].text().toInt()
+//                val lines = tds[2].text().toInt()
 
                 val percentage1 = firstATag.text().split(" ")
                     .last()
@@ -79,6 +79,8 @@ class MossAnalyzer(
                 val solution1 = findSolutionByStudent(solutions, students.first)
                 val solution2 = findSolutionByStudent(solutions, students.second)
 
+                val notReversed = students.first < students.second
+
                 val matchedLines =
                     if (analysisSettings.analysisMode == AnalysisMode.FULL) {
                         val rows = Jsoup.connect(firstATag.attr("href").replace(".html", "-top.html"))
@@ -88,25 +90,42 @@ class MossAnalyzer(
                             val cells = row.getElementsByTag("td")
                             val firstMatch = cells[0].selectFirst("a").text().split("-")
                             val secondMatch = cells[2].selectFirst("a").text().split("-")
-                            matchedLines += MatchedLines(
-                                match1 = firstMatch[0].toInt() to firstMatch[1].toInt(),
-                                match2 = secondMatch[0].toInt() to secondMatch[1].toInt(),
-                                files = solution1.fileName to solution2.fileName
-                            )
+                            matchedLines += if (notReversed)
+                                MatchedLines(
+                                    match1 = firstMatch[0].toInt() to firstMatch[1].toInt(),
+                                    match2 = secondMatch[0].toInt() to secondMatch[1].toInt(),
+                                    files = solution1.fileName to solution2.fileName
+                                )
+                            else
+                                MatchedLines(
+                                    match2 = firstMatch[0].toInt() to firstMatch[1].toInt(),
+                                    match1 = secondMatch[0].toInt() to secondMatch[1].toInt(),
+                                    files = solution2.fileName to solution1.fileName
+                                )
                         }
                         matchedLines
                     } else mutableListOf()
 
-                AnalysisMatch(
-                    students = students.first to students.second,
-                    lines = lines,
-                    percentage = percentage,
-                    minPercentage = percentage,
-                    maxPercentage = percentage,
-                    matchedLines = matchedLines,
-                    sha = solution1.sha to solution2.sha,
-                    createdAt = solution1.createdAt to solution2.createdAt
-                )
+                if (notReversed)
+                    AnalysisMatch(
+                        students = students.first to students.second,
+                        percentage = percentage,
+                        minPercentage = percentage,
+                        maxPercentage = percentage,
+                        matchedLines = matchedLines,
+                        sha = solution1.sha to solution2.sha,
+                        createdAt = solution1.createdAt to solution2.createdAt
+                    )
+                else
+                    AnalysisMatch(
+                        students = students.second to students.first,
+                        percentage = percentage,
+                        minPercentage = percentage,
+                        maxPercentage = percentage,
+                        matchedLines = matchedLines,
+                        sha = solution2.sha to solution1.sha,
+                        createdAt = solution2.createdAt to solution1.createdAt
+                    )
             }
     }
 

@@ -72,7 +72,6 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                 AnalysisMatch(
                     students = student1 to student3,
                     sha = sha1 to sha3,
-                    lines = 102,
                     percentage = 82,
                     minPercentage = 82,
                     maxPercentage = 82,
@@ -92,7 +91,6 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                 ), AnalysisMatch(
                     students = student2 to student3,
                     sha = sha2 to sha3,
-                    lines = 48,
                     percentage = 55,
                     minPercentage = 55,
                     maxPercentage = 55,
@@ -117,7 +115,6 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                 ), AnalysisMatch(
                     students = student1 to student2,
                     sha = sha1 to sha2,
-                    lines = 45,
                     percentage = 53,
                     minPercentage = 53,
                     maxPercentage = 53,

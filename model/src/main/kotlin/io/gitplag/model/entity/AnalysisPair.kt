@@ -22,9 +22,6 @@ data class AnalysisPair(
     val student2: String = "",
 
     @Column(nullable = false)
-    val lines: Int = 0,
-
-    @Column(nullable = false)
     val percentage: Int = 0,
 
     @Column(nullable = false)

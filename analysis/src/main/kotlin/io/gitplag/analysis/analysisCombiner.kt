@@ -24,7 +24,6 @@ fun mergeAnalysisMatches(analysisMatches: List<AnalysisMatch>) =
             maxPercentage = percents.max() ?: 0,
             sha = matches.first().sha,
             createdAt = matches.first().createdAt,
-            lines = 0,
             matchedLines = mergeMatchedLines(matches)
         )
     }

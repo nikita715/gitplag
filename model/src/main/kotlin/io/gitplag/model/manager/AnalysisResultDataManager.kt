@@ -42,7 +42,6 @@ class AnalysisResultDataManager(
                     AnalysisPair(
                         student1 = pair.students.first,
                         student2 = pair.students.second,
-                        lines = pair.lines,
                         percentage = pair.percentage,
                         minPercentage = pair.minPercentage,
                         maxPercentage = pair.maxPercentage,
@@ -70,7 +69,6 @@ class AnalysisResultDataManager(
                     AnalysisPair(
                         student1 = pair.students.second,
                         student2 = pair.students.first,
-                        lines = pair.lines,
                         percentage = pair.percentage,
                         minPercentage = pair.minPercentage,
                         maxPercentage = pair.maxPercentage,
