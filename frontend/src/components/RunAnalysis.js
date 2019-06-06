@@ -53,7 +53,12 @@ export class RunAnalysis extends React.Component {
   }
 
   handleSubmit() {
-    axios.post((PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/analyze/detached"), this.state);
+    axios.post((PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/analyze/detached"), this.state)
+      .then((response) => {
+        if (response.data === true) {
+          document.getElementById("newAnalysisModalWindow").click();
+        }
+      });
   }
 
   handlePlatformChange(event) {
@@ -69,7 +74,7 @@ export class RunAnalysis extends React.Component {
 
   render() {
     return (
-      <div className="modal fade" id="exampleModalLong" tabindex="-1" role="dialog"
+      <div className="modal fade" id="newAnalysisModalWindow" tabindex="-1" role="dialog"
            aria-labelledby="exampleModalLongTitle"
            aria-hidden="true">
         <div className="modal-dialog" role="document">
@@ -113,8 +118,8 @@ export class RunAnalysis extends React.Component {
                       analysis</label>
                   </div>
                 </div>
-                <div>
-                  <button form="none" type="submit" data-dismiss="modal" className="btn btn-primary"
+                <div className="form-group mb-4">
+                  <button form="none" type="submit" className="btn btn-primary"
                           onClick={this.handleSubmit}>Submit
                   </button>
                 </div>
