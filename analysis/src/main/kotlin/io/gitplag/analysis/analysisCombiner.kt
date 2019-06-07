@@ -5,7 +5,7 @@ import io.gitplag.model.data.AnalysisResult
 import io.gitplag.model.data.MatchedLines
 import kotlin.math.roundToInt
 
-fun mergeAnalysisResults(vararg results: AnalysisResult) =
+fun mergeAnalysisResults(results: List<AnalysisResult>) =
     AnalysisResult(
         repo = results.first().repo,
         resultLink = results.joinToString(separator = ";") { it.resultLink },

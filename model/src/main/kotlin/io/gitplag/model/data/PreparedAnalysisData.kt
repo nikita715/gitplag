@@ -39,4 +39,15 @@ class PreparedAnalysisData(
      * Solution files that were created by students
      */
     val solutions: List<Solution>
+//    ,
+//
+//    /**
+//     * Count of matches to be saved
+//     */
+//    val resultSize: Int,
+//
+//    /**
+//     * Minimal percentage of a received match
+//     */
+//    val minPercentage: Int
 )

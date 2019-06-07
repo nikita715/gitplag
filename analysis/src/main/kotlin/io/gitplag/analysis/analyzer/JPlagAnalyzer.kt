@@ -16,21 +16,14 @@ import kotlin.math.roundToInt
  * JPlag client wrapper
  */
 class JPlagAnalyzer(
-    private val sourceCodeStorage: SourceCodeStorage,
+    sourceCodeStorage: SourceCodeStorage,
     private val analysisResultFilesDir: String,
     private val jplagResultDir: String
-) : Analyzer {
+) : AbstractAnalyzer(sourceCodeStorage, analysisResultFilesDir) {
 
     private val logger = KotlinLogging.logger {}
     private val regexUserNames = "^Matches for (.+) & (.+)$".toRegex()
     private val regexMatchedRows = "^(.+)\\((\\d+)-(\\d+)\\)$".toRegex()
-
-    override fun analyze(settings: AnalysisSettings): AnalysisResult {
-        val directoryName = analysisFilesDirectoryName(settings)
-        val fileDir = generateDir(analysisResultFilesDir, directoryName)
-        val analysisFiles = sourceCodeStorage.loadBasesAndComposedSolutions(settings, fileDir)
-        return analyze(settings, analysisFiles)
-    }
 
     override fun analyze(settings: AnalysisSettings, analysisFiles: PreparedAnalysisData): AnalysisResult {
         val directoryName = analysisFilesDirectoryName(settings)

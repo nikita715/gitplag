@@ -1,11 +1,9 @@
 package io.gitplag.analysis.analyzer
 
-import io.gitplag.analysis.analysisFilesDirectoryName
 import io.gitplag.analysis.repoInfo
 import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.model.data.*
 import io.gitplag.model.enums.AnalysisMode
-import io.gitplag.util.generateDir
 import mu.KotlinLogging
 import org.jsoup.Jsoup
 
@@ -13,18 +11,11 @@ import org.jsoup.Jsoup
  * Moss client wrapper
  */
 class MossAnalyzer(
-    private val sourceCodeStorage: SourceCodeStorage,
-    private val analysisResultFilesDir: String,
+    sourceCodeStorage: SourceCodeStorage,
+    analysisResultFilesDir: String,
     private val mossId: String
-) : Analyzer {
+) : AbstractAnalyzer(sourceCodeStorage, analysisResultFilesDir) {
     private val logger = KotlinLogging.logger {}
-
-    override fun analyze(settings: AnalysisSettings): AnalysisResult {
-        val directoryName = analysisFilesDirectoryName(settings)
-        val fileDir = generateDir(analysisResultFilesDir, directoryName)
-        val analysisFiles = sourceCodeStorage.loadBasesAndComposedSolutions(settings, fileDir)
-        return analyze(settings, analysisFiles)
-    }
 
     override fun analyze(settings: AnalysisSettings, analysisFiles: PreparedAnalysisData): AnalysisResult {
         logger.info { "Analysis:Moss.Start analysis. ${repoInfo(settings)}" }

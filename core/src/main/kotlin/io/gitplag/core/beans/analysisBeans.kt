@@ -34,9 +34,16 @@ val analysisBeans = beans {
         )
     }
 
+    bean("standaloneAnalyzers") {
+        mapOf(
+            AnalyzerProperty.MOSS to ref<MossAnalyzer>(),
+            AnalyzerProperty.JPLAG to ref<JPlagAnalyzer>()
+        )
+    }
+
     bean {
         CombinedAnalyzer(
-            ref(), ref(), ref(),
+            ref("standaloneAnalyzers"), ref(),
             analysisFilesDir
         )
     }
