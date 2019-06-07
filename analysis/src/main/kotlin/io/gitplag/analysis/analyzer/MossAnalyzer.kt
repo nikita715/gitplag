@@ -65,6 +65,8 @@ class MossAnalyzer(
 
                 val percentage = if (percentage1 > percentage2) percentage1 else percentage2
 
+                if (percentage < analysisSettings.minResultPercentage) return@mapNotNull null
+
                 val solution1 = findSolutionByStudent(solutions, students.first)
                 val solution2 = findSolutionByStudent(solutions, students.second)
 

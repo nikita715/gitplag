@@ -22,11 +22,13 @@ internal class JPlagClient(
     private val language = analysisData.language.ofJPlag()
     private val baseCount = analysisData.bases.size
     private val solutionsDir = analysisData.rootDir
+    private val resultSize = analysisData.resultSize
 
     fun run() =
         buildString {
             append("-l $language -r $resultDir -s ")
             if (baseCount != 0) append("-bc .base ")
+            if (resultSize != null) append("-m $resultSize ")
             append(asPath(solutionsDir))
         }.also {
             logger.info { it }

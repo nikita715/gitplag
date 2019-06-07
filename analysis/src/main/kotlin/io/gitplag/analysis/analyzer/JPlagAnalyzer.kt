@@ -68,6 +68,8 @@ class JPlagAnalyzer(
             .groupValues.subList(1, 3)
         val percentage = body.getElementsByTag("H1")[0].text().replace("%", "").toDouble().roundToInt()
 
+        if (percentage < analysisSettings.minResultPercentage) return null
+
         val notReversed = name1 < name2
 
         val matchedLines =

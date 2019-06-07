@@ -75,7 +75,9 @@ class FileSystemSourceCodeStorage(
             language = settings.language,
             bases = loadBases(settings, rootDir),
             solutions = solutions,
-            rootDir = rootDir
+            rootDir = rootDir,
+            resultSize = settings.maxResultSize,
+            minPercentage = settings.minResultPercentage
         )
 
     private fun loadSeparateSolutions(
