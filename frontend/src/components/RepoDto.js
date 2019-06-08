@@ -7,6 +7,7 @@ export class RepoDto {
   language = "";
   git = "";
   analyzer = "";
+  autoCloningEnabled = false;
   filePatterns = [];
 
   constructor(state) {
@@ -18,6 +19,7 @@ export class RepoDto {
     this.language = state.language;
     this.git = state.git;
     this.analyzer = state.analyzer;
+    this.autoCloningEnabled = state.autoCloningEnabled;
     if (state.filePatterns.length === 0) {
       this.filePatterns = [];
     } else {
