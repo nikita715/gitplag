@@ -55,7 +55,9 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
             Solution(student3, file7Name, solution7, sha = sha3, createdAt = createdAtList[2]),
             Solution(student3, file8Name, solution8, sha = sha3, createdAt = createdAtList[2]),
             Solution(student3, file9Name, solution9, sha = sha3, createdAt = createdAtList[2])
-        )
+        ),
+        null,
+        null
     )
 
     private val solutionStorageService = mock<SourceCodeStorage> {

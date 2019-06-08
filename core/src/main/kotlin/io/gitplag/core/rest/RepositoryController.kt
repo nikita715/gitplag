@@ -82,7 +82,9 @@ class RepositoryController(
                         analyzer = dto.analyzer,
                         language = dto.language,
                         analysisMode = dto.mode,
-                        updateFiles = dto.updateFiles
+                        updateFiles = dto.updateFiles,
+                        maxResultSize = dto.maxResultSize,
+                        minResultPercentage = dto.minResultPercentage
                     )
                 )
             )
@@ -107,7 +109,9 @@ class RepositoryController(
                 analyzer = dto.analyzer,
                 language = dto.language,
                 analysisMode = dto.mode,
-                updateFiles = dto.updateFiles
+                updateFiles = dto.updateFiles,
+                maxResultSize = dto.maxResultSize,
+                minResultPercentage = dto.minResultPercentage
             ), dto.responseUrl
         )
         return true

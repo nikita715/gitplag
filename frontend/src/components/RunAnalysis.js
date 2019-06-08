@@ -8,6 +8,8 @@ export class RunAnalysis extends React.Component {
     repoId: 0,
     analyzer: "",
     language: "",
+    maxResultSize: null,
+    minResultPercentage: 0,
     analysisMode: "FULL",
     updateFiles: false
   };
@@ -108,6 +110,22 @@ export class RunAnalysis extends React.Component {
                            onClick={this.handlePlatformChange}>
                       <input type="radio" id="analyzer3" name="analyzer" value="COMBINED"
                              checked={this.state.analyzer === "COMBINED"}/>Combined</label>
+                  </div>
+                </div>
+                <div className="form-group row">
+                  <div className="col">
+                    <label htmlFor="example-number-input" className="">Count of results</label>
+                    <div className="">
+                      <input className="form-control" type="number" onChange={this.handleChange} placeholder="All"
+                             name="maxResultSize" value={this.state.maxResultSize}/>
+                    </div>
+                  </div>
+                  <div className="col">
+                    <label htmlFor="example-number-input" className="">Minimal percentage</label>
+                    <div className="">
+                      <input className="form-control" type="number" onChange={this.handleChange}
+                             name="minResultPercentage" value={this.state.minResultPercentage}/>
+                    </div>
                   </div>
                 </div>
                 <div className="form-group">

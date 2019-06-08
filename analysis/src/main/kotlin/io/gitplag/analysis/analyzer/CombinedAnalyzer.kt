@@ -6,6 +6,7 @@ import io.gitplag.model.data.AnalysisResult
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.data.PreparedAnalysisData
 import io.gitplag.model.enums.AnalyzerProperty
+import mu.KotlinLogging
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -17,6 +18,7 @@ class CombinedAnalyzer(
     analysisResultFilesDir: String
 ) : AbstractAnalyzer(sourceCodeStorage, analysisResultFilesDir) {
     private val executor: Executor = Executors.newCachedThreadPool()
+    private val logger = KotlinLogging.logger {}
 
     override fun analyze(settings: AnalysisSettings, analysisFiles: PreparedAnalysisData) =
         mergeAnalysisResults(analyzers.map { analyzer ->
@@ -24,6 +26,6 @@ class CombinedAnalyzer(
                 Supplier { (analyzer.value as AbstractAnalyzer).analyze(settings, analysisFiles) },
                 executor
             )
-        }.map { it.join() })
+        }.map { it.join() }.also { logger.info { "Combined analysis: Started merge" } })
 
 }

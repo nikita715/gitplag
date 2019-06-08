@@ -13,7 +13,8 @@ class AnalysisDto(
     val analyzer: AnalyzerProperty?,
     val language: Language?,
     val mode: AnalysisMode?,
-    val parameters: String?,
+    val maxResultSize: Int?,
+    val minResultPercentage: Int?,
     val responseUrl: String?,
     val updateFiles: Boolean = false
 )

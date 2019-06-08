@@ -54,7 +54,9 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                 sha = sha3,
                 createdAt = createdAtList[2]
             )
-        )
+        ),
+        null,
+        null
     )
 
     private val analysisService = MossAnalyzer(
