@@ -60,7 +60,8 @@ class RepositoryController(
      */
     @GetMapping("/repositories/{id}/analyzes")
     fun getRepositoryAnalyzes(@PathVariable id: Long) =
-        repositoryDataManager.findById(id)?.analyzes?.map { AnalysisResultDto(it) }?.sortedBy { it.id } ?: emptyList()
+        repositoryDataManager.findById(id)?.analyzes?.map { AnalysisResultDto(it, nameMap) }?.sortedBy { it.id }
+            ?: emptyList()
 
     /**
      * Initiate the analysis
@@ -85,7 +86,7 @@ class RepositoryController(
                         parameters = dto.parameters,
                         updateFiles = dto.updateFiles
                     )
-                )
+                ), nameMap
             )
             notificationService.notify("Ended analysis #${resultDto.id} of repo ${repoValue.name}")
             return resultDto
@@ -264,7 +265,7 @@ class RepositoryController(
                 sourceBranch = branch.key,
                 students = branch.value.groupBy { it.pullRequest }.map { pullRequest ->
                     StudentFilesDto(
-                        student = pullRequest.key.creatorName,
+                        student = nameMap.getOrDefault(pullRequest.key.creatorName, pullRequest.key.creatorName),
                         updated = pullRequest.key.updatedAt,
                         files = pullRequest.value.map { FileInfoDto(it) }
                     )

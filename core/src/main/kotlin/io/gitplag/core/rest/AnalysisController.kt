@@ -30,7 +30,7 @@ class AnalysisController(
      */
     @GetMapping("/{id}")
     fun getAnalysis(@PathVariable id: Long): AnalysisResultDto? =
-        analysisRepository.findById(id).orElse(null)?.let { AnalysisResultDto(it) }
+        analysisRepository.findById(id).orElse(null)?.let { AnalysisResultDto(it, nameMap) }
 
     /**
      * Get the analysis result
@@ -61,7 +61,10 @@ class AnalysisController(
         return AnalysisFilePairDto(
             getAnalysisFiles(analysis, analysisPair.get().student1),
             getAnalysisFiles(analysis, analysisPair.get().student2),
-            pair
+            pair.copy(
+                student1 = nameMap.getOrDefault(pair.student1, pair.student1),
+                student2 = nameMap.getOrDefault(pair.student2, pair.student2)
+            )
         )
     }
 

@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 /**
  * Dto for [AnalysisPair]
  */
-class AnalysisPairDto(
+data class AnalysisPairDto(
     val id: Long,
     val student1: String,
     val student2: String,

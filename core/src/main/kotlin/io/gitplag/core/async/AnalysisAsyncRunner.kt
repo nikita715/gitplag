@@ -2,6 +2,7 @@ package io.gitplag.core.async
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.gitplag.analysis.AnalysisRunner
+import io.gitplag.core.rest.nameMap
 import io.gitplag.core.websocket.NotificationService
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.dto.AnalysisResultDto
@@ -43,7 +44,7 @@ class AnalysisAsyncRunner(
     fun runAndRespond(analysisSettings: AnalysisSettings, responseUrl: String?) {
         notificationService.notify("Started analysis of repo ${analysisSettings.repository.name}")
         try {
-            val result = AnalysisResultDto(analysisRunner.run(analysisSettings))
+            val result = AnalysisResultDto(analysisRunner.run(analysisSettings), nameMap)
             if (responseUrl != null) {
                 val body = objectMapper.writeValueAsString(result)
                 sendAnalysisResult(url = responseUrl, body = body)

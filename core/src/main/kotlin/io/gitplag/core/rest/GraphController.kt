@@ -54,8 +54,8 @@ class GraphController(
         }
         return GraphData(nameSet.map { createGraphNode(analysisId, it) }, analysisPairs.map {
             Link(
-                it.student1,
-                it.student2,
+                nameMap.getOrDefault(it.student1, it.student1),
+                nameMap.getOrDefault(it.student2, it.student2),
                 it.percentage,
                 findDirection(it),
                 "$uiUrl/analyzes/$analysisId/pairs/${it.id}"
@@ -64,7 +64,7 @@ class GraphController(
     }
 
     private fun createGraphNode(analysisId: Long, name: String) =
-        Node(name, "/?graph_url=$serverUrl/api/analyzes/$analysisId/graph/student/$name")
+        Node(nameMap.getOrDefault(name, name), "/?graph_url=$serverUrl/api/analyzes/$analysisId/graph/student/$name")
 
     private fun findDirection(analysisPair: AnalysisPair): Direction {
         analysisPair.run { return if (createdAt1 > createdAt2) Direction.FIRST else Direction.SECOND }
