@@ -1,9 +1,12 @@
 package io.gitplag.analysis.analyzer
 
+import io.gitplag.analysis.AnalysisException
 import io.gitplag.model.data.PreparedAnalysisData
 import io.gitplag.util.asPath
-import jplag.JPlag
+import jplag.Program
+import jplag.options.CommandLineOptions
 import mu.KotlinLogging
+
 
 /**
  * Client of the JPlag plagiarism analysis service.
@@ -19,19 +22,25 @@ internal class JPlagClient(
     private val language = analysisData.language.ofJPlag()
     private val baseCount = analysisData.bases.size
     private val solutionsDir = analysisData.rootDir
-    private val parameters = analysisData.analysisParameters
+    private val resultSize = analysisData.resultSize
 
     fun run() =
         buildString {
-            append("-l $language -r $resultDir -s $parameters ")
+            append("-l $language -r $resultDir -s ")
             if (baseCount != 0) append("-bc .base ")
+            if (resultSize != null) append("-m $resultSize ")
             append(asPath(solutionsDir))
         }.also {
             logger.info { it }
         }.also(::execute)
 
     private fun execute(task: String) {
-        JPlag.main(task.split(" ").toTypedArray())
+        try {
+            val options = CommandLineOptions(task.split(" ").toTypedArray(), null)
+            Program(options).run()
+        } catch (e: Exception) {
+            throw AnalysisException("Jplag analysis failed", e)
+        }
     }
 
 }

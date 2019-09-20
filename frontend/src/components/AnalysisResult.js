@@ -35,7 +35,7 @@ export class AnalysisResult extends React.Component {
         id: result.id,
         student1: result.student1,
         student2: result.student2,
-        percentage: result.percentage
+        percentage: result.minPercentage === result.maxPercentage ? result.percentage : (result.minPercentage + "-" + result.maxPercentage)
       }));
       this.setState({
         results: data, repoId: response.data.repo, repoName: response.data.repoName, analysisId: response.data.id,
@@ -88,7 +88,9 @@ export class AnalysisResult extends React.Component {
                     <div className="badge badge-info mr-2">{this.state.analyzer}</div>
                     <div className="badge badge-info mr-2">Branch {this.state.branch}</div>
                     <div className="badge badge-info mr-2">{formatDate(this.state.date).toLowerCase()}</div>
-                    <a className="badge badge-primary mr-2" role="button" href={this.state.resultLink}>Source</a>
+                    {this.state.resultLink.split(";")
+                      .map((link) => <a className="badge badge-primary mr-2" role="button"
+                                        href={link.startsWith("/jplag") ? (PROP.serverUrl + link) : link}>Source</a>)}
                     <Link to={"/analyzes/" + this.state.analysisId + "/graph"} className="badge badge-primary mr-2"
                           role="button" aria-pressed="true">Graph</Link>
                   </div>

@@ -3,6 +3,7 @@ import axios from "axios";
 import {Link} from "react-router-dom";
 import * as PROP from "../properties";
 import {Header} from "./Header";
+import {NewRepo} from "./NewRepo";
 
 export class Repositories extends React.Component {
 
@@ -30,6 +31,10 @@ export class Repositories extends React.Component {
     }).catch(() => this.props.history.push("/error"));
   }
 
+  openRepoPage(id) {
+    this.props.history.push("/repos/" + id);
+  }
+
   render() {
     return (
       <div className="container">
@@ -51,7 +56,7 @@ export class Repositories extends React.Component {
                   <tr>
                     <th>Name</th>
                     <th>Git</th>
-                    <th className="fit"></th>
+                    <th className="fit"/>
                   </tr>
                   </thead>
                   <tbody>{this.state.repos}</tbody>
@@ -61,13 +66,14 @@ export class Repositories extends React.Component {
           </div>
           <div className="container col-sm-3">
             <div className="list-group">
-              <Link to={"/repos/new"}
-                    className="btn list-group-item list-group-item-action">
+              <button className="btn list-group-item list-group-item-action" type="button" data-toggle="modal"
+                      data-target="#newRepoModalWindow">
                 Add new repository
-              </Link>
+              </button>
             </div>
           </div>
         </div>
+        <NewRepo openRepoPage={(id) => this.openRepoPage(id)}/>
       </div>
     );
   }

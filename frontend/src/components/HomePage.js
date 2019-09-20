@@ -9,8 +9,7 @@ export class HomePage extends React.Component {
       <p className="lead">Plagiarism analyser for git educational repositories</p>
       <hr className="my-4"/>
       <p>See our <a href="https://github.com/nikita715/gitplag/wiki">wiki</a> for information about the system.</p>
-      <Link to="/repos/new" className="btn btn-primary btn-lg mr-2" href="#" role="button">Add new repository</Link>
-      <Link to="/repos" className="btn btn-outline-secondary btn-lg" href="#" role="button">List of repositories</Link>
+      <Link to="/repos" className="btn btn-primary btn-lg mr-2" href="#" role="button">List of repositories</Link>
     </div>;
   }
 }

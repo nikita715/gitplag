@@ -13,10 +13,10 @@ import io.gitplag.model.repo.PullRequestRepository
 import io.gitplag.model.repo.SolutionFileRecordRepository
 import io.gitplag.util.asPath
 import io.gitplag.util.forEachFileInDirectory
-import io.gitplag.util.innerRegularFiles
 import mu.KotlinLogging
 import java.io.File
 import java.nio.file.Files
+import java.time.LocalDateTime
 
 /**
  * Storage of source files based on file system
@@ -76,7 +76,8 @@ class FileSystemSourceCodeStorage(
             bases = loadBases(settings, rootDir),
             solutions = solutions,
             rootDir = rootDir,
-            analysisParameters = settings.parameters
+            resultSize = settings.maxResultSize,
+            minPercentage = settings.minResultPercentage
         )
 
     private fun loadSeparateSolutions(
@@ -88,8 +89,9 @@ class FileSystemSourceCodeStorage(
             analysisSettings.repository,
             analysisSettings.branch
         ).flatMap { pullRequest ->
-            solutionFileRecordRepository.findAllByPullRequest(pullRequest).mapNotNull { solutionRecord ->
-                if (nameMatchesRegex(solutionRecord.fileName, filePatterns)) {
+            solutionFileRecordRepository.findAllByPullRequest(pullRequest)
+                .filter { solutionRecord -> nameMatchesRegex(solutionRecord.fileName, filePatterns) }
+                .map { solutionRecord ->
                     val file = File(pathToSolution(analysisSettings, solutionRecord))
                     val copiedFile = File("$tempDir/${pullRequest.creatorName}/${solutionRecord.fileName}")
                     copiedFile.parentFile.mkdirs()
@@ -101,8 +103,7 @@ class FileSystemSourceCodeStorage(
                         sha = pullRequest.headSha,
                         createdAt = pullRequest.createdAt
                     )
-                } else null
-            }
+                }
         }
     }
 
@@ -116,14 +117,16 @@ class FileSystemSourceCodeStorage(
             analysisSettings.branch
         ).map { pullRequest ->
             val solutionRecords = solutionFileRecordRepository.findAllByPullRequest(pullRequest)
+                .filter { solutionRecord -> nameMatchesRegex(solutionRecord.fileName, filePatterns) }
             val extension = solutionRecords.getOrNull(0)?.fileName?.toFileExtension()
             val fileName = pullRequest.creatorName + "." + (extension ?: "txt")
             val composedFile = File("$tempDir/${pullRequest.creatorName}/$fileName")
             composedFile.parentFile.mkdir()
-            solutionRecords.forEach { solutionRecord ->
-                if (nameMatchesRegex(solutionRecord.fileName, filePatterns)) {
-                    val solFile = File(pathToSolution(analysisSettings, solutionRecord))
-                    composedFile.appendText(solFile.readText())
+            solutionRecords.forEachIndexed { index, solutionRecord ->
+                val solFile = File(pathToSolution(analysisSettings, solutionRecord))
+                composedFile.appendText(solFile.readText())
+                if (index != solutionRecords.size - 1) {
+                    composedFile.appendText("\n")
                 }
             }
             Solution(
@@ -189,16 +192,21 @@ class FileSystemSourceCodeStorage(
 
     override fun getAnalysisFiles(analysis: Analysis, user: String): List<File> {
         val directoryName = analysisFilesDirectoryName(analysis)
-        return when (analysis.analyzer) {
-            AnalyzerProperty.MOSS -> listOf(File("$analysisFilesDir/$directoryName/$user").listFiles()[0])
-            AnalyzerProperty.JPLAG -> File("$analysisFilesDir/$directoryName/$user").innerRegularFiles()
-        }.sortedBy { it.name }
+        return listOf(File("$analysisFilesDir/$directoryName/$user").listFiles()[0])
     }
 
     override fun deleteAnalysisFiles(analysis: Analysis) {
         val directoryName = analysisFilesDirectoryName(analysis)
         File("$analysisFilesDir/$directoryName").deleteRecursively()
         if (analysis.analyzer == AnalyzerProperty.JPLAG) {
+            File("$jplagResultDir/$directoryName").deleteRecursively()
+        }
+    }
+
+    override fun deleteAnalysisFiles(repoName: String, executionDate: LocalDateTime, analyzer: AnalyzerProperty) {
+        val directoryName = analysisFilesDirectoryName(repoName, executionDate)
+        File("$analysisFilesDir/$directoryName").deleteRecursively()
+        if (analyzer == AnalyzerProperty.JPLAG) {
             File("$jplagResultDir/$directoryName").deleteRecursively()
         }
     }

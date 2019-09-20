@@ -19,7 +19,6 @@ import java.nio.file.Paths
  */
 class JPlagAnalyzerTest : AbstractAnalyzerTest() {
 
-    private val serverUrl = "localhost"
     private val solutionsDir = asPath("src", "test", "resources", "jplagpreparedfiles")
 
     private val base1 =
@@ -56,7 +55,8 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
             Solution(student3, file8Name, solution8, sha = sha3, createdAt = createdAtList[2]),
             Solution(student3, file9Name, solution9, sha = sha3, createdAt = createdAtList[2])
         ),
-        analysisParameters = ""
+        null,
+        null
     )
 
     private val solutionStorageService = mock<SourceCodeStorage> {
@@ -73,71 +73,74 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
     private val expectedResult =
         AnalysisResult(
             repo = testRepoName,
-            resultLink = "$serverUrl/jplagresult/$testRepoName/$executionDate/index.html",
+            resultLink = "",
             executionDate = executionDate,
             matchData = listOf(
                 AnalysisMatch(
-                    students = "student2" to "student1",
-                    sha = sha2 to sha1,
-                    lines = -1,
-                    percentage = 66,
-                    createdAt = createdAtList[1] to createdAtList[0],
+                    students = "student1" to "student2",
+                    sha = sha1 to sha2,
+                    percentage = 67,
+                    minPercentage = 67,
+                    maxPercentage = 67,
+                    createdAt = createdAtList[0] to createdAtList[1],
                     matchedLines = listOf(
                         MatchedLines(
-                            match1 = 13 to 22,
-                            match2 = 12 to 21,
-                            files = file6Name to file3Name
+                            match1 = 12 to 21,
+                            match2 = 13 to 22,
+                            files = file3Name to file6Name
                         ),
                         MatchedLines(
-                            match1 = 1 to 24,
-                            match2 = 3 to 26,
-                            files = file4Name to file1Name
+                            match1 = 3 to 26,
+                            match2 = 1 to 24,
+                            files = file1Name to file4Name
                         ),
                         MatchedLines(
                             match1 = 1 to 11,
                             match2 = 1 to 11,
-                            files = file5Name to file3Name
+                            files = file3Name to file5Name
                         )
                     )
                 ), AnalysisMatch(
-                    sha = sha3 to sha1,
-                    students = "student3" to "student1",
-                    lines = -1,
-                    percentage = 44,
-                    createdAt = createdAtList[2] to createdAtList[0],
+                    students = "student2" to "student3",
+                    sha = sha2 to sha3,
+                    percentage = 42,
+                    minPercentage = 42,
+                    maxPercentage = 42,
+                    createdAt = createdAtList[1] to createdAtList[2],
                     matchedLines = listOf(
                         MatchedLines(
-                            match1 = 6 to 11,
-                            match2 = 21 to 26,
-                            files = file7Name to file2Name
+                            match1 = 18 to 31,
+                            match2 = 7 to 20,
+                            files = file5Name to file8Name
                         ),
                         MatchedLines(
-                            match1 = 3 to 10,
-                            match2 = 6 to 13,
-                            files = file9Name to file3Name
-                        ),
-                        MatchedLines(
-                            match1 = 10 to 18,
-                            match2 = 14 to 21,
-                            files = file9Name to file3Name
+                            match1 = 15 to 22,
+                            match2 = 10 to 18,
+                            files = file6Name to file9Name
                         )
                     )
                 ), AnalysisMatch(
-                    students = "student3" to "student2",
-                    sha = sha3 to sha2,
-                    lines = -1,
-                    percentage = 39,
-                    createdAt = createdAtList[2] to createdAtList[1],
+                    sha = sha1 to sha3,
+                    students = "student1" to "student3",
+                    percentage = 43,
+                    minPercentage = 43,
+                    maxPercentage = 43,
+                    createdAt = createdAtList[0] to createdAtList[2],
                     matchedLines = listOf(
                         MatchedLines(
-                            match1 = 7 to 20,
-                            match2 = 18 to 31,
-                            files = file8Name to file5Name
+                            match1 = 21 to 26,
+                            match2 = 6 to 11,
+                            files = file2Name to file7Name
                         ),
                         MatchedLines(
-                            match1 = 10 to 18,
-                            match2 = 15 to 22,
-                            files = file9Name to file6Name
+                            match1 = 6 to 13,
+                            match2 = 3 to 10,
+                            files = file3Name to file9Name
+                        ),
+                        MatchedLines(
+                            match1 = 14 to 21,
+                            match2 = 10 to 18,
+                            files = file3Name to file9Name
                         )
                     )
                 )
@@ -151,6 +154,10 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
     @Test
     fun analyze() {
         val analysisResult = analysisService.analyze(analysisSettings)
-//        analysisResult shouldBe expectedResult.copy(executionDate = analysisResult.executionDate)
+        val executionDate = analysisResult.executionDate
+//        analysisResult shouldBe expectedResult.copy(
+//            executionDate = executionDate,
+//            resultLink = "/jplagresult/${analysisFilesDirectoryName(analysisSettings)}/index.html"
+//        )
     }
 }

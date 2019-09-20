@@ -13,7 +13,5 @@ data class InputRepositoryDto(val id: Long, val git: GitProperty, val name: Stri
     var filePatterns: Collection<String>? = null
     var analyzer: AnalyzerProperty? = null
     var analysisMode: AnalysisMode? = null
-    var mossParameters: String? = null
-    var jplagParameters: String? = null
     var autoCloningEnabled: Boolean? = null
 }

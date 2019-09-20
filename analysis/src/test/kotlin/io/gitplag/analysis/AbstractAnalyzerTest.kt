@@ -47,5 +47,6 @@ abstract class AbstractAnalyzerTest {
         on { language } doReturn Language.JAVA
         on { branch } doReturn "master"
         on { analysisMode } doReturn AnalysisMode.FULL
+        on { executionDate } doReturn executionDate
     }
 }

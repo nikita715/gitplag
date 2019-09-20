@@ -42,8 +42,9 @@ class AnalysisResultDataManager(
                     AnalysisPair(
                         student1 = pair.students.first,
                         student2 = pair.students.second,
-                        lines = pair.lines,
                         percentage = pair.percentage,
+                        minPercentage = pair.minPercentage,
+                        maxPercentage = pair.maxPercentage,
                         analysis = analysis,
                         sha1 = pair.sha.first,
                         sha2 = pair.sha.second,
@@ -68,8 +69,9 @@ class AnalysisResultDataManager(
                     AnalysisPair(
                         student1 = pair.students.second,
                         student2 = pair.students.first,
-                        lines = pair.lines,
                         percentage = pair.percentage,
+                        minPercentage = pair.minPercentage,
+                        maxPercentage = pair.maxPercentage,
                         analysis = analysis,
                         sha1 = pair.sha.second,
                         sha2 = pair.sha.first,

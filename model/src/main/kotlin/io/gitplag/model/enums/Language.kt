@@ -53,7 +53,7 @@ enum class Language {
     fun ofJPlag() =
         when (this) {
             C, CPP -> "c/c++"
-            JAVA -> "java17"
+            JAVA -> "java19"
             SCHEME -> "scheme"
             PYTHON -> "python3"
             CSHARP -> "c#-1.2"

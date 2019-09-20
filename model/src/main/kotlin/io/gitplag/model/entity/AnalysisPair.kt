@@ -4,16 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.ElementCollection
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
-import javax.persistence.OneToMany
+import javax.persistence.*
 
 /**
  * Result of the plagiarism analysis of two files
@@ -31,10 +22,13 @@ data class AnalysisPair(
     val student2: String = "",
 
     @Column(nullable = false)
-    val lines: Int = 0,
+    val percentage: Int = 0,
 
     @Column(nullable = false)
-    val percentage: Int = 0,
+    val minPercentage: Int = 0,
+
+    @Column(nullable = false)
+    val maxPercentage: Int = 0,
 
     @field:JsonManagedReference
     @get:JsonManagedReference

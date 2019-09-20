@@ -9,7 +9,7 @@ import io.gitplag.model.data.AnalysisSettings
 interface Analyzer {
 
     /**
-     * Analyze the pull request for plagiarism
+     * Analyze the branch for plagiarism
      *
      * @return student-to-student matches for each file
      */

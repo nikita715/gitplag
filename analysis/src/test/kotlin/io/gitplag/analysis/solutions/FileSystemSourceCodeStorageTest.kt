@@ -56,9 +56,6 @@ class FileSystemSourceCodeStorageTest {
         on { language } doReturn java
         on { analyzer } doReturn AnalyzerProperty.MOSS
         on { analysisMode } doReturn AnalysisMode.LINK
-        on { parameters } doReturn "par1"
-        on { mossParameters } doReturn "par1"
-        on { jplagParameters } doReturn "par2"
     }
 
     private val sha1 = "sha1"

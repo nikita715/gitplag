@@ -4,6 +4,8 @@ import * as PROP from "../properties";
 import {Link} from "react-router-dom";
 import {formatDate} from "../util";
 import {Header} from "./Header";
+import {RunAnalysis} from "./RunAnalysis";
+import {EditRepo} from "./EditRepo";
 
 export class Repository extends React.Component {
   state = {
@@ -51,6 +53,10 @@ export class Repository extends React.Component {
     });
   }
 
+  openReposList() {
+    this.props.history.push("/repos");
+  }
+
   render() {
     return (
       <div className="container">
@@ -84,20 +90,24 @@ export class Repository extends React.Component {
           </div>
           <div className="container col-sm-3">
             <div className="list-group">
-              <Link to={"/repos/" + this.state.repoId + "/analyze"}
-                    className="btn list-group-item list-group-item-action">
+              <button className="btn list-group-item list-group-item-action" type="button" data-toggle="modal"
+                      data-target="#newAnalysisModalWindow">
                 Run new analysis
-              </Link>
+              </button>
               <Link to={"/repos/" + this.state.repoId + "/files"} className="list-group-item list-group-item-action">Downloaded
                 files</Link>
               <div onClick={() => Repository.startUpdateOfFiles(this.state.repoId)}
                    className="btn list-group-item list-group-item-action">Update files from git
               </div>
-              <Link className="btn list-group-item list-group-item-action" to={"/repos/" + this.state.repoId + "/edit"}>Manage
-                the repository</Link>
+              <button className="btn list-group-item list-group-item-action" type="button" data-toggle="modal"
+                      data-target="#editRepoModalWindow">
+                Manage the repository
+              </button>
             </div>
           </div>
         </div>
+        <RunAnalysis id={this.state.repoId}/>
+        <EditRepo id={this.state.repoId} openReposList={this.openReposList}/>
       </div>);
   }
 }

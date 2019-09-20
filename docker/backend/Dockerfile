@@ -4,8 +4,8 @@ ENV GITPLAG_HOME=/opt/gitplag
 
 WORKDIR $GITPLAG_HOME
 
-RUN apk add --update openjdk8 git \
-    && rm -rf /var/cache/apk/*
+RUN apk --no-cache add openjdk11 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
+    && apk --no-cache add --update git
 
 RUN git clone https://github.com/nikita715/gitplag.git $GITPLAG_HOME \
     && ./gradlew bootJar
@@ -19,8 +19,7 @@ ENV GITPLAG_ANALYSIS_FILES_DIR=/mnt/gitplag/analysisfiles/
 
 WORKDIR $GITPLAG_HOME
 
-RUN apk add --update openjdk8 \
-    && rm -rf /var/cache/apk/*
+RUN apk --no-cache add openjdk11 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
 
 COPY --from=init $GITPLAG_HOME/core/build/libs/core.jar .
 

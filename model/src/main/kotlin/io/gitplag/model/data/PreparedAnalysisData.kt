@@ -41,7 +41,12 @@ class PreparedAnalysisData(
     val solutions: List<Solution>,
 
     /**
-     * Parameters that will be used for the analysis
+     * Count of matches to be saved
      */
-    val analysisParameters: String
+    val resultSize: Int?,
+
+    /**
+     * Minimal percentage of a received match
+     */
+    val minPercentage: Int?
 )

@@ -66,25 +66,5 @@ data class Repository(
     val branches: List<Branch> = mutableListOf(),
 
     @Column(nullable = false)
-    val mossParameters: String = "",
-
-    @Column(nullable = false)
-    val jplagParameters: String = "",
-
-    @Column(nullable = false)
     val gitId: String
-) {
-    val parameters: String
-        get() = when (analyzer) {
-            AnalyzerProperty.MOSS -> mossParameters
-            AnalyzerProperty.JPLAG -> jplagParameters
-        }
-
-    /**
-     * Get parameters of the [analyzer]
-     */
-    fun parametersOfAnalyzer(analyzer: AnalyzerProperty) = when (analyzer) {
-        AnalyzerProperty.MOSS -> mossParameters
-        AnalyzerProperty.JPLAG -> jplagParameters
-    }
-}
+)

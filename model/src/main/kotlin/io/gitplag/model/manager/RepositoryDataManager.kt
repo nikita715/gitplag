@@ -31,8 +31,6 @@ class RepositoryDataManager(
                 filePatterns = repositoryDto.filePatterns ?: emptyList(),
                 analyzer = repositoryDto.analyzer ?: AnalyzerProperty.MOSS,
                 analysisMode = repositoryDto.analysisMode ?: AnalysisMode.PAIRS,
-                mossParameters = repositoryDto.mossParameters ?: "",
-                jplagParameters = repositoryDto.jplagParameters ?: "",
                 autoCloningEnabled = repositoryDto.autoCloningEnabled ?: true
             )
         )
@@ -48,8 +46,6 @@ class RepositoryDataManager(
                 filePatterns = repositoryDto.filePatterns ?: repo.filePatterns,
                 analyzer = repositoryDto.analyzer ?: repo.analyzer,
                 analysisMode = repositoryDto.analysisMode ?: repo.analysisMode,
-                mossParameters = repositoryDto.mossParameters ?: repo.mossParameters,
-                jplagParameters = repositoryDto.jplagParameters ?: repo.jplagParameters,
                 autoCloningEnabled = repositoryDto.autoCloningEnabled ?: repo.autoCloningEnabled
             )
         )

@@ -1,5 +1,6 @@
 package io.gitplag.core.beans
 
+import io.gitplag.analysis.analyzer.CombinedAnalyzer
 import io.gitplag.analysis.analyzer.JPlagAnalyzer
 import io.gitplag.analysis.analyzer.MossAnalyzer
 import io.gitplag.analysis.solutions.FileSystemSourceCodeStorage
@@ -33,14 +34,29 @@ val analysisBeans = beans {
         )
     }
 
-    bean("analyzers") {
+    bean("standaloneAnalyzers") {
         mapOf(
             AnalyzerProperty.MOSS to ref<MossAnalyzer>(),
             AnalyzerProperty.JPLAG to ref<JPlagAnalyzer>()
         )
     }
 
-    bean { GitAnalysisRunner(ref("analyzers"), ref("payloadProcessors"), ref()) }
+    bean {
+        CombinedAnalyzer(
+            ref("standaloneAnalyzers"), ref(),
+            analysisFilesDir
+        )
+    }
+
+    bean("analyzers") {
+        mapOf(
+            AnalyzerProperty.MOSS to ref<MossAnalyzer>(),
+            AnalyzerProperty.JPLAG to ref<JPlagAnalyzer>(),
+            AnalyzerProperty.COMBINED to ref<CombinedAnalyzer>()
+        )
+    }
+
+    bean { GitAnalysisRunner(ref("analyzers"), ref("payloadProcessors"), ref(), ref()) }
     bean {
         FileSystemSourceCodeStorage(
             ref(), ref(), ref(), ref(),

@@ -11,6 +11,8 @@ class AnalysisResultSimplePairDto(
     val student1: String,
     val student2: String,
     val percentage: Int,
+    val minPercentage: Int,
+    val maxPercentage: Int,
     val createdAt1: LocalDateTime,
     val createdAt2: LocalDateTime
 ) {
@@ -19,6 +21,8 @@ class AnalysisResultSimplePairDto(
         analysisPair.student1,
         analysisPair.student2,
         analysisPair.percentage,
+        analysisPair.minPercentage,
+        analysisPair.maxPercentage,
         analysisPair.createdAt1,
         analysisPair.createdAt2
     )
