@@ -5,6 +5,9 @@ import io.gitplag.model.data.AnalysisResult
 import io.gitplag.model.data.MatchedLines
 import kotlin.math.roundToInt
 
+/**
+ * Merge a list of [results] to one [AnalysisResult]
+ */
 fun mergeAnalysisResults(results: List<AnalysisResult>) =
     AnalysisResult(
         repo = results.first().repo,
@@ -13,6 +16,9 @@ fun mergeAnalysisResults(results: List<AnalysisResult>) =
         matchData = mergeAnalysisMatches(results.flatMap { it.matchData })
     )
 
+/**
+ * Merge a list of [analysisMatches] to one [AnalysisMatch]
+ */
 fun mergeAnalysisMatches(analysisMatches: List<AnalysisMatch>) =
     analysisMatches.groupBy { it.students }.map { matchesEntry ->
         val matches = matchesEntry.value
@@ -28,7 +34,9 @@ fun mergeAnalysisMatches(analysisMatches: List<AnalysisMatch>) =
         )
     }
 
-
+/**
+ * Merge a list of [matches] to one list of [MatchedLines]
+ */
 fun mergeMatchedLines(matches: List<AnalysisMatch>): List<MatchedLines> {
     return matches.first().matchedLines
 }

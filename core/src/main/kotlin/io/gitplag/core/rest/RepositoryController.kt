@@ -292,7 +292,7 @@ class RepositoryController(
         pullRequestRepository.findAllByRepoId(id).map { PullRequestDto(it) }
 
     //    @PostMapping("/repositories/{id}/bases/delete")
-    fun deleteBaseFiles(@PathVariable id: Long, @RequestBody ids: List<Long>) {
+    private fun deleteBaseFiles(@PathVariable id: Long, @RequestBody ids: List<Long>) {
         val repo = repositoryDataManager.findById(id) ?: return
         val bases = baseFileRecordRepository.findAllById(ids)
         bases.map { it.branch }.toSet().forEach { branchName ->
@@ -306,7 +306,7 @@ class RepositoryController(
     }
 
     //    @PostMapping("/repositories/{id}/solutions/delete")
-    fun deleteSolutionFiles(@PathVariable id: Long, @RequestBody ids: List<Long>) {
+    private fun deleteSolutionFiles(@PathVariable id: Long, @RequestBody ids: List<Long>) {
         val repo = repositoryDataManager.findById(id) ?: return
         val solutions = solutionFileRecordRepository.findAllById(ids)
         solutions.forEach {
@@ -320,6 +320,9 @@ class RepositoryController(
         solutionFileRecordRepository.deleteAll(solutions)
     }
 
+    /**
+     * Delete all [BaseFileRecord]s and corresponding files of the repo
+     */
     @DeleteMapping("/repositories/{id}/bases/delete")
     fun deleteAllBaseFiles(@PathVariable id: Long) {
         val repo = repositoryDataManager.findById(id) ?: return
@@ -332,6 +335,9 @@ class RepositoryController(
         notificationService.notify("Deleted all base files of repo ${repo.name}")
     }
 
+    /**
+     * Delete all [SolutionFileRecord]s, pull request records and corresponding files of the repo
+     */
     @DeleteMapping("/repositories/{id}/solutions/delete")
     fun deleteAllSolutionFiles(@PathVariable id: Long) {
         val repo = repositoryDataManager.findById(id) ?: return
