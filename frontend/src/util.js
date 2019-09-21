@@ -1,11 +1,11 @@
 import moment from "moment";
 
 export function formatDate(dateString) {
-  return moment(dateString).calendar()
+  return moment(dateString).calendar();
 }
 
 export function formatDateSimple(dateString) {
-  return dateString.replace("T", " ")
+  return dateString.replace("T", " ");
 }
 
 export function times(n) {

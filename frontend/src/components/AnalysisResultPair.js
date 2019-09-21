@@ -131,11 +131,11 @@ export class AnalysisResultPair extends React.Component {
     if (side === "right") {
       return this.state.leftRightMatches.find(function (el) {
         return el.from1 <= line && el.to1 >= line;
-      }).from2
+      }).from2;
     } else {
       return this.state.leftRightMatches.find(function (el) {
         return el.from2 <= line && el.to2 >= line;
-      }).from1
+      }).from1;
     }
   }
 
@@ -144,7 +144,9 @@ export class AnalysisResultPair extends React.Component {
     if (typeof elementById !== "undefined" && elementById !== null) {
       elementById.scrollIntoView();
       let elementById2 = document.getElementById(elementById.getAttribute("to"));
-      if (typeof elementById2 !== "undefined" && elementById2 !== null) elementById2.scrollIntoView();
+      if (typeof elementById2 !== "undefined" && elementById2 !== null) {
+        elementById2.scrollIntoView();
+      }
     }
   }
 

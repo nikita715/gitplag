@@ -17,7 +17,7 @@ const AlertTemplate = ({style, options, message, close}) => (
                                         .parentNode.parentNode.remove()}>{message}</Alert></div>
 );
 
-Redirect("/repos");
+new Redirect("/repos");
 ReactDOM.render(<AlertProvider
   template={AlertTemplate} {...options}><App/></AlertProvider>, document.getElementById("root"));
 

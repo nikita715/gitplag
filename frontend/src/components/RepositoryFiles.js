@@ -73,7 +73,7 @@ export class RepositoryFiles extends React.Component {
   deleteSolutionFiles() {
     axios.delete(PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/solutions/delete").then(
       () => this.fetchFiles()
-    )
+    );
   }
 
   handleChange(event) {
@@ -108,9 +108,9 @@ export class RepositoryFiles extends React.Component {
 
   changeBaseSortMethodTo(method) {
     if (this.state.baseSortMethod === method) {
-      this.setState({baseSortMethod: (a, b) => method(a, b) * -1})
+      this.setState({baseSortMethod: (a, b) => method(a, b) * -1});
     } else {
-      this.setState({baseSortMethod: method})
+      this.setState({baseSortMethod: method});
     }
   }
 
@@ -118,13 +118,13 @@ export class RepositoryFiles extends React.Component {
     if (this.state.solutionSortMethod === method) {
       this.setState({solutionSortMethod: (a, b) => method(a, b) * -1})
     } else {
-      this.setState({solutionSortMethod: method})
+      this.setState({solutionSortMethod: method});
     }
   }
 
   render() {
     return (<div className="container">
-      {Header(
+      {new Header(
         <ol className="breadcrumb">
           <li className="breadcrumb-item"><Link to="/repos">Repositories</Link></li>
           <li className="breadcrumb-item"><Link to={"/repos/" + this.state.repoId}>{this.state.repoName}</Link></li>

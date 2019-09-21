@@ -44,12 +44,12 @@ export class Repository extends React.Component {
   }
 
   static startUpdateOfFiles(repoId) {
-    axios.get(PROP.serverUrl + "/api/repositories/" + repoId + "/files/update/detached")
+    axios.get(PROP.serverUrl + "/api/repositories/" + repoId + "/files/update/detached");
   }
 
   deleteAnalysis(repoId, analysisId) {
     axios.delete(PROP.serverUrl + "/api/analyzes/" + analysisId).then(() => {
-      this.downloadAnalyzes()
+      this.downloadAnalyzes();
     });
   }
 
@@ -60,7 +60,7 @@ export class Repository extends React.Component {
   render() {
     return (
       <div className="container">
-        {Header(
+        {new Header(
           <ol className="breadcrumb">
             <li className="breadcrumb-item"><Link to="/repos">Repositories</Link></li>
             <li className="breadcrumb-item"><Link onClick={() => this.downloadAnalyzes()}

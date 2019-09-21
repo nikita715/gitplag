@@ -59,7 +59,7 @@ export class AnalysisResult extends React.Component {
 
   render() {
     return (<div className="container">
-        {Header(
+        {new Header(
           <ol className="breadcrumb">
             <li className="breadcrumb-item"><Link to="/repos">Repositories</Link></li>
             <li className="breadcrumb-item"><Link to={"/repos/" + this.state.repoId}>{this.state.repoName}</Link></li>
