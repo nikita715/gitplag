@@ -8,7 +8,6 @@ import io.gitplag.model.enums.Language
  * Analysis request dto
  */
 class AnalysisDto(
-    val repoId: Long,
     val branch: String,
     val analyzer: AnalyzerProperty?,
     val language: Language?,

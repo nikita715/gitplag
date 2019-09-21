@@ -10,14 +10,18 @@ import io.gitplag.model.entity.Analysis
 import io.gitplag.model.repo.AnalysisPairRepository
 import io.gitplag.model.repo.AnalysisRepository
 import mu.KotlinLogging
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 /**
  * Controller for analyzes
  */
 @RestController
 @RequestMapping("/api/analyzes")
-class AnalysisController(
+class AnalysisResultController(
     private val analysisRepository: AnalysisRepository,
     private val analysisPairRepository: AnalysisPairRepository,
     private val sourceCodeStorage: SourceCodeStorage,

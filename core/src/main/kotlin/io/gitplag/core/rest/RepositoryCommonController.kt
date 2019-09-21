@@ -8,8 +8,19 @@ import io.gitplag.core.websocket.NotificationService
 import io.gitplag.git.payload.PayloadProcessor
 import io.gitplag.git.rest.GitRestManager
 import io.gitplag.model.data.AnalysisSettings
-import io.gitplag.model.dto.*
+import io.gitplag.model.dto.AnalysisDto
+import io.gitplag.model.dto.AnalysisResultDto
+import io.gitplag.model.dto.BaseBranchInfoDto
+import io.gitplag.model.dto.FileInfoDto
+import io.gitplag.model.dto.InputRepositoryDto
+import io.gitplag.model.dto.LocalFileDto
+import io.gitplag.model.dto.OutputRepositoryDto
+import io.gitplag.model.dto.PullRequestDto
+import io.gitplag.model.dto.RepositoryFilesInfoDto
+import io.gitplag.model.dto.SolutionBranchInfoDto
+import io.gitplag.model.dto.StudentFilesDto
 import io.gitplag.model.entity.BaseFileRecord
+import io.gitplag.model.entity.Repository
 import io.gitplag.model.entity.SolutionFileRecord
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.manager.RepositoryDataManager
@@ -19,15 +30,14 @@ import io.gitplag.model.repo.PullRequestRepository
 import io.gitplag.model.repo.SolutionFileRecordRepository
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.web.bind.annotation.*
+import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
 /**
  * Controller for repositories
  */
-@RestController
-@RequestMapping("/api")
-class RepositoryController(
+@Component
+class RepositoryCommonController(
     private val repositoryDataManager: RepositoryDataManager,
     private val pullRequestRepository: PullRequestRepository,
     private val analysisRunner: AnalysisRunner,
@@ -44,40 +54,30 @@ class RepositoryController(
     private val logger = KotlinLogging.logger {}
 
     /**
-     * Get all repositories
-     */
-    @GetMapping("/repositories")
-    fun getAllRepositories() = repositoryDataManager.findAll().map(::OutputRepositoryDto).sortedBy { it.id }
-
-    /**
      * Get the repo
      */
-    @GetMapping("/repositories/{id}")
-    fun getRepo(@PathVariable id: Long) = repositoryDataManager.findById(id)?.let(::OutputRepositoryDto)
+    fun getRepo(repository: Repository?) = repository?.let(::OutputRepositoryDto)
 
     /**
      * Get analyzes of the repo
      */
-    @GetMapping("/repositories/{id}/analyzes")
-    fun getRepositoryAnalyzes(@PathVariable id: Long) =
-        repositoryDataManager.findById(id)?.analyzes?.map { AnalysisResultDto(it) }?.sortedBy { it.id } ?: emptyList()
+    fun getRepositoryAnalyzes(repository: Repository?) =
+        repository?.analyzes?.map { AnalysisResultDto(it) }?.sortedBy { it.id } ?: emptyList()
 
     /**
      * Initiate the analysis
      */
-    @PostMapping("/repositories/{id}/analyze")
-    fun analyze(@PathVariable id: Long, @RequestBody dto: AnalysisDto): AnalysisResultDto? {
+    fun analyze(repository: Repository?, dto: AnalysisDto): AnalysisResultDto? {
         try {
-            val repoValue = repositoryDataManager.findById(dto.repoId)
-            if (repoValue == null) {
-                notificationService.notify("Repository with id = $id is not found")
+            if (repository == null) {
+                notificationService.notify("Repository not found")
                 return null
             }
-            notificationService.notify("Started analysis of repo ${repoValue.name}")
+            notificationService.notify("Started analysis of repo ${repository.name}")
             val resultDto = AnalysisResultDto(
                 analysisRunner.run(
                     AnalysisSettings(
-                        repoValue,
+                        repository,
                         dto.branch,
                         analyzer = dto.analyzer,
                         language = dto.language,
@@ -88,7 +88,7 @@ class RepositoryController(
                     )
                 )
             )
-            notificationService.notify("Ended analysis #${resultDto.id} of repo ${repoValue.name}")
+            notificationService.notify("Ended analysis #${resultDto.id} of repo ${repository.name}")
             return resultDto
         } catch (e: Exception) {
             notificationService.notify(e.message)
@@ -99,9 +99,8 @@ class RepositoryController(
     /**
      * Initiate the analysis async
      */
-    @PostMapping("/repositories/{id}/analyze/detached")
-    fun analyzeDetached(@PathVariable id: Long, @RequestBody dto: AnalysisDto): Boolean {
-        val repoValue = repositoryDataManager.findById(dto.repoId) ?: return false
+    fun analyzeDetached(repository: Repository?, dto: AnalysisDto): Boolean {
+        val repoValue = repository ?: return false
         analysisAsyncRunner.runAndRespond(
             AnalysisSettings(
                 repoValue,
@@ -120,26 +119,23 @@ class RepositoryController(
     /**
      * Update the repo
      */
-    @PutMapping("/repositories/{id}")
-    fun editRepo(@PathVariable id: Long, @RequestBody dto: InputRepositoryDto): OutputRepositoryDto? {
-        val storedRepo = repositoryDataManager.findById(id)
-        val updatedRepo = if (storedRepo != null) {
-            repositoryDataManager.update(storedRepo, dto)
+    fun editRepo(repository: Repository?, dto: InputRepositoryDto): OutputRepositoryDto? {
+        val updatedRepo = if (repository != null) {
+            repositoryDataManager.update(repository, dto)
         } else null
-        if (updatedRepo == null) {
-            notificationService.notify("Repo with id $id not found")
-            return null
+        return if (updatedRepo == null) {
+            notificationService.notify("Repo not found")
+            null
         } else {
-            notificationService.notify("Updated repo with id $id")
-            return OutputRepositoryDto(updatedRepo)
+            notificationService.notify("Updated repo with id ${updatedRepo.id}")
+            OutputRepositoryDto(updatedRepo)
         }
     }
 
     /**
      * Create a repo
      */
-    @PostMapping("/repositories")
-    fun createRepo(@RequestBody dto: InputRepositoryDto): OutputRepositoryDto? {
+    fun createRepo(dto: InputRepositoryDto): OutputRepositoryDto? {
         val repository = payloadProcessors.getValue(dto.git).createRepo(dto)
         return if (repository != null) {
             notificationService.notify("Created repo ${repository.name} with id ${repository.id}")
@@ -153,9 +149,7 @@ class RepositoryController(
     /**
      * Create a repo
      */
-    @DeleteMapping("/repositories/{id}")
-    fun deleteRepo(@PathVariable id: Long) {
-        val repository = repositoryDataManager.findById(id)
+    fun deleteRepo(repository: Repository?) {
         if (repository != null) {
             repository.analyzes.forEach { analysis ->
                 sourceCodeStorage.deleteAnalysisFiles(analysis)
@@ -168,9 +162,7 @@ class RepositoryController(
     /**
      * Trigger download of files of the repo
      */
-    @GetMapping("/repositories/{id}/files/update")
-    fun updateFilesOfRepo(@PathVariable id: Long): RepositoryFilesInfoDto? {
-        val repository = repositoryDataManager.findById(id)
+    fun updateFilesOfRepo(repository: Repository?): RepositoryFilesInfoDto? {
         return if (repository != null) {
             notificationService.notify("Started upload of files from repo ${repository.name}")
             val gitRestManager = restManagers.getValue(repository.gitService)
@@ -188,24 +180,18 @@ class RepositoryController(
     /**
      * Trigger download of files of the repo
      */
-    @GetMapping("/repositories/{id}/files/update/detached")
-    fun updateFilesOfRepoAsync(@PathVariable id: Long): Boolean {
-        val repository = repositoryDataManager.findById(id)
-
+    fun updateFilesOfRepoAsync(repository: Repository?): Boolean {
         if (repository != null) {
             asyncFileUploader.uploadFiles(repository)
             return true
         }
-
         return false
     }
 
     /**
      * Get downloaded base and solution files of the repo
      */
-    @GetMapping("/repositories/{id}/files")
-    fun getFilesOfRepo(@PathVariable id: Long): RepositoryFilesInfoDto? {
-        val repository = repositoryDataManager.findById(id)
+    fun getFilesOfRepo(repository: Repository?): RepositoryFilesInfoDto? {
         return if (repository != null) {
             RepositoryFilesInfoDto(
                 bases = basesToDto(baseFileRecordRepository.findAllByRepo(repository)),
@@ -217,21 +203,18 @@ class RepositoryController(
     /**
      * Get downloaded base files of the repo
      */
-    @GetMapping("/repositories/{id}/bases")
-    fun getLocalBases(@PathVariable id: Long): List<BaseBranchInfoDto> {
-        val repo = repositoryDataManager.findById(id)
-        return if (repo != null) basesToDto(baseFileRecordRepository.findAllByRepo(repo)) else emptyList()
+    fun getLocalBases(repository: Repository?): List<BaseBranchInfoDto> {
+        return if (repository != null) basesToDto(baseFileRecordRepository.findAllByRepo(repository)) else emptyList()
     }
 
     /**
      * Get downloaded base files of the repo
      */
-    @PostMapping("/repositories/{id}/bases")
-    fun getLocalBases(@PathVariable id: Long, @RequestBody dto: LocalFileDto): List<BaseBranchInfoDto> {
-        val repo = repositoryDataManager.findById(id)
-        return if (repo != null) basesToDto(baseFileRecordRepository.findAllByRepo(repo)
+    fun getLocalBases(repository: Repository?, dto: LocalFileDto): List<BaseBranchInfoDto> {
+        return if (repository != null) basesToDto(baseFileRecordRepository.findAllByRepo(repository)
             .filter {
-                ((dto.branch == null) || (it.branch == dto.branch)) && ((dto.fileName == null) || (it.fileName == dto.fileName))
+                ((dto.branch == null) || (it.branch == dto.branch))
+                        && ((dto.fileName == null) || (it.fileName == dto.fileName))
             })
         else emptyList()
     }
@@ -239,19 +222,18 @@ class RepositoryController(
     /**
      * Get downloaded solution files of the repo
      */
-    @GetMapping("/repositories/{id}/solutions")
-    fun getLocalSolutions(@PathVariable id: Long): List<SolutionBranchInfoDto> {
-        val repo = repositoryDataManager.findById(id)
-        return if (repo != null) solutionsToDto(solutionFileRecordRepository.findAllByRepo(repo)) else emptyList()
+    fun getLocalSolutions(repository: Repository?): List<SolutionBranchInfoDto> {
+        return if (repository != null)
+            solutionsToDto(solutionFileRecordRepository.findAllByRepo(repository))
+        else
+            emptyList()
     }
 
     /**
      * Get downloaded solution files of the repo
      */
-    @PostMapping("/repositories/{id}/solutions")
-    fun getLocalSolutions(@PathVariable id: Long, @RequestBody dto: LocalFileDto): List<SolutionBranchInfoDto> {
-        val repo = repositoryDataManager.findById(id)
-        return if (repo != null) solutionsToDto(solutionFileRecordRepository.findAllByRepo(repo)
+    fun getLocalSolutions(repository: Repository?, dto: LocalFileDto): List<SolutionBranchInfoDto> {
+        return if (repository != null) solutionsToDto(solutionFileRecordRepository.findAllByRepo(repository)
             .filter {
                 ((dto.branch == null) || (it.pullRequest.sourceBranchName == dto.branch))
                         && ((dto.fileName == null) || (it.fileName == dto.fileName))
@@ -287,31 +269,29 @@ class RepositoryController(
     /**
      * Get pull requests of the repo
      */
-    @GetMapping("/repositories/{id}/pulls")
-    fun getPullRequests(@PathVariable id: Long) =
-        pullRequestRepository.findAllByRepoId(id).map { PullRequestDto(it) }
+    fun getPullRequests(repository: Repository?) = repository?.pullRequests?.map { PullRequestDto(it) }
 
     //    @PostMapping("/repositories/{id}/bases/delete")
-    private fun deleteBaseFiles(@PathVariable id: Long, @RequestBody ids: List<Long>) {
-        val repo = repositoryDataManager.findById(id) ?: return
+    private fun deleteBaseFiles(repository: Repository?, ids: List<Long>) {
+        if (repository == null) return
         val bases = baseFileRecordRepository.findAllById(ids)
         bases.map { it.branch }.toSet().forEach { branchName ->
-            val branch = branchRepository.findByRepositoryAndName(repo, branchName)
+            val branch = branchRepository.findByRepositoryAndName(repository, branchName)
             if (branch != null) branchRepository.delete(branch)
         }
         bases.forEach {
-            sourceCodeStorage.deleteBaseFile(repo, it.branch, it.fileName)
+            sourceCodeStorage.deleteBaseFile(repository, it.branch, it.fileName)
         }
         baseFileRecordRepository.deleteAll(bases)
     }
 
     //    @PostMapping("/repositories/{id}/solutions/delete")
-    private fun deleteSolutionFiles(@PathVariable id: Long, @RequestBody ids: List<Long>) {
-        val repo = repositoryDataManager.findById(id) ?: return
+    private fun deleteSolutionFiles(repository: Repository?, ids: List<Long>) {
+        if (repository == null) return
         val solutions = solutionFileRecordRepository.findAllById(ids)
         solutions.forEach {
             sourceCodeStorage.deleteSolutionFile(
-                repo,
+                repository,
                 it.pullRequest.sourceBranchName,
                 it.pullRequest.creatorName,
                 it.fileName
@@ -323,30 +303,28 @@ class RepositoryController(
     /**
      * Delete all [BaseFileRecord]s and corresponding files of the repo
      */
-    @DeleteMapping("/repositories/{id}/bases/delete")
-    fun deleteAllBaseFiles(@PathVariable id: Long) {
-        val repo = repositoryDataManager.findById(id) ?: return
-        notificationService.notify("Started deletion of base files from repo ${repo.name}")
-        repo.branches.forEach { branch ->
-            sourceCodeStorage.deleteAllBaseFiles(repo, branch.name)
+    fun deleteAllBaseFiles(repository: Repository?) {
+        if (repository == null) return
+        notificationService.notify("Started deletion of base files from repo ${repository.name}")
+        repository.branches.forEach { branch ->
+            sourceCodeStorage.deleteAllBaseFiles(repository, branch.name)
         }
-        branchRepository.deleteAll(repo.branches)
-        baseFileRecordRepository.deleteAllByRepo(repo)
-        notificationService.notify("Deleted all base files of repo ${repo.name}")
+        branchRepository.deleteAll(repository.branches)
+        baseFileRecordRepository.deleteAllByRepo(repository)
+        notificationService.notify("Deleted all base files of repo ${repository.name}")
     }
 
     /**
      * Delete all [SolutionFileRecord]s, pull request records and corresponding files of the repo
      */
-    @DeleteMapping("/repositories/{id}/solutions/delete")
-    fun deleteAllSolutionFiles(@PathVariable id: Long) {
-        val repo = repositoryDataManager.findById(id) ?: return
-        notificationService.notify("Started deletion of solution files from repo ${repo.name}")
-        repo.pullRequests.forEach { pullRequest ->
+    fun deleteAllSolutionFiles(repository: Repository?) {
+        if (repository == null) return
+        notificationService.notify("Started deletion of solution files from repo ${repository.name}")
+        repository.pullRequests.forEach { pullRequest ->
             solutionFileRecordRepository.deleteAllByPullRequest(pullRequest)
-            sourceCodeStorage.deleteAllSolutionFiles(repo, pullRequest.sourceBranchName, pullRequest.creatorName)
+            sourceCodeStorage.deleteAllSolutionFiles(repository, pullRequest.sourceBranchName, pullRequest.creatorName)
         }
-        pullRequestRepository.deleteAll(repo.pullRequests)
-        notificationService.notify("Deleted all solution files of repo ${repo.name}")
+        pullRequestRepository.deleteAll(repository.pullRequests)
+        notificationService.notify("Deleted all solution files of repo ${repository.name}")
     }
 }
