@@ -1,6 +1,7 @@
 package io.gitplag.core.async
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.gitplag.analysis.AnalysisException
 import io.gitplag.analysis.AnalysisRunner
 import io.gitplag.core.websocket.NotificationService
 import io.gitplag.model.data.AnalysisSettings
@@ -61,7 +62,7 @@ class AnalysisAsyncRunner(
                 }
             }
             notificationService.notify(message)
-            throw e
+            throw AnalysisException(message, e)
         }
     }
 }
