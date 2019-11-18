@@ -76,6 +76,13 @@ class RepositoryDataManager(
         repositoryRepository.findById(repoId).orElse(null)
 
     /**
+     * Find repos by [repoIds]
+     */
+    @Transactional(readOnly = true)
+    fun findById(repoIds: List<Long>): List<Repository> =
+        repositoryRepository.findAllById(repoIds)
+
+    /**
      * Save the [repo]
      */
     @Transactional

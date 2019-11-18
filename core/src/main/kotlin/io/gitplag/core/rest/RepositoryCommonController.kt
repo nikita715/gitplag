@@ -8,17 +8,7 @@ import io.gitplag.core.websocket.NotificationService
 import io.gitplag.git.payload.PayloadProcessor
 import io.gitplag.git.rest.GitRestManager
 import io.gitplag.model.data.AnalysisSettings
-import io.gitplag.model.dto.AnalysisDto
-import io.gitplag.model.dto.AnalysisResultDto
-import io.gitplag.model.dto.BaseBranchInfoDto
-import io.gitplag.model.dto.FileInfoDto
-import io.gitplag.model.dto.InputRepositoryDto
-import io.gitplag.model.dto.LocalFileDto
-import io.gitplag.model.dto.OutputRepositoryDto
-import io.gitplag.model.dto.PullRequestDto
-import io.gitplag.model.dto.RepositoryFilesInfoDto
-import io.gitplag.model.dto.SolutionBranchInfoDto
-import io.gitplag.model.dto.StudentFilesDto
+import io.gitplag.model.dto.*
 import io.gitplag.model.entity.BaseFileRecord
 import io.gitplag.model.entity.Repository
 import io.gitplag.model.entity.SolutionFileRecord
@@ -84,7 +74,8 @@ class RepositoryCommonController(
                         analysisMode = dto.mode,
                         updateFiles = dto.updateFiles,
                         maxResultSize = dto.maxResultSize,
-                        minResultPercentage = dto.minResultPercentage
+                        minResultPercentage = dto.minResultPercentage,
+                        additionalRepositories = dto.additionalRepositories
                     )
                 )
             )
@@ -110,7 +101,8 @@ class RepositoryCommonController(
                 analysisMode = dto.mode,
                 updateFiles = dto.updateFiles,
                 maxResultSize = dto.maxResultSize,
-                minResultPercentage = dto.minResultPercentage
+                minResultPercentage = dto.minResultPercentage,
+                additionalRepositories = dto.additionalRepositories
             ), dto.responseUrl
         )
         return true

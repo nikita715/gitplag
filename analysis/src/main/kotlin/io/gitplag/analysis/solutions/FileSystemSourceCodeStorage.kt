@@ -92,7 +92,7 @@ class FileSystemSourceCodeStorage(
             solutionFileRecordRepository.findAllByPullRequest(pullRequest)
                 .filter { solutionRecord -> nameMatchesRegex(solutionRecord.fileName, filePatterns) }
                 .map { solutionRecord ->
-                    val file = File(pathToSolution(analysisSettings, solutionRecord))
+                    val file = File(pathToSolution(analysisSettings.repository, solutionRecord))
                     val copiedFile = File("$tempDir/${pullRequest.creatorName}/${solutionRecord.fileName}")
                     copiedFile.parentFile.mkdirs()
                     Files.copy(file.toPath(), copiedFile.toPath())
@@ -112,31 +112,34 @@ class FileSystemSourceCodeStorage(
         tempDir: String
     ): List<Solution> {
         val filePatterns = repositoryDataManager.findFileNameRegexps(analysisSettings.repository)
-        return pullRequestRepository.findAllByRepoAndSourceBranchName(
-            analysisSettings.repository,
-            analysisSettings.branch
-        ).map { pullRequest ->
-            val solutionRecords = solutionFileRecordRepository.findAllByPullRequest(pullRequest)
-                .filter { solutionRecord -> nameMatchesRegex(solutionRecord.fileName, filePatterns) }
-            val extension = solutionRecords.getOrNull(0)?.fileName?.toFileExtension()
-            val fileName = pullRequest.creatorName + "." + (extension ?: "txt")
-            val composedFile = File("$tempDir/${pullRequest.creatorName}/$fileName")
-            composedFile.parentFile.mkdir()
-            solutionRecords.forEachIndexed { index, solutionRecord ->
-                val solFile = File(pathToSolution(analysisSettings, solutionRecord))
-                composedFile.appendText(solFile.readText())
-                if (index != solutionRecords.size - 1) {
-                    composedFile.appendText("\n")
+        return repositoryDataManager.findById(analysisSettings.additionalRepositories).plus(analysisSettings.repository)
+            .flatMap { repository ->
+                pullRequestRepository.findAllByRepoAndSourceBranchName(
+                    repository,
+                    analysisSettings.branch
+                ).map { pullRequest ->
+                    val solutionRecords = solutionFileRecordRepository.findAllByPullRequest(pullRequest)
+                        .filter { solutionRecord -> nameMatchesRegex(solutionRecord.fileName, filePatterns) }
+                    val extension = solutionRecords.getOrNull(0)?.fileName?.toFileExtension()
+                    val fileName = pullRequest.creatorName + "." + (extension ?: "txt")
+                    val composedFile = File("$tempDir/${pullRequest.creatorName}/$fileName")
+                    composedFile.parentFile.mkdir()
+                    solutionRecords.forEachIndexed { index, solutionRecord ->
+                        val solFile = File(pathToSolution(repository, solutionRecord))
+                        composedFile.appendText(solFile.readText())
+                        if (index != solutionRecords.size - 1) {
+                            composedFile.appendText("\n")
+                        }
+                    }
+                    Solution(
+                        student = pullRequest.creatorName,
+                        fileName = fileName,
+                        file = composedFile,
+                        sha = pullRequest.headSha,
+                        createdAt = pullRequest.createdAt
+                    )
                 }
             }
-            Solution(
-                student = pullRequest.creatorName,
-                fileName = fileName,
-                file = composedFile,
-                sha = pullRequest.headSha,
-                createdAt = pullRequest.createdAt
-            )
-        }
     }
 
     override fun saveBasesFromDir(
@@ -263,12 +266,12 @@ class FileSystemSourceCodeStorage(
         )
 
     private fun pathToSolution(
-        analysisSettings: AnalysisSettings,
+        repo: Repository,
         solutionFileRecord: SolutionFileRecord
     ): String =
         pathToSolution(
-            analysisSettings.repository.gitService,
-            analysisSettings.repository.name,
+            repo.gitService,
+            repo.name,
             solutionFileRecord.pullRequest.sourceBranchName,
             solutionFileRecord.pullRequest.creatorName,
             solutionFileRecord.fileName

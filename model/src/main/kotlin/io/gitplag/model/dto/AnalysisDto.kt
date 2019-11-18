@@ -15,5 +15,6 @@ class AnalysisDto(
     val maxResultSize: Int?,
     val minResultPercentage: Int?,
     val responseUrl: String?,
-    val updateFiles: Boolean = false
+    val updateFiles: Boolean = false,
+    val additionalRepositories: List<Long>?
 )

@@ -15,31 +15,20 @@ class AnalysisSettings(
     val executionDate: LocalDateTime = LocalDateTime.now()
 ) {
     var analyzer: AnalyzerProperty = repository.analyzer
-        private set(value) {
-            field = value
-        }
+        private set
     var language: Language = repository.language
-        private set(value) {
-            field = value
-        }
+        private set
     var analysisMode: AnalysisMode = repository.analysisMode
-        private set(value) {
-            field = value
-        }
+        private set
+    var additionalRepositories: List<Long> = emptyList()
+        private set
     var updateFiles: Boolean = false
-        private set(value) {
-            field = value
-        }
-
+        private set
     var maxResultSize: Int? = null
-        private set(value) {
-            field = value
-        }
+        private set
 
     var minResultPercentage: Int = 0
-        private set(value) {
-            field = value
-        }
+        private set
 
     constructor(
         repository: Repository,
@@ -48,6 +37,7 @@ class AnalysisSettings(
         language: Language?,
         analysisMode: AnalysisMode?,
         updateFiles: Boolean?,
+        additionalRepositories: List<Long>?,
         maxResultSize: Int? = null,
         minResultPercentage: Int? = null
     ) : this(repository, branch) {
@@ -55,6 +45,7 @@ class AnalysisSettings(
         this.language = language ?: repository.language
         this.analysisMode = analysisMode ?: repository.analysisMode
         this.updateFiles = updateFiles ?: false
+        this.additionalRepositories = additionalRepositories ?: emptyList()
         this.maxResultSize = maxResultSize
         this.minResultPercentage = minResultPercentage ?: 0
     }

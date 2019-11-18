@@ -10,6 +10,7 @@ export class RunAnalysis extends React.Component {
     language: "",
     maxResultSize: null,
     minResultPercentage: 0,
+    additionalRepositories: [],
     analysisMode: "FULL",
     updateFiles: false
   };
@@ -43,6 +44,11 @@ export class RunAnalysis extends React.Component {
     } else if (target.type === "checkbox") {
       this.setState({
         [target.name]: target.checked
+      });
+    } else if (target.name === "additionalRepositories") {
+      const name = target.name;
+      this.setState({
+        [name]: target.value.replace(/[^0-9,]+/g, "").split(",")
       });
     } else {
       const value = target.value;
@@ -125,6 +131,15 @@ export class RunAnalysis extends React.Component {
                     <div className="">
                       <input className="form-control" type="number" onChange={this.handleChange}
                              name="minResultPercentage" value={this.state.minResultPercentage}/>
+                    </div>
+                  </div>
+                </div>
+                <div className="form-group row">
+                  <div className="col">
+                    <label htmlFor="example-number-input" className="">Additional repositories</label>
+                    <div className="">
+                      <input className="form-control" type="text" onChange={this.handleChange} placeholder="Comma-separated ids"
+                             name="additionalRepositories" value={this.state.additionalRepositories}/>
                     </div>
                   </div>
                 </div>
