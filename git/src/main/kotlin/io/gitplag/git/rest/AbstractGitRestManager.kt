@@ -13,7 +13,8 @@ import java.io.File
  */
 abstract class AbstractGitRestManager(
     private val sourceCodeStorage: SourceCodeStorage,
-    private val solutionFileRecordRepository: SolutionFileRecordRepository
+    private val solutionFileRecordRepository: SolutionFileRecordRepository,
+    private val accessToken: String
 ) : GitRestManager {
 
     private val logger = KotlinLogging.logger {}
@@ -21,7 +22,7 @@ abstract class AbstractGitRestManager(
     override fun clonePullRequest(pullRequest: PullRequest) {
         val resourceUrl = linkToRepoArchive(pullRequest.sourceRepoFullName, pullRequest.sourceBranchName)
         logger.info { "Git: trying to download the zip from url $resourceUrl" }
-        downloadAndUnpackZip(resourceUrl) { unpackedDir ->
+        downloadAndUnpackZip(resourceUrl, accessToken) { unpackedDir ->
             val sourceDir = File(unpackedDir).listFiles()[0].absolutePath
             sourceCodeStorage.saveSolutionsFromDir(
                 sourceDir, pullRequest
@@ -53,7 +54,7 @@ abstract class AbstractGitRestManager(
 
     private fun cloneBranchOfRepository(repo: Repository, branch: String) {
         logger.info { "Git: download zip archive of repo = ${repo.name}, branch = $branch" }
-        downloadAndUnpackZip(linkToRepoArchive(repo.name, branch)) { unpackedDir ->
+        downloadAndUnpackZip(linkToRepoArchive(repo.name, branch), accessToken) { unpackedDir ->
             val sourceDir = File(unpackedDir).listFiles()[0].absolutePath
             sourceCodeStorage.saveBasesFromDir(
                 sourceDir,

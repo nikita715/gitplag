@@ -15,7 +15,7 @@ class GithubRestManager(
     sourceCodeStorage: SourceCodeStorage,
     solutionFileRecordRepository: SolutionFileRecordRepository,
     private val accessToken: String
-) : AbstractGitRestManager(sourceCodeStorage, solutionFileRecordRepository) {
+) : AbstractGitRestManager(sourceCodeStorage, solutionFileRecordRepository, accessToken) {
 
     override fun getBranchOfRepo(repo: Repository, name: String) =
         sendRestRequest<JsonObject>(

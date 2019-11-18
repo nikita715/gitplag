@@ -4,9 +4,11 @@ import net.lingala.zip4j.core.ZipFile
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.file.Files
 import java.util.stream.Collectors.toList
+
 
 /**
  * Perform the [action] in a temp directory
@@ -34,10 +36,15 @@ fun generateDir(path: String, name: String): String {
 /**
  * Download an archive from the [resourceUrl], unpack it and perform the action in it
  */
-fun <T> downloadAndUnpackZip(resourceUrl: String, action: (unpackedDir: String) -> T): T =
+fun <T> downloadAndUnpackZip(resourceUrl: String, accessToken: String? = null, action: (unpackedDir: String) -> T): T =
     inTempDirectory { tempDir ->
         val zipFile = File("$tempDir/zip.zip")
-        BufferedInputStream(URL(resourceUrl).openStream())
+        val url = URL(resourceUrl)
+        val urlConnection = url.openConnection() as HttpURLConnection
+        urlConnection.doOutput = true
+        urlConnection.requestMethod = "GET"
+        if (accessToken != null) urlConnection.setRequestProperty("Authorization", accessToken)
+        BufferedInputStream(urlConnection.inputStream)
             .use { inputStream ->
                 val bytes = inputStream.readBytes()
                 FileOutputStream(zipFile).use {
