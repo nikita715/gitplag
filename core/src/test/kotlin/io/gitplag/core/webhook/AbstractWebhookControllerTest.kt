@@ -2,7 +2,7 @@ package io.gitplag.core.webhook
 
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
-import io.gitplag.git.payload.PayloadProcessor
+import io.gitplag.git.payload.GitManager
 import org.junit.Before
 import org.junit.Test
 import org.springframework.http.MediaType
@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 abstract class AbstractWebhookControllerTest {
 
-    abstract val payloadProcessor: PayloadProcessor
+    abstract val gitManager: GitManager
     abstract val webhookController: Any
 
     abstract val endpoint: String
@@ -35,7 +35,7 @@ abstract class AbstractWebhookControllerTest {
             MockMvcRequestBuilders.post(endpoint).header(headerName, prEvent).content(payload)
                 .contentType(MediaType.APPLICATION_JSON)
         )
-        verify(payloadProcessor).downloadSolutionsOfPullRequest(payload)
+        verify(gitManager).downloadSolutionsOfPullRequest(payload)
     }
 
     @Test
@@ -44,7 +44,7 @@ abstract class AbstractWebhookControllerTest {
             MockMvcRequestBuilders.post(endpoint).header(headerName, pushEvent).content(payload)
                 .contentType(MediaType.APPLICATION_JSON)
         )
-        verify(payloadProcessor).downloadBasesOfRepository(payload)
+        verify(gitManager).downloadBasesOfRepository(payload)
     }
 
     @Test
@@ -53,7 +53,7 @@ abstract class AbstractWebhookControllerTest {
             MockMvcRequestBuilders.post(endpoint).content(payload)
                 .contentType(MediaType.APPLICATION_JSON)
         )
-        verify(payloadProcessor, never()).downloadBasesOfRepository(payload)
-        verify(payloadProcessor, never()).downloadSolutionsOfPullRequest(payload)
+        verify(gitManager, never()).downloadBasesOfRepository(payload)
+        verify(gitManager, never()).downloadSolutionsOfPullRequest(payload)
     }
 }

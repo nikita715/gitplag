@@ -3,7 +3,7 @@ package io.gitplag.git
 import io.gitplag.analysis.AnalysisRunner
 import io.gitplag.analysis.analyzer.Analyzer
 import io.gitplag.analysis.solutions.SourceCodeStorage
-import io.gitplag.git.payload.PayloadProcessor
+import io.gitplag.git.payload.GitManager
 import io.gitplag.model.data.AnalysisResult
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.entity.Analysis
@@ -17,7 +17,7 @@ import mu.KotlinLogging
  */
 class GitAnalysisRunner(
     private val analyzers: Map<AnalyzerProperty, Analyzer>,
-    private val payloadProcessors: Map<GitProperty, PayloadProcessor>,
+    private val payloadProcessors: Map<GitProperty, GitManager>,
     private val analysisResultDataManager: AnalysisResultDataManager,
     private val sourceCodeStorage: SourceCodeStorage
 ) : AnalysisRunner {

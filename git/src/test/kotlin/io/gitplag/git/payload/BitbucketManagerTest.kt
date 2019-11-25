@@ -12,7 +12,7 @@ import java.time.Month
 /**
  * Bitbucket payload processor test implementation
  */
-class BitbucketPayloadProcessorTest : AbstractPayloadProcessorTest() {
+class BitbucketManagerTest : AbstractGitManagerTest() {
     override val payload by lazy { readPayloadOf("bitbucket") }
 
     override val gitAgent = mock<BitbucketAgent>()
@@ -24,8 +24,8 @@ class BitbucketPayloadProcessorTest : AbstractPayloadProcessorTest() {
         gitId = ""
     )
 
-    override val payloadProcessor =
-        BitbucketPayloadProcessor(pullRequestRepository, repositoryDataManager, gitAgent, branchRepository)
+    override val gitManager =
+        BitbucketManager(pullRequestRepository, repositoryDataManager, gitAgent, branchRepository)
 
     override val pullRequest = PullRequest(
         number = 3,

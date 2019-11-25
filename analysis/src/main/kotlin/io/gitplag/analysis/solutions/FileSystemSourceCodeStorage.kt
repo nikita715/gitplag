@@ -34,20 +34,21 @@ class FileSystemSourceCodeStorage(
     private val logger = KotlinLogging.logger {}
     private val baseDir = ".base"
 
-    override fun loadBasesAndSolutions(settings: AnalysisSettings, tempDir: String) =
-        PreparedAnalysisData(
+    override fun loadBasesAndSolutions(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData {
+        val filePatterns = repositoryDataManager.findFileNameRegexps(settings.repository)
+        return PreparedAnalysisData(
             gitService = settings.repository.gitService,
             repoName = settings.repository.name,
             language = settings.language,
-            bases = loadBases(settings, tempDir),
-            solutions = buildComposedSolutions(settings, tempDir),
+            bases = loadBases(settings, filePatterns, tempDir),
+            solutions = buildComposedSolutions(settings, filePatterns, tempDir),
             rootDir = tempDir,
             resultSize = settings.maxResultSize,
             minPercentage = settings.minResultPercentage
         )
+    }
 
-    private fun loadBases(settings: AnalysisSettings, tempDir: String): List<File> {
-        val filePatterns = repositoryDataManager.findFileNameRegexps(settings.repository)
+    private fun loadBases(settings: AnalysisSettings, filePatterns: Collection<String>, tempDir: String): List<File> {
         val baseDir = File("$tempDir/$baseDir")
         Files.createDirectory(baseDir.toPath())
         var fileIterator = 0
@@ -65,13 +66,13 @@ class FileSystemSourceCodeStorage(
     }
 
     private fun buildComposedSolutions(
-        analysisSettings: AnalysisSettings,
+        settings: AnalysisSettings,
+        filePatterns: Collection<String>,
         tempDir: String
     ): List<Solution> {
-        val filePatterns = repositoryDataManager.findFileNameRegexps(analysisSettings.repository)
         return pullRequestRepository.findAllByRepoIdInAndSourceBranchName(
-            analysisSettings.additionalRepositories.plus(analysisSettings.repository.id),
-            analysisSettings.branch
+            settings.additionalRepositories.plus(settings.repository.id),
+            settings.branch
         ).map { pullRequest ->
             val solutionRecords = solutionFileRecordRepository.findAllByPullRequest(pullRequest)
                 .filter { solutionRecord -> nameMatchesRegex(solutionRecord.fileName, filePatterns) }

@@ -1,6 +1,6 @@
 package io.gitplag.core.webhook
 
-import io.gitplag.git.payload.BitbucketPayloadProcessor
+import io.gitplag.git.payload.BitbucketManager
 import mu.KotlinLogging
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest
  * Receiver of bitbucket webhook messages
  */
 @RestController
-class BitbucketWebhookController(private val bitbucketWebhookService: BitbucketPayloadProcessor) {
+class BitbucketWebhookController(private val bitbucketWebhookService: BitbucketManager) {
     private val logger = KotlinLogging.logger {}
 
     /**

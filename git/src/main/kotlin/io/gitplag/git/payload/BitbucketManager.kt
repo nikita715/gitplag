@@ -10,16 +10,16 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 /**
- * Implementation of the [AbstractPayloadProcessor] for handling Bitbucket webhooks
+ * Implementation of the [AbstractGitManager] for handling Bitbucket webhooks
  */
-class BitbucketPayloadProcessor(
+class BitbucketManager(
     pullRequestRepository: PullRequestRepository,
     repositoryDataManager: RepositoryDataManager,
     bitbucketLoader: BitbucketAgent,
     branchRepository: BranchRepository
-) : AbstractPayloadProcessor(pullRequestRepository, repositoryDataManager, bitbucketLoader, branchRepository) {
+) : AbstractGitManager(pullRequestRepository, repositoryDataManager, bitbucketLoader, branchRepository) {
 
-    override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    override val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     override val git = GitProperty.BITBUCKET
 
     override val JsonObject.pullRequest: JsonObject

@@ -6,15 +6,7 @@ import io.gitplag.model.dto.LocalFileDto
 import io.gitplag.model.entity.BaseFileRecord
 import io.gitplag.model.entity.SolutionFileRecord
 import io.gitplag.model.manager.RepositoryDataManager
-import mu.KotlinLogging
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 /**
  * Controller for repositories
@@ -25,7 +17,6 @@ class RepositoryByIdController(
     private val repositoryDataManager: RepositoryDataManager,
     private val repositoryCommonController: RepositoryCommonController
 ) {
-    private val logger = KotlinLogging.logger {}
 
     private fun getRepoEntity(id: Long) = repositoryDataManager.findById(id)
 

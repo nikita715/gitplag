@@ -29,8 +29,7 @@ fun generateDir(path: String, name: String): String {
     val file = File("$path/$name")
     Files.deleteIfExists(file.toPath())
     Files.createDirectories(file.toPath())
-    val resultDir = file.absolutePath
-    return resultDir
+    return file.absolutePath
 }
 
 /**

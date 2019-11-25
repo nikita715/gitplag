@@ -21,10 +21,10 @@ import java.nio.file.Paths
 /**
  * Abstract test for the payload processors
  */
-abstract class AbstractPayloadProcessorTest {
+abstract class AbstractGitManagerTest {
 
     abstract val payload: String
-    abstract val payloadProcessor: PayloadProcessor
+    abstract val gitManager: GitManager
     abstract val pullRequest: PullRequest
     abstract val repo: Repository
 
@@ -49,7 +49,7 @@ abstract class AbstractPayloadProcessorTest {
     @Test
     fun saveNewPullRequest() {
         `when`(repositoryDataManager.findByGitServiceAndName(any(), any())).thenReturn(repo)
-        payloadProcessor.downloadSolutionsOfPullRequest(payload)
+        gitManager.downloadSolutionsOfPullRequest(payload)
         verify(pullRequestRepository).save(argument.capture())
         argument.value shouldEqual pullRequest
         verify(gitAgent).clonePullRequest(pullRequest)

@@ -1,23 +1,19 @@
 package io.gitplag.core.rest
 
 import io.gitplag.core.websocket.NotificationService
-import io.gitplag.git.payload.PayloadProcessor
+import io.gitplag.git.payload.GitManager
 import io.gitplag.model.dto.InputRepositoryDto
 import io.gitplag.model.dto.OutputRepositoryDto
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.manager.RepositoryDataManager
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/repositories")
 class RepositoriesController(
     private val repositoryDataManager: RepositoryDataManager,
-    @Qualifier("payloadProcessors") private val payloadProcessors: Map<GitProperty, PayloadProcessor>,
+    @Qualifier("payloadProcessors") private val payloadProcessors: Map<GitProperty, GitManager>,
     private val notificationService: NotificationService
 ) {
 

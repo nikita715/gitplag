@@ -1,6 +1,7 @@
 package io.gitplag.analysis.analyzer
 
 import io.gitplag.analysis.analysisFilesDirectoryName
+import io.gitplag.analysis.client.JPlagClient
 import io.gitplag.analysis.repoInfo
 import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.model.data.*
@@ -17,7 +18,7 @@ import kotlin.math.roundToInt
  */
 class JPlagAnalyzer(
     sourceCodeStorage: SourceCodeStorage,
-    private val analysisResultFilesDir: String,
+    analysisResultFilesDir: String,
     private val jplagResultDir: String
 ) : AbstractAnalyzer(sourceCodeStorage, analysisResultFilesDir) {
 
@@ -29,23 +30,23 @@ class JPlagAnalyzer(
         val directoryName = analysisFilesDirectoryName(settings)
         val jplagReportDir = generateDir(jplagResultDir, directoryName)
 
-        logger.info { "Analysis:JPlag:2.Start analysis. ${repoInfo(settings)}" }
+        logger.info { "Analysis:JPlag:Start analysis. ${repoInfo(settings)}" }
         JPlagClient(analysisFiles, jplagReportDir).run()
 
         val matchLines =
             if (settings.analysisMode.order > AnalysisMode.LINK.order) {
-                logger.info { "Analysis:JPlag:3.Start parsing of results. ${repoInfo(settings)}" }
+                logger.info { "Analysis:JPlag:Start parsing of results. ${repoInfo(settings)}" }
                 analysisFiles.toSolutionPairIndexes().mapNotNull { index ->
                     parseResults(index, settings, analysisFiles.solutions, jplagReportDir)
                 }
             } else {
-                logger.info { "Analysis:JPlag:3.Skipped parsing. ${repoInfo(settings)}" }
+                logger.info { "Analysis:JPlag:Skipped parsing. ${repoInfo(settings)}" }
                 emptyList()
             }
 
         val resultLink = "/jplagresult/$directoryName/index.html"
 
-        logger.info { "Analysis:JPlag:4.End of analysis. ${repoInfo(settings)}" }
+        logger.info { "Analysis:JPlag:End of analysis. ${repoInfo(settings)}" }
         return AnalysisResult(
             settings,
             resultLink,
@@ -132,7 +133,7 @@ class JPlagAnalyzer(
     }
 
     private fun PreparedAnalysisData.toSolutionPairIndexes(): IntRange {
-        val countOfMatches = (0 until solutions.size).sum()
+        val countOfMatches = solutions.indices.sum()
         return 0 until countOfMatches
     }
 }

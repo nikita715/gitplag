@@ -1,6 +1,6 @@
 package io.gitplag.core.webhook
 
-import io.gitplag.git.payload.GithubPayloadProcessor
+import io.gitplag.git.payload.GithubManager
 import mu.KotlinLogging
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest
  * Receiver of github webhook messages
  */
 @RestController
-class GithubWebhookController(private val githubWebhookService: GithubPayloadProcessor) {
+class GithubWebhookController(private val githubWebhookService: GithubManager) {
     private val logger = KotlinLogging.logger {}
 
     /**

@@ -17,14 +17,14 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 /**
- * Common implementation of the [PayloadProcessor]
+ * Common implementation of the [GitManager]
  */
-abstract class AbstractPayloadProcessor(
+abstract class AbstractGitManager(
     private val pullRequestRepository: PullRequestRepository,
     private val repositoryDataManager: RepositoryDataManager,
     private val gitAgent: GitAgent,
     private val branchRepository: BranchRepository
-) : PayloadProcessor {
+) : GitManager {
     private val logger = KotlinLogging.logger {}
 
     override fun downloadSolutionsOfPullRequest(payload: String) {

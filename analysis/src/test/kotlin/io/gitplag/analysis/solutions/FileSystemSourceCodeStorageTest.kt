@@ -144,7 +144,7 @@ class FileSystemSourceCodeStorageTest {
             solutionFileRecordRepository, pullRequestRepository, solutionDir, jplagResultDir, analysisFilesDir
         )
 
-        val analysisSettings = AnalysisSettings(repo, branchName)
+        val analysisSettings = AnalysisSettings(repo, branchName, listOf(".+\\.java"))
 
         inTempDirectory { tempDir ->
             val analysisData =

@@ -5,24 +5,24 @@ import io.gitplag.git.agent.BitbucketAgent
 import io.gitplag.git.agent.GitAgent
 import io.gitplag.git.agent.GithubAgent
 import io.gitplag.git.agent.GitlabAgent
-import io.gitplag.git.payload.BitbucketPayloadProcessor
-import io.gitplag.git.payload.GithubPayloadProcessor
-import io.gitplag.git.payload.GitlabPayloadProcessor
-import io.gitplag.git.payload.PayloadProcessor
+import io.gitplag.git.payload.BitbucketManager
+import io.gitplag.git.payload.GitManager
+import io.gitplag.git.payload.GithubManager
+import io.gitplag.git.payload.GitlabManager
 import io.gitplag.model.enums.GitProperty
 import org.springframework.context.support.beans
 
 val gitBeans = beans {
 
     // Payload processors
-    bean<GitlabPayloadProcessor>()
-    bean<BitbucketPayloadProcessor>()
-    bean<GithubPayloadProcessor>()
-    bean<Map<GitProperty, PayloadProcessor>>("payloadProcessors") {
+    bean<GitlabManager>()
+    bean<BitbucketManager>()
+    bean<GithubManager>()
+    bean<Map<GitProperty, GitManager>>("payloadProcessors") {
         mapOf(
-            GitProperty.GITHUB to ref<GithubPayloadProcessor>(),
-            GitProperty.GITLAB to ref<GitlabPayloadProcessor>(),
-            GitProperty.BITBUCKET to ref<BitbucketPayloadProcessor>()
+            GitProperty.GITHUB to ref<GithubManager>(),
+            GitProperty.GITLAB to ref<GitlabManager>(),
+            GitProperty.BITBUCKET to ref<BitbucketManager>()
         )
     }
 

@@ -1,4 +1,4 @@
-package io.gitplag.analysis.analyzer
+package io.gitplag.analysis.client
 
 import io.gitplag.analysis.AnalysisException
 import io.gitplag.model.data.PreparedAnalysisData

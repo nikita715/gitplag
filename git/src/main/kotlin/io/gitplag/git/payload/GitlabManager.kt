@@ -10,16 +10,16 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 /**
- * Implementation of the [AbstractPayloadProcessor] for handling Gitlab webhooks
+ * Implementation of the [AbstractGitManager] for handling Gitlab webhooks
  */
-class GitlabPayloadProcessor(
+class GitlabManager(
     pullRequestRepository: PullRequestRepository,
     repositoryDataManager: RepositoryDataManager,
     private val gitlabLoader: GitlabAgent,
     branchRepository: BranchRepository
-) : AbstractPayloadProcessor(pullRequestRepository, repositoryDataManager, gitlabLoader, branchRepository) {
+) : AbstractGitManager(pullRequestRepository, repositoryDataManager, gitlabLoader, branchRepository) {
 
-    override val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    override val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     override val git = GitProperty.GITLAB
 
     override val JsonObject.pullRequest: JsonObject

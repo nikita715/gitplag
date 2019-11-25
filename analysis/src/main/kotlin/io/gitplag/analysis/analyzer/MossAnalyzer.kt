@@ -1,5 +1,6 @@
 package io.gitplag.analysis.analyzer
 
+import io.gitplag.analysis.client.MossClient
 import io.gitplag.analysis.repoInfo
 import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.model.data.*

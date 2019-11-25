@@ -12,7 +12,7 @@ import java.time.Month
 /**
  * Gitlab payload processor test implementation
  */
-class GitlabPayloadProcessorTest : AbstractPayloadProcessorTest() {
+class GitlabManagerTest : AbstractGitManagerTest() {
     override val payload by lazy { readPayloadOf("gitlab") }
 
     override val gitAgent = mock<GitlabAgent>()
@@ -24,8 +24,8 @@ class GitlabPayloadProcessorTest : AbstractPayloadProcessorTest() {
         gitId = ""
     )
 
-    override val payloadProcessor =
-        GitlabPayloadProcessor(pullRequestRepository, repositoryDataManager, gitAgent, branchRepository)
+    override val gitManager =
+        GitlabManager(pullRequestRepository, repositoryDataManager, gitAgent, branchRepository)
 
     override val pullRequest = PullRequest(
         number = 1,

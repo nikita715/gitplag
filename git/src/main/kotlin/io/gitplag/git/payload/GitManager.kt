@@ -4,9 +4,9 @@ import io.gitplag.model.dto.InputRepositoryDto
 import io.gitplag.model.entity.Repository
 
 /**
- * Service that receives webhook requests about pull requests from git services
+ * Service for managing of interactions with git services
  */
-interface PayloadProcessor {
+interface GitManager {
 
     /**
      * Transform payload from a git service
