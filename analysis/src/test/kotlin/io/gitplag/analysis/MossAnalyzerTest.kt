@@ -142,7 +142,7 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
      */
     @Test
     fun analyze() {
-        `when`(solutionStorage.loadBasesAndComposedSolutions(any(), any())).thenReturn(testPreparedAnalysisFiles)
+        `when`(solutionStorage.loadBasesAndSolutions(any(), any())).thenReturn(testPreparedAnalysisFiles)
         val analysisResult = analysisService.analyze(analysisSettings)
         analysisResult shouldEqual expectedResult.copy(
             resultLink = analysisResult.resultLink,

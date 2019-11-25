@@ -60,7 +60,7 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
     )
 
     private val solutionStorageService = mock<SourceCodeStorage> {
-        on { loadBasesAndComposedSolutions(any(), any()) } doReturn testPreparedAnalysisFiles
+        on { loadBasesAndSolutions(any(), any()) } doReturn testPreparedAnalysisFiles
     }
 
     private val analysisService =

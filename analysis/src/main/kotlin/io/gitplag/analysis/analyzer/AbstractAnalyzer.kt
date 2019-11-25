@@ -18,7 +18,7 @@ abstract class AbstractAnalyzer(
     override fun analyze(settings: AnalysisSettings): AnalysisResult {
         val directoryName = analysisFilesDirectoryName(settings)
         val fileDir = generateDir(analysisResultFilesDir, directoryName)
-        val analysisFiles = sourceCodeStorage.loadBasesAndComposedSolutions(settings, fileDir)
+        val analysisFiles = sourceCodeStorage.loadBasesAndSolutions(settings, fileDir)
         return analyze(settings, analysisFiles)
     }
 

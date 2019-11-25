@@ -51,6 +51,7 @@ class FileSystemSourceCodeStorageTest {
     private val student2 = "stud2"
 
     private val repo = mock<Repository> {
+        on { id } doReturn 1
         on { gitService } doReturn github
         on { name } doReturn repoName
         on { language } doReturn java
@@ -113,7 +114,7 @@ class FileSystemSourceCodeStorageTest {
     }
 
     private val pullRequestRepository = mock<PullRequestRepository> {
-        on { findAllByRepoAndSourceBranchName(repo, branchName) } doReturn listOf(pullRequest, pullRequest2)
+        on { findAllByRepoIdInAndSourceBranchName(listOf(1), branchName) } doReturn listOf(pullRequest, pullRequest2)
     }
 
     private val baseFileRecordRepository = mock<BaseFileRecordRepository> {
@@ -147,7 +148,7 @@ class FileSystemSourceCodeStorageTest {
 
         inTempDirectory { tempDir ->
             val analysisData =
-                sourceCodeStorage.loadBasesAndComposedSolutions(analysisSettings, tempDir)
+                sourceCodeStorage.loadBasesAndSolutions(analysisSettings, tempDir)
 
             analysisData.bases.size shouldBe 2
 

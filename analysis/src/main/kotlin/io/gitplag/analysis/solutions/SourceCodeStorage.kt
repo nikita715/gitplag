@@ -28,7 +28,7 @@ interface SourceCodeStorage {
      * Load all base solution files and corresponding solution files according to the [settings].
      * Merges all files of each student to single files.
      */
-    fun loadBasesAndComposedSolutions(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData
+    fun loadBasesAndSolutions(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData
 
     /**
      * Get files of the [analysis] and the [user]

@@ -10,11 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface PullRequestRepository : JpaRepository<PullRequest, Long> {
 
     /**
-     * Find all [PullRequest]s by the [repo] and by the [sourceBranchName]
-     */
-    fun findAllByRepoAndSourceBranchName(repo: Repository, sourceBranchName: String): List<PullRequest>
-
-    /**
      * Find all [PullRequest]s by any of the [repo]s and by the [sourceBranchName]
      */
     fun findAllByRepoIdInAndSourceBranchName(repo: List<Long>, sourceBranchName: String): List<PullRequest>
