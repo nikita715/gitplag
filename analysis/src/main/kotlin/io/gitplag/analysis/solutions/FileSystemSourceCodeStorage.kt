@@ -48,7 +48,7 @@ class FileSystemSourceCodeStorage(
 
     private fun loadBases(settings: AnalysisSettings, tempDir: String): List<File> {
         val filePatterns = repositoryDataManager.findFileNameRegexps(settings.repository)
-        val baseDir = File("$tempDir/.base")
+        val baseDir = File("$tempDir/$baseDir")
         Files.createDirectory(baseDir.toPath())
         var fileIterator = 0
         return baseFileRecordRepository.findAllByRepo(settings.repository)

@@ -3,7 +3,7 @@ package io.gitplag.git.payload
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
-import io.gitplag.git.rest.GitRestManager
+import io.gitplag.git.agent.GitAgent
 import io.gitplag.model.entity.PullRequest
 import io.gitplag.model.entity.Repository
 import io.gitplag.model.manager.RepositoryDataManager
@@ -38,7 +38,7 @@ abstract class AbstractPayloadProcessorTest {
         `when`(it.save<PullRequest>(any())).thenAnswer(PullRequestAnswer)
     }
 
-    abstract val gitRestManager: GitRestManager
+    abstract val gitAgent: GitAgent
 
     protected val repositoryDataManager = mock<RepositoryDataManager>()
     protected val branchRepository = mock<BranchRepository>()
@@ -52,7 +52,7 @@ abstract class AbstractPayloadProcessorTest {
         payloadProcessor.downloadSolutionsOfPullRequest(payload)
         verify(pullRequestRepository).save(argument.capture())
         argument.value shouldEqual pullRequest
-        verify(gitRestManager).clonePullRequest(pullRequest)
+        verify(gitAgent).clonePullRequest(pullRequest)
     }
 
     companion object {

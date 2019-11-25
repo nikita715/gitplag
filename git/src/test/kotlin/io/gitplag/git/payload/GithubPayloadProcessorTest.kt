@@ -1,6 +1,6 @@
 package io.gitplag.git.payload
 
-import io.gitplag.git.rest.GithubRestManager
+import io.gitplag.git.agent.GithubAgent
 import io.gitplag.model.entity.PullRequest
 import io.gitplag.model.entity.Repository
 import io.gitplag.model.enums.GitProperty
@@ -15,7 +15,7 @@ import java.time.Month
 class GithubPayloadProcessorTest : AbstractPayloadProcessorTest() {
     override val payload by lazy { readPayloadOf("github") }
 
-    override val gitRestManager = mock<GithubRestManager>()
+    override val gitAgent = mock<GithubAgent>()
 
     override val repo = Repository(
         name = "nikita715/plagiarism_test",
@@ -25,7 +25,7 @@ class GithubPayloadProcessorTest : AbstractPayloadProcessorTest() {
     )
 
     override val payloadProcessor =
-        GithubPayloadProcessor(pullRequestRepository, repositoryDataManager, gitRestManager, branchRepository)
+        GithubPayloadProcessor(pullRequestRepository, repositoryDataManager, gitAgent, branchRepository)
 
     override val pullRequest = PullRequest(
         number = 8,

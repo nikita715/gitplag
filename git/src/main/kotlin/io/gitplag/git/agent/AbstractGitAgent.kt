@@ -1,4 +1,4 @@
-package io.gitplag.git.rest
+package io.gitplag.git.agent
 
 import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.model.entity.PullRequest
@@ -9,13 +9,13 @@ import mu.KotlinLogging
 import java.io.File
 
 /**
- * Common implementation of the [GitRestManager]
+ * Common implementation of the [GitAgent]
  */
-abstract class AbstractGitRestManager(
+abstract class AbstractGitAgent(
     private val sourceCodeStorage: SourceCodeStorage,
     private val solutionFileRecordRepository: SolutionFileRecordRepository,
     private val accessToken: String
-) : GitRestManager {
+) : GitAgent {
 
     private val logger = KotlinLogging.logger {}
 

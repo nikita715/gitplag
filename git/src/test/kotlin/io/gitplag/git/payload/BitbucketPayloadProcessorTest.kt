@@ -1,7 +1,7 @@
 package io.gitplag.git.payload
 
 import com.nhaarman.mockitokotlin2.mock
-import io.gitplag.git.rest.BitbucketRestManager
+import io.gitplag.git.agent.BitbucketAgent
 import io.gitplag.model.entity.PullRequest
 import io.gitplag.model.entity.Repository
 import io.gitplag.model.enums.GitProperty
@@ -15,7 +15,7 @@ import java.time.Month
 class BitbucketPayloadProcessorTest : AbstractPayloadProcessorTest() {
     override val payload by lazy { readPayloadOf("bitbucket") }
 
-    override val gitRestManager = mock<BitbucketRestManager>()
+    override val gitAgent = mock<BitbucketAgent>()
 
     override val repo = Repository(
         name = "nikita715/plagiarism_test2",
@@ -25,7 +25,7 @@ class BitbucketPayloadProcessorTest : AbstractPayloadProcessorTest() {
     )
 
     override val payloadProcessor =
-        BitbucketPayloadProcessor(pullRequestRepository, repositoryDataManager, gitRestManager, branchRepository)
+        BitbucketPayloadProcessor(pullRequestRepository, repositoryDataManager, gitAgent, branchRepository)
 
     override val pullRequest = PullRequest(
         number = 3,

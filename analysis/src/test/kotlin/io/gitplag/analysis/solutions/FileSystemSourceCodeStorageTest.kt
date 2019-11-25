@@ -179,59 +179,6 @@ class FileSystemSourceCodeStorageTest {
     }
 
     @Test
-    fun loadBasesAndSeparatedSolutions() {
-        sourceCodeStorage = FileSystemSourceCodeStorage(
-            baseFileRecordRepository, repositoryDataManager,
-            solutionFileRecordRepository, pullRequestRepository, solutionDir, jplagResultDir, analysisFilesDir
-        )
-
-        val analysisSettings = AnalysisSettings(repo, branchName)
-
-        inTempDirectory { tempDir ->
-            val analysisData = sourceCodeStorage.loadBasesAndSeparatedSolutions(analysisSettings, tempDir)
-
-            analysisData.bases.size shouldBe 2
-
-            analysisData.bases[0].name shouldBe base0Java
-            analysisData.bases[1].name shouldBe base1Java
-
-            FileUtils.contentEquals(analysisData.bases[0], baseFile1) shouldBe true
-            FileUtils.contentEquals(analysisData.bases[1], baseFile2) shouldBe true
-
-            analysisData.solutions.size shouldBe 4
-            analysisData.gitService shouldBe github
-            analysisData.language shouldBe java
-            analysisData.repoName shouldBe repoName
-
-            val sortedSolutions = analysisData.solutions.sortedBy { it.fileName }
-            val solution1 = sortedSolutions[0]
-            val solution2 = sortedSolutions[1]
-            val solution3 = sortedSolutions[2]
-            val solution4 = sortedSolutions[3]
-
-            solution1.fileName shouldBe fileName1
-            solution1.sha shouldBe sha1
-            solution1.student shouldBe student
-            FileUtils.contentEquals(solution1.file, solFile1) shouldBe true
-
-            solution2.fileName shouldBe fileName1
-            solution2.sha shouldBe sha2
-            solution2.student shouldBe student2
-            FileUtils.contentEquals(solution2.file, solFile5) shouldBe true
-
-            solution3.fileName shouldBe fileName2
-            solution3.sha shouldBe sha1
-            solution3.student shouldBe student
-            FileUtils.contentEquals(solution3.file, solFile2) shouldBe true
-
-            solution4.fileName shouldBe fileName2
-            solution4.sha shouldBe sha2
-            solution4.student shouldBe student2
-            FileUtils.contentEquals(solution4.file, solFile6) shouldBe true
-        }
-    }
-
-    @Test
     fun saveBasesFromDir() {
         inTempDirectory { tempDir ->
             sourceCodeStorage = FileSystemSourceCodeStorage(

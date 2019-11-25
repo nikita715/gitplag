@@ -1,4 +1,4 @@
-package io.gitplag.git.rest
+package io.gitplag.git.agent
 
 import io.gitplag.model.entity.PullRequest
 import io.gitplag.model.entity.Repository
@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 /**
  * Gitlab rest test implementation
  */
-class GitlabRestManagerTest : AbstractGitRestManagerTest() {
+class GitlabRestManagerTest : AbstractGitAgentTest() {
 
     override val repo = Repository(
         name = "testns3/plagiarism_test",
@@ -29,5 +29,5 @@ class GitlabRestManagerTest : AbstractGitRestManagerTest() {
         sourceRepoFullName = repo.name,
         mainBranchName = "master"
     )
-    override val restManager = GitlabRestManager(solutionStorage, solutionFileRecordRepository, "")
+    override val agent = GitlabAgent(solutionStorage, solutionFileRecordRepository, "")
 }

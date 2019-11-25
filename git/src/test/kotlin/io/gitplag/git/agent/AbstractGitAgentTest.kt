@@ -1,4 +1,4 @@
-package io.gitplag.git.rest
+package io.gitplag.git.agent
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq
@@ -18,7 +18,7 @@ import java.nio.file.Paths
 /**
  * Abstract test for the rest managers
  */
-abstract class AbstractGitRestManagerTest {
+abstract class AbstractGitAgentTest {
     abstract val repo: Repository
     val branchName = "test"
 
@@ -39,7 +39,7 @@ abstract class AbstractGitRestManagerTest {
 
     private val repositoryDataManager = mock<RepositoryDataManager>()
 
-    abstract val restManager: GitRestManager
+    abstract val agent: GitAgent
 
     @Before
     fun setUp() {
@@ -58,7 +58,7 @@ abstract class AbstractGitRestManagerTest {
      */
     @Test
     fun loadFileText() {
-        restManager.clonePullRequest(pullRequest)
+        agent.clonePullRequest(pullRequest)
         verify(solutionStorage).saveSolutionsFromDir(any(), eq(pullRequest))
     }
 }

@@ -1,4 +1,4 @@
-package io.gitplag.git.rest
+package io.gitplag.git.agent
 
 import com.beust.klaxon.JsonObject
 import io.gitplag.model.entity.PullRequest
@@ -7,7 +7,7 @@ import io.gitplag.model.entity.Repository
 /**
  * The service that interacts with git services apis
  */
-interface GitRestManager {
+interface GitAgent {
 
     /**
      * Upload branch of the repo from which the [pullRequest] was created

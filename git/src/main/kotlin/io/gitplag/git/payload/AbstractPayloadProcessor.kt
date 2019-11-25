@@ -1,7 +1,7 @@
 package io.gitplag.git.payload
 
 import com.beust.klaxon.JsonObject
-import io.gitplag.git.rest.GitRestManager
+import io.gitplag.git.agent.GitAgent
 import io.gitplag.model.dto.InputRepositoryDto
 import io.gitplag.model.entity.Branch
 import io.gitplag.model.entity.PullRequest
@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter
 abstract class AbstractPayloadProcessor(
     private val pullRequestRepository: PullRequestRepository,
     private val repositoryDataManager: RepositoryDataManager,
-    private val gitRestManager: GitRestManager,
+    private val gitAgent: GitAgent,
     private val branchRepository: BranchRepository
 ) : PayloadProcessor {
     private val logger = KotlinLogging.logger {}
@@ -44,7 +44,7 @@ abstract class AbstractPayloadProcessor(
     }
 
     override fun createRepo(dto: InputRepositoryDto): Repository? {
-        val repoId = gitRestManager.getRepoIdByName(dto.name)
+        val repoId = gitAgent.getRepoIdByName(dto.name)
         return if (repoId != null) {
             val repository = repositoryDataManager.create(repoId, dto)
             repositoryDataManager.save(repository.copy(gitId = repoId))
@@ -61,13 +61,12 @@ abstract class AbstractPayloadProcessor(
         if (repo != null) {
             if (!repo.autoCloningEnabled) {
                 logger.info {
-                    "Webhook: cloning disabled, " +
-                            "ignored new push from repo ${repo.name} to branch $branchName"
+                    "Webhook: cloning disabled, ignored new push from repo ${repo.name} to branch $branchName"
                 }
                 return
             }
             logger.info { "Webhook: received new push from repo ${repo.name}" }
-            gitRestManager.cloneRepository(repo, branchName)
+            gitAgent.cloneRepository(repo, branchName)
             val branch = branchRepository.findByRepositoryAndName(repo, branchName)
                 ?.copy(updatedAt = updatedAt)
             if (branch != null) branchRepository.save(branch) else branchRepository.save(
@@ -93,13 +92,13 @@ abstract class AbstractPayloadProcessor(
             val pullRequest = storedPullRequest.updateFrom(prJsonObject)
             logger.info { "Webhook: received updated pr from repo ${prJsonObject.mainRepoFullName}, pr number ${pullRequest.number}" }
             val savedPullRequest = pullRequestRepository.save(pullRequest)
-            gitRestManager.clonePullRequest(savedPullRequest)
+            gitAgent.clonePullRequest(savedPullRequest)
         } else {
             val pullRequest = parsePullRequest(prJsonObject, repo)
             if (pullRequest != null && pullRequest.sourceRepoFullName != repo.name) {
                 logger.info { "Webhook: received new pr from repo ${prJsonObject.mainRepoFullName}, pr number ${pullRequest.number}" }
                 val savedPullRequest = pullRequestRepository.save(pullRequest)
-                gitRestManager.clonePullRequest(savedPullRequest)
+                gitAgent.clonePullRequest(savedPullRequest)
             } else {
                 logger.info { "Webhook: Ignored pr to itself repo ${repo.name}, pr number $prNumber" }
             }
@@ -107,12 +106,12 @@ abstract class AbstractPayloadProcessor(
     }
 
     override fun downloadAllPullRequestsOfRepository(repo: Repository) {
-        gitRestManager.findBranchesOfRepo(repo).forEach { branchName ->
+        gitAgent.findBranchesOfRepo(repo).forEach { branchName ->
             val lastUpdated =
-                requireNotNull(gitRestManager.getBranchOfRepo(repo, branchName).branchUpdatedAt)
+                requireNotNull(gitAgent.getBranchOfRepo(repo, branchName).branchUpdatedAt)
             val branch = branchRepository.findByRepositoryAndName(repo, branchName)
             if (branch?.updatedAt != lastUpdated) {
-                gitRestManager.cloneRepository(repo, branchName)
+                gitAgent.cloneRepository(repo, branchName)
             }
             branchRepository.save(
                 branch?.copy(updatedAt = lastUpdated) ?: Branch(
@@ -123,7 +122,7 @@ abstract class AbstractPayloadProcessor(
         }
         var page = 1
         while (true) {
-            val pullRequests = gitRestManager.findPullRequests(repo, page++)
+            val pullRequests = gitAgent.findPullRequests(repo, page++)
             if (pullRequests.isNotEmpty()) {
                 downloadPullRequests(repo, pullRequests)
             } else break
@@ -149,7 +148,7 @@ abstract class AbstractPayloadProcessor(
                 pullRequestRepository.save(pullRequest)
             } else pullRequestRepository.save(storedPullRequest.updateFrom(json))
             try {
-                gitRestManager.clonePullRequest(savedPullRequest)
+                gitAgent.clonePullRequest(savedPullRequest)
             } catch (e: FileNotFoundException) {
                 logger.info { "Git: unable to download archive ${repo.name}, pr number ${savedPullRequest.number}" }
                 pullRequestRepository.delete(savedPullRequest)
@@ -174,7 +173,7 @@ abstract class AbstractPayloadProcessor(
                     "Git: Deleted duplicated pr #${duplicatedPullRequest.number}," +
                             " another is #${pullRequest.number}, repo ${repo.name}"
                 }
-                gitRestManager.deletePullRequestFiles(duplicatedPullRequest)
+                gitAgent.deletePullRequestFiles(duplicatedPullRequest)
                 pullRequestRepository.delete(duplicatedPullRequest)
             } else {
                 logger.info {

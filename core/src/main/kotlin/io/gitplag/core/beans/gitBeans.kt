@@ -1,14 +1,14 @@
 package io.gitplag.core.beans
 
 import io.gitplag.core.util.safeEnvVar
+import io.gitplag.git.agent.BitbucketAgent
+import io.gitplag.git.agent.GitAgent
+import io.gitplag.git.agent.GithubAgent
+import io.gitplag.git.agent.GitlabAgent
 import io.gitplag.git.payload.BitbucketPayloadProcessor
 import io.gitplag.git.payload.GithubPayloadProcessor
 import io.gitplag.git.payload.GitlabPayloadProcessor
 import io.gitplag.git.payload.PayloadProcessor
-import io.gitplag.git.rest.BitbucketRestManager
-import io.gitplag.git.rest.GitRestManager
-import io.gitplag.git.rest.GithubRestManager
-import io.gitplag.git.rest.GitlabRestManager
 import io.gitplag.model.enums.GitProperty
 import org.springframework.context.support.beans
 
@@ -27,14 +27,14 @@ val gitBeans = beans {
     }
 
     // Loaders
-    bean { GithubRestManager(ref(), ref(), env.safeEnvVar("gitplag.githubToken")) }
-    bean { GitlabRestManager(ref(), ref(), env.safeEnvVar("gitplag.gitlabToken")) }
-    bean { BitbucketRestManager(ref(), ref(), env.safeEnvVar("gitplag.bitbucketToken")) }
-    bean<Map<GitProperty, GitRestManager>>("gitRestManagers") {
+    bean { GithubAgent(ref(), ref(), env.safeEnvVar("gitplag.githubToken")) }
+    bean { GitlabAgent(ref(), ref(), env.safeEnvVar("gitplag.gitlabToken")) }
+    bean { BitbucketAgent(ref(), ref(), env.safeEnvVar("gitplag.bitbucketToken")) }
+    bean<Map<GitProperty, GitAgent>>("gitRestManagers") {
         mapOf(
-            GitProperty.GITHUB to ref<GithubRestManager>(),
-            GitProperty.BITBUCKET to ref<BitbucketRestManager>(),
-            GitProperty.GITLAB to ref<GitlabRestManager>()
+            GitProperty.GITHUB to ref<GithubAgent>(),
+            GitProperty.BITBUCKET to ref<BitbucketAgent>(),
+            GitProperty.GITLAB to ref<GitlabAgent>()
         )
     }
 }

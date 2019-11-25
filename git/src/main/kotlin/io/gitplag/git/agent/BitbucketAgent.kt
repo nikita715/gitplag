@@ -1,4 +1,4 @@
-package io.gitplag.git.rest
+package io.gitplag.git.agent
 
 import com.beust.klaxon.JsonObject
 import com.github.kittinunf.fuel.core.FuelError
@@ -10,11 +10,11 @@ import io.gitplag.util.sendRestRequest
 /**
  * Loader of files from Bitbucket
  */
-class BitbucketRestManager(
+class BitbucketAgent(
     sourceCodeStorage: SourceCodeStorage,
     solutionFileRecordRepository: SolutionFileRecordRepository,
     private val accessToken: String
-) : AbstractGitRestManager(sourceCodeStorage, solutionFileRecordRepository, accessToken) {
+) : AbstractGitAgent(sourceCodeStorage, solutionFileRecordRepository, accessToken) {
 
     override fun getBranchOfRepo(repo: Repository, name: String) =
         sendRestRequest<JsonObject>(

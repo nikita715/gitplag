@@ -1,4 +1,4 @@
-package io.gitplag.git.rest
+package io.gitplag.git.agent
 
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
@@ -11,11 +11,11 @@ import io.gitplag.util.sendRestRequest
 /**
  * Loader of files from Gitlab
  */
-class GitlabRestManager(
+class GitlabAgent(
     sourceCodeStorage: SourceCodeStorage,
     solutionFileRecordRepository: SolutionFileRecordRepository,
     private val accessToken: String
-) : AbstractGitRestManager(sourceCodeStorage, solutionFileRecordRepository, accessToken) {
+) : AbstractGitAgent(sourceCodeStorage, solutionFileRecordRepository, accessToken) {
 
     override fun getBranchOfRepo(repo: Repository, name: String) =
         sendRestRequest<JsonObject>(

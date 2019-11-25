@@ -1,4 +1,4 @@
-package io.gitplag.git.rest
+package io.gitplag.git.agent
 
 import io.gitplag.model.entity.PullRequest
 import io.gitplag.model.entity.Repository
@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 /**
  * Bitbucket rest test implementation
  */
-class BitbucketRestManagerTest : AbstractGitRestManagerTest() {
+class BitbucketRestManagerTest : AbstractGitAgentTest() {
 
     override val repo = Repository(
         name = "nikita715/plagiarism_test2",
@@ -30,5 +30,5 @@ class BitbucketRestManagerTest : AbstractGitRestManagerTest() {
         mainBranchName = "master"
     )
 
-    override val restManager = BitbucketRestManager(solutionStorage, solutionFileRecordRepository, "")
+    override val agent = BitbucketAgent(solutionStorage, solutionFileRecordRepository, "")
 }

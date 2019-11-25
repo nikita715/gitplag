@@ -4,8 +4,8 @@ import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.HttpException
 import io.gitplag.core.exception.RepositoryException
 import io.gitplag.core.websocket.NotificationService
+import io.gitplag.git.agent.GitAgent
 import io.gitplag.git.payload.PayloadProcessor
-import io.gitplag.git.rest.GitRestManager
 import io.gitplag.model.entity.Repository
 import io.gitplag.model.enums.GitProperty
 import org.springframework.beans.factory.annotation.Qualifier
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component
  */
 @Component
 class AsyncFileUploader(
-    @Qualifier("gitRestManagers") private val restManagers: Map<GitProperty, GitRestManager>,
+    @Qualifier("gitRestManagers") private val restManagers: Map<GitProperty, GitAgent>,
     @Qualifier("payloadProcessors") private val payloadProcessors: Map<GitProperty, PayloadProcessor>,
     private val notificationService: NotificationService
 ) {

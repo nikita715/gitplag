@@ -1,7 +1,7 @@
 package io.gitplag.git.payload
 
 import com.beust.klaxon.JsonObject
-import io.gitplag.git.rest.GitlabRestManager
+import io.gitplag.git.agent.GitlabAgent
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.manager.RepositoryDataManager
 import io.gitplag.model.repo.BranchRepository
@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter
 class GitlabPayloadProcessor(
     pullRequestRepository: PullRequestRepository,
     repositoryDataManager: RepositoryDataManager,
-    private val gitlabLoader: GitlabRestManager,
+    private val gitlabLoader: GitlabAgent,
     branchRepository: BranchRepository
 ) : AbstractPayloadProcessor(pullRequestRepository, repositoryDataManager, gitlabLoader, branchRepository) {
 

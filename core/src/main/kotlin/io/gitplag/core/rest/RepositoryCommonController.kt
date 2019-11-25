@@ -5,8 +5,8 @@ import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.core.async.AnalysisAsyncRunner
 import io.gitplag.core.async.AsyncFileUploader
 import io.gitplag.core.websocket.NotificationService
+import io.gitplag.git.agent.GitAgent
 import io.gitplag.git.payload.PayloadProcessor
-import io.gitplag.git.rest.GitRestManager
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.dto.*
 import io.gitplag.model.entity.BaseFileRecord
@@ -34,7 +34,7 @@ class RepositoryCommonController(
     private val analysisAsyncRunner: AnalysisAsyncRunner,
     private val solutionFileRecordRepository: SolutionFileRecordRepository,
     private val baseFileRecordRepository: BaseFileRecordRepository,
-    @Qualifier("gitRestManagers") private val restManagers: Map<GitProperty, GitRestManager>,
+    @Qualifier("gitRestManagers") private val restManagers: Map<GitProperty, GitAgent>,
     @Qualifier("payloadProcessors") private val payloadProcessors: Map<GitProperty, PayloadProcessor>,
     private val branchRepository: BranchRepository,
     private val notificationService: NotificationService,

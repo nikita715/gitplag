@@ -2,8 +2,8 @@ package io.gitplag.core.graphql
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import io.gitplag.git.agent.GitAgent
 import io.gitplag.git.payload.PayloadProcessor
-import io.gitplag.git.rest.GitRestManager
 import io.gitplag.model.entity.BaseFileRecord
 import io.gitplag.model.entity.PullRequest
 import io.gitplag.model.entity.Repository
@@ -53,10 +53,10 @@ class SourceFileQueriesTest {
     private val repositoryDataManager = mock<RepositoryDataManager> {
         on { findByGitServiceAndName(github, repoName) } doReturn repo
     }
-    private val restManager = mock<GitRestManager>()
+    private val restManager = mock<GitAgent>()
     private val payloadProcessor = mock<PayloadProcessor>()
 
-    private val restManagers: Map<GitProperty, GitRestManager> = mapOf(github to restManager)
+    private val restManagers: Map<GitProperty, GitAgent> = mapOf(github to restManager)
     private val payloadProcessors = mapOf(github to payloadProcessor)
 
 //    private val sourceFileQueries = SourceFileQueries(
