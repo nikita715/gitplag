@@ -31,11 +31,6 @@ interface SourceCodeStorage {
     fun loadBasesAndComposedSolutions(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData
 
     /**
-     * Load all base solution files and corresponding solution files according to the [settings].
-     */
-    fun loadBasesAndSeparatedSolutions(settings: AnalysisSettings, tempDir: String): PreparedAnalysisData
-
-    /**
      * Get files of the [analysis] and the [user]
      */
     fun getAnalysisFiles(analysis: Analysis, user: String): List<File>

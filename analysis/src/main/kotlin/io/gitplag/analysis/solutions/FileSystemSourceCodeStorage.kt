@@ -35,10 +35,16 @@ class FileSystemSourceCodeStorage(
     private val baseDir = ".base"
 
     override fun loadBasesAndComposedSolutions(settings: AnalysisSettings, tempDir: String) =
-        loadBasesAndSolutions(settings, tempDir, loadComposedSolutions(settings, tempDir))
-
-    override fun loadBasesAndSeparatedSolutions(settings: AnalysisSettings, tempDir: String) =
-        loadBasesAndSolutions(settings, tempDir, loadSeparateSolutions(settings, tempDir))
+        PreparedAnalysisData(
+            gitService = settings.repository.gitService,
+            repoName = settings.repository.name,
+            language = settings.language,
+            bases = loadBases(settings, tempDir),
+            solutions = loadComposedSolutions(settings, tempDir),
+            rootDir = tempDir,
+            resultSize = settings.maxResultSize,
+            minPercentage = settings.minResultPercentage
+        )
 
     private fun loadBases(settings: AnalysisSettings, tempDir: String): List<File> {
         val filePatterns = repositoryDataManager.findFileNameRegexps(settings.repository)
@@ -62,49 +68,6 @@ class FileSystemSourceCodeStorage(
                     generatedFile
                 } else null
             }
-    }
-
-    private fun loadBasesAndSolutions(
-        settings: AnalysisSettings,
-        rootDir: String,
-        solutions: List<Solution>
-    ) =
-        PreparedAnalysisData(
-            gitService = settings.repository.gitService,
-            repoName = settings.repository.name,
-            language = settings.language,
-            bases = loadBases(settings, rootDir),
-            solutions = solutions,
-            rootDir = rootDir,
-            resultSize = settings.maxResultSize,
-            minPercentage = settings.minResultPercentage
-        )
-
-    private fun loadSeparateSolutions(
-        analysisSettings: AnalysisSettings,
-        tempDir: String
-    ): List<Solution> {
-        val filePatterns = repositoryDataManager.findFileNameRegexps(analysisSettings.repository)
-        return pullRequestRepository.findAllByRepoAndSourceBranchName(
-            analysisSettings.repository,
-            analysisSettings.branch
-        ).flatMap { pullRequest ->
-            solutionFileRecordRepository.findAllByPullRequest(pullRequest)
-                .filter { solutionRecord -> nameMatchesRegex(solutionRecord.fileName, filePatterns) }
-                .map { solutionRecord ->
-                    val file = File(pathToSolution(analysisSettings.repository, solutionRecord))
-                    val copiedFile = File("$tempDir/${pullRequest.creatorName}/${solutionRecord.fileName}")
-                    copiedFile.parentFile.mkdirs()
-                    Files.copy(file.toPath(), copiedFile.toPath())
-                    Solution(
-                        student = pullRequest.creatorName,
-                        fileName = solutionRecord.fileName,
-                        file = copiedFile,
-                        sha = pullRequest.headSha,
-                        createdAt = pullRequest.createdAt
-                    )
-                }
-        }
     }
 
     private fun loadComposedSolutions(
@@ -257,12 +220,6 @@ class FileSystemSourceCodeStorage(
         pathToSolutions(
             pullRequest.repo.gitService, pullRequest.repo.name,
             pullRequest.sourceBranchName.toLowerCase(), pullRequest.creatorName
-        )
-
-    private fun pathToBase(analysisSettings: AnalysisSettings, fileName: String): String =
-        pathToBase(
-            analysisSettings.repository.gitService, analysisSettings.repository.name,
-            analysisSettings.branch, fileName
         )
 
     private fun pathToSolution(
