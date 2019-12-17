@@ -10,4 +10,6 @@ dependencies {
 
     api 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    api 'com.github.nikita715:gitplag-api-model:0.2.1'
 }

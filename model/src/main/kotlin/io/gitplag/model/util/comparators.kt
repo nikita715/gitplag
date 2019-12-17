@@ -1,7 +1,7 @@
 package io.gitplag.model.util
 
+import io.gitplag.gitplagapi.model.output.analysis.AnalyzedPairInfo
 import io.gitplag.model.data.AnalysisMatch
-import io.gitplag.model.dto.AnalysisResultSimplePairDto
 import java.util.*
 
 val analysisResultComparator: Comparator<AnalysisMatch> = compareByDescending(AnalysisMatch::percentage)
@@ -12,7 +12,7 @@ val analysisResultComparator: Comparator<AnalysisMatch> = compareByDescending(An
         o1.students.second.toLowerCase().compareTo(o2.students.second.toLowerCase())
     }
 
-val analysisResultSimplePairDtoComparator: Comparator<AnalysisResultSimplePairDto> =
-    compareByDescending(AnalysisResultSimplePairDto::percentage)
+val analysisResultSimplePairDtoComparator: Comparator<AnalyzedPairInfo> =
+    compareByDescending(AnalyzedPairInfo::percentage)
         .thenComparing { o1, o2 -> o1.student1.toLowerCase().compareTo(o2.student1.toLowerCase()) }
         .thenComparing { o1, o2 -> o1.student2.toLowerCase().compareTo(o2.student2.toLowerCase()) }

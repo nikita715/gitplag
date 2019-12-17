@@ -57,6 +57,7 @@ class FileSystemSourceCodeStorageTest {
         on { language } doReturn java
         on { analyzer } doReturn AnalyzerProperty.MOSS
         on { analysisMode } doReturn AnalysisMode.LINK
+        on { filePatterns } doReturn listOf(".+\\.java")
     }
 
     private val sha1 = "sha1"
@@ -144,7 +145,7 @@ class FileSystemSourceCodeStorageTest {
             solutionFileRecordRepository, pullRequestRepository, solutionDir, jplagResultDir, analysisFilesDir
         )
 
-        val analysisSettings = AnalysisSettings(repo, branchName, listOf(".+\\.java"))
+        val analysisSettings = AnalysisSettings(repo, branchName)
 
         inTempDirectory { tempDir ->
             val analysisData =

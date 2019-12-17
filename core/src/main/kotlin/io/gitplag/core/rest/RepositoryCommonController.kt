@@ -163,8 +163,8 @@ class RepositoryCommonController(
             payloadProcessor.downloadAllPullRequestsOfRepository(repository)
             notificationService.notify("Ended upload of files from repo ${repository.name}")
             RepositoryFilesInfoDto(
-                bases = basesToDto(baseFileRecordRepository.findAllByRepo(repository)),
-                solutions = solutionsToDto(solutionFileRecordRepository.findAllByRepo(repository))
+                baseBranches = basesToDto(baseFileRecordRepository.findAllByRepo(repository)),
+                solutionBranches = solutionsToDto(solutionFileRecordRepository.findAllByRepo(repository))
             )
         } else null
     }
@@ -186,8 +186,8 @@ class RepositoryCommonController(
     fun getFilesOfRepo(repository: Repository?): RepositoryFilesInfoDto? {
         return if (repository != null) {
             RepositoryFilesInfoDto(
-                bases = basesToDto(baseFileRecordRepository.findAllByRepo(repository)),
-                solutions = solutionsToDto(solutionFileRecordRepository.findAllByRepo(repository))
+                baseBranches = basesToDto(baseFileRecordRepository.findAllByRepo(repository)),
+                solutionBranches = solutionsToDto(solutionFileRecordRepository.findAllByRepo(repository))
             )
         } else null
     }
@@ -238,7 +238,7 @@ class RepositoryCommonController(
         solutionRecords.groupBy { it.pullRequest.sourceBranchName }.map { branch ->
             SolutionBranchInfoDto(
                 sourceBranch = branch.key,
-                students = branch.value.groupBy { it.pullRequest }.map { pullRequest ->
+                solutions = branch.value.groupBy { it.pullRequest }.map { pullRequest ->
                     StudentFilesDto(
                         student = pullRequest.key.creatorName,
                         updated = pullRequest.key.updatedAt,

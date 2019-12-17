@@ -20,7 +20,7 @@ class AnalysisSettings(
         private set
     var analysisMode: AnalysisMode = repository.analysisMode
         private set
-    var additionalRepositories: List<Long> = emptyList()
+    var additionalRepositories: Collection<Long> = emptyList()
         private set
     var updateFiles: Boolean = false
         private set
@@ -37,7 +37,7 @@ class AnalysisSettings(
         language: Language?,
         analysisMode: AnalysisMode?,
         updateFiles: Boolean?,
-        additionalRepositories: List<Long>?,
+        additionalRepositories: Collection<Long>?,
         maxResultSize: Int? = null,
         minResultPercentage: Int? = null
     ) : this(repository, branch) {
