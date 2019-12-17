@@ -1,6 +1,10 @@
 package io.gitplag.analysis.solutions
 
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.verify
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.entity.BaseFileRecord
 import io.gitplag.model.entity.PullRequest

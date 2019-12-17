@@ -4,7 +4,11 @@ import io.gitplag.analysis.analysisFilesDirectoryName
 import io.gitplag.model.data.AnalysisSettings
 import io.gitplag.model.data.PreparedAnalysisData
 import io.gitplag.model.data.Solution
-import io.gitplag.model.entity.*
+import io.gitplag.model.entity.Analysis
+import io.gitplag.model.entity.BaseFileRecord
+import io.gitplag.model.entity.PullRequest
+import io.gitplag.model.entity.Repository
+import io.gitplag.model.entity.SolutionFileRecord
 import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.manager.RepositoryDataManager

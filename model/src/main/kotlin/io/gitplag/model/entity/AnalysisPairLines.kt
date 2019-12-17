@@ -1,7 +1,7 @@
 package io.gitplag.model.entity
 
 import com.fasterxml.jackson.annotation.JsonBackReference
-import java.util.*
+import java.util.Objects
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue

@@ -2,7 +2,7 @@ package io.gitplag.model.util
 
 import io.gitplag.gitplagapi.model.output.analysis.AnalyzedPairInfo
 import io.gitplag.model.data.AnalysisMatch
-import java.util.*
+import java.util.Comparator
 
 val analysisResultComparator: Comparator<AnalysisMatch> = compareByDescending(AnalysisMatch::percentage)
     .thenComparing { o1, o2 ->

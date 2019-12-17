@@ -5,7 +5,11 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.gitplag.analysis.analyzer.JPlagAnalyzer
 import io.gitplag.analysis.solutions.SourceCodeStorage
-import io.gitplag.model.data.*
+import io.gitplag.model.data.AnalysisMatch
+import io.gitplag.model.data.AnalysisResult
+import io.gitplag.model.data.MatchedLines
+import io.gitplag.model.data.PreparedAnalysisData
+import io.gitplag.model.data.Solution
 import io.gitplag.model.enums.GitProperty
 import io.gitplag.model.enums.Language
 import io.gitplag.util.asPath

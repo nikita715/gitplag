@@ -3,7 +3,13 @@ package io.gitplag.analysis.analyzer
 import io.gitplag.analysis.client.MossClient
 import io.gitplag.analysis.repoInfo
 import io.gitplag.analysis.solutions.SourceCodeStorage
-import io.gitplag.model.data.*
+import io.gitplag.model.data.AnalysisMatch
+import io.gitplag.model.data.AnalysisResult
+import io.gitplag.model.data.AnalysisSettings
+import io.gitplag.model.data.MatchedLines
+import io.gitplag.model.data.PreparedAnalysisData
+import io.gitplag.model.data.Solution
+import io.gitplag.model.data.findSolutionByStudent
 import io.gitplag.model.enums.AnalysisMode
 import mu.KotlinLogging
 import org.jsoup.Jsoup

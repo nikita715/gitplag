@@ -4,7 +4,13 @@ import io.gitplag.analysis.analysisFilesDirectoryName
 import io.gitplag.analysis.client.JPlagClient
 import io.gitplag.analysis.repoInfo
 import io.gitplag.analysis.solutions.SourceCodeStorage
-import io.gitplag.model.data.*
+import io.gitplag.model.data.AnalysisMatch
+import io.gitplag.model.data.AnalysisResult
+import io.gitplag.model.data.AnalysisSettings
+import io.gitplag.model.data.MatchedLines
+import io.gitplag.model.data.PreparedAnalysisData
+import io.gitplag.model.data.Solution
+import io.gitplag.model.data.findSolutionByStudent
 import io.gitplag.model.enums.AnalysisMode
 import io.gitplag.util.asPath
 import io.gitplag.util.generateDir
