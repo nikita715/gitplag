@@ -4,7 +4,7 @@
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/gitplag/gitplag?include_prereleases)](https://github.com/gitplag/gitplag/releases)
 # Gitplag
 
-System for analysing the similarity of source code in git repositories
+System for analysing the similarity of pull requests in git repositories
 
 ## Documentation
 * [English](https://github.com/nikita715/gitplag/wiki/Docs_en)
