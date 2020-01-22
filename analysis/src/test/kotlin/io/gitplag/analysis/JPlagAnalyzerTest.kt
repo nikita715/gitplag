@@ -5,6 +5,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.gitplag.analysis.analyzer.JPlagAnalyzer
 import io.gitplag.analysis.solutions.SourceCodeStorage
+import io.gitplag.gitplagapi.model.enums.AnalyzerProperty
 import io.gitplag.model.data.AnalysisMatch
 import io.gitplag.model.data.AnalysisResult
 import io.gitplag.model.data.MatchedLines
@@ -91,17 +92,20 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
                         MatchedLines(
                             match1 = 12 to 21,
                             match2 = 13 to 22,
-                            files = file3Name to file6Name
+                            files = file3Name to file6Name,
+                            analyzer = AnalyzerProperty.JPLAG
                         ),
                         MatchedLines(
                             match1 = 3 to 26,
                             match2 = 1 to 24,
-                            files = file1Name to file4Name
+                            files = file1Name to file4Name,
+                            analyzer = AnalyzerProperty.JPLAG
                         ),
                         MatchedLines(
                             match1 = 1 to 11,
                             match2 = 1 to 11,
-                            files = file3Name to file5Name
+                            files = file3Name to file5Name,
+                            analyzer = AnalyzerProperty.JPLAG
                         )
                     )
                 ), AnalysisMatch(
@@ -115,12 +119,14 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
                         MatchedLines(
                             match1 = 18 to 31,
                             match2 = 7 to 20,
-                            files = file5Name to file8Name
+                            files = file5Name to file8Name,
+                            analyzer = AnalyzerProperty.JPLAG
                         ),
                         MatchedLines(
                             match1 = 15 to 22,
                             match2 = 10 to 18,
-                            files = file6Name to file9Name
+                            files = file6Name to file9Name,
+                            analyzer = AnalyzerProperty.JPLAG
                         )
                     )
                 ), AnalysisMatch(
@@ -134,17 +140,20 @@ class JPlagAnalyzerTest : AbstractAnalyzerTest() {
                         MatchedLines(
                             match1 = 21 to 26,
                             match2 = 6 to 11,
-                            files = file2Name to file7Name
+                            files = file2Name to file7Name,
+                            analyzer = AnalyzerProperty.JPLAG
                         ),
                         MatchedLines(
                             match1 = 6 to 13,
                             match2 = 3 to 10,
-                            files = file3Name to file9Name
+                            files = file3Name to file9Name,
+                            analyzer = AnalyzerProperty.JPLAG
                         ),
                         MatchedLines(
                             match1 = 14 to 21,
                             match2 = 10 to 18,
-                            files = file3Name to file9Name
+                            files = file3Name to file9Name,
+                            analyzer = AnalyzerProperty.JPLAG
                         )
                     )
                 )

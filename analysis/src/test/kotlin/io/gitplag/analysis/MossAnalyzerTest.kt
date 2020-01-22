@@ -3,6 +3,7 @@ package io.gitplag.analysis
 import com.nhaarman.mockitokotlin2.any
 import io.gitplag.analysis.analyzer.MossAnalyzer
 import io.gitplag.analysis.solutions.SourceCodeStorage
+import io.gitplag.gitplagapi.model.enums.AnalyzerProperty
 import io.gitplag.model.data.AnalysisMatch
 import io.gitplag.model.data.AnalysisResult
 import io.gitplag.model.data.MatchedLines
@@ -86,12 +87,14 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                         MatchedLines(
                             match1 = 1 to 91,
                             match2 = 40 to 130,
-                            files = file1.name to file3.name
+                            files = file1.name to file3.name,
+                            analyzer = AnalyzerProperty.MOSS
                         ),
                         MatchedLines(
                             match1 = 107 to 115,
                             match2 = 12 to 22,
-                            files = file1.name to file3.name
+                            files = file1.name to file3.name,
+                            analyzer = AnalyzerProperty.MOSS
                         )
                     )
                 ), AnalysisMatch(
@@ -105,17 +108,20 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                         MatchedLines(
                             match1 = 44 to 70,
                             match2 = 104 to 130,
-                            files = file2.name to file3.name
+                            files = file2.name to file3.name,
+                            analyzer = AnalyzerProperty.MOSS
                         ),
                         MatchedLines(
                             match1 = 32 to 43,
                             match2 = 6 to 17,
-                            files = file2.name to file3.name
+                            files = file2.name to file3.name,
+                            analyzer = AnalyzerProperty.MOSS
                         ),
                         MatchedLines(
                             match1 = 6 to 14,
                             match2 = 24 to 31,
-                            files = file2.name to file3.name
+                            files = file2.name to file3.name,
+                            analyzer = AnalyzerProperty.MOSS
                         )
                     )
                 ), AnalysisMatch(
@@ -129,12 +135,14 @@ class MossAnalyzerTest : AbstractAnalyzerTest() {
                         MatchedLines(
                             match1 = 65 to 91,
                             match2 = 44 to 70,
-                            files = file1.name to file2.name
+                            files = file1.name to file2.name,
+                            analyzer = AnalyzerProperty.MOSS
                         ),
                         MatchedLines(
                             match1 = 100 to 117,
                             match2 = 6 to 23,
-                            files = file1.name to file2.name
+                            files = file1.name to file2.name,
+                            analyzer = AnalyzerProperty.MOSS
                         )
                     )
                 )
