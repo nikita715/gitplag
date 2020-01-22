@@ -52,16 +52,16 @@ export class RepositoryFiles extends React.Component {
     }
   }
 
-  static baseElement(base) {
-    return base.files.map((file) => RepositoryFiles.fileElementBase(base, file));
+  static baseElement(baseBranch) {
+    return baseBranch.files.map((file) => RepositoryFiles.fileElementBase(baseBranch, file));
   }
 
-  static solutionElement(solution) {
-    return solution.students.flatMap((student) => RepositoryFiles.solutionUserElement(solution, student));
+  static solutionElement(solutionBranch) {
+    return solutionBranch.solutions.flatMap((solution) => RepositoryFiles.solutionUserElement(solutionBranch, solution));
   }
 
-  static solutionUserElement(solution, student) {
-    return student.files.map((file) => RepositoryFiles.fileElementSolution(solution, student, file));
+  static solutionUserElement(solutionBranch, solution) {
+    return solution.files.map((file) => RepositoryFiles.fileElementSolution(solutionBranch, solution, file));
   }
 
   deleteBaseFiles() {
@@ -93,8 +93,8 @@ export class RepositoryFiles extends React.Component {
 
   fetchFiles() {
     axios.get(PROP.serverUrl + "/api/repositories/" + this.state.repoId + "/files").then((response) => {
-      let bases = response.data.bases.flatMap((base) => RepositoryFiles.baseElement(base));
-      let solutions = response.data.solutions.flatMap((solution) => RepositoryFiles.solutionElement(solution));
+      let bases = response.data.baseBranches.flatMap((baseBranch) => RepositoryFiles.baseElement(baseBranch));
+      let solutions = response.data.solutionBranches.flatMap((solutionBranch) => RepositoryFiles.solutionElement(solutionBranch));
       this.setState({
         bases, solutions
       });

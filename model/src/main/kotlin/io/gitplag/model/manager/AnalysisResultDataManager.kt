@@ -60,7 +60,8 @@ class AnalysisResultDataManager(
                         to2 = it.match2.second,
                         fileName1 = it.files.first,
                         fileName2 = it.files.second,
-                        analysisPair = analysisPair
+                        analysisPair = analysisPair,
+                        analyzer = it.analyzer
                     )
                 })
                 analysisPair to analysisPairLines
@@ -87,7 +88,8 @@ class AnalysisResultDataManager(
                         to2 = lines.match1.second,
                         fileName1 = lines.files.second,
                         fileName2 = lines.files.first,
-                        analysisPair = analysisPair
+                        analysisPair = analysisPair,
+                        analyzer = lines.analyzer
                     )
                 })
                 analysisPair to analysisPairLines

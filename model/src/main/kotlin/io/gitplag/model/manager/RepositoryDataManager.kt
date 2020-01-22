@@ -1,11 +1,11 @@
 package io.gitplag.model.manager
 
 import io.gitplag.model.dto.InputRepositoryDto
+import io.gitplag.model.dto.RepositoryUpdate
 import io.gitplag.model.entity.Repository
 import io.gitplag.model.enums.AnalysisMode
 import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.model.enums.GitProperty
-import io.gitplag.model.enums.Language
 import io.gitplag.model.repo.RepositoryRepository
 import org.springframework.transaction.annotation.Transactional
 
@@ -27,8 +27,8 @@ class RepositoryDataManager(
                 name = repositoryDto.name,
                 gitId = gitId,
                 gitService = repositoryDto.git,
-                language = repositoryDto.language ?: Language.JAVA,
-                filePatterns = repositoryDto.filePatterns ?: emptyList(),
+                language = repositoryDto.language,
+                filePatterns = repositoryDto.filePatterns,
                 analyzer = repositoryDto.analyzer ?: AnalyzerProperty.MOSS,
                 analysisMode = repositoryDto.analysisMode ?: AnalysisMode.PAIRS,
                 autoCloningEnabled = repositoryDto.autoCloningEnabled ?: true
@@ -39,11 +39,11 @@ class RepositoryDataManager(
      * Update the [repo] by the [repositoryDto]
      */
     @Transactional
-    fun update(repo: Repository, repositoryDto: InputRepositoryDto): Repository =
+    fun update(repo: Repository, repositoryDto: RepositoryUpdate): Repository =
         repositoryRepository.save(
             repo.copy(
                 language = repositoryDto.language ?: repo.language,
-                filePatterns = repositoryDto.filePatterns ?: repo.filePatterns,
+                filePatterns = repositoryDto.filePatterns,
                 analyzer = repositoryDto.analyzer ?: repo.analyzer,
                 analysisMode = repositoryDto.analysisMode ?: repo.analysisMode,
                 autoCloningEnabled = repositoryDto.autoCloningEnabled ?: repo.autoCloningEnabled

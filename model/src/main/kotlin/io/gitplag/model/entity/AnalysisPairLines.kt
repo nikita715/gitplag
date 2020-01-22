@@ -1,9 +1,12 @@
 package io.gitplag.model.entity
 
 import com.fasterxml.jackson.annotation.JsonBackReference
+import io.gitplag.model.enums.AnalyzerProperty
 import java.util.Objects
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
@@ -36,6 +39,10 @@ data class AnalysisPairLines(
 
     @Column(nullable = false)
     val fileName2: String,
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    val analyzer: AnalyzerProperty,
 
     @ManyToOne
     @field:JsonBackReference

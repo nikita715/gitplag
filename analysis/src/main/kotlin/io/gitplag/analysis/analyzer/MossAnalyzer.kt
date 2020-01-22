@@ -3,6 +3,7 @@ package io.gitplag.analysis.analyzer
 import io.gitplag.analysis.client.MossClient
 import io.gitplag.analysis.repoInfo
 import io.gitplag.analysis.solutions.SourceCodeStorage
+import io.gitplag.gitplagapi.model.enums.AnalyzerProperty
 import io.gitplag.model.data.AnalysisMatch
 import io.gitplag.model.data.AnalysisResult
 import io.gitplag.model.data.AnalysisSettings
@@ -92,13 +93,15 @@ class MossAnalyzer(
                                 MatchedLines(
                                     match1 = firstMatch[0].toInt() to firstMatch[1].toInt(),
                                     match2 = secondMatch[0].toInt() to secondMatch[1].toInt(),
-                                    files = solution1.fileName to solution2.fileName
+                                    files = solution1.fileName to solution2.fileName,
+                                    analyzer = AnalyzerProperty.MOSS
                                 )
                             else
                                 MatchedLines(
                                     match2 = firstMatch[0].toInt() to firstMatch[1].toInt(),
                                     match1 = secondMatch[0].toInt() to secondMatch[1].toInt(),
-                                    files = solution2.fileName to solution1.fileName
+                                    files = solution2.fileName to solution1.fileName,
+                                    analyzer = AnalyzerProperty.MOSS
                                 )
                         }
                         matchedLines

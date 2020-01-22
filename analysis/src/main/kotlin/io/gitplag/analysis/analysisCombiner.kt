@@ -2,7 +2,6 @@ package io.gitplag.analysis
 
 import io.gitplag.model.data.AnalysisMatch
 import io.gitplag.model.data.AnalysisResult
-import io.gitplag.model.data.MatchedLines
 import kotlin.math.roundToInt
 
 /**
@@ -30,13 +29,6 @@ fun mergeAnalysisMatches(analysisMatches: List<AnalysisMatch>) =
             maxPercentage = percents.max() ?: 0,
             sha = matches.first().sha,
             createdAt = matches.first().createdAt,
-            matchedLines = mergeMatchedLines(matches)
+            matchedLines = matches.flatMap { it.matchedLines }
         )
     }
-
-/**
- * Merge a list of [matches] to one list of [MatchedLines]
- */
-fun mergeMatchedLines(matches: List<AnalysisMatch>): List<MatchedLines> {
-    return matches.first().matchedLines
-}

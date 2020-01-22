@@ -7,6 +7,7 @@ import io.gitplag.model.dto.AnalysisPairDto
 import io.gitplag.model.dto.AnalysisResultDto
 import io.gitplag.model.dto.FileDto
 import io.gitplag.model.entity.Analysis
+import io.gitplag.model.enums.AnalyzerProperty
 import io.gitplag.model.repo.AnalysisPairRepository
 import io.gitplag.model.repo.AnalysisRepository
 import mu.KotlinLogging
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 /**
@@ -56,12 +58,33 @@ class AnalysisResultController(
      * Get two files of the analysis result pair and matching lines
      */
     @GetMapping("/{analysisId}/pairs/{analysisPairId}")
-    fun getAnalysisPair(@PathVariable analysisId: Long, @PathVariable analysisPairId: Long): AnalysisFilePairDto? {
+    fun getAnalysisPair(
+        @PathVariable analysisId: Long, @PathVariable analysisPairId: Long,
+        @RequestParam(name = "analyzer", required = false) inputAnalyzerString: String?
+    ): AnalysisFilePairDto? {
+
         val analysis = analysisRepository.findById(analysisId).orElse(null)
+
+        val inputAnalyzer = inputAnalyzerString?.toUpperCase()?.let { AnalyzerProperty.valueOf(it) }
+
+        val analyzer = if (analysis.analyzer == AnalyzerProperty.COMBINED) {
+            when {
+                inputAnalyzer == AnalyzerProperty.COMBINED -> return null
+                inputAnalyzer != null -> inputAnalyzer
+                else -> AnalyzerProperty.MOSS
+            }
+        } else {
+            when (inputAnalyzer) {
+                analysis.analyzer -> inputAnalyzer
+                null -> analysis.analyzer
+                else -> return null
+            }
+        }
+
         val analysisPair = analysisPairRepository.findById(analysisPairId)
 
         if (analysis == null || !analysisPair.isPresent) return null
-        val pair = AnalysisPairDto(analysisPair.get())
+        val pair = AnalysisPairDto(analysisPair.get(), analyzer)
         return AnalysisFilePairDto(
             getAnalysisFiles(analysis, analysisPair.get().student1),
             getAnalysisFiles(analysis, analysisPair.get().student2),

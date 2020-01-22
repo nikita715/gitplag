@@ -1,7 +1,9 @@
 package io.gitplag.model.dto
 
+import io.gitplag.gitplagapi.model.enums.AnalyzerProperty
 import io.gitplag.gitplagapi.model.input.AnalysisRequest
 import io.gitplag.gitplagapi.model.input.FileSearchCriteria
+import io.gitplag.gitplagapi.model.input.RepositoryInput
 import io.gitplag.gitplagapi.model.output.analysis.AnalysisResult
 import io.gitplag.gitplagapi.model.output.analysis.AnalyzedPairInfo
 import io.gitplag.gitplagapi.model.output.analysis.pair.AnalysedPair
@@ -22,8 +24,11 @@ import io.gitplag.model.entity.PullRequest
 import io.gitplag.model.entity.Repository
 import io.gitplag.model.entity.SolutionFileRecord
 import io.gitplag.model.util.analysisResultSimplePairDtoComparator
+import io.gitplag.gitplagapi.model.input.RepositoryUpdate as RepositoryUpdateModel
 import io.gitplag.gitplagapi.model.output.pullrequest.PullRequest as PullRequestDto
 
+typealias InputRepositoryDto = RepositoryInput
+typealias RepositoryUpdate = RepositoryUpdateModel
 typealias FileDto = FileContent
 typealias AnalysisFilePairDto = AnalysedPairContent
 typealias AnalysisDto = AnalysisRequest
@@ -35,7 +40,7 @@ typealias StudentFilesDto = SolutionInfo
 typealias OutputRepositoryDto = RepositoryOutput
 typealias AnalysisResultDto = AnalysisResult
 
-fun AnalysisPairDto(analysisPair: AnalysisPair) = AnalysedPair(
+fun AnalysisPairDto(analysisPair: AnalysisPair, analyzer: AnalyzerProperty) = AnalysedPair(
     analysisPair.id,
     analysisPair.student1,
     analysisPair.student2,
@@ -44,7 +49,7 @@ fun AnalysisPairDto(analysisPair: AnalysisPair) = AnalysedPair(
     analysisPair.maxPercentage,
     analysisPair.createdAt1,
     analysisPair.createdAt2,
-    analysisPair.analysisPairLines.map { AnalysisPairLinesDto(it) }.sortedBy { it.from1 }
+    analysisPair.analysisPairLines.filter { it.analyzer == analyzer }.map { AnalysisPairLinesDto(it) }.sortedBy { it.from1 }
 )
 
 fun AnalysisPairLinesDto(analysisPairLines: AnalysisPairLines) = AnalyzedPairMatch(

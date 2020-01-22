@@ -17,6 +17,7 @@ import io.gitplag.model.dto.LocalFileDto
 import io.gitplag.model.dto.OutputRepositoryDto
 import io.gitplag.model.dto.PullRequestDto
 import io.gitplag.model.dto.RepositoryFilesInfoDto
+import io.gitplag.model.dto.RepositoryUpdate
 import io.gitplag.model.dto.SolutionBranchInfoDto
 import io.gitplag.model.dto.StudentFilesDto
 import io.gitplag.model.entity.BaseFileRecord
@@ -121,7 +122,7 @@ class RepositoryCommonController(
     /**
      * Update the repo
      */
-    fun editRepo(repository: Repository?, dto: InputRepositoryDto): OutputRepositoryDto? {
+    fun editRepo(repository: Repository?, dto: RepositoryUpdate): OutputRepositoryDto? {
         val updatedRepo = if (repository != null) {
             repositoryDataManager.update(repository, dto)
         } else null

@@ -9,7 +9,7 @@ plugins {
 }
 
 group 'io.gitplag'
-version '0.5'
+version '0.5.2'
 
 apply from: 'coverage.gradle'
 

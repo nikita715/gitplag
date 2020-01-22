@@ -1,8 +1,8 @@
 package io.gitplag.core.rest
 
 import io.gitplag.model.dto.AnalysisDto
-import io.gitplag.model.dto.InputRepositoryDto
 import io.gitplag.model.dto.LocalFileDto
+import io.gitplag.model.dto.RepositoryUpdate
 import io.gitplag.model.entity.BaseFileRecord
 import io.gitplag.model.entity.SolutionFileRecord
 import io.gitplag.model.enums.GitProperty
@@ -79,7 +79,7 @@ class RepositoryByNameController(
         @PathVariable service: String,
         @PathVariable user: String,
         @PathVariable repo: String,
-        @RequestBody dto: InputRepositoryDto
+        @RequestBody dto: RepositoryUpdate
     ) = repositoryCommonController.editRepo(getRepoEntity(service, user, repo), dto)
 
     /**

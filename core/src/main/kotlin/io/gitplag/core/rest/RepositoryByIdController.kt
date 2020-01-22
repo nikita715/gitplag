@@ -1,8 +1,8 @@
 package io.gitplag.core.rest
 
 import io.gitplag.model.dto.AnalysisDto
-import io.gitplag.model.dto.InputRepositoryDto
 import io.gitplag.model.dto.LocalFileDto
+import io.gitplag.model.dto.RepositoryUpdate
 import io.gitplag.model.entity.BaseFileRecord
 import io.gitplag.model.entity.SolutionFileRecord
 import io.gitplag.model.manager.RepositoryDataManager
@@ -67,7 +67,7 @@ class RepositoryByIdController(
     @PutMapping("")
     fun editRepo(
         @PathVariable id: Long,
-        @RequestBody dto: InputRepositoryDto
+        @RequestBody dto: RepositoryUpdate
     ) = repositoryCommonController.editRepo(getRepoEntity(id), dto)
 
     /**

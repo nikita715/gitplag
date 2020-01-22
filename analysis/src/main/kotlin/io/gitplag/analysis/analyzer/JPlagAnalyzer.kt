@@ -4,6 +4,7 @@ import io.gitplag.analysis.analysisFilesDirectoryName
 import io.gitplag.analysis.client.JPlagClient
 import io.gitplag.analysis.repoInfo
 import io.gitplag.analysis.solutions.SourceCodeStorage
+import io.gitplag.gitplagapi.model.enums.AnalyzerProperty
 import io.gitplag.model.data.AnalysisMatch
 import io.gitplag.model.data.AnalysisResult
 import io.gitplag.model.data.AnalysisSettings
@@ -126,13 +127,15 @@ class JPlagAnalyzer(
                 MatchedLines(
                     match1 = from1.toInt() to to1.toInt(),
                     match2 = from2.toInt() to to2.toInt(),
-                    files = fileName1 to fileName2
+                    files = fileName1 to fileName2,
+                    analyzer = AnalyzerProperty.JPLAG
                 )
             else
                 MatchedLines(
                     match2 = from1.toInt() to to1.toInt(),
                     match1 = from2.toInt() to to2.toInt(),
-                    files = fileName2 to fileName1
+                    files = fileName2 to fileName1,
+                    analyzer = AnalyzerProperty.JPLAG
                 )
         }
         return matchedLines
