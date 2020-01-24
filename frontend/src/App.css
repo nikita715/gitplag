@@ -211,3 +211,11 @@ form {
 .text-notice {
     font-size: 14px;
 }
+
+.analysis-pair-analyzer-select {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 10px;
+}

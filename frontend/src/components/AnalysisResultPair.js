@@ -21,12 +21,27 @@ export class AnalysisResultPair extends React.Component {
     leftMatches: [],
     rightMatches: [],
     leftRightMatches: [],
-    percentage: 0
+    percentage: 0,
+    analyzerSelectEnabled: false,
+    isFlushed: false
 //    scrollEnabled: false,
 //    offset: 0
   };
   matchIndex = 0;
   redClass = false;
+
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.dealLoaded && nextProps.dealLoaded) {
+      this.setState({
+        isFlushed: false
+      });
+    }
+    if (!this.state.isFlushed && nextProps.location.state === 'flushDeal') {
+      this.setState({
+        isFlushed: true,
+      }, () => this.props.loadDeals());
+    }
+  }
 
   constructor(props, context) {
     super(props, context);
@@ -34,7 +49,15 @@ export class AnalysisResultPair extends React.Component {
     let pairId = props.match.params.pairId;
     this.state.analysisId = analysisId;
     this.state.pairId = pairId;
-    axios.get(PROP.serverUrl + "/api/analyzes/" + analysisId + "/pairs/" + pairId).then((response) => {
+    let analyzer = new URLSearchParams(props.location.search).get("analyzer");
+
+    let requestString = PROP.serverUrl + "/api/analyzes/" + analysisId + "/pairs/" + pairId;
+    if (analyzer === "moss" || analyzer === "jplag") {
+      requestString = requestString + "?analyzer=" + analyzer;
+      this.state.analyzerSelectEnabled = true;
+    }
+
+    axios.get(requestString).then((response) => {
       let files1 = response.data.files1.map((file) => ({fileName: file.name, lines: file.content}));
       let files2 = response.data.files2.map((file) => ({fileName: file.name, lines: file.content}));
 
@@ -176,6 +199,16 @@ export class AnalysisResultPair extends React.Component {
               <div><b>{this.state.percentage + "%"}</b></div>
             </div>
             <div>Student {this.state.rightName}, created at {this.state.rightTime}</div>
+              {this.state.analyzerSelectEnabled &&
+                  <div>
+                    <Link to={{pathname:"/analyzes/" + this.state.analysisId + "/pairs/" + this.state.pairId + "?analyzer=moss", state: 'flushDeal'}}>
+                      <div className={"btn btn-light"}>Moss</div>
+                    </Link>
+                    <Link to={{pathname:"/analyzes/" + this.state.analysisId + "/pairs/" + this.state.pairId + "?analyzer=jplag", state: 'flushDeal'}}>
+                      <div className={"btn btn-light"}>JPlag</div>
+                    </Link>
+                  </div>
+              }
           </div>
           <div className="compare-wrapper">
             <div id="left-compare" className="compare-side-wrapper" onScroll={this.handleScroll}>

@@ -15,7 +15,8 @@ export class AnalysisResult extends React.Component {
     sortedByName: "",
     analyzer: "",
     date: "",
-    branch: ""
+    branch: "",
+    pairLinkQueryParams: ""
   };
 
   constructor(props, context) {
@@ -35,10 +36,16 @@ export class AnalysisResult extends React.Component {
         student2: result.student2,
         percentage: result.minPercentage === result.maxPercentage ? result.percentage : (result.minPercentage + "-" + result.maxPercentage)
       }));
+
+      let pairLinkQueryParams = "";
+      if (response.data.analyzer.toUpperCase() === "COMBINED") {
+        pairLinkQueryParams = "?analyzer=moss"
+      }
+
       this.setState({
         results: data, repoId: response.data.repo, repoName: response.data.repoName, analysisId: response.data.id,
         resultLink: AnalysisResult.createResultLink(response.data.resultLink, response.data.analyzer),
-        analyzer: response.data.analyzer, date: response.data.date, branch: response.data.branch
+        analyzer: response.data.analyzer, date: response.data.date, branch: response.data.branch, pairLinkQueryParams
       });
     });
   }
@@ -103,7 +110,8 @@ export class AnalysisResult extends React.Component {
                     || it.student2.toLowerCase().includes(this.state.sortedByName)).map((result) =>
                     <tr>
                       <td>
-                        <Link to={"/analyzes/" + this.state.analysisId + "/pairs/" + result.id}>{result.id}</Link>
+                        <Link to={"/analyzes/" + this.state.analysisId + "/pairs/" + result.id
+                           + this.state.pairLinkQueryParams}>{result.id}</Link>
                       </td>
                       <td>{result.student1}</td>
                       <td>{result.student2}</td>
