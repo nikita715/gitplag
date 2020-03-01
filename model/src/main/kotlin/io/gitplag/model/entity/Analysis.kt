@@ -6,7 +6,7 @@ import io.gitplag.model.enums.Language
 import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
 import java.time.LocalDateTime
-import java.util.Objects
+import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
@@ -47,6 +47,9 @@ data class Analysis(
 
     @Column(nullable = false)
     val resultLink: String,
+
+    @Column(nullable = false)
+    val studentsWithoutSolutions: String,
 
     @field:JsonManagedReference
     @get:JsonManagedReference

@@ -20,9 +20,10 @@ internal class MossClient(analysisData: PreparedAnalysisData, private val mossId
 
         if (resultSize != null) mossClient.resultSize(resultSize.toLong())
 
+        val files = solutions.asSequence().filter { !it.isEmpty }.map { it.student to it.file }.toList()
         return mossClient
             .submitFiles(bases, isBase = true)
-            .submitNamedFiles(solutions.map { it.student to it.file })
+            .submitNamedFiles(files)
             .getResult()
     }
 

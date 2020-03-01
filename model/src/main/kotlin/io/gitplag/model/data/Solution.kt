@@ -11,7 +11,8 @@ class Solution(
     val fileName: String,
     val file: File,
     val sha: String,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
+    val isEmpty: Boolean = false
 )
 
 /**

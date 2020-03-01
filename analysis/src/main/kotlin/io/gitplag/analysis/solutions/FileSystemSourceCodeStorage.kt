@@ -96,7 +96,8 @@ class FileSystemSourceCodeStorage(
                 fileName = fileName,
                 file = composedFile,
                 sha = pullRequest.headSha,
-                createdAt = pullRequest.createdAt
+                createdAt = pullRequest.createdAt,
+                isEmpty = solutionRecords.isEmpty()
             )
         }
     }

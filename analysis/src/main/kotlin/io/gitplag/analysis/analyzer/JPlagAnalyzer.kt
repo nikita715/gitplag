@@ -54,11 +54,14 @@ class JPlagAnalyzer(
         val resultLink = "/jplagresult/$directoryName/index.html"
 
         logger.info { "Analysis:JPlag:End of analysis. ${repoInfo(settings)}" }
+        val studentsWithoutSolutions = analysisFiles.solutions.asSequence()
+            .filter { it.isEmpty }.map(Solution::student).toList()
         return AnalysisResult(
             settings,
             resultLink,
             settings.executionDate,
-            matchLines
+            matchLines,
+            studentsWithoutSolutions
         )
     }
 

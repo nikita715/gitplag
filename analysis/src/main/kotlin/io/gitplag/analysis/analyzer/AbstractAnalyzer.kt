@@ -1,5 +1,6 @@
 package io.gitplag.analysis.analyzer
 
+import io.gitplag.analysis.AnalysisException
 import io.gitplag.analysis.analysisFilesDirectoryName
 import io.gitplag.analysis.solutions.SourceCodeStorage
 import io.gitplag.model.data.AnalysisResult
@@ -19,6 +20,9 @@ abstract class AbstractAnalyzer(
         val directoryName = analysisFilesDirectoryName(settings)
         val fileDir = generateDir(analysisResultFilesDir, directoryName)
         val analysisFiles = sourceCodeStorage.loadBasesAndSolutions(settings, fileDir)
+        if (analysisFiles.solutions.asSequence().filter { !it.isEmpty }.count() < 2) {
+            throw AnalysisException("Not enough valid submissions", null)
+        }
         return analyze(settings, analysisFiles)
     }
 

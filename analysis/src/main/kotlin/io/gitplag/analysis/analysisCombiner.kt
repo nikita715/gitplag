@@ -12,7 +12,8 @@ fun mergeAnalysisResults(results: List<AnalysisResult>) =
         repo = results.first().repo,
         resultLink = results.joinToString(separator = ";") { it.resultLink },
         executionDate = results.first().executionDate,
-        matchData = mergeAnalysisMatches(results.flatMap { it.matchData })
+        matchData = mergeAnalysisMatches(results.flatMap { it.matchData }),
+        studentsWithoutSolutions = results.first().studentsWithoutSolutions
     )
 
 /**

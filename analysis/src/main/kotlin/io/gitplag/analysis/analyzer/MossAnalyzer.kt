@@ -40,7 +40,9 @@ class MossAnalyzer(
             }
 
         logger.info { "Analysis:Moss.End of analysis. ${repoInfo(settings)}" }
-        return AnalysisResult(settings, resultLink, settings.executionDate, matchData)
+        val studentsWithoutSolutions = analysisFiles.solutions.asSequence()
+            .filter { it.isEmpty }.map(Solution::student).toList()
+        return AnalysisResult(settings, resultLink, settings.executionDate, matchData, studentsWithoutSolutions)
     }
 
     private fun parseResult(

@@ -1,6 +1,5 @@
 package io.gitplag.analysis.client
 
-import io.gitplag.analysis.AnalysisException
 import io.gitplag.model.data.PreparedAnalysisData
 import io.gitplag.util.asPath
 import jplag.Program
@@ -35,12 +34,8 @@ internal class JPlagClient(
         }.also(::execute)
 
     private fun execute(task: String) {
-        try {
-            val options = CommandLineOptions(task.split(" ").toTypedArray(), null)
-            Program(options).run()
-        } catch (e: Exception) {
-            throw AnalysisException("Jplag analysis failed", e)
-        }
+        val options = CommandLineOptions(task.split(" ").toTypedArray(), null)
+        Program(options).run()
     }
 
 }

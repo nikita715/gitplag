@@ -33,7 +33,9 @@ class AnalysisResultDataManager(
                 language = analysisSettings.language,
                 analyzer = analysisSettings.analyzer,
                 branch = analysisSettings.branch,
-                resultLink = analysisResults.resultLink
+                resultLink = analysisResults.resultLink,
+                studentsWithoutSolutions = analysisResults.studentsWithoutSolutions
+                    .sorted().joinToString(separator = ", ")
             )
         )
         val analysisPairs = analysisResults.matchData.sortedWith(analysisResultComparator).map { pair ->

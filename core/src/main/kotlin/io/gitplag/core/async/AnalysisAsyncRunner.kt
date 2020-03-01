@@ -53,6 +53,7 @@ class AnalysisAsyncRunner(
         } catch (e: Exception) {
             var message = "Failed analysis of repo ${analysisSettings.repository.name}."
             when (e) {
+                is AnalysisException -> message += (" ${e.message}.")
                 is ConnectException,
                 is SocketException,
                 is SocketTimeoutException -> {

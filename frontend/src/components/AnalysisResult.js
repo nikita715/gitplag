@@ -15,7 +15,8 @@ export class AnalysisResult extends React.Component {
     sortedByName: "",
     analyzer: "",
     date: "",
-    branch: ""
+    branch: "",
+    studentsWithoutSolutions: ""
   };
 
   constructor(props, context) {
@@ -38,7 +39,8 @@ export class AnalysisResult extends React.Component {
       this.setState({
         results: data, repoId: response.data.repo, repoName: response.data.repoName, analysisId: response.data.id,
         resultLink: AnalysisResult.createResultLink(response.data.resultLink, response.data.analyzer),
-        analyzer: response.data.analyzer, date: response.data.date, branch: response.data.branch
+        analyzer: response.data.analyzer, date: response.data.date, branch: response.data.branch,
+        studentsWithoutSolutions: response.data.studentsWithoutSolutions
       });
     });
   }
@@ -55,6 +57,46 @@ export class AnalysisResult extends React.Component {
     this.setState({
       [event.target.name]: event.target.value.toLowerCase()
     });
+  }
+
+  getAnalysisResultsBlock() {
+    if (this.state.results.length == 0) {
+      return <div className="row">No results</div>;
+    }
+    return <div className="row">
+        <table className="table table-hover table-sm">
+          <thead className="thead-light">
+          <tr>
+            <th>Id</th>
+            <th>First student</th>
+            <th>Second student</th>
+            <th>Similarity</th>
+          </tr>
+          </thead>
+          <tbody>
+          {this.state.results.filter((it) =>
+            it.student1.toLowerCase().includes(this.state.sortedByName)
+            || it.student2.toLowerCase().includes(this.state.sortedByName)).map((result) =>
+            <tr>
+              <td>
+                <Link to={"/analyzes/" + this.state.analysisId + "/pairs/" + result.id}>{result.id}</Link>
+              </td>
+              <td>{result.student1}</td>
+              <td>{result.student2}</td>
+              <td>{result.percentage}</td>
+            </tr>)
+          }
+          </tbody>
+        </table>
+      </div>;
+  }
+
+  getStudentsWithoutSolutionsBlock() {
+    if (this.state.studentsWithoutSolutions == "") {
+      return "";
+    } else {
+      return <p className="font-weight-light text-notice">Students without solutions: {this.state.studentsWithoutSolutions}</p>;
+    }
   }
 
   render() {
@@ -87,32 +129,7 @@ export class AnalysisResult extends React.Component {
                   </div>
                 </div>
               </div>
-              <div className="row">
-                <table className="table table-hover table-sm">
-                  <thead className="thead-light">
-                  <tr>
-                    <th>Id</th>
-                    <th>First student</th>
-                    <th>Second student</th>
-                    <th>Similarity</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {this.state.results.filter((it) =>
-                    it.student1.toLowerCase().includes(this.state.sortedByName)
-                    || it.student2.toLowerCase().includes(this.state.sortedByName)).map((result) =>
-                    <tr>
-                      <td>
-                        <Link to={"/analyzes/" + this.state.analysisId + "/pairs/" + result.id}>{result.id}</Link>
-                      </td>
-                      <td>{result.student1}</td>
-                      <td>{result.student2}</td>
-                      <td>{result.percentage}</td>
-                    </tr>)
-                  }
-                  </tbody>
-                </table>
-              </div>
+              {this.getAnalysisResultsBlock()}
             </div>
           </div>
           <div className="container col-sm-3">
@@ -120,7 +137,8 @@ export class AnalysisResult extends React.Component {
               <input name="sortedByName" onChange={this.handleChange} autoComplete="off"
                      className="list-group-item list-group-item-action text-input" placeholder="Type a name"/>
                      <div className="col mt-2 p-1">
-              <p className="font-weight-light text-notice">Left solutions are made before right ones</p></div>
+              <p className="font-weight-light text-notice">Left solutions are made before right ones</p>
+              {this.getStudentsWithoutSolutionsBlock()}</div>
             </div>
           </div>
         </div>

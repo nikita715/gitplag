@@ -62,7 +62,8 @@ fun AnalysisResultDto(analysis: Analysis) = AnalysisResult(
     analysis.id, analysis.repository.id, analysis.repository.name, analysis.analyzer,
     analysis.branch, analysis.executionDate, analysis.resultLink,
     analysis.analysisPairs.map { AnalysisResultSimplePairDto(it) }
-        .sortedWith(analysisResultSimplePairDtoComparator)
+        .sortedWith(analysisResultSimplePairDtoComparator),
+    analysis.studentsWithoutSolutions
 )
 
 fun AnalysisResultSimplePairDto(analysisPair: AnalysisPair) = AnalyzedPairInfo(
